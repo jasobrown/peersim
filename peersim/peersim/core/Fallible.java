@@ -24,7 +24,7 @@ public interface Fallible {
 
   /**
   * Fail state indicating that the object is running, but it may behave
-  * in a malicious way.
+  * in a malicious way..
   */
   public int MALICIOUS = 2;
 

@@ -72,7 +72,7 @@ public WireScaleFreeDM(String prefix)
 	pid = Configuration.getPid(prefix + "." + PAR_PROT);
 	nodes = Network.size();
 	edges = Configuration.getInt(prefix + "." + PAR_EDGES);
-  }
+}
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -83,10 +83,10 @@ public WireScaleFreeDM(String prefix)
 public void modify() 
 {
 	Node[] links = new Node[4*edges*nodes];
-    
-    	// Initial number of nodes connected as a clique
+
+	// Initial number of nodes connected as a clique
 	int clique = (edges > 3 ? edges : 3);
-    
+
 	// Add initial edges, to form a clique
 	int len=0;
 	for (int i=0; i < clique; i++) {
@@ -103,15 +103,15 @@ public void modify()
 		}
 	}
 
-    
+
 	for (int i=clique; i < nodes; i++) {
 		Node ni = Network.get(i);
 		for (int j=0; j < edges; j++) {
 			int edge = CommonRandom.r.nextInt(len);
 			Node nk = links[edge*2];
 			Node nj = links[edge*2+1];
-		  ni.addNeighbor(pid, nk);
-		  nk.addNeighbor(pid, ni);
+			ni.addNeighbor(pid, nk);
+			nk.addNeighbor(pid, ni);
 			nj.addNeighbor(pid, nk);
 			nk.addNeighbor(pid, nj);
 			links[len*2] = ni;

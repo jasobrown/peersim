@@ -58,7 +58,7 @@ int pid;
 /** Number of nodes */
 int nodes;
 
-/** Average number of edges to be created */	
+/** Average number of edges to be created */
 int edges;
 
 
@@ -66,13 +66,13 @@ int edges;
 // Constructor
 ////////////////////////////////////////////////////////////////////////////
 
- public WireScaleFreeBA(String prefix)
- {
+public WireScaleFreeBA(String prefix)
+{
 	/* Read parameters */
 	pid = Configuration.getPid(prefix + "." + PAR_PROT);
 	nodes = Network.size();
 	edges = Configuration.getInt(prefix + "." + PAR_EDGES);
-  }
+}
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -82,32 +82,32 @@ int edges;
 // Comment inherited from interface
 public void modify() 
 {
-    Node[] dest = new Node[2*edges*nodes];
-    
-    // Add initial edges; 
-    Node ne = Network.get(edges);
-    for (int i=0; i < edges; i++) {
-    	Node ni = Network.get(i);
-    	dest[i*2] = ne;
-    	dest[i*2+1] = ni;
-    	ni.addNeighbor(pid, ne);
-    	ne.addNeighbor(pid, ni);
-    }
-    
-    int len=edges*2;
-    for (int i=edges+1; i < nodes; i++) {
-    	Node ni = Network.get(i);
-    	for (int j=0; j < edges; j++) {
-    		boolean stop;
-    		Node nk;
-    		do {
-    			nk = dest[CommonRandom.r.nextInt(len)]; 
-    			stop = ni.addNeighbor(pid, nk) && nk.addNeighbor(pid, ni);
-    		} while (!stop);
-    		dest[len++] = ni;
-    		dest[len++] = nk;
-    	}
-    }
+	Node[] dest = new Node[2*edges*nodes];
+	
+	// Add initial edges; 
+	Node ne = Network.get(edges);
+	for (int i=0; i < edges; i++) {
+		Node ni = Network.get(i);
+		dest[i*2] = ne;
+		dest[i*2+1] = ni;
+		ni.addNeighbor(pid, ne);
+		ne.addNeighbor(pid, ni);
+	}
+	
+	int len=edges*2;
+	for (int i=edges+1; i < nodes; i++) {
+		Node ni = Network.get(i);
+		for (int j=0; j < edges; j++) {
+			boolean stop;
+			Node nk;
+			do {
+				nk = dest[CommonRandom.r.nextInt(len)]; 
+				stop = ni.addNeighbor(pid, nk) && nk.addNeighbor(pid, ni);
+			} while (!stop);
+			dest[len++] = ni;
+			dest[len++] = nk;
+		}
+	}
 }
 
 }

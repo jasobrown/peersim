@@ -617,7 +617,6 @@ public static String[] getNames( String name )
 			ll.add(key);
 	}
 	String[] ret = (String[])ll.toArray(new String[ll.size()]);
-	Arrays.sort(ret);
 	Configuration.order(ret,name);
 	return ret;
 }
@@ -653,20 +652,21 @@ private static void order(String[] names, String type)
 {
 	String order = getString(PAR_ORDER+"."+type, null);
 	
+	int i=0;
 	if( order != null )
 	{
 		// split around non-word characters
-		String[] sret = order.split("\\W");
-		for (int i=0; i < sret.length; i++)
+		String[] sret = order.split("\\W+");
+		for (; i < sret.length; i++)
 		{
 			int j=i;
 			for(; j<names.length; ++j)
-				if( names.equals(type+"."+sret[i])) break;
+				if( names[j].equals(type+"."+sret[i])) break;
 			if( j == names.length )
 			{
 				throw new IllegalParameterException(
 				PAR_ORDER+"."+type,
-				type + "." + sret[i] + " is not defined.");
+				type + "." + sret[i]+ " is not defined.");
 			}
 			else // swap the element to current position
 			{
@@ -676,6 +676,8 @@ private static void order(String[] names, String type)
 			}
 		}
 	}
+	
+	Arrays.sort(names,i,names.length);
 }
 
 

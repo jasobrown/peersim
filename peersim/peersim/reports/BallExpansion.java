@@ -28,16 +28,11 @@ import peersim.graph.*;
 * are accessable from a given node in at most 1, 2, etc steps.
 * It works only after the simulation.
 */
-public class BallExpansion implements Observer {
+public class BallExpansion extends GraphObserver {
 
 
 // ===================== fields =======================================
 // ====================================================================
-
-/** 
-*  String name of the parameter used to select the protocol to operate on
-*/
-public static final String PAR_PROT = "protocol";
 
 /** 
 * Name for the parameter maxd, which defines the maximal distance which
@@ -53,31 +48,16 @@ public static final String PAR_MAXD = "maxd";
 public static final String PAR_N = "n";
 
 /** 
-* If defines, the undirected version of the graph will be analized.
-* Not defined by default;
-*/
-public static final String PAR_UNDIR = "undir";
-
-/** 
 * If defines, statistics are printed instead over the minimal path lengths.
 * Not defined by default;
 */
 public static final String PAR_STATS = "stats";
   
-/** The name of this observer in the configuration */
-private final String name;
-
-private final int protocolID;
-
 private final int maxd;
 
 private final int n;
 
-private final boolean undir;
-
 private final boolean stats;
-
-private final GraphAlgorithms ga = new GraphAlgorithms();
 
 /** working variable */
 private final int[] b;
@@ -89,11 +69,9 @@ private final int[] b;
 
 public BallExpansion(String name) {
 
-	this.name = name;
-	protocolID = Configuration.getPid(name+"."+PAR_PROT);
+	super(name);
 	maxd = Configuration.getInt(name+"."+PAR_MAXD,Network.size());
 	n = Configuration.getInt(name+"."+PAR_N,1000);
-	undir = Configuration.contains(name+"."+PAR_UNDIR);
 	stats = Configuration.contains(name+"."+PAR_STATS);
 	b = new int[maxd];
 }
@@ -105,9 +83,8 @@ public BallExpansion(String name) {
 
 public boolean analyze() {
 	
-	Graph g = new OverlayGraph(protocolID);
-	if( undir ) g = new ConstUndirGraph(g);
-
+	updateGraph();
+	
 	System.out.print(name+": ");
 	
 	if(stats)

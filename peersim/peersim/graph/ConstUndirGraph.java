@@ -39,9 +39,9 @@ public class ConstUndirGraph implements Graph {
 // ==============================================================
 
 
-private final Graph g;
+protected final Graph g;
 
-private final List[] in;
+protected final List[] in;
 
 // ====================== public constructors ===================
 // ==============================================================
@@ -53,11 +53,20 @@ public ConstUndirGraph( Graph g ) {
 	if( !g.directed() )
 	{
 		in = null;
-		return;
+	}
+	else
+	{
+		in = new List[g.size()];
 	}
 	
+	initGraph();
+}
+	
+// --------------------------------------------------------------
+
+protected void initGraph() {
+
 	final int max = g.size();
-	in = new List[max];
 	for(int i=0; i<max; ++i) in[i] = new ArrayList();
 	for(int i=0; i<max; ++i)
 	{

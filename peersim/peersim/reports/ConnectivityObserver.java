@@ -27,16 +27,11 @@ import java.util.Iterator;
 
 /**
  */
-public class ConnectivityObserver implements Observer {
+public class ConnectivityObserver extends GraphObserver {
 
 
 // ===================== fields =======================================
 // ====================================================================
-
-/** 
-*  String name of the parameter used to select the protocol to operate on
-*/
-public static final String PAR_PROT = "protocol";
 
 /** 
 * String name of the parameter used to request cluster size statistics instead
@@ -44,14 +39,7 @@ public static final String PAR_PROT = "protocol";
 */
 public static final String PAR_SIZESTATS = "sizestats";
   
-/** The name of this observer in the configuration */
-private final String name;
-
-private final int protocolID;
-
 private final boolean sizestats;
-
-private final GraphAlgorithms ga;
 
 
 // ===================== initialization ================================
@@ -60,10 +48,8 @@ private final GraphAlgorithms ga;
 
 public ConnectivityObserver(String name) {
 
-	this.name = name;
-	protocolID = Configuration.getPid(name+"."+PAR_PROT);
+	super(name);
 	sizestats = Configuration.contains(name+"."+PAR_SIZESTATS);
-	ga = new GraphAlgorithms();
 }
 
 
@@ -73,15 +59,15 @@ public ConnectivityObserver(String name) {
 
 public boolean analyze() {
 	
-	OverlayGraph og = new OverlayGraph(protocolID);
-
+	updateGraph();
+	
 	if(!sizestats)
 	{
-		System.out.println(name+": "+ga.weaklyConnectedClusters(og));
+		System.out.println(name+": "+ga.weaklyConnectedClusters(g));
 	}
 	else
 	{
-		Map clst = ga.weaklyConnectedClusters(og);
+		Map clst = ga.weaklyConnectedClusters(g);
 		IncrementalStats stats = new IncrementalStats();
 		Iterator it = clst.values().iterator();
 		while(it.hasNext())

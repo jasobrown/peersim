@@ -27,16 +27,12 @@ import peersim.graph.*;
 * Prints reports on the graph like average clustering and average path length,
 * based on random sampling of the nodes.
 */
-public class GraphStats implements Observer {
+public class GraphStats extends GraphObserver {
 
 
 // ===================== fields =======================================
 // ====================================================================
 
-/** 
-*  String name of the parameter used to select the protocol to operate on
-*/
-public static final String PAR_PROT = "protocol";
 
 /** 
 * Name for the parameter which defines the number of nodes to use fore
@@ -58,25 +54,9 @@ public static final String PAR_NL = "nl";
 */
 public static final String PAR_NC = "nc";
 
-/** 
-* If defined, the directed version of the graph will be analized, otherwise
-* the undirected version.
-* Not defined by default.
-*/
-public static final String PAR_DIR = "directed";
+protected final int nc;
 
-/** The name of this observer in the configuration */
-private final String name;
-
-private final int protocolID;
-
-private final int nc;
-
-private final int nl;
-
-private final boolean dir;
-
-private final GraphAlgorithms ga = new GraphAlgorithms();
+protected final int nl;
 
 
 // ===================== initialization ================================
@@ -85,11 +65,9 @@ private final GraphAlgorithms ga = new GraphAlgorithms();
 
 public GraphStats(String name) {
 
-	this.name = name;
-	protocolID = Configuration.getPid(name+"."+PAR_PROT);
+	super(name);
 	nl = Configuration.getInt(name+"."+PAR_NL,0);
 	nc = Configuration.getInt(name+"."+PAR_NC,0);
-	dir = Configuration.contains(name+"."+PAR_DIR);
 }
 
 
@@ -102,8 +80,7 @@ public boolean analyze() {
 	System.out.print(name+": ");
 	
 	IncrementalStats stats = new IncrementalStats();
-	Graph g = new OverlayGraph(protocolID);
-	if( !dir && (nc!=0 || nl!=0)) g = new ConstUndirGraph(g);
+	updateGraph();
 	
 	if( nc != 0 )
 	{

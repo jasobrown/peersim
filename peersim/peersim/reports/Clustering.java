@@ -28,16 +28,11 @@ import peersim.graph.*;
 * are accessable from a given node in at most 1, 2, etc steps.
 * It works only after the simulation.
 */
-public class Clustering implements Observer {
+public class Clustering extends GraphObserver {
 
 
 // ===================== fields =======================================
 // ====================================================================
-
-/** 
-*  String name of the parameter used to select the protocol to operate on
-*/
-public static final String PAR_PROT = "protocol";
 
 /** 
 * Name for the parameter which defines the number of nodes to print info about.
@@ -45,20 +40,7 @@ public static final String PAR_PROT = "protocol";
 */
 public static final String PAR_N = "n";
 
-/** 
-* If defines, the undirected version of the graph will be analized.
-* Not defined by default;
-*/
-public static final String PAR_UNDIR = "undir";
-  
-/** The name of this observer in the configuration */
-private final String name;
-
-private final int protocolID;
-
 private final int n;
-
-private final boolean undir;
 
 
 // ===================== initialization ================================
@@ -67,10 +49,8 @@ private final boolean undir;
 
 public Clustering(String name) {
 
-	this.name = name;
-	protocolID = Configuration.getPid(name+"."+PAR_PROT);
+	super(name);
 	n = Configuration.getInt(name+"."+PAR_N,Integer.MAX_VALUE);
-	undir = Configuration.contains(name+"."+PAR_UNDIR);
 }
 
 
@@ -81,9 +61,9 @@ public Clustering(String name) {
 public boolean analyze() {
 
 	IncrementalStats stats = new IncrementalStats();
-	Graph g = new OverlayGraph(protocolID);
-	if( undir ) g = new ConstUndirGraph(g);
-
+	
+	updateGraph();
+	
 	for(int i=0; i<n && i<g.size(); ++i)
 	{
 		stats.add(GraphAlgorithms.clustering(g,i));

@@ -29,16 +29,12 @@ import java.util.Iterator;
 * It test the network for sensiticity for random node removal.
 * Of course it does not actually remove nodes, it is only an observer.
 */
-public class RandRemoval implements Observer {
+public class RandRemoval extends GraphObserver {
 
 
 // ===================== fields =======================================
 // ====================================================================
 
-/** 
-*  String name of the parameter used to select the protocol to operate on.
-*/
-public static final String PAR_PROT = "protocol";
 
 // XXX remove side effect
 /** 
@@ -49,14 +45,7 @@ public static final String PAR_PROT = "protocol";
 */
 public static final String PAR_N = "n";
 
-/** The name of this observer in the configuration */
-private final String name;
-
-private final int protocolID;
-
 private final int n;
-
-private final GraphAlgorithms ga;
 
 
 // ===================== initialization ================================
@@ -65,10 +54,8 @@ private final GraphAlgorithms ga;
 
 public RandRemoval(String name) {
 
-	this.name = name;
-	protocolID = Configuration.getPid(name+"."+PAR_PROT);
+	super(name);
 	n = Configuration.getInt(name+"."+PAR_N,1);
-	ga = new GraphAlgorithms();
 }
 
 

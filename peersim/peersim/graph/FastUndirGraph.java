@@ -1,0 +1,100 @@
+/*
+ * Copyright (c) 2003 The BISON Project
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 2 as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *
+ */
+
+/*
+ * Created on Jan 30, 2005 by Spyros Voulgaris
+ *
+ */
+package peersim.graph;
+
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import peersim.core.CommonState;
+
+/**
+* Speeds up {@link ConstUndirGraph#isEdge} by storing the links in a matrix.
+* Its memory consumptions is huge but it's much faster if the isEdge method
+* of the original graph is slow.
+*/
+public class FastUndirGraph extends ConstUndirGraph
+{
+
+private BitSet[] triangle;
+
+
+// ======================= initializarion ==========================
+// =================================================================
+
+
+public FastUndirGraph(Graph graph)
+{
+	super(graph);
+}
+
+// -----------------------------------------------------------------
+
+protected void initGraph()
+{
+	
+	final int max = g.size();
+	triangle = new BitSet[max];
+	for (int i=0; i<max; ++i)
+	{
+		in[i] = new ArrayList();
+		triangle[i] = new BitSet(i);
+	}
+
+	for(int i=0; i<max; ++i)
+	{
+		Collection out = g.getNeighbours(i);
+		Iterator it = out.iterator();
+		while( it.hasNext() )
+		{
+			int j = ((Integer)it.next()).intValue();
+			if( ! g.isEdge(j,i) )
+				in[j].add(new Integer(i));
+			// But always add the link to the triangle
+			if (i>j) // make sure i>j
+				triangle[i].set(j);
+			else
+				triangle[j].set(i);
+		}
+	}
+}
+
+
+// ============================ Graph functions ====================
+// =================================================================
+
+
+public boolean isEdge(int i, int j)
+{
+	// make sure i>j
+	if (i<j)
+	{
+		int ii=i;
+		i=j;
+		j=ii;
+	}
+	return triangle[i].get(j);
+}
+}
+

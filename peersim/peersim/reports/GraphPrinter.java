@@ -28,16 +28,11 @@ import java.io.IOException;
 /**
 * Prints the whole graph in a given format.
 */
-public class GraphPrinter implements Observer {
+public class GraphPrinter extends GraphObserver {
 
 
 // ===================== fields =======================================
 // ====================================================================
-
-/**
-*  String name of the parameter used to select the protocol to operate on
-*/
-public static final String PAR_PROT = "protocol";
 
 /**
 * This is the base name of the file where the graph is saved. The
@@ -56,23 +51,10 @@ public static final String PAR_BASENAME = "outf";
 */
 public static final String PAR_FORMAT = "format";
 
-/** 
-* If defined, the undirected version of the graph will be printed, otherwise
-* the directed version.
-* Not defined by default.
-*/
-public static final String PAR_UNDIR = "undirected";
-
-private final int protocolID;
-
-/** The name of this observer in the configuration */
-private final String name;
-
 private final String baseName;
 
 private final String format;
 
-private final boolean undir;
 
 // ===================== initialization ================================
 // =====================================================================
@@ -80,11 +62,9 @@ private final boolean undir;
 
 public GraphPrinter(String name) {
 
-	this.name = name;
-	protocolID = Configuration.getPid(name+"."+PAR_PROT);
+	super(name);
 	baseName = Configuration.getString(name+"."+PAR_BASENAME,null);
 	format = Configuration.getString(name+"."+PAR_FORMAT,"neighborlist");
-	undir = Configuration.contains(name+"."+PAR_UNDIR);
 }
 
 
@@ -94,8 +74,7 @@ public GraphPrinter(String name) {
 
 public boolean analyze() {
 try {	
-	Graph og = new OverlayGraph(protocolID);
-	if( undir ) og = new ConstUndirGraph(og);
+	updateGraph();
 	
 	System.out.print(name+": ");
 	
@@ -113,11 +92,11 @@ try {
 	else	System.out.println();
 	
 	if( format.equals("neighborlist") )
-		GraphIO.writeNeighborList(og, pstr);
+		GraphIO.writeNeighborList(g, pstr);
 	else if( format.equals("chaco") )
-		GraphIO.writeChaco(og, pstr);
+		GraphIO.writeChaco(g, pstr);
 	else if( format.equals("netmeter") )
-		GraphIO.writeNetmeter(og, pstr);
+		GraphIO.writeNetmeter(g, pstr);
 	else
 		System.err.println(name+": unsupported format "+format);
 	

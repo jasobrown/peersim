@@ -26,30 +26,18 @@ import peersim.config.IllegalParameterException;
 
 /**
  */
-public class DegreeStats implements Observer {
+public class DegreeStats extends GraphObserver {
 
 
 // ===================== fields =======================================
 // ====================================================================
 
 /** 
-*  String name of the parameter used to select the protocol to operate on
-*/
-public static final String PAR_PROT = "protocol";
-  
-/** 
 * Name for the parameter which defines the number of nodes to use to sample
 * degree.
 * Defaults to full size of the graph.
 */
 public static final String PAR_N = "n";
-
-/** 
-* If defined, the directed version of the graph will be analized, otherwise
-* the undirected version.
-* Not defined by default.
-*/
-public static final String PAR_DIR = "directed";
 
 /**
 * If defined, then the given number of nodes will be traced. That is,
@@ -79,14 +67,7 @@ public static final String PAR_METHOD = "method";
 */
 public static final String PAR_TYPE = "linktype";
 
-/** The name of this observer in the configuration */
-private final String name;
-
-private final int protocolID;
-
 private final int n;
-
-private final boolean dir;
 
 private final boolean trace;
 
@@ -103,18 +84,16 @@ private final String type;
 
 public DegreeStats(String name) {
 
-	this.name = name;
-	protocolID = Configuration.getPid(name+"."+PAR_PROT);
+	super(name);
 	n = Configuration.getInt(name+"."+PAR_N,-1);
-	dir = Configuration.contains(name+"."+PAR_DIR);
 	trace = Configuration.contains(name+"."+PAR_TRACE);
 	method = Configuration.getString(name+"."+PAR_METHOD,"stats");
 	type = Configuration.getString(name+"."+PAR_TYPE,"live");
-	if( (type.equals("all") || type.equals("dead")) && !dir )
+	if( (type.equals("all") || type.equals("dead")) && undir )
 	{
 		throw new IllegalParameterException(name+"."+PAR_TYPE,
 			" Parameter "+
-			name+"."+PAR_DIR+" has to be defined if "+
+			name+"."+PAR_UNDIR+" must not be defined if "+
 			name+"."+PAR_TYPE+"="+type+".");
 	}
 }
@@ -145,8 +124,8 @@ private int getNodeId(int i) {
 
 public boolean analyze() {
 	
-	Graph og = new OverlayGraph(protocolID);
-	if( !dir ) og = new ConstUndirGraph(og);
+	updateGraph();
+	
 	final int nn = (n<0?Network.size():n);
  
 	if( method.equals("stats") )
@@ -156,20 +135,20 @@ public boolean analyze() {
 		if( type.equals("live") )
 		{
 			for(int i=0; i<nn; ++i)
-				stats.add(og.degree(getNodeId(i)));
+				stats.add(g.degree(getNodeId(i)));
 		}
 		else if( type.equals("all") )
 		{
 			for(int i=0; i<nn; ++i)
 				stats.add(
-				((OverlayGraph)og).fullDegree(getNodeId(i)));
+				((OverlayGraph)g).fullDegree(getNodeId(i)));
 		}
 		else if( type.equals("dead") )
 		{
 			for(int i=0; i<nn; ++i)
 				stats.add(
-				((OverlayGraph)og).fullDegree(getNodeId(i))-
-				og.degree(getNodeId(i)) );
+				((OverlayGraph)g).fullDegree(getNodeId(i))-
+				g.degree(getNodeId(i)) );
 		}
 		
 		System.out.println(name+": "+stats);
@@ -181,20 +160,20 @@ public boolean analyze() {
 		if( type.equals("live") )
 		{
 			for(int i=0; i<nn; ++i)
-				stats.add(og.degree(getNodeId(i)));
+				stats.add(g.degree(getNodeId(i)));
 		}
 		else if( type.equals("all") )
 		{
 			for(int i=0; i<nn; ++i)
 				stats.add(
-				((OverlayGraph)og).fullDegree(getNodeId(i)));
+				((OverlayGraph)g).fullDegree(getNodeId(i)));
 		}
 		else if( type.equals("dead") )
 		{
 			for(int i=0; i<nn; ++i)
 				stats.add(
-				((OverlayGraph)og).fullDegree(getNodeId(i))-
-				og.degree(getNodeId(i)) );
+				((OverlayGraph)g).fullDegree(getNodeId(i))-
+				g.degree(getNodeId(i)) );
 		}
 	
 		stats.print(System.out);
@@ -207,21 +186,21 @@ public boolean analyze() {
 		if( type.equals("live") )
 		{
 			for(int i=0; i<nn; ++i)
-				System.out.print(og.degree(getNodeId(i))+" ");
+				System.out.print(g.degree(getNodeId(i))+" ");
 		}
 		else if( type.equals("all") )
 		{
 			for(int i=0; i<nn; ++i)
 				System.out.print(
-				((OverlayGraph)og).fullDegree(getNodeId(i))
+				((OverlayGraph)g).fullDegree(getNodeId(i))
 				+" ");
 		}
 		else if( type.equals("dead") )
 		{
 			for(int i=0; i<nn; ++i)
 				System.out.print((
-				((OverlayGraph)og).fullDegree(getNodeId(i))-
-					og.degree(getNodeId(i)))+" ");
+				((OverlayGraph)g).fullDegree(getNodeId(i))-
+					g.degree(getNodeId(i)))+" ");
 		}
 		
 		System.out.println();

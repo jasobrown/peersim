@@ -52,10 +52,18 @@ public void reset() {
 
 public void add( double item ) {
 	
-	if( item < min ) { min = item; countmin = 0; } 
-	if (item == min) countmin++;
-	if( item > max ) { max = item; countmax = 0; }
-	if (item == max) countmax++;  
+	if( item < min )
+	{
+		min = item;
+		countmin = 0;
+	} 
+	if( item == min ) countmin++;
+	if( item > max )
+	{
+		max = item;
+		countmax = 0;
+	}
+	if(item == max) countmax++;  
 	n++;
 	sum += item;
 	sqrsum += item*item;
@@ -78,12 +86,12 @@ public double getMin() { return min; }
 
 // --------------------------------------------------------------------
 
-/** Returns the number of data items whose value corresponds to the max */
+/** Returns the number of data items whose value equals the maximum. */
 public int getMaxCount() { return countmax; }
 
 // --------------------------------------------------------------------
 
-/** Returns the number of data items whose value corresponds to the min */
+/** Returns the number of data items whose value equals the minimum. */
 public int getMinCount() { return countmin; }
 
 // --------------------------------------------------------------------

@@ -67,14 +67,14 @@ public StepDistribution(String prefix)
 public void modify() {
 	
 	int i = 0;
-	for(; i<OverlayNetwork.size()/2; ++i)
+	for(; i<Network.size()/2; ++i)
 	{
-		((Aggregation)OverlayNetwork.get(i).getProtocol(protocolID)
+		((Aggregation)Network.get(i).getProtocol(protocolID)
 			).setValue(value);
 	}
-	for(; i<OverlayNetwork.size(); ++i)
+	for(; i<Network.size(); ++i)
 	{
-		((Aggregation)OverlayNetwork.get(i).getProtocol(protocolID)
+		((Aggregation)Network.get(i).getProtocol(protocolID)
 			).setValue(0.0);
 	}
 }

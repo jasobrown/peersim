@@ -85,7 +85,7 @@ public boolean analyze() {
 		return false;
 	}
 		
-	final int size = OverlayNetwork.size();
+	final int size = Network.size();
 	final int steps = 50; // XXX we assume net size is at least 100
 	IncrementalStats[] maxClust = new IncrementalStats[steps];
 	IncrementalStats[] clustNum = new IncrementalStats[steps];
@@ -97,7 +97,7 @@ public boolean analyze() {
 	
 	for(int j=0; j<n; ++j)
 	{
-		OverlayNetwork.shuffle();
+		Network.shuffle();
 		OverlayGraph og = new OverlayGraph(protocolID);
 		PrefixSubGraph g = new PrefixSubGraph(og);
 		IncrementalStats stats = new IncrementalStats();

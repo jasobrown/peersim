@@ -188,15 +188,12 @@ public static String getString( String name, String def ) {
 */
 public static String getString( String name ) {
 
-	try
+	String result = config.getProperty(name);
+	if( result == null )
 	{
-		return config.getProperty(name);
-	}
-	catch (NullPointerException e)
-	{
-		// XXX To be fixed
 		throw new NoSuchElementException("Property "+name+" not found");
 	}
+	return result;
 }
 
 // -------------------------------------------------------------------

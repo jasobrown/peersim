@@ -47,12 +47,6 @@ public static final String PAR_NC = "nc";
 */
 public static final String PAR_DIR = "directed";
 
-/** 
-* If defined, the directed version of the graph will be analized, otherwise
-* the undirected version.
-* Not defined by default.
-*/
-  
 /** The name of this observer in the configuration */
 private final String name;
 

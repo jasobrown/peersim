@@ -128,6 +128,7 @@ protected static void nextRound() {
 			node = Network.get(j);
 		if( !node.isUp() ) continue; 
 		int len = node.protocolSize();
+		CommonState.setNode(node);
 		// XXX maybe should use different shuffle for each protocol?
 		// (instead of running all on one node at the same time?)
 		for(int k=0; k<len; ++k)

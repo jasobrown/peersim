@@ -38,11 +38,6 @@ public class CommonState {
 private static int time = 0;
 
 /**
- * The current pid.
- */
-private static int pid;
-
-/**
 * Working variable to provide for an object version of time.
 * This is useful to save memory because all objects can use the same object.
 */
@@ -52,6 +47,16 @@ private static Integer _time = new Integer(0);
 * Information about where exactly the simulation is. 
 */
 private static int phase = 0;
+
+/**
+* The current pid.
+*/
+private static int pid;
+
+/**
+* The current node.
+*/
+private static Node node;
 
 public static final int PRE_DYNAMICS = 0;
 
@@ -109,17 +114,23 @@ public static void setPhase( int p ) { phase = p; }
 // -----------------------------------------------------------------
 
 /** Returns the current protocol identifier */
-public static int getPid()
-{
-	return pid;
-}
+public static int getPid() { return pid; }
 
 //-----------------------------------------------------------------
 
-public static void setPid(int p)
-{
-	pid = p;
-}
+public static void setPid( int p ) { pid = p; }
+
+//-----------------------------------------------------------------
+
+/**
+* Returns the current node. When a protocol is executing, it is
+* the node hosting the protocol.
+*/
+public static Node getNode() { return node; }
+
+//-----------------------------------------------------------------
+
+public static void setNode( Node n ) { node = n; }
 
 }
 

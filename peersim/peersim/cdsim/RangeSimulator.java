@@ -526,6 +526,7 @@ protected static void nextRound(boolean shuffle) {
 	{
 		Node node = Network.get(j);
 		int len = node.protocolSize();
+		CommonState.setNode(node);
 		// XXX maybe should use different shuffle for each protocol?
 		// (instead of running all on one node at the same time?)
 		for(int k=0; k<len; ++k)

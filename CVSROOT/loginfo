@@ -22,7 +22,7 @@
 #
 # For example:
 #DEFAULT (echo ""; id; echo %s; date; cat) >> $CVSROOT/CVSROOT/commitlog
-# or
+# or test
 #DEFAULT (echo ""; id; echo %{sVv}; date; cat) >> $CVSROOT/CVSROOT/commitlog
 CVSROOT $CVSROOT/CVSROOT/syncmail -u %{sVv} amontresor@users.sourceforge.net
 DEFAULT $CVSROOT/CVSROOT/syncmail -u %{sVv} peersim-cvs@lists.sourceforge.net

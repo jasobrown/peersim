@@ -79,6 +79,8 @@ private final String type;
 
 private final RandPermutation rp = new RandPermutation();
 
+private int nextnode = 0;
+
 
 // ===================== initialization ================================
 // =====================================================================
@@ -104,8 +106,10 @@ public DegreeStats(String name) {
 // ====================== methods ======================================
 // =====================================================================
 
-
-private int getNodeId(int i) {
+/**
+* Returns next node to get degree information about.
+*/
+private int nextNodeId() {
 	
 	if( trace )
 	{
@@ -116,10 +120,34 @@ private int getNodeId(int i) {
 			for(int j=0; j<nn; ++j)
 				traced[j]=Network.get(j);
 		}
-		return traced[i].getIndex();
+		return traced[nextnode++].getIndex();
 	}
+	else
+		return rp.next();
+}
 
-	return rp.next();
+// ---------------------------------------------------------------------
+
+/**
+* Returns degree information about next node.
+*/
+private int nextDegree() {
+	
+	final int nodeid = nextNodeId();
+	
+	if( type.equals("live") )
+	{
+		return g.degree(nodeid);
+	}
+	else if( type.equals("all") )
+	{
+		return ((OverlayGraph)g).fullDegree(nodeid);
+	}
+	else if( type.equals("dead") )
+	{
+		return ((OverlayGraph)g).fullDegree(nodeid)-g.degree(nodeid);
+	}
+	else throw new RuntimeException(name+": invalid type");
 }
 
 // ---------------------------------------------------------------------
@@ -128,84 +156,27 @@ public boolean analyze() {
 	
 	updateGraph();
 	if(!trace) rp.reset(g.size());
+	else nextnode = 0;
 	
 	final int nn = (n<0?Network.size():n);
  
 	if( method.equals("stats") )
 	{
 		IncrementalStats stats = new IncrementalStats();
-		
-		if( type.equals("live") )
-		{
-			for(int i=0; i<nn; ++i)
-				stats.add(g.degree(getNodeId(i)));
-		}
-		else if( type.equals("all") )
-		{
-			for(int i=0; i<nn; ++i)
-				stats.add(
-				((OverlayGraph)g).fullDegree(getNodeId(i)));
-		}
-		else if( type.equals("dead") )
-		{
-			for(int i=0; i<nn; ++i)
-				stats.add(
-				((OverlayGraph)g).fullDegree(getNodeId(i))-
-				g.degree(getNodeId(i)) );
-		}
-		
+		for(int i=0; i<nn; ++i) stats.add(nextDegree());
 		System.out.println(name+": "+stats);
 	}
 	else if( method.equals("freq") )
 	{
 		IncrementalFreq stats = new IncrementalFreq();
-		
-		if( type.equals("live") )
-		{
-			for(int i=0; i<nn; ++i)
-				stats.add(g.degree(getNodeId(i)));
-		}
-		else if( type.equals("all") )
-		{
-			for(int i=0; i<nn; ++i)
-				stats.add(
-				((OverlayGraph)g).fullDegree(getNodeId(i)));
-		}
-		else if( type.equals("dead") )
-		{
-			for(int i=0; i<nn; ++i)
-				stats.add(
-				((OverlayGraph)g).fullDegree(getNodeId(i))-
-				g.degree(getNodeId(i)) );
-		}
-	
+		for(int i=0; i<nn; ++i) stats.add(nextDegree());
 		stats.print(System.out);
 		System.out.println("\n\n");
 	}
 	else if( method.equals("list") )
 	{
 		System.out.print(name+": ");
-		
-		if( type.equals("live") )
-		{
-			for(int i=0; i<nn; ++i)
-				System.out.print(g.degree(getNodeId(i))+" ");
-		}
-		else if( type.equals("all") )
-		{
-			for(int i=0; i<nn; ++i)
-				System.out.print(
-				((OverlayGraph)g).fullDegree(getNodeId(i))
-				+" ");
-		}
-		else if( type.equals("dead") )
-		{
-			for(int i=0; i<nn; ++i)
-				System.out.print((
-				((OverlayGraph)g).fullDegree(getNodeId(i))-
-					g.degree(getNodeId(i)))+" ");
-		}
-		
+		for(int i=0; i<nn; ++i) System.out.print(nextDegree()+" ");
 		System.out.println();
 	}
 	

@@ -47,6 +47,12 @@ public static final String PAR_PROT = "protocol";
 public static final String PAR_K = "k";
 
 /**
+ * If this parameter is defined, method pack() is invoked on the specified
+ * protocol at the end of the wiring phase. Default to false.
+ */
+public static final String PAR_PACK = "pack";
+
+/**
 * The protocol we want to wire
 */
 private final int protocolID;
@@ -56,6 +62,8 @@ private final int protocolID;
 */
 private final int k;
 
+/** If true, method pack() is invoked on the initialized protocol */
+private final boolean pack;
 
 // ==================== initialization ==============================
 //===================================================================
@@ -65,6 +73,7 @@ public WireRingLattice(String prefix) {
 
 	protocolID = Configuration.getPid(prefix+"."+PAR_PROT);
 	k = Configuration.getInt(prefix+"."+PAR_K);
+	pack = Configuration.contains(prefix+"."+PAR_PACK);
 }
 
 
@@ -76,6 +85,13 @@ public WireRingLattice(String prefix) {
 public void modify() {
 	
 	GraphFactory.wireRingLattice( new OverlayGraph(protocolID), k );
+	if (pack) {
+		int size = Network.size();
+		for (int i=0; i < size; i++) {
+			Linkable link = (Linkable) Network.get(i).getProtocol(protocolID);
+			link.pack();
+		}
+	}
 }
 
 

@@ -1,3 +1,9 @@
+AM 02/01/2005
+- Added the "pack" parameter (originally included in WireRegularRandom)
+  to all the Wire* classes. When this parameter is present, the pack()
+  method is called over the initialized protocol after all links have
+  been wired.
+
 MJ 02/01/2005
 - Fixed bug in WireScaleFreeBA: it ocasionally generated loop edges and in
   general did not follow the BA model.

@@ -54,10 +54,18 @@ public static final String PAR_PROT = "protocol";
 */
 public static final String PAR_FILE = "file";
 
+/**
+ * If this parameter is defined, method pack() is invoked on the specified
+ * protocol at the end of the wiring phase. Default to false.
+ */
+public static final String PAR_PACK = "pack";
+
 private final int protocolID;
 
 private final String file;
 
+/** If true, method pack() is invoked on the initialized protocol */
+private final boolean pack;
 
 // ==================== initialization ==============================
 // ==================================================================
@@ -67,6 +75,7 @@ public WireFromFile(String prefix) {
 
 	protocolID = Configuration.getPid(prefix+"."+PAR_PROT);
 	file = Configuration.getString(prefix+"."+PAR_FILE);
+	pack = Configuration.contains(prefix+"."+PAR_PACK);
 }
 
 
@@ -111,6 +120,14 @@ try
 catch( Exception e )
 {
 	throw new RuntimeException(e);
+}
+
+if (pack) {
+	int size = Network.size();
+	for (int i=0; i < size; i++) {
+		Linkable link = (Linkable) Network.get(i).getProtocol(protocolID);
+		link.pack();
+	}
 }
 
 }

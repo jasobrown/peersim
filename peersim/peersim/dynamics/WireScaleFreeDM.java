@@ -47,19 +47,28 @@ public static final String PAR_PROT = "protocol";
  */
 public static final String PAR_EDGES = "edges";
 
+/**
+ * If this parameter is defined, method pack() is invoked on the specified
+ * protocol at the end of the wiring phase. Default to false.
+ */
+public static final String PAR_PACK = "pack";
+
 
 ////////////////////////////////////////////////////////////////////////////
 // Fields
 ////////////////////////////////////////////////////////////////////////////
 
 /** Protocol id */
-int pid;
+private final int pid;
 
 /** Number of nodes */
-int nodes;
+private final int nodes;
 
 /** Average number of edges to be created */	
-int edges;
+private final int edges;
+
+/** If true, method pack() is invoked on the initialized protocol */
+private final boolean pack;
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -72,6 +81,7 @@ public WireScaleFreeDM(String prefix)
 	pid = Configuration.getPid(prefix + "." + PAR_PROT);
 	nodes = Network.size();
 	edges = Configuration.getInt(prefix + "." + PAR_EDGES);
+	pack = Configuration.contains(prefix+"."+PAR_PACK);
 }
 
 
@@ -129,6 +139,13 @@ public void modify()
 			links[len*2] = nj;
 			links[len*2+1] = nk;
 			len++;
+		}
+	}
+	if (pack) {
+		int size = Network.size();
+		for (int i=0; i < size; i++) {
+			Linkable link = (Linkable) Network.get(i).getProtocol(pid);
+			link.pack();
 		}
 	}
 }

@@ -52,8 +52,8 @@ public static final String PAR_DEGREE = "degree";
 public static final String PAR_UNDIR = "undirected";
 
 /**
- * If this parameter is defined, after the link insertion phase, method
- * pack() is invoked on the initialized protocol. Default to false.
+ * If this parameter is defined, method pack() is invoked on the specified
+ * protocol at the end of the wiring phase. Default to false.
  */
 public static final String PAR_PACK = "pack";
 
@@ -82,8 +82,8 @@ public WireRegularRandom(String prefix) {
 
 	protocolID = Configuration.getPid(prefix+"."+PAR_PROT);
 	degree = Configuration.getInt(prefix+"."+PAR_DEGREE);
-	pack = Configuration.contains(prefix+"."+PAR_PACK);
 	undirected = Configuration.contains(prefix+"."+PAR_UNDIR);
+	pack = Configuration.contains(prefix+"."+PAR_PACK);
 }
 
 
@@ -122,6 +122,9 @@ public void initialize(Node n) {
 		((Linkable)n.getProtocol(protocolID)).addNeighbor(
 		    Network.get(
 			CommonRandom.r.nextInt(Network.size())));
+	}
+	if (pack) {
+		((Linkable)n.getProtocol(protocolID)).pack();
 	}
 }
 

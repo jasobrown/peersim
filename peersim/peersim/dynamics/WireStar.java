@@ -41,14 +41,24 @@ public class WireStar implements Dynamics, NodeInitializer {
 public static final String PAR_PROT = "protocol";
 
 /**
+ * If this parameter is defined, method pack() is invoked on the specified
+ * protocol at the end of the wiring phase. Default to false.
+ */
+public static final String PAR_PACK = "pack";
+
+/**
 * The protocol we want to wire
 */
 private final int protocolID;
+
+/** If true, method pack() is invoked on the initialized protocol */
+private final boolean pack;
 
 /**
 * Used as center in the {@link NodeInitializer} implementation.
 */
 private Node center=null;
+
 
 // ==================== initialization ==============================
 //===================================================================
@@ -57,6 +67,7 @@ private Node center=null;
 public WireStar(String prefix) {
 
 	protocolID = Configuration.getPid(prefix+"."+PAR_PROT);
+	pack = Configuration.contains(prefix+"."+PAR_PACK);
 }
 
 
@@ -72,6 +83,13 @@ public void modify() {
 	GraphFactory.wireStar(new OverlayGraph(protocolID));
 	
 	center = Network.get(0);
+	if (pack) {
+		int size = Network.size();
+		for (int i=0; i < size; i++) {
+			Linkable link = (Linkable) Network.get(i).getProtocol(protocolID);
+			link.pack();
+		}
+	}
 }
 
 // -------------------------------------------------------------------
@@ -90,6 +108,9 @@ public void initialize(Node n) {
 	if( center == null || !center.isUp() ) center = Network.get(0);
 
 	((Linkable)n.getProtocol(protocolID)).addNeighbor(center);
+	if (pack) {
+		((Linkable)n.getProtocol(protocolID)).pack();
+	}
 }
 
 }

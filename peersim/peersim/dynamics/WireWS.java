@@ -55,6 +55,12 @@ public static final String PAR_BETA = "beta";
 public static final String PAR_DEGREE = "degree";
 
 /**
+ * If this parameter is defined, method pack() is invoked on the specified
+ * protocol at the end of the wiring phase. Default to false.
+ */
+public static final String PAR_PACK = "pack";
+
+/**
 * The protocol we want to wire
 */
 private final int pid;
@@ -70,6 +76,9 @@ private final int degree;
 */
 private final double beta;
 
+/** If true, method pack() is invoked on the initialized protocol */
+private final boolean pack;
+
 
 // ==================== initialization ==============================
 //===================================================================
@@ -80,6 +89,7 @@ public WireWS(String prefix) {
 	pid = Configuration.getPid(prefix+"."+PAR_PROT);
 	degree = Configuration.getInt(prefix+"."+PAR_DEGREE);
 	beta = Configuration.getDouble(prefix+"."+PAR_BETA);
+	pack = Configuration.contains(prefix+"."+PAR_PACK);
 }
 
 
@@ -91,6 +101,13 @@ public WireWS(String prefix) {
 public void modify() 
 {
 	GraphFactory.wireWS( new OverlayGraph(pid), degree, beta, CommonRandom.r);
+	if (pack) {
+		int size = Network.size();
+		for (int i=0; i < size; i++) {
+			Linkable link = (Linkable) Network.get(i).getProtocol(pid);
+			link.pack();
+		}
+	}
 }
 
 }

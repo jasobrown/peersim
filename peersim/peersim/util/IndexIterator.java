@@ -1,7 +1,7 @@
 package peersim.util;
 
 /**
-* This class provides iterations over the set of integers [0...,len-1].
+* This class provides iterations over the set of integers [0...len-1].
 */
 public interface IndexIterator {
 

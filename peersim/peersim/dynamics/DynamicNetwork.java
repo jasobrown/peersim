@@ -28,16 +28,14 @@ public static final String PAR_INIT = "init";
 public static final String PAR_SUBST = "substitute";
 
 /** 
-* The number of nodes to add when nodes are scheduled for addition. This
-* can be negative which result in deletion of that many nodes.
-* It can also be non-integer if {@link #PAR_PERC} is set.
+* The number of nodes to add when nodes are scheduled for addition.
 */
 public static final String PAR_ADD = "add";
 
 /** 
 * The network is grown until reaching this number of nodes. The network
 * will never exceed this size as a result of this network manager.
-* Defaults to {@link OverlayNetwork#getCapacity()}.
+* Defaults to {@link Network#getCapacity()}.
 */
 public static final String PAR_MAX = "maxsize";
 
@@ -106,7 +104,7 @@ protected void add(int n) {
 /**
 * Removes n nodes from the network. Extending classes can implement
 * any algorithm to do that. The default algorithm removes random nodes
-* simply by calling {@link OverlayNetwork#remove}. This is equialent
+* simply by calling {@link Network#remove}. This is equialent
 * to permanent failure without any cleanup.
 * @param n the number of nodes to remove
 */

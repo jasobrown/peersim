@@ -37,7 +37,7 @@ public static final String PAR_PERC = "percentage";
 /** 
 * The network is grown until reaching this number of nodes. The network
 * will never exceed this size as a result of this network manager.
-* Defaults to {@link OverlayNetwork#getCapacity()}.
+* Defaults to {@link Network#getCapacity()}.
 */
 public static final String PAR_MAX = "maxsize";
 
@@ -100,7 +100,7 @@ protected void add(int n) {
 /**
 * Removes n nodes from the network. Extending classes can implement
 * any algorithm to do that. The default algorithm removes random nodes
-* simply by calling {@link OverlayNetwork#remove}. This is equialent
+* simply by calling {@link Network#remove}. This is equialent
 * to permanent failure without any cleanup.
 * @param n the number of nodes to remove
 */

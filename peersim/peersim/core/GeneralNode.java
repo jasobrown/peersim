@@ -5,7 +5,7 @@ import java.util.*;
 
 /**
 * Class that represents one node with a nework address.
-* An {@link OverlayNetwork} is made of a set of nodes.
+* An {@link Network} is made of a set of nodes.
 * The functionality of this class is thin: it must be able to represent
 * failure states and store a list of protocols.
 * It is the protocols that do the interesting job.
@@ -28,14 +28,14 @@ private Protocol[] protocol = null;
 
 /**
 * This package private field tells the index of this node in the node
-* list of the {@link OverlayNetwork}. This is necessary to allow
+* list of the {@link Network}. This is necessary to allow
 * the implementation of efficient graph algorithms.
 */
 private int index;
 
 /**
 * This package private field tells the index of this node in the node
-* list of the {@link OverlayNetwork}. This is necessary to allow
+* list of the {@link Network}. This is necessary to allow
 * the implementation of efficient graph algorithms.
 */
 private int failstate = Fallible.OK;

@@ -2,7 +2,7 @@ package peersim.core;
 
 /**
 * Class that represents one node with a network address.
-* An {@link OverlayNetwork} is made of a set of nodes.
+* An {@link Network} is made of a set of nodes.
 * The functionality of this class is thin: it must be able to represent
 * failure states and store a list of protocols.
 * It is the protocols that do the interesting job.

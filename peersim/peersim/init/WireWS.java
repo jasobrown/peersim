@@ -25,7 +25,7 @@ implements Initializer
 public static final String PAR_PROT = "protocol";
 
 /** 
-*  String name of the property containing the beta parameter, i.e. the
+*  String name of the property containing the beta parameter, ie the
 *  probability for a node to be re-wired.
 */
 public static final String PAR_BETA = "beta";

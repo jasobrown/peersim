@@ -1,5 +1,6 @@
 MJ 16/12/2004
-- Fixed docs bug in FastConfig, thanks to Spyros Voulgaris
+- Fixed docs bug in FastConfig, thanks to Spyros Voulgaris, and added
+  hasLinkable.
 
 GJ 15/12/2004
 - Added ExtendedRandom class to support power-law distribution generation

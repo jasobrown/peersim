@@ -78,6 +78,17 @@ static {
 
 
 /**
+* Returns true if the given protocol has a linkable protocol associated with
+* it, otherwise false.
+*/
+public static boolean hasLinkable(int pid) {
+
+	return links[pid] >= 0;
+}
+
+// ---------------------------------------------------------------------
+
+/**
 * Returns the protocol id used by the protocol identified by pid.
 * Throws an IllegalParameterException if there is no linkable associated
 * with the given protocol: we assume here that his happens when the
@@ -85,15 +96,16 @@ static {
 */
 public static int getLinkable(int pid) {
 
-	if (links[pid] < 0) {
-		String[] names = Configuration.getNames(Configuration.PAR_PROT);		
-		throw new IllegalParameterException(names[pid], "Protocol " + pid + 
-				" has no linkable parameter");
+	if (links[pid] < 0)
+	{
+		String[] names=Configuration.getNames(Configuration.PAR_PROT);
+		throw new IllegalParameterException(names[pid],
+			"Protocol " + pid + " has no linkable parameter");
 	}
-				
-		return links[pid];
+
+	return links[pid];
 }
-  
+
 
 }
 

@@ -8,7 +8,7 @@ clean:
 	rm -f `find -name "*.class"`
 doc:
 	rm -rf doc/*
-	javadoc -classpath .:jep-2.24.jar -overview overview.html -d doc \
+	javadoc -classpath .:jep-2.24.jar -d doc \
 		peersim \
 		peersim.edsim \
 		peersim.transport \
@@ -37,4 +37,15 @@ release: all doc
 	jar cf peersim-$(VER).jar `find peersim example \( -name "*.java" -o -name "*.class" \)`
 	mv peersim-$(VER).jar peersim-$(VER)
 
-
+releaseall: all doc
+	rm -fr peersim-$(VER)
+	mkdir peersim-$(VER)
+	mv doc peersim-$(VER)
+	cp README CHANGELOG build.xml peersim-$(VER)
+	mkdir peersim-$(VER)/example
+	cp example/*.txt peersim-$(VER)/example
+	mkdir peersim-$(VER)/src
+	cp --parents `find peersim example -name "*.java"` peersim-$(VER)/src
+	jar cf peersim-$(VER).jar `find peersim example -name "*.class"`
+	mv peersim-$(VER).jar peersim-$(VER)
+	cp jep-2.24.jar peersim-$(VER)

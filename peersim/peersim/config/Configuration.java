@@ -241,16 +241,21 @@ public static boolean getBoolean(String name, boolean def) {
 // -------------------------------------------------------------------
 
 /**
-* Reads given configuration item. If not found, throws a
-* MissingParameterException.
+* Reads given configuration item. If not found, or the value is empty string
+* then throws a 
+* MissingParameterException. Empty string is not accepted as false due to
+* the similar function of "contains" which returns true in that case.
 * True is returned if the lowercase value of
 * the item is "true", otherwise false is returned.
 * @param name Name of configuration property.
 */
 public static boolean getBoolean(String name) {
-
+System.err.println("'"+config.getProperty(name)+"'");
 	if( config.getProperty(name) == null )
 		throw new MissingParameterException(name);
+	if( config.getProperty(name).matches("\\P{Blank}*") )
+		throw new MissingParameterException(name,
+		"Blank value is not accepted when parsing Boolean.");
 	return (new Boolean(config.getProperty(name))).booleanValue();
 }
 

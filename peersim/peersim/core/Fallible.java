@@ -23,16 +23,10 @@ public interface Fallible {
 	public int DEAD = 1;
 
 	/**
-	* Fail state indicating that the object is running, but it may behave
-	* in a malicious way.
-	*/
-	public int MALICIOUS = 2;
-	
-	/**
 	* Fail state indicating that the object is not dead, but is temporarily
 	* not accessible.
 	*/
-	public int DOWN = 3;
+	public int DOWN = 2;
 
 	/**
 	* Returns the state of this object. Must be one of the constants

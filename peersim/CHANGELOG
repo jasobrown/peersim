@@ -1,12 +1,15 @@
-Added new modifiers, which can set numeric parameters of network
-nodes according the some specified pattern. Originally this was in
-aggregation but refactored to be more general.
+Added peersim.reports.SingleValueObserver
 
-Refactoring: added peersim.init into peersim.dynamics and now Dynamics
-is used also instead of the old Initializer. This involved quite a number of
-files. Note that config files don't break because the init entries
-are now simply loaded as dynamics that are scheduled to execute only before the
-simulation, once. The change was trivial in all files, just renaming.
+Added new modifier classes, which can set numeric parameters of
+network nodes according the some specified pattern. Originally this
+was in aggregation but refactored to be more general.
+
+Refactoring: added classes from peersim.init into peersim.dynamics
+and now Dynamics is used also instead of the old Initializer. This
+involved quite a number of files. Note that config files don't break
+because the init entries are now simply loaded as dynamics that are
+scheduled to execute only before the simulation, once. The change
+was trivial in all files, just renaming.
 
 Added class peersim.dynamics.Shuffle
 
@@ -14,8 +17,9 @@ Made class peersim.graph.NeighborListGraph public
 
 fixed bug in GeneralNode with failstate handling
 
-added curent node to CommonState. When a protocol is executing, it is
-the node hosting the protocol. Modified simulators too to record this info.
+added curent node to CommonState. When a protocol is executing,
+it is the node hosting the protocol. Modified simulators too to
+record this info.
 
 fixed some config files in lpbcast and scamp packages
 

@@ -27,7 +27,7 @@ original version by:  Nikos Drakos, CBLU, University of Leeds
 <H1 ALIGN="CENTER">PeerSim HOWTO: build a new protocol for the peersim simulation
 framework</H1>
 <P ALIGN="CENTER"><STRONG>Gian Paolo Jesi (jesi@cs.unibo.it)</STRONG></P>
-<P ALIGN="CENTER"><STRONG>November 3, 2004</STRONG></P>
+<P ALIGN="CENTER"><STRONG>November 7, 2004</STRONG></P>
 
 <P>
 
@@ -51,7 +51,7 @@ this tutorial it supposed that you and/or your workstation have:
 <LI>knowledge of O.O. programming and Java language;
 </LI>
 <LI>a working Java compiler ( <IMG
- WIDTH="20" HEIGHT="33" ALIGN="MIDDLE" BORDER="0"
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
  SRC="img1.png"
  ALT="$\geq$"> JDK 1.2);
 </LI>
@@ -85,10 +85,10 @@ This tutorial IS NOT exhaustive at all!
 
 <P>
 One of the P2P system properties is that they can be extremely large
-scale (millions of nodes!); another issue to deal with, is the high
+scale (millions of nodes); another issue to deal with, is the high
 dinamicity of such systems: nodes in the network join and leave continously.
 Setting up a protocol experiments in a such simulated environent it's
-not an easy task at all! 
+not an easy task at all.
 
 <P>
 Peersim has been developed to cope with these P2P properties and thus
@@ -236,7 +236,7 @@ to retreive a final snapshot.
 <P>
 
 <P></P>
-<DIV ALIGN="CENTER"><A NAME="obsfigure"></A><A NAME="321"></A>
+<DIV ALIGN="CENTER"><A NAME="obsfigure"></A><A NAME="329"></A>
 <TABLE>
 <CAPTION ALIGN="BOTTOM"><STRONG>Figure 1:</STRONG>
 Observer and Dynamics scheduling</CAPTION>
@@ -337,10 +337,10 @@ Looks easy!!
 Lets comment the code line by line. The first thing to node are the
 key names: some of them are indexed and some other not (e.g. protocol.0.xxx
 versus simulation.<IMG
- WIDTH="19" HEIGHT="33" ALIGN="MIDDLE" BORDER="0"
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
  SRC="img3.png"
  ALT="$&lt;$">parameter<IMG
- WIDTH="19" HEIGHT="33" ALIGN="MIDDLE" BORDER="0"
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
  SRC="img4.png"
  ALT="$&gt;$">). That means the unindexed keys refers
 to static simulation elements, in fact the simulation itself is one
@@ -362,10 +362,10 @@ So the key for indexed components can be (informally) expressed as:
 
 <P>
 The final <IMG
- WIDTH="19" HEIGHT="33" ALIGN="MIDDLE" BORDER="0"
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
  SRC="img3.png"
  ALT="$&lt;$">parameter_name<IMG
- WIDTH="19" HEIGHT="33" ALIGN="MIDDLE" BORDER="0"
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
  SRC="img4.png"
  ALT="$&gt;$"> is contained between [] to express
 that it can be not present. This is the case when the element is declared.
@@ -591,7 +591,7 @@ The global parameters are the same as in the previous example; only
 new additions are discussed below. At <B>line 7-8</B> there is the
 <I>Newscast</I> (what is newscast? see section <A HREF="tutorial1.html#sec:Appendix-B-newscast">7</A>) 
 component declaration with its
-only parameter cache (plese note: cache size should be at least as
+only parameter cache (please note: cache size should be at least as
 large as network degree size). At <B>line 17-18</B> there is a different
 distribution type: <TT>aggregation.PeakDistribution Initializer</TT>,
 but it's inactive. To switch it on, simply delete the preceeding simbol
@@ -645,17 +645,18 @@ are actually defined.
 </H2>
 
 <P>
-Thanks to the presence of the Java Expression Parser, the configuaration
+Thanks to the presence of the Java Expression Parser (since release
+0.2), the configuaration
 file can handle many types of <B>expressions</B>, such as boolean 
 expressions, 
 common
 mathematical functions and well known predifined constants (e.g.: <IMG
- WIDTH="16" HEIGHT="17" ALIGN="BOTTOM" BORDER="0"
+ WIDTH="15" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
  SRC="img5.png"
  ALT="$\pi$"> 
 and
 <IMG
- WIDTH="13" HEIGHT="17" ALIGN="BOTTOM" BORDER="0"
+ WIDTH="12" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
  SRC="img6.png"
  ALT="$e$">); for an exhaustive feature list check the Java Expression Parser
 web page (<TT><A NAME="tex2html5"
@@ -736,10 +737,10 @@ will produce the following order:
 <P>
 <DIV ALIGN="CENTER">
 <IMG
- WIDTH="12" HEIGHT="37" ALIGN="MIDDLE" BORDER="0"
+ WIDTH="11" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
  SRC="img7.png"
  ALT="$\langle$"> <TT>observer.2</TT> ; <TT>observer.0</TT> ; <TT>observer.conn</TT> <IMG
- WIDTH="12" HEIGHT="37" ALIGN="MIDDLE" BORDER="0"
+ WIDTH="11" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
  SRC="img8.png"
  ALT="$\rangle$">
 </DIV>
@@ -759,6 +760,73 @@ exact order. If the list is empty, then an empty ordering array will be
 generated; means that, in this case, no observer will run. Note that 
 <TT>include</TT> is stronger than <TT>order</TT>
 infact if the former is defined, then the latter is ignored.
+
+<P>
+
+<H3><A NAME="SECTION00026100000000000000">
+2.6.1 A concrete example</A>
+</H3>
+
+<P>
+To have a pratical idea about how to use these new features, the following
+example is presented; it is a modified example2 version.
+
+<P>
+<PRE>
+1 #random.seed 1234567890
+2 simulation.cycles 30
+3 simulation.shuffle
+4
+5 # Imposes the correct protocol running order:
+6 order.protocol ncast,avgagr
+7
+8 overlay.size 50000
+9 overlay.maxsize 200000
+10 
+11 protocol.ncast example.newscast.SimpleNewscast
+12 protocol.ncast.cache 20
+13
+14 protocol.avgagr example.aggregation.AverageFunction
+15 protocol.avgagr.linkable ncast
+16
+17 init.wrr peersim.dynamics.WireRegularRandom
+18 init.wrr.protocol ncast
+19 init.wrr.degree 20
+20
+21 # UNCOMMENT THE FOLLOWING LINES TO GET A PEAK DISTRIBUTION
+22 #init.pkdistrib example.aggregation.PeakDistributionInitializer
+23 #init.pkdistrib.value 10000
+24 #init.pkdistrib.protocol avgagr
+25
+26 # UNCOMMENT THE FOLLOWING LINES TO GET A LINEAR DISTRIBUTION
+27 init.ldistrib example.loadbalance.LinearDistributionInitializer
+28 init.ldistrib.protocol avgagr
+29 init.ldistrib.max 100
+30 init.ldistrib.min 1
+31
+32 observer.avgobs example.aggregation.AverageObserver
+33 observer.avgobs.protocol avgagr
+34 observer.avgobs.from 1
+35
+36 dynamics.grnetwork peersim.dynamics.GrowingNetwork
+37 dynamics.grnetwork.add -500
+38 dynamics.grnetwork.minsize 4000
+39 dynamics.grnetwork.from 5
+40 dynamics.grnetwork.until 10
+</PRE>
+<P>
+In this configuration file, the protocol indexes are no more used; 
+but the same holds for each kind of object. A symbol string that
+summarize the original class name is used instead of an index number.
+Bacause of the choosen protocol symbol names (<TT>ncast</TT> and 
+<TT>avgagr</TT>),
+it is necessary to impose a different running order scheme to let
+newscast run first using (at <B>line 6</B>):
+
+<P>
+<PRE>
+order.protocol ncast,avgagr
+</PRE>
 
 <P>
 
@@ -910,9 +978,8 @@ file (<TT>linkable</TT> parameter).
 <P>
 The <I>resetQuota()</I> method is called by the dynamics object at
 the cycle end. Clearly a suitable dynamics entry should be present
-in the configuration file (such as: <TT>dynamics.0 loadbalance. 
-ResetQuota</TT>
-and <TT>dynamics.0.protocol protocol-index</TT>). This method is not
+in the configuration file (such as: <TT>dynamics.0 loadbalance.ResetQuota</TT>
+and <TT>dynamics.0. protocol protocol-index</TT>). This method is not
 mandatory, but it's much more software engineering oriented then a
 dirty variable access performed by the dynamics object.
 <BR>
@@ -1508,7 +1575,7 @@ Mathematics Department, Macquarie University, Sydney.
 The command line arguments were: <BR>
  <STRONG>latex2html</STRONG> <TT>-t 'Peersim HOWTO 1' -split 0 -nonavigation -noaddress -show_section_numbers -t 'Peersim HOWTO 1' tutorial1.tex</TT>
 <P>
-The translation was initiated by Gian_Paolo Jesi on 2004-11-04
+The translation was initiated by Gian_Paolo Jesi on 2004-11-07
 <BR><HR>
 
 </BODY>

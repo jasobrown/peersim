@@ -113,9 +113,9 @@ import java.util.*;
   </pre>
   will result in returning <em>only</em> <code>observer.conn</code> and
   <code>observer.2</code>, in this order.
-  Note that for example the empy list resutls in a zero length array in this
+  Note that for example the empy list results in a zero length array in this
   case.
-  <em>Important!</em> If inlude is
+  <em>Important!</em> If include is
   defined then ordering is ignored. That is, include is stronger than order.
 *
 */

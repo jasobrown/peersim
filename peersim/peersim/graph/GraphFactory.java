@@ -19,6 +19,7 @@
 package peersim.graph;
 
 import java.util.*;
+import peersim.util.WeightedRandPerm;
 
 /**
 * Contains static methods for wiring certain kinds of graphs. The general
@@ -125,11 +126,76 @@ public static Graph wireStar( Graph g ) {
 
 // -------------------------------------------------------------------
 
+/**
+* This contains the implementation of the Barabasi-Albert model
+* of growing scale free networks. The original model is described in
+* <a href="http://arxiv.org/abs/cond-mat/0106096">
+http://arxiv.org/abs/cond-mat/0106096</a>.
+* It also works if the graph is directed, in which case the model is a
+* variation of the BA model
+* described in <a href="http://arxiv.org/pdf/cond-mat/0408391">
+http://arxiv.org/pdf/cond-mat/0408391</a>. In both cases, the number of the
+* initial set of nodes is the same as the degree parameter, and no links are
+* added. The first added node is connected to all of the initial nodes,
+* and after that the BA model is used normally.
+* @param k the numbre of edges that are generated for each new node, also
+* the number of initial nodes (that have no adges).
+* @param r the randomness to be used
+*/
+public static Graph wireScaleFreeBA( Graph g, int k, Random r ) {
+
+	final int nodes = g.size();
+	if( nodes <= k ) return g;
+	
+	// edge i has ends (ends[2*i],ends[2*i+1])
+	int[] ends = new int[2*k*(nodes-k)];
+	
+	// Add initial edges from k to 0,1,...,k-1
+	for(int i=0; i < k; i++)
+	{
+		g.setEdge(k,i);
+		ends[2*i]=k;
+		ends[2*i+1]=i;
+	}
+	
+	int len = 2*k; // edges drawn so far is len/2
+	for(int i=k+1; i < nodes; i++) // over the remaining nodes
+	{
+		for (int j=0; j < k; j++) // over the new edges
+		{
+			int target;
+			do
+			{
+				target = ends[r.nextInt(len)]; 
+				int m=0;
+				while( m<j && ends[len+2*m+1]!=target) ++m;
+				if(m==j) break;
+				// we don't check in the graph because
+				// this wire method should accept graphs
+				// that already have edges.
+			}
+			while(true);
+			g.setEdge(i,target);
+			ends[len+2*j]=i;
+			ends[len+2*j+1]=target;
+		}
+		len += 2*k;
+	}
+
+	return g;
+}
+
+// -------------------------------------------------------------------
+
 public static void main(String[] pars) {
 	
-	Graph g = new BitMatrixGraph(100);
+	Graph g = new BitMatrixGraph(1000);
+	/*
 	wireWS(g,20,.1,new Random());
 	GraphIO.writeChaco(new UndirectedGraph(g),System.out);
+	*/
+	wireScaleFreeBA(g,3,new Random());
+	GraphIO.writeNeighborList(new UndirectedGraph(g),System.out);
 }
 
 }

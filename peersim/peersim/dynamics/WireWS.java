@@ -98,13 +98,14 @@ public WireWS(String prefix) {
 
 
 /** calls {@link GraphFactory#wireRegularRandom}.*/
-public void modify() 
-{
-	GraphFactory.wireWS( new OverlayGraph(pid), degree, beta, CommonRandom.r);
+public void modify()  {
+
+	GraphFactory.wireWS(new OverlayGraph(pid),degree,beta,CommonRandom.r);
+	
 	if (pack) {
 		int size = Network.size();
 		for (int i=0; i < size; i++) {
-			Linkable link = (Linkable) Network.get(i).getProtocol(pid);
+			Linkable link=(Linkable)Network.get(i).getProtocol(pid);
 			link.pack();
 		}
 	}

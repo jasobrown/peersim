@@ -60,7 +60,7 @@ public static final String PAR_FILE = "file";
  */
 public static final String PAR_PACK = "pack";
 
-private final int protocolID;
+private final int pid;
 
 private final String file;
 
@@ -73,7 +73,7 @@ private final boolean pack;
 
 public WireFromFile(String prefix) {
 
-	protocolID = Configuration.getPid(prefix+"."+PAR_PROT);
+	pid = Configuration.getPid(prefix+"."+PAR_PROT);
 	file = Configuration.getString(prefix+"."+PAR_FILE);
 	pack = Configuration.contains(prefix+"."+PAR_PACK);
 }
@@ -88,7 +88,7 @@ try
 {
 	FileReader fr = new FileReader(file);
 	LineNumberReader lnr = new LineNumberReader(fr);
-	Graph g = new OverlayGraph(protocolID);
+	Graph g = new OverlayGraph(pid);
 	String line;
 	boolean wasOutOfRange=false;
 	while((line=lnr.readLine()) != null)
@@ -122,13 +122,13 @@ catch( Exception e )
 	throw new RuntimeException(e);
 }
 
-if (pack) {
-	int size = Network.size();
-	for (int i=0; i < size; i++) {
-		Linkable link = (Linkable) Network.get(i).getProtocol(protocolID);
-		link.pack();
+	if (pack) {
+		int size = Network.size();
+		for (int i=0; i < size; i++) {
+			Linkable link=(Linkable)Network.get(i).getProtocol(pid);
+			link.pack();
+		}
 	}
-}
 
 }
 

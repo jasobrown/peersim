@@ -49,7 +49,7 @@ public static final String PAR_PACK = "pack";
 /**
 * The protocol we want to wire
 */
-private final int protocolID;
+private final int pid;
 
 /** If true, method pack() is invoked on the initialized protocol */
 private final boolean pack;
@@ -66,7 +66,7 @@ private Node center=null;
 
 public WireStar(String prefix) {
 
-	protocolID = Configuration.getPid(prefix+"."+PAR_PROT);
+	pid = Configuration.getPid(prefix+"."+PAR_PROT);
 	pack = Configuration.contains(prefix+"."+PAR_PACK);
 }
 
@@ -80,13 +80,14 @@ public void modify() {
 	
 	if( Network.size() == 0 ) return;
 	
-	GraphFactory.wireStar(new OverlayGraph(protocolID));
+	GraphFactory.wireStar(new OverlayGraph(pid));
 	
 	center = Network.get(0);
+	
 	if (pack) {
 		int size = Network.size();
 		for (int i=0; i < size; i++) {
-			Linkable link = (Linkable) Network.get(i).getProtocol(protocolID);
+			Linkable link=(Linkable)Network.get(i).getProtocol(pid);
 			link.pack();
 		}
 	}
@@ -107,9 +108,10 @@ public void initialize(Node n) {
 	
 	if( center == null || !center.isUp() ) center = Network.get(0);
 
-	((Linkable)n.getProtocol(protocolID)).addNeighbor(center);
+	((Linkable)n.getProtocol(pid)).addNeighbor(center);
+	
 	if (pack) {
-		((Linkable)n.getProtocol(protocolID)).pack();
+		((Linkable)n.getProtocol(pid)).pack();
 	}
 }
 

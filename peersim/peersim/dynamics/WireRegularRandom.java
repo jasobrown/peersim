@@ -61,7 +61,7 @@ public static final String PAR_PACK = "pack";
 /**
 * The protocol we want to wire
 */
-private final int protocolID;
+private final int pid;
 
 /**
 * The degree of the regular graph
@@ -80,7 +80,7 @@ private final boolean undirected;
 
 public WireRegularRandom(String prefix) {
 
-	protocolID = Configuration.getPid(prefix+"."+PAR_PROT);
+	pid = Configuration.getPid(prefix+"."+PAR_PROT);
 	degree = Configuration.getInt(prefix+"."+PAR_DEGREE);
 	undirected = Configuration.contains(prefix+"."+PAR_UNDIR);
 	pack = Configuration.contains(prefix+"."+PAR_PACK);
@@ -95,13 +95,14 @@ public WireRegularRandom(String prefix) {
 public void modify() {
 	
 	GraphFactory.wireRegularRandom(
-		new OverlayGraph(protocolID,!undirected), 
+		new OverlayGraph(pid,!undirected), 
 		degree,
 		CommonRandom.r );
+		
 	if (pack) {
 		int size = Network.size();
 		for (int i=0; i < size; i++) {
-			Linkable link = (Linkable) Network.get(i).getProtocol(protocolID);
+			Linkable link=(Linkable)Network.get(i).getProtocol(pid);
 			link.pack();
 		}
 	}
@@ -119,12 +120,13 @@ public void initialize(Node n) {
 	
 	for(int j=0; j<degree; ++j)
 	{
-		((Linkable)n.getProtocol(protocolID)).addNeighbor(
+		((Linkable)n.getProtocol(pid)).addNeighbor(
 		    Network.get(
 			CommonRandom.r.nextInt(Network.size())));
 	}
+	
 	if (pack) {
-		((Linkable)n.getProtocol(protocolID)).pack();
+		((Linkable)n.getProtocol(pid)).pack();
 	}
 }
 

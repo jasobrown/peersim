@@ -21,20 +21,25 @@ package peersim.dynamics;
 import peersim.config.*;
 import peersim.core.*;
 import peersim.util.*;
+import peersim.graph.*;
 
 /**
- * 
- *
- * @author Alberto Montresor
- * @version $Revision$
- */
-public class WireScaleFreeBA
-implements Dynamics
-{
+* This class contains the implementation of the Barabasi-Albert model
+* of growing scale free networks. The original model is described in
+* <a href="http://arxiv.org/abs/cond-mat/0106096">http://arxiv.org/abs/cond-mat/0106096</a>. It also contains the option of building
+* a directed network, in which case the model is a variation of the BA model
+* described in <a href="http://arxiv.org/pdf/cond-mat/0408391">
+http://arxiv.org/pdf/cond-mat/0408391</a>. In both cases, the number of the
+* initial set of nodes is the same as the degree parameter, and no links are
+* added. The first added node is connected to all of the initial nodes,
+* and after that the BA model is used normally.
+*/
+public class WireScaleFreeBA implements Dynamics {
 
-////////////////////////////////////////////////////////////////////////////
-// Constants
-////////////////////////////////////////////////////////////////////////////
+
+// ================ constants ============================================
+// =======================================================================
+
 
 /** 
  *  String name of the parameter used to select the protocol to operate on
@@ -45,7 +50,7 @@ public static final String PAR_PROT = "protocol";
  * This config property represents the number of edges added to each new
  * node (apart from those forming the initial network).
  */
-public static final String PAR_EDGES = "degree";
+public static final String PAR_DEGREE = "degree";
 
 /**
  * If this parameter is defined, method pack() is invoked on the specified
@@ -53,10 +58,16 @@ public static final String PAR_EDGES = "degree";
  */
 public static final String PAR_PACK = "pack";
 
+/** 
+*  String name of the parameter to set if the graph should be undirected,
+* that is, for each link (i,j) a link (j,i) will also be added.
+*/
+public static final String PAR_UNDIR = "undirected";
 
-////////////////////////////////////////////////////////////////////////////
-// Fields
-////////////////////////////////////////////////////////////////////////////
+
+// =================== fields ============================================
+// =======================================================================
+
 
 /** Protocol id */
 private final int pid;
@@ -65,75 +76,49 @@ private final int pid;
 private final int nodes;
 
 /** Average number of edges to be created */
-private int edges;
+private int degree;
 
 /** If true, method pack() is invoked on the initialized protocol */
 private final boolean pack;
 
-////////////////////////////////////////////////////////////////////////////
-// Constructor
-////////////////////////////////////////////////////////////////////////////
+private final boolean undirected;
+
+
+// ===================== initialization ==================================
+// =======================================================================
+
 
 public WireScaleFreeBA(String prefix)
 {
 	/* Read parameters */
 	pid = Configuration.getPid(prefix + "." + PAR_PROT);
 	nodes = Network.size();
-	edges = Configuration.getInt(prefix + "." + PAR_EDGES);
+	degree = Configuration.getInt(prefix + "." + PAR_DEGREE);
 	pack = Configuration.contains(prefix+"."+PAR_PACK);
+	undirected = Configuration.contains(prefix+"."+PAR_UNDIR);
 }
 
 
-////////////////////////////////////////////////////////////////////////////
-// Methods
-////////////////////////////////////////////////////////////////////////////
+// ======================== methods =======================================
+// ========================================================================
 
-/** to save typing */
-private boolean addNeighbor(Node n, int pid, Node n2) {
 
-	return ((Linkable)n.getProtocol(pid)).addNeighbor(n2);
-}
-
-// -------------------------------------------------------------------------
-
-// Comment inherited from interface
-public void modify() 
-{
-	Node[] dest = new Node[2*edges*nodes];
+/** calls {@link GraphFactory#wireScaleFreeBA}.*/
+public void modify() {
 	
-	// Add initial edges; 
-	Node ne = Network.get(edges);
-	for (int i=0; i < edges; i++) {
-		Node ni = Network.get(i);
-		dest[i*2] = ne;
-		dest[i*2+1] = ni;
-		addNeighbor(ni, pid, ne);
-		addNeighbor(ne, pid, ni);
-	}
-	
-	int len=edges*2;
-	for (int i=edges+1; i < nodes; i++) {
-		Node ni = Network.get(i);
-		for (int j=0; j < edges; j++) {
-			boolean stop;
-			Node nk;
-			do {
-				nk = dest[CommonRandom.r.nextInt(len)]; 
-				stop = addNeighbor(ni, pid, nk) &&
-					addNeighbor(nk, pid, ni);
-			} while (!stop);
-			dest[len+2*j] = ni;
-			dest[len+2*j+1] = nk;
-		}
-		len+=edges*2;
-	}
+	GraphFactory.wireScaleFreeBA(
+		new OverlayGraph(pid,!undirected), 
+		degree,
+		CommonRandom.r );
+		
 	if (pack) {
 		int size = Network.size();
 		for (int i=0; i < size; i++) {
-			Linkable link = (Linkable) Network.get(i).getProtocol(pid);
+			Linkable link=(Linkable)Network.get(i).getProtocol(pid);
 			link.pack();
 		}
 	}
 }
 
 }
+

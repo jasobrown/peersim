@@ -55,7 +55,7 @@ public static final String PAR_PACK = "pack";
 /**
 * The protocol we want to wire
 */
-private final int protocolID;
+private final int pid;
 
 /**
 * The degree of the regular graph
@@ -71,7 +71,7 @@ private final boolean pack;
 
 public WireRingLattice(String prefix) {
 
-	protocolID = Configuration.getPid(prefix+"."+PAR_PROT);
+	pid = Configuration.getPid(prefix+"."+PAR_PROT);
 	k = Configuration.getInt(prefix+"."+PAR_K);
 	pack = Configuration.contains(prefix+"."+PAR_PACK);
 }
@@ -84,11 +84,12 @@ public WireRingLattice(String prefix) {
 /** calls {@link GraphFactory#wireRingLattice}.*/
 public void modify() {
 	
-	GraphFactory.wireRingLattice( new OverlayGraph(protocolID), k );
+	GraphFactory.wireRingLattice( new OverlayGraph(pid), k );
+	
 	if (pack) {
 		int size = Network.size();
 		for (int i=0; i < size; i++) {
-			Linkable link = (Linkable) Network.get(i).getProtocol(protocolID);
+			Linkable link=(Linkable)Network.get(i).getProtocol(pid);
 			link.pack();
 		}
 	}

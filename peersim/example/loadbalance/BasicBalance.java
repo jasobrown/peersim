@@ -18,12 +18,12 @@
 
 package example.loadbalance;
  
- import example.aggregation.AbstractFunction;
  import peersim.config.Configuration;
  import peersim.config.FastConfig;
  import peersim.core.*;
+ import distributions.SingleValueHolder;
  
- public class BasicBalance extends AbstractFunction {
+ public class BasicBalance extends SingleValueHolder {
  // Fields:
  public static final String PAR_QUOTA = "quota"; // allowed config file parameter
  private final double quota_value; // original quota value taken from configuration
@@ -32,7 +32,7 @@ package example.loadbalance;
  
  // Constructor:
  public BasicBalance(String prefix, Object obj) {
- 	super(prefix, obj);
+ 	super(prefix);
   	// get quota value from the config file. Default 1.
  	quota_value = (double)(Configuration.getInt(prefix+"."+PAR_QUOTA, 1));
  	quota = quota_value;

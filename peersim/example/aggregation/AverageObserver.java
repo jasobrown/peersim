@@ -102,8 +102,8 @@ public class AverageObserver implements Observer
 		/* Compute max, min, average */
 		for (int i = 0; i < len; i++)
 		{
-			Aggregation protocol =
-				(Aggregation) Network.get(i).getProtocol(pid);
+			SingleValue protocol =
+				(SingleValue) Network.get(i).getProtocol(pid);
 			double value = protocol.getValue();
 			if (value > max)
 				max = value;

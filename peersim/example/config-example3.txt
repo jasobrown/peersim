@@ -13,8 +13,8 @@ protocol.0.cache 20
 #protocol.0 peersim.core.IdleProtocol
 #protocol.0.capacity 20
 
-#protocol.1 example.loadbalance.AvgBalance
-protocol.1 example.loadbalance.BasicBalance
+protocol.1 example.loadbalance.AvgBalance
+#protocol.1 example.loadbalance.BasicBalance
 protocol.1.linkable 0
 protocol.1.quota 1
 

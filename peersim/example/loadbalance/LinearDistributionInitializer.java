@@ -21,7 +21,6 @@ package example.loadbalance;
 import peersim.config.*;
 import peersim.core.*;
 import peersim.dynamics.Dynamics;
-import example.aggregation.AbstractFunction;
 
 public class LinearDistributionInitializer  implements Dynamics {
 
@@ -79,7 +78,7 @@ public void modify() {
 	{
 		tmp = i*step+min;
 		sum += tmp;
-		((AbstractFunction)Network.get(i).getProtocol(protocolID)
+		((SingleValue)Network.get(i).getProtocol(protocolID)
 			).setValue(tmp);
 	}
 }

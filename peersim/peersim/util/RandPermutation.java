@@ -31,7 +31,7 @@ private int pointer = 0;
 */
 public void setPermutation(int k) {
 	
-	initPermutation(k);
+	reset(k);
 	
 	for(int i=len; i>1; i--)
 	{
@@ -62,7 +62,7 @@ public int get(int i) {
 * Calls to {@link #get} return undefined values, so {@link #next} must be used.
 * If the previous permutation was of the same length, it is more efficient.
 */
-public void initPermutation(int k) {
+public void reset(int k) {
 	
 	pointer = k;
 	if( len == k ) return;
@@ -113,14 +113,15 @@ public static void main( String pars[] ) throws Exception {
 	System.out.println();
 
 	k = Integer.parseInt(pars[1]);
-	rp.initPermutation(k);
-	for(int i=0; i<k; ++i) System.out.println(rp.next());
+	rp.reset(k);
+	while(rp.hasNext()) System.out.println(rp.next());
 	
 	System.out.println();
 
 	k = Integer.parseInt(pars[2]);
-	rp.initPermutation(k);
-	for(int i=0; i<k+1; ++i) System.out.println(rp.next());
+	rp.reset(k);
+	while(rp.hasNext()) System.out.println(rp.next());
+	System.out.println(rp.next());
 }
 
 }

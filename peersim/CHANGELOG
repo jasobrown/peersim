@@ -1,3 +1,8 @@
+Added peersim.example.hot package : classes to model a preferential
+attachment internet like topology
+
+Added peersim.util.ExtendedStats class 
+
 peersim.util.IncrementalFreq now accepts an upper bound on the
 processed values
 

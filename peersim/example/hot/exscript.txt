@@ -1,0 +1,16 @@
+# Complex Network file:
+random.seed 1234567890
+simulation.cycles 1
+#simulation.shuffle
+
+overlay.size 10000
+overlay.maxSize 10000
+
+protocol.0 hot.InetNodeProtocol
+#protocol.0.maxcoord 1000
+
+init.0 hot.InetInitializer
+#init.0.max_coord 1000
+init.0.alfa 20
+init.0.protocol 0
+init.0.d 2

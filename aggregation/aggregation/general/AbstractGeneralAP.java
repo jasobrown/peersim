@@ -200,5 +200,12 @@ protected boolean canDeliverResponse(Node node)
 }
 
 //--------------------------------------------------------------------------
+
+/**
+ */
+public String toString()
+{
+	return ""+value;
+}
 	
 }

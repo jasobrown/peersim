@@ -1,3 +1,8 @@
+MJ 26/03/05
+- Added boolean support to configuration (only constants so far).
+  Similar in function to "contains", take care. In the future we might add
+  boolean expressions, this is why it was added now.
+
 MJ 24/03/05
 - Fixed a memory leak. It was present when simulating churn with
   Linkable protocols. Now Linkables have to implement an "onKill"

@@ -1,3 +1,16 @@
+AM 14/10/2004
+- added maxcount and mincount to the toString method of 
+  peersim.util.IncrementalStats
+- added a print(String prefix) method to peersim.util.IncrementalFreq 
+  that uses the Log facility to print
+- protocols are not nullified in GeneralNode when the node is declared DEAD
+- observers, initializers and dynamics are not required to be tagged by
+  consecutive numbers any more; this is not the final version of what
+  we have discussed, it is just a small hack, compatible with the past,
+  that I've implemented in Configuration.java
+- small changes to RangeSimulator; in any case, it will updated in order
+  to be based on the Simulator code.
+
 AM 22/6/2004:
 In GeneralNode, when creating/cloning a node, the CommonState.setNode()
 method is invoked to set the current node being created.

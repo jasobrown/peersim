@@ -21,7 +21,6 @@ package peersim.init;
 import peersim.config.*;
 import peersim.core.*;
 import peersim.util.*;
-import peersim.init.*;
 
 /**
  * 

@@ -2,7 +2,6 @@ package peersim.reports;
 
 import peersim.core.*;
 import peersim.config.Configuration;
-import peersim.util.IncrementalStats;
 import peersim.graph.*;
 
 /**

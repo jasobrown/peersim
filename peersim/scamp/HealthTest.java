@@ -1,6 +1,5 @@
 package scamp;
 
-import peersim.core.*;
 import peersim.config.Configuration;
 import peersim.reports.Observer;
 

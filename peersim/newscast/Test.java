@@ -1,9 +1,6 @@
 package newscast;
 
-import peersim.util.*;
 import peersim.core.*;
-import peersim.config.*;
-import peersim.cdsim.*;
 
 /**
 * Provides as graph interface a different neighbor set (the protocol

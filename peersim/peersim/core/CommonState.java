@@ -1,7 +1,5 @@
 package peersim.core;
 
-import peersim.config.Configuration;
-
 /**
 * This is the common state of the simulation all objects see.
 * It's purpose is simplification of parameter structures and increasing

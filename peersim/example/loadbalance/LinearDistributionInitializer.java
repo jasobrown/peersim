@@ -20,10 +20,10 @@ package example.loadbalance;
 
 import peersim.config.*;
 import peersim.core.*;
-import peersim.init.Initializer;
+import peersim.dynamics.Dynamics;
 import example.aggregation.AbstractFunction;
 
-public class LinearDistributionInitializer  implements Initializer {
+public class LinearDistributionInitializer  implements Dynamics {
 
 ////////////////////////////////////////////////////////////////////////////
 // Constants
@@ -71,7 +71,7 @@ public LinearDistributionInitializer(String prefix)
 
 
 // Comment inherited from interface
-public void initialize() {
+public void modify() {
 	double step = (max-min)/(Network.size()-1);
 	double sum = 0.0;
 	double tmp;

@@ -21,7 +21,6 @@ package peersim.cdsim;
 import peersim.config.*;
 import peersim.core.*;
 import peersim.reports.Observer;
-import peersim.init.Initializer;
 import peersim.dynamics.Dynamics;
 import peersim.util.CommonRandom;
 import java.util.Arrays;
@@ -105,7 +104,7 @@ protected static void runInitializers() {
 	{
 		System.err.println(
 		"- Running initializer " + i + ": " + inits[i].getClass());
-		((Initializer)inits[i]).initialize();
+		((Dynamics)inits[i]).modify();
 	}
 }
 
@@ -174,6 +173,8 @@ public static void main(String[] pars) throws Exception {
 		System.err.println("Simulator: resetting overlay network");
 		Network.reset();
 		System.err.println("Simulator: running initializers");
+		CommonState.setT(0); // needed here
+		CommonState.setPhase(CommonState.PRE_DYNAMICS);
 		runInitializers();
 
 		// load analizers
@@ -204,7 +205,6 @@ public static void main(String[] pars) throws Exception {
 
 		// main cycle
 		System.err.println("Simulator: starting simulation");
-		CommonState.setT(0); // needed here
 		for(int i=0; i<cycles; ++i)
 		{
 			CommonState.setT(i);

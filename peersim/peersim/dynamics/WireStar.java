@@ -16,19 +16,19 @@
  *
  */
 		
-package peersim.init;
+package peersim.dynamics;
 
 import peersim.graph.*;
 import peersim.core.*;
 import peersim.config.Configuration;
-import peersim.util.CommonRandom;
 
 /**
-* Takes a {@link Linkable} protocol and adds random connections. Note that no
+* Takes a {@link Linkable} protocol and adds connection which for a star
+* topology. No 
 * connections are removed, they are only added. So it can be used in
 * combination with other initializers.
 */
-public class WireRegularRandom implements Initializer, NodeInitializer {
+public class WireStar implements Dynamics, NodeInitializer {
 
 
 // ========================= fields =================================
@@ -40,30 +40,23 @@ public class WireRegularRandom implements Initializer, NodeInitializer {
 */
 public static final String PAR_PROT = "protocol";
 
-/** 
-*  String name of the parameter used to select the protocol to operate on
-*/
-public static final String PAR_DEGREE = "degree";
-
 /**
 * The protocol we want to wire
 */
 private final int protocolID;
 
 /**
-* The degree of the regular graph
+* Used as center in the {@link NodeInitializer} implementation.
 */
-private final int degree;
-
+private Node center=null;
 
 // ==================== initialization ==============================
 //===================================================================
 
 
-public WireRegularRandom(String prefix) {
+public WireStar(String prefix) {
 
 	protocolID = Configuration.getInt(prefix+"."+PAR_PROT);
-	degree = Configuration.getInt(prefix+"."+PAR_DEGREE);
 }
 
 
@@ -71,31 +64,32 @@ public WireRegularRandom(String prefix) {
 // ===================================================================
 
 
-/** calls {@link GraphFactory#wireRegularRandom}.*/
-public void initialize() {
+/** calls {@link GraphFactory#wireStar} if size is larger than 0.*/
+public void modify() {
 	
-	GraphFactory.wireRegularRandom(
-		new OverlayGraph(protocolID), 
-		degree,
-		CommonRandom.r );
+	if( Network.size() == 0 ) return;
+	
+	GraphFactory.wireStar(new OverlayGraph(protocolID));
+	
+	center = Network.get(0);
 }
 
 // -------------------------------------------------------------------
 
 /**
-* Takes {@link #PAR_DEGREE} random samples with replacement
-* from the node of the overlay network.
+* Adds a link to a fixed node, the center. This fixed node remains the
+* same throughout consequitive calls to this method. If the center
+* fails in the meantime, a new one is chosen so care should be taken.
+* The center is the 0th index node at the time of the
+* first call to the function.
 */
 public void initialize(Node n) {
-
+	
 	if( Network.size() == 0 ) return;
 	
-	for(int j=0; j<degree; ++j)
-	{
-		((Linkable)n.getProtocol(protocolID)).addNeighbor(
-		    Network.get(
-			CommonRandom.r.nextInt(Network.size())));
-	}
+	if( center == null || !center.isUp() ) center = Network.get(0);
+
+	((Linkable)n.getProtocol(protocolID)).addNeighbor(center);
 }
 
 }

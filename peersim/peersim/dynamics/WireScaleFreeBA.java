@@ -16,7 +16,7 @@
  *
  */
 
-package peersim.init;
+package peersim.dynamics;
 
 import peersim.config.*;
 import peersim.core.*;
@@ -29,59 +29,59 @@ import peersim.util.*;
  * @version $Revision$
  */
 public class WireScaleFreeBA
-implements Initializer
+implements Dynamics
 {
-	
-	////////////////////////////////////////////////////////////////////////////
-	// Constants
-	////////////////////////////////////////////////////////////////////////////
-	
-	/** 
-	 *  String name of the parameter used to select the protocol to operate on
-	 */
-	public static final String PAR_PROT = "protocol";
 
-	/** 
-	 * This config property represents the number of edges added to each new
-	 * node (apart from those forming the initial network).
-	 */
-	public static final String PAR_EDGES = "degree";
+////////////////////////////////////////////////////////////////////////////
+// Constants
+////////////////////////////////////////////////////////////////////////////
 
+/** 
+ *  String name of the parameter used to select the protocol to operate on
+ */
+public static final String PAR_PROT = "protocol";
 
-	////////////////////////////////////////////////////////////////////////////
-	// Fields
-	////////////////////////////////////////////////////////////////////////////
-
-  /** Protocol id */
-	int pid;
-
-  /** Number of nodes */
-  int nodes;
-
-  /** Average number of edges to be created */	
-	int edges;
+/** 
+ * This config property represents the number of edges added to each new
+ * node (apart from those forming the initial network).
+ */
+public static final String PAR_EDGES = "degree";
 
 
-	////////////////////////////////////////////////////////////////////////////
-	// Constructor
-	////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+// Fields
+////////////////////////////////////////////////////////////////////////////
 
-  public WireScaleFreeBA(String prefix)
-  {
-		/* Read parameters */
-		pid = Configuration.getInt(prefix + "." + PAR_PROT);
-		nodes = Network.size();
-		edges = Configuration.getInt(prefix + "." + PAR_EDGES);
+/** Protocol id */
+int pid;
+
+/** Number of nodes */
+int nodes;
+
+/** Average number of edges to be created */	
+int edges;
+
+
+////////////////////////////////////////////////////////////////////////////
+// Constructor
+////////////////////////////////////////////////////////////////////////////
+
+ public WireScaleFreeBA(String prefix)
+ {
+	/* Read parameters */
+	pid = Configuration.getInt(prefix + "." + PAR_PROT);
+	nodes = Network.size();
+	edges = Configuration.getInt(prefix + "." + PAR_EDGES);
   }
 
 
-	////////////////////////////////////////////////////////////////////////////
-	// Methods
-	////////////////////////////////////////////////////////////////////////////
-	
-	// Comment inherited from interface
-	public void initialize() 
-	{
+////////////////////////////////////////////////////////////////////////////
+// Methods
+////////////////////////////////////////////////////////////////////////////
+
+// Comment inherited from interface
+public void modify() 
+{
     Node[] dest = new Node[2*edges*nodes];
     
     // Add initial edges; 
@@ -108,6 +108,6 @@ implements Initializer
     		dest[len++] = nk;
     	}
     }
-	}
-		
+}
+
 }

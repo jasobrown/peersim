@@ -18,7 +18,6 @@
 		
 package peersim.dynamics;
 
-import peersim.init.NodeInitializer;
 import peersim.config.Configuration;
 import peersim.util.CommonRandom;
 import peersim.core.*;

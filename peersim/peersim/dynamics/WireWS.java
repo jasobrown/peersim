@@ -16,19 +16,21 @@
  *
  */
 		
-package peersim.init;
+package peersim.dynamics;
 
 import peersim.graph.*;
 import peersim.core.*;
 import peersim.config.Configuration;
+import peersim.util.CommonRandom;
 
 /**
-* Takes a {@link Linkable} protocol and adds connection which for a star
-* topology. No 
+* Takes a {@link Linkable} protocol and adds random connections. Note that no
 * connections are removed, they are only added. So it can be used in
 * combination with other initializers.
 */
-public class WireStar implements Initializer, NodeInitializer {
+public class WireWS 
+implements Dynamics
+{
 
 
 // ========================= fields =================================
@@ -40,23 +42,44 @@ public class WireStar implements Initializer, NodeInitializer {
 */
 public static final String PAR_PROT = "protocol";
 
+/** 
+*  String name of the property containing the beta parameter, ie the
+*  probability for a node to be re-wired.
+*/
+public static final String PAR_BETA = "beta";
+
+/** 
+*  String name of the parameter which sets defines the degree of the graph,
+* see {@link GraphFactory#wireRingLattice}.
+*/
+public static final String PAR_DEGREE = "degree";
+
 /**
 * The protocol we want to wire
 */
-private final int protocolID;
+private final int pid;
 
 /**
-* Used as center in the {@link NodeInitializer} implementation.
+* The degree of the regular graph
 */
-private Node center=null;
+private final int degree;
+
+
+/**
+* The degree of the regular graph
+*/
+private final double beta;
+
 
 // ==================== initialization ==============================
 //===================================================================
 
 
-public WireStar(String prefix) {
+public WireWS(String prefix) {
 
-	protocolID = Configuration.getInt(prefix+"."+PAR_PROT);
+	pid = Configuration.getInt(prefix+"."+PAR_PROT);
+	degree = Configuration.getInt(prefix+"."+PAR_DEGREE);
+	beta = Configuration.getDouble(prefix+"."+PAR_BETA);
 }
 
 
@@ -64,33 +87,10 @@ public WireStar(String prefix) {
 // ===================================================================
 
 
-/** calls {@link GraphFactory#wireStar} if size is larger than 0.*/
-public void initialize() {
-	
-	if( Network.size() == 0 ) return;
-	
-	GraphFactory.wireStar(new OverlayGraph(protocolID));
-	
-	center = Network.get(0);
-}
-
-// -------------------------------------------------------------------
-
-/**
-* Adds a link to a fixed node, the center. This fixed node remains the
-* same throughout consequitive calls to this method. If the center
-* fails in the meantime, a new one is chosen so care should be taken.
-* The center is the 0th index node at the time of the
-* first call to the function.
-*/
-public void initialize(Node n) {
-	
-	if( Network.size() == 0 ) return;
-	
-	if( center == null || !center.isUp() ) center = Network.get(0);
-
-	((Linkable)n.getProtocol(protocolID)).addNeighbor(center);
+/** calls {@link GraphFactory#wireRegularRandom}.*/
+public void modify() 
+{
+	GraphFactory.wireWS( new OverlayGraph(pid), degree, beta, CommonRandom.r);
 }
 
 }
-

@@ -16,19 +16,19 @@
  *
  */
 		
-package peersim.init;
+package peersim.dynamics;
 
 import peersim.graph.*;
 import peersim.core.*;
 import peersim.config.Configuration;
+import peersim.util.CommonRandom;
 
 /**
-* Takes a {@link Linkable} protocol and adds edges that define a ring lattice.
-* Note that no
+* Takes a {@link Linkable} protocol and adds random connections. Note that no
 * connections are removed, they are only added. So it can be used in
 * combination with other initializers.
 */
-public class WireRingLattice implements Initializer {
+public class WireRegularRandom implements Dynamics, NodeInitializer {
 
 
 // ========================= fields =================================
@@ -41,10 +41,9 @@ public class WireRingLattice implements Initializer {
 public static final String PAR_PROT = "protocol";
 
 /** 
-*  String name of the parameter which sets defines the degree of the graph,
-* see {@link GraphFactory#wireRingLattice}.
+*  String name of the parameter used to select the protocol to operate on
 */
-public static final String PAR_K = "k";
+public static final String PAR_DEGREE = "degree";
 
 /**
 * The protocol we want to wire
@@ -54,17 +53,17 @@ private final int protocolID;
 /**
 * The degree of the regular graph
 */
-private final int k;
+private final int degree;
 
 
 // ==================== initialization ==============================
 //===================================================================
 
 
-public WireRingLattice(String prefix) {
+public WireRegularRandom(String prefix) {
 
 	protocolID = Configuration.getInt(prefix+"."+PAR_PROT);
-	k = Configuration.getInt(prefix+"."+PAR_K);
+	degree = Configuration.getInt(prefix+"."+PAR_DEGREE);
 }
 
 
@@ -72,12 +71,32 @@ public WireRingLattice(String prefix) {
 // ===================================================================
 
 
-/** calls {@link GraphFactory#wireRingLattice}.*/
-public void initialize() {
+/** calls {@link GraphFactory#wireRegularRandom}.*/
+public void modify() {
 	
-	GraphFactory.wireRingLattice( new OverlayGraph(protocolID), k );
+	GraphFactory.wireRegularRandom(
+		new OverlayGraph(protocolID), 
+		degree,
+		CommonRandom.r );
 }
 
+// -------------------------------------------------------------------
+
+/**
+* Takes {@link #PAR_DEGREE} random samples with replacement
+* from the node of the overlay network.
+*/
+public void initialize(Node n) {
+
+	if( Network.size() == 0 ) return;
+	
+	for(int j=0; j<degree; ++j)
+	{
+		((Linkable)n.getProtocol(protocolID)).addNeighbor(
+		    Network.get(
+			CommonRandom.r.nextInt(Network.size())));
+	}
+}
 
 }
 

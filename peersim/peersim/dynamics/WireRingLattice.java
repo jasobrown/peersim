@@ -16,21 +16,19 @@
  *
  */
 		
-package peersim.init;
+package peersim.dynamics;
 
 import peersim.graph.*;
 import peersim.core.*;
 import peersim.config.Configuration;
-import peersim.util.CommonRandom;
 
 /**
-* Takes a {@link Linkable} protocol and adds random connections. Note that no
+* Takes a {@link Linkable} protocol and adds edges that define a ring lattice.
+* Note that no
 * connections are removed, they are only added. So it can be used in
 * combination with other initializers.
 */
-public class WireWS 
-implements Initializer 
-{
+public class WireRingLattice implements Dynamics {
 
 
 // ========================= fields =================================
@@ -43,43 +41,30 @@ implements Initializer
 public static final String PAR_PROT = "protocol";
 
 /** 
-*  String name of the property containing the beta parameter, ie the
-*  probability for a node to be re-wired.
-*/
-public static final String PAR_BETA = "beta";
-
-/** 
 *  String name of the parameter which sets defines the degree of the graph,
 * see {@link GraphFactory#wireRingLattice}.
 */
-public static final String PAR_DEGREE = "degree";
+public static final String PAR_K = "k";
 
 /**
 * The protocol we want to wire
 */
-private final int pid;
+private final int protocolID;
 
 /**
 * The degree of the regular graph
 */
-private final int degree;
-
-
-/**
-* The degree of the regular graph
-*/
-private final double beta;
+private final int k;
 
 
 // ==================== initialization ==============================
 //===================================================================
 
 
-public WireWS(String prefix) {
+public WireRingLattice(String prefix) {
 
-	pid = Configuration.getInt(prefix+"."+PAR_PROT);
-	degree = Configuration.getInt(prefix+"."+PAR_DEGREE);
-	beta = Configuration.getDouble(prefix+"."+PAR_BETA);
+	protocolID = Configuration.getInt(prefix+"."+PAR_PROT);
+	k = Configuration.getInt(prefix+"."+PAR_K);
 }
 
 
@@ -87,10 +72,12 @@ public WireWS(String prefix) {
 // ===================================================================
 
 
-/** calls {@link GraphFactory#wireRegularRandom}.*/
-public void initialize() 
-{
-	GraphFactory.wireWS( new OverlayGraph(pid), degree, beta, CommonRandom.r);
+/** calls {@link GraphFactory#wireRingLattice}.*/
+public void modify() {
+	
+	GraphFactory.wireRingLattice( new OverlayGraph(protocolID), k );
 }
 
+
 }
+

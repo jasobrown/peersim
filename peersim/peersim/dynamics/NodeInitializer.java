@@ -16,7 +16,9 @@
  *
  */
 		
-package peersim.init;
+package peersim.dynamics;
+
+import peersim.core.Node;
 
 /**
 * Generic interface to initialize a simulation. It is designed to allow
@@ -24,15 +26,14 @@ package peersim.init;
 * implementation. It can be used to imlpement initializations before the
 * simulation that require global knowledge of the system.
 */
-public interface Initializer {
+public interface NodeInitializer {
 
 	/**
-	* Performs arbitrary initializations or modifications on the overlay
-	* nework and protocols before the simulation.
-	* Implementations will typically know many details of the
-	* actual overlay network and protocols, but there will be general
-	* purpose reusable initializers too for example to set up a topology.
+	* Performs arbitrary initializations on the given node.
+	* It is guaranteed that this is called <em>before</em> inserting
+	* the node into the network.
 	*/
-	public void initialize();
+	public void initialize(Node n);
 }
+
 

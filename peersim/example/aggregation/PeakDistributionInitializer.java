@@ -21,7 +21,6 @@ package example.aggregation;
 import peersim.config.*;
 import peersim.core.*;
 import peersim.dynamics.Dynamics;
-import peersim.init.*;
 
 /**
  * Initialize an aggregation protocol using a peak distribution.
@@ -29,7 +28,7 @@ import peersim.init.*;
  * @author Alberto Montresor
  * @version $Revision$
  */
-public class PeakDistributionInitializer implements Initializer, Dynamics
+public class PeakDistributionInitializer implements Dynamics
 {
 
 	////////////////////////////////////////////////////////////////////////////
@@ -89,26 +88,20 @@ public class PeakDistributionInitializer implements Initializer, Dynamics
 	////////////////////////////////////////////////////////////////////////////
 
 	// Comment inherited from interface
-	public void initialize()
-	{
-		for (int i = 0; i < Network.size(); i++)
-		{
-			Aggregation prot = (Aggregation) Network.get(i).getProtocol(pid);
-			prot.setValue(0);
-		}
-		Aggregation prot = (Aggregation) Network.get(0).getProtocol(pid);
-		prot.setValue(value);
-		// RestartingManager.setStartTime(0);			
-	}
-
-	// Comment inherited from interface
 	public void modify()
 	{
 		int time = peersim.core.CommonState.getT();
+		// works also at initialization (time==0)
 		if (time % epochLength == 0)
 		{
 			System.err.println("Restarting: " + Network.size());
-			initialize();
+			for (int i = 0; i < Network.size(); i++)
+			{
+				Aggregation prot = (Aggregation) Network.get(i).getProtocol(pid);
+				prot.setValue(0);
+			}
+			Aggregation prot = (Aggregation) Network.get(0).getProtocol(pid);
+			prot.setValue(value);
 			// RestartingManager.setStartTime(time);			
 		}
 	}

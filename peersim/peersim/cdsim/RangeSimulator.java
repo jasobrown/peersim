@@ -22,7 +22,6 @@ import peersim.config.*;
 import peersim.core.*;
 import peersim.reports.*;
 import peersim.util.*;
-import peersim.init.*;
 import peersim.dynamics.*;
 import java.util.Arrays;
 import java.io.*;
@@ -464,7 +463,7 @@ protected static void runInitializers() {
 	{
 		System.err.println(
 		"- Running initializer " + i + ": " + inits[i].getClass());
-		((Initializer)inits[i]).initialize();
+		((Dynamics)inits[i]).modify();
 	}
 }
 
@@ -475,11 +474,11 @@ private static void performSimulation(int cycles, boolean shuffle)
 
 	// initialization
 	System.err.println("Simulator: running initializers");
+	CommonState.setT(0); // needed here
 	runInitializers();
 
 	// main cycle
 	System.err.println("Simulator: starting simulation");
-	CommonState.setT(0); // needed here
 	for(int i=0; i<cycles; ++i)
 	{
 		CommonState.setT(i);

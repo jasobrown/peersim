@@ -1,6 +1,9 @@
 MJ 22/01/2005
 - Moved the wiring algorithm from WireScaleFreeBA to GraphFactory
-  and added the possibility to generate an undirected version.
+  and added the possibility to generate a directed version.
+  Now, the "undirected" config parameter has to be given to get
+  an unirected graph. This breaks backwards compatibility, but I prefer
+  to have a consistent set of parameters for the wiring classes.
   Also, some pretty printing changes on some wiring classes.
 
 AM 19/01/2005

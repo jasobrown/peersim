@@ -1,3 +1,7 @@
+MJ 03/03/2005
+- GraphPrinter is extended with a new format and the possibility to save the
+  undirected version of the overlay. See class docs.
+
 MJ 02/03/2005
 - DegreeStats is extended by new options, to collect statistics about
   dead links. See class documentation.

@@ -54,6 +54,13 @@ public static final String PAR_BASENAME = "outf";
 */
 public static final String PAR_FORMAT = "format";
 
+/** 
+* If defined, the undirected version of the graph will be printed, otherwise
+* the directed version.
+* Not defined by default.
+*/
+public static final String PAR_UNDIR = "undirected";
+
 private final int protocolID;
 
 /** The name of this observer in the configuration */
@@ -63,6 +70,7 @@ private final String baseName;
 
 private final String format;
 
+private final boolean undir;
 
 // ===================== initialization ================================
 // =====================================================================
@@ -74,6 +82,7 @@ public GraphPrinter(String name) {
 	protocolID = Configuration.getPid(name+"."+PAR_PROT);
 	baseName = Configuration.getString(name+"."+PAR_BASENAME,null);
 	format = Configuration.getString(name+"."+PAR_FORMAT,"neighborlist");
+	undir = Configuration.contains(name+"."+PAR_UNDIR);
 }
 
 
@@ -83,7 +92,8 @@ public GraphPrinter(String name) {
 
 public boolean analyze() {
 try {	
-	OverlayGraph og = new OverlayGraph(protocolID);	
+	Graph og = new OverlayGraph(protocolID);
+	if( undir ) og = new ConstUndirGraph(og);
 	
 	System.out.print(name+": ");
 	
@@ -102,6 +112,8 @@ try {
 	
 	if( format.equals("neighborlist") )
 		GraphIO.writeNeighborList(og, pstr);
+	else if( format.equals("chaco") )
+		GraphIO.writeChaco(og, pstr);
 	else
 		System.err.println(name+": unsupported format "+format);
 	

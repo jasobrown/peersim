@@ -126,10 +126,6 @@ public boolean isUp() { return failstate==OK; }
 
 public Protocol getProtocol(int i) { return protocol[i]; }
 
-// -----------------------------------------------------------------
-
-public void setProtocol(int i, Protocol p) { protocol[i]=p; }
-
 //------------------------------------------------------------------
 
 public int protocolSize() { return protocol.length; }
@@ -153,53 +149,6 @@ public String toString()
 		buffer.append("protocol["+i+"]="+protocol[i]+"\n");
 	}
 	return buffer.toString();
-}
-
-//------------------------------------------------------------------
-
-// Comment inherited from interface
-public int degree(int protocolId)
-{
-	return ((Linkable) protocol[protocolId]).degree();
-}
-
-//------------------------------------------------------------------
-
-// Comment inherited from interface
-public Node getNeighbor(int protocolId, int i)
-{
-	return ((Linkable) protocol[protocolId]).getNeighbor(i);
-}
-
-//------------------------------------------------------------------
-
-public void setNeighbor(int protocolId, int i, Node node)
-{
-	throw new IllegalArgumentException("Not supported yet!");
-}
-
-//------------------------------------------------------------------
-
-// Comment inherited from interface
-public boolean addNeighbor(int protocolId, Node neighbor)
-{
-	return ((Linkable) protocol[protocolId]).addNeighbor(neighbor);
-}
-
-//------------------------------------------------------------------
-
-// Comment inherited from interface
-public boolean contains(int protocolId, Node neighbor)
-{
-	return ((Linkable) protocol[protocolId]).contains(neighbor);
-}
-
-//------------------------------------------------------------------
-
-// Comment inherited from interface
-public void pack(int protocolId)
-{
-	((Linkable) protocol[protocolId]).pack();
 }
 
 }

@@ -79,8 +79,9 @@ static {
 
 /**
 * Returns the protocol id used by the protocol identified by pid.
-* @return returns a negative value if there is no linkable associated with
-* the given protocol, otherwise the pid of the linkable protocol.
+* Throws an IllegalParameterException if there is no linkable associated
+* with the given protocol: we assume here that his happens when the
+* configuration is incorrect.
 */
 public static int getLinkable(int pid) {
 

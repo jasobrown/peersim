@@ -162,7 +162,8 @@ Once the initalization phase is completed, the simulation starts.<br>
 The way the simulator manages the interactions between the protocol(s)
 run, the <span style="font-style: italic;">Observer</span> object(s)
 and the <span style="font-style: italic;">Dynamics</span> object(s) in
-each cycle can be quite sophisticated. Each Observer and <span
+each cycle can be quite sophisticated. Each <span
+ style="font-style: italic;">Observer</span> and <span
  style="font-style: italic;">Dynamics</span> object is wrapped into a <span
  style="font-style: italic;">Scheduler</span> class which adds fine
 grained scheduling facilities to their run.<br>
@@ -234,8 +235,10 @@ the averaging values. Looks easy!!<br>
 <span style="font-family: monospace;"><br>
 <span style="font-family: monospace;">1&nbsp; # PEERSIM EXAMPLE 1</span><br
  style="font-family: monospace;">
-<span style="font-family: monospace;">2&nbsp; #</span></span><br
- style="font-family: monospace;">
+<span style="font-family: monospace;">2&nbsp; # </span></span><span
+ style="font-family: monospace;"><span style="font-family: monospace;"><span
+ style="font-family: monospace;">random.seed
+1234567890</span></span></span><br style="font-family: monospace;">
 <span style="font-family: monospace;">3&nbsp; simulation.cycles 30</span><br
  style="font-family: monospace;">
 <span style="font-family: monospace;">4&nbsp; simulation.shuffle</span><br
@@ -255,7 +258,8 @@ peersim.core.IdleProtocol</span><br style="font-family: monospace;">
 <span style="font-family: monospace;">11</span><br
  style="font-family: monospace;">
 <span style="font-family: monospace;">12 protocol.1
-aggregation.AverageFunction</span><br style="font-family: monospace;">
+example.aggregation.AverageFunction</span><br
+ style="font-family: monospace;">
 <span style="font-family: monospace;">13 protocol.1.linkable 0</span><br
  style="font-family: monospace;">
 <span style="font-family: monospace;">14</span><br
@@ -269,7 +273,7 @@ peersim.init.WireRegularRandom</span><br style="font-family: monospace;">
 <span style="font-family: monospace;">18</span><br
  style="font-family: monospace;">
 <span style="font-family: monospace;">19 init.1
-loadbalance.LinearDistributionInitializer</span><br
+example.loadbalance.LinearDistributionInitializer</span><br
  style="font-family: monospace;">
 <span style="font-family: monospace;">20 init.1.protocol 1</span><br
  style="font-family: monospace;">
@@ -280,7 +284,8 @@ loadbalance.LinearDistributionInitializer</span><br
 <span style="font-family: monospace;">23</span><br
  style="font-family: monospace;">
 <span style="font-family: monospace;">24 observer.0
-aggregation.AverageObserver</span><br style="font-family: monospace;">
+example.aggregation.AverageObserver</span><br
+ style="font-family: monospace;">
 <span style="font-family: monospace;">25 observer.0.protocol 1</span><br
  style="font-family: monospace;">
 <br>
@@ -396,8 +401,9 @@ example1.txt<br>
 <br>
 The classpath is mandatory only if the used system has not peersim
 classes in the shell CLASSPATH environment variable.<br>
-To get the exact output that will follow, the reader can add the
-parameter:<br>
+To get the exact output that will follow, the reader should uncomment
+the
+parameter at <span style="font-weight: bold;">line 2</span>:<br>
 <br>
 <div style="text-align: center;"><span style="font-family: monospace;">random.seed
 1234567890</span><br>
@@ -408,139 +414,82 @@ replicate exactly the experiments results based on (pseudo) random
 behaviour.<br>
 The experiment output is (some initialization string may be different):<br>
 <br>
-<span style="font-family: monospace;">Simulator: loading configuration</span><br
- style="font-family: monospace;">
-<span style="font-family: monospace;">ConfigProperties: File example
-loaded.</span><br style="font-family: monospace;">
-<span style="font-family: monospace;">Simulator: starting experiment 0</span><br
- style="font-family: monospace;">
-<span style="font-family: monospace;">Simulator: resetting overlay
-network</span><br style="font-family: monospace;">
-<span style="font-family: monospace;">OverlayNetwork: No node defined,
-using GeneralNode</span><br style="font-family: monospace;">
-<span style="font-family: monospace;">Simulator: running initializers</span><br
- style="font-family: monospace;">
-<span style="font-family: monospace;">- Running initializer 0: class
-peersim.init.WireRegularRandom</span><br style="font-family: monospace;">
-<span style="font-family: monospace;">- Running initializer 1: class
-loadbalance.LinearDistributionInitializer</span><br
- style="font-family: monospace;">
-<span style="font-family: monospace;">Simulator: loaded observers
-[observer.0]</span><br style="font-family: monospace;">
-<span style="font-family: monospace;">Simulator: loaded modifiers []</span><br
- style="font-family: monospace;">
-<span style="font-family: monospace;">Simulator: starting simulation</span><br
- style="font-family: monospace;">
-<span style="font-family: monospace;">observer.0 0 28.57969570575493
-1.0 50.49999999999998 100.0 1.0 50000 50000</span><br
- style="font-family: monospace;">
-<span style="font-family: monospace;">Simulator: cycle 0 done</span><br
- style="font-family: monospace;">
-<span style="font-family: monospace;">observer.0 1 15.774113542136039
-0.5519342719579655 50.49999999999994 99.06443128862577
-2.4127582551651034 50000 50000</span><br style="font-family: monospace;">
-<span style="font-family: monospace;">Simulator: cycle 1 done</span><br
- style="font-family: monospace;">
-<span style="font-family: monospace;">observer.0 2 8.835484033675945
-0.30915248799856165 50.49999999999997 88.7184768695374
-13.891357202144043 50000 50000</span><br style="font-family: monospace;">
-<span style="font-family: monospace;">Simulator: cycle 2 done</span><br
- style="font-family: monospace;">
-<span style="font-family: monospace;">observer.0 3 4.931169850658448
-0.17254102008040229 50.500000000000156 76.02686389665294
-28.248574073043958 50000 50000</span><br style="font-family: monospace;">
-<span style="font-family: monospace;">Simulator: cycle 3 done</span><br
- style="font-family: monospace;">
-<span style="font-family: monospace;">observer.0 4 2.781383346547945
-0.09732025754171601 50.5000000000003 64.13883082352008
-36.735682385156494 50000 50000</span><br style="font-family: monospace;">
-<span style="font-family: monospace;">Simulator: cycle 4 done</span><br
- style="font-family: monospace;">
-<span style="font-family: monospace;">observer.0 5 1.5585321453695304
-0.05453284602521845 50.49999999999991 57.95305057712483
-42.365281065863776 50000 50000</span><br style="font-family: monospace;">
-<span style="font-family: monospace;">Simulator: cycle 5 done</span><br
- style="font-family: monospace;">
-<span style="font-family: monospace;">observer.0 6 0.8817544926685187
-0.030852480087496692 50.49999999999987 55.79705503651233
-45.179259619159374 50000 50000</span><br style="font-family: monospace;">
-<span style="font-family: monospace;">Simulator: cycle 6 done</span><br
- style="font-family: monospace;">
-<span style="font-family: monospace;">observer.0 7 0.49662960256781125
-0.01737700805778026 50.49999999999985 53.475386753133584
-47.561197221137206 50000 50000</span><br style="font-family: monospace;">
-<span style="font-family: monospace;">Simulator: cycle 7 done</span><br
- style="font-family: monospace;">
-<span style="font-family: monospace;">observer.0 8 0.2791489898463698
-0.009767388453690191 50.50000000000021 52.01212279333069
-48.98195197062567 50000 50000</span><br style="font-family: monospace;">
-<span style="font-family: monospace;">Simulator: cycle 8 done</span><br
- style="font-family: monospace;">
-<span style="font-family: monospace;">observer.0 9 0.15665356159770558
-0.005481288646686366 50.500000000000206 51.43402168091945
-49.59630792352769 50000 50000</span><br style="font-family: monospace;">
-<span style="font-family: monospace;">Simulator: cycle 9 done</span><br
- style="font-family: monospace;">
-<span style="font-family: monospace;">observer.0 10 0.08798088416341113
-0.003078440199966682 50.49999999999999 51.01528062721777
-50.029362269648146 50000 50000</span><br style="font-family: monospace;">
-<span style="font-family: monospace;">Simulator: cycle 10 done</span><br
- style="font-family: monospace;">
-<span style="font-family: monospace;">observer.0 11 0.04955901607015236
-0.001734063811609196 50.49999999999944 <span
- style="text-decoration: underline;">50.782237280656425
-50.204518029962884</span> 50000 50000</span><br
- style="font-family: monospace;">
-<span style="font-family: monospace;">Simulator: cycle 11 done</span><br
- style="font-family: monospace;">
-<span style="font-family: monospace;">observer.0 12 0.02787478949963527
-9.753354194748226E-4 50.4999999999994 50.65073784826623
-50.350009217606306 50000 50000</span><br style="font-family: monospace;">
-<span style="font-family: monospace;">Simulator: cycle 12 done</span><br
- style="font-family: monospace;">
-<span style="font-family: monospace;">observer.0 13 0.01566887602462972
-5.48252024302504E-4 50.499999999999396 50.59137786021026
-50.3826755046714 50000 50000</span><br style="font-family: monospace;">
-<span style="font-family: monospace;">Simulator: cycle 13 done</span><br
- style="font-family: monospace;">
-<span style="font-family: monospace;">observer.0 14
-0.008869003234550827 3.103253206703991E-4 50.49999999999983
-50.550065544787316 50.43478266999748 50000 50000</span><br
- style="font-family: monospace;">
-<span style="font-family: monospace;">Simulator: cycle 14 done</span><br
- style="font-family: monospace;">
-<span style="font-family: monospace;">observer.0 15
-0.004970950314615429 1.7393293356914426E-4 50.50000000000042
-50.52980114494357 50.47146250394515 50000 50000</span><br
- style="font-family: monospace;">
-<span style="font-family: monospace;">Simulator: cycle 15 done</span><br
- style="font-family: monospace;">
-<span style="font-family: monospace;">observer.0 16
-0.0027954164029263973 9.781127243994765E-5 50.49999999999947
-50.51730103735326 50.48227152068037 50000 50000</span><br
- style="font-family: monospace;">
-<span style="font-family: monospace;">Simulator: cycle 16 done</span><br
- style="font-family: monospace;">
-<span style="font-family: monospace;">observer.0 17
-0.0015800119643194935 5.5284422220119566E-5 50.50000000000025
-50.50856931736749 50.49058939793816 50000 50000</span><br
- style="font-family: monospace;">
-<span style="font-family: monospace;">Simulator: cycle 17 done</span><br
- style="font-family: monospace;">
-<span style="font-family: monospace;">observer.0 18 8.92255216973727E-4
-3.1219899125590015E-5 50.50000000000017 50.50549577966541
-50.49510397037146 50000 50000</span><br style="font-family: monospace;">
-<span style="font-family: monospace;">Simulator: cycle 18 done</span><br
- style="font-family: monospace;">
-<span style="font-family: monospace;">observer.0 19
-5.033106630068788E-4 1.7610777532020047E-5 50.5 50.50309546455102
-50.497507949230894 50000 50000</span><br style="font-family: monospace;">
-<span style="font-family: monospace;">Simulator: cycle 19 done</span><br>
+<span style="font-family: monospace;">Simulator: loading configuration<br>
+ConfigProperties: File example/config-example1.txt loaded.<br>
+Simulator: starting experiment 0<br>
+Simulator: resetting overlay network<br>
+Network: no node defined, using GeneralNode<br>
+Simulator: running initializers<br>
+- Running initializer 0: class peersim.init.WireRegularRandom<br>
+- Running initializer 1: class
+example.loadbalance.LinearDistributionInitializer<br>
+Simulator: loaded observers [observer.0]<br>
+Simulator: loaded modifiers []<br>
+Simulator: starting simulation<br>
+observer.0 0 28.57969570575493 1.0 50.49999999999998 100.0 1.0 50000
+50000<br>
+Simulator: cycle 0 done<br>
+observer.0 1 15.744375112466432 0.5508937280006126 50.500000000000185
+99.64260285205704 1.993979879597592 50000 50000<br>
+Simulator: cycle 1 done<br>
+observer.0 2 8.77307045667709 0.3069686446980087 50.50000000000009
+86.06868887377748 11.048700974019479 50000 50000<br>
+Simulator: cycle 2 done<br>
+observer.0 3 4.909681896225926 0.17178915922597776 50.499999999999794
+74.03587220181905 22.769780085543115 50000 50000<br>
+Simulator: cycle 3 done<br>
+observer.0 4 2.7403309556342257 0.09588383948687113 50.500000000000426
+65.43171163227953 33.427798365537626 50000 50000<br>
+Simulator: cycle 4 done<br>
+observer.0 5 1.538286672869342 0.053824459459153234 50.49999999999973
+59.82515640226745 42.62594413722992 50000 50000<br>
+Simulator: cycle 5 done<br>
+observer.0 6 0.866397905938638 0.03031515502679675 50.50000000000007
+55.26130498088358 45.94325388089578 50000 50000<br>
+Simulator: cycle 6 done<br>
+observer.0 7 0.485544546348093 0.016989143318636584 50.4999999999996
+53.34350686753126 47.92146780934889 50000 50000<br>
+Simulator: cycle 7 done<br>
+observer.0 8 0.27325943590085566 0.009561313693267594
+50.499999999999936 51.953084686348944 49.100818456230826 50000 50000<br>
+Simulator: cycle 8 done<br>
+observer.0 9 0.15407802503043988 0.005391170942362905
+50.499999999999545 51.464657035213264 49.43879802069546 50000 50000<br>
+Simulator: cycle 9 done<br>
+observer.0 10 0.08620333588583261 0.0030162440067013846
+50.500000000000156 51.099961126584006 49.98131655222747 50000 50000<br>
+Simulator: cycle 10 done<br>
+observer.0 11 0.04848730705794467 0.0016965648464962858
+50.4999999999997 50.816956855036466 50.22577832539035 50000 50000<br>
+Simulator: cycle 11 done<br>
+observer.0 12 0.027214744249562235 9.522405182250473E-4
+50.499999999999524 <span style="text-decoration: underline;">50.65301253758219
+50.29955826845794</span> 50000 50000<br>
+Simulator: cycle 12 done<br>
+observer.0 13 0.015246845383671713 5.334852246380476E-4
+50.50000000000032 50.59479421528527 50.38736504947625 50000 50000<br>
+Simulator: cycle 13 done<br>
+observer.0 14 0.008587160488627146 3.004636780264248E-4
+50.499999999999815 50.543660258997136 50.44122418780829 50000 50000<br>
+Simulator: cycle 14 done<br>
+observer.0 15 0.004850437249792671 1.697161964119851E-4
+50.50000000000037 50.52544970665122 50.46753516145482 50000 50000<br>
+Simulator: cycle 15 done<br>
+observer.0 16 0.0027428141606463717 9.59707265215587E-5
+50.50000000000047 50.515509548126744 50.48203242786418 50000 50000<br>
+Simulator: cycle 16 done<br>
+observer.0 17 0.001550607390364058 5.4255559832703925E-5
+50.4999999999997 50.50982384430303 50.49003444731606 50000 50000<br>
+Simulator: cycle 17 done<br>
+observer.0 18 8.746858998689715E-4 3.0605150904137896E-5
+50.5000000000003 50.50564226243819 50.495105203016905 50000 50000<br>
+Simulator: cycle 18 done<br>
+</span><span style="font-family: monospace;"></span><br>
 <br>
 The observer component produces many numbers, but looking at 6th and
 7th data columns (respectively the maximum of averages and the minimum
 of averages) it's easy to see how the variance decreases very quickly.
-At cicle 11 (look at the underlined data), quite all the nodes has a
+At cicle 12 (look at the underlined data), quite all the nodes has a
 very good approximation of the real average (50).<br>
 <br>
 Try to experiment with different numbers and then to change the init
@@ -569,13 +518,15 @@ size (it shrinks it by cutting out 500 nodes each time).&nbsp; &nbsp; <br>
 <span style="font-family: monospace;">6</span><br
  style="font-family: monospace;">
 <span style="font-family: monospace;">7&nbsp; protocol.0
-newscast.SimpleNewscast</span><br style="font-family: monospace;">
+example.newscast.SimpleNewscast</span><br
+ style="font-family: monospace;">
 <span style="font-family: monospace;">8&nbsp; protocol.0.cache 20</span><br
  style="font-family: monospace;">
 <span style="font-family: monospace;">9</span><br
  style="font-family: monospace;">
 <span style="font-family: monospace;">10 protocol.1
-aggregation.AverageFunction</span><br style="font-family: monospace;">
+example.aggregation.AverageFunction</span><br
+ style="font-family: monospace;">
 <span style="font-family: monospace;">11 protocol.1.linkable 0</span><br
  style="font-family: monospace;">
 <span style="font-family: monospace;">12</span><br
@@ -589,12 +540,12 @@ peersim.init.WireRegularRandom</span><br style="font-family: monospace;">
 <span style="font-family: monospace;">16 </span><br
  style="font-family: monospace;">
 <span style="font-family: monospace;">17 #init.1
-aggregation.PeakDistributionInitializer</span><br
+example.aggregation.PeakDistributionInitializer</span><br
  style="font-family: monospace;">
 <span style="font-family: monospace;">18 #init.1.value 1</span><br
  style="font-family: monospace;">
 <span style="font-family: monospace;">19 init.1
-loadbalance.LinearDistributionInitializer</span><br
+example.loadbalance.LinearDistributionInitializer</span><br
  style="font-family: monospace;">
 <span style="font-family: monospace;">20 init.1.protocol 1</span><br
  style="font-family: monospace;">
@@ -605,7 +556,8 @@ loadbalance.LinearDistributionInitializer</span><br
 <span style="font-family: monospace;">23</span><br
  style="font-family: monospace;">
 <span style="font-family: monospace;">24 observer.0
-aggregation.AverageObserver</span><br style="font-family: monospace;">
+example.aggregation.AverageObserver</span><br
+ style="font-family: monospace;">
 <span style="font-family: monospace;">25 observer.0.protocol 1</span><br
  style="font-family: monospace;">
 <span style="font-family: monospace;">26</span><br

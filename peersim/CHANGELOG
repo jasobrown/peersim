@@ -3,6 +3,7 @@ JM 9/11/2004
   is that FastConfig is automatic, it reads and stores "linkable" config lines
   in a transparent fashion to the protocols.
 - toString method to SingleValueHolder, and made value protected
+- stripped Node interface to those methods that were actually used
 
 JM 9/11/2004
 - added nextLong(long) to CommonRandom

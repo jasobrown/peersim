@@ -26,24 +26,18 @@ package peersim.core;
 * It is the protocols that do the interesting job.
 */
 public interface Node extends Fallible, Cloneable {
-// XXX ugly design with the indexes but efficiency is first
 
 	/** 
 	* prefix of the parameters that defines protocols.
 	*/
 	public static final String PAR_PROT = "protocol";
 
-
 	/**
-	* Returns the i-th protocol in this node.
+	* Returns the i-th protocol in this node. If i is not a valid protocol
+	* id (negative or larger than or equal to the number of protocols),
+	* then throws IndexOutOfBoundsException.
 	*/
 	public Protocol getProtocol(int i);
-
-	/**
-	 *  Substitutes the i-th protocol of this node with the specified
-	 *  protocol.
-	 */
-	public void setProtocol(int i, Protocol protocol);
 
 	/**
 	* Returns the number of protocols included in this node.
@@ -51,22 +45,17 @@ public interface Node extends Fallible, Cloneable {
 	public int protocolSize();
 
 	/**
-	* Sets an integer identifier for this node. Applications should
-	* not use this method. It is provided for the core system.
-	* It is public only because in a java interface it is not possible
-	* to define non-public methods, and other solutions, like adapters
-	* supporting indexing increase memory consumption which is a great
-	* problem.
+	* Sets the index of this node in the internal representation of the
+	* node list. Applications should
+	* not use this method. Using this mehtod will result in undefined
+	* behvior. It is provided for the core system.
 	*/
 	public void setIndex(int index);
 	
 	/**
-	* Returns an integer identifier for this node. Applications
-	* will not need this method. It is provided for the core system.
-	* It is public only becuase in a java interface it is not possible
-	* to define non-public methods, and other solutions, like adapters
-	* supporting indexing increase memory consumption which is a great
-	* problem.
+	* Returns the index of this node. It is such that
+	* <code>Network.get(n.getIndex())<code> returns n.
+	* @see Network#get
 	*/
 	public int getIndex();
 
@@ -74,50 +63,5 @@ public interface Node extends Fallible, Cloneable {
 	* We have to include this to change the access right to public.
 	*/
 	public Object clone() throws CloneNotSupportedException;
-
-// XXX Additional methods to simplify coding. It is somewhat ugly
-// because if Linkable changes, we have to change this too, but
-// it saves some typing. Any better idea to save typing?
-
-	/**
-	* Returns the size of the neighbor list of the specified protocol.
-	* 
-	* @param protocolId the protocol to be used for this method
-	*/
-	public int degree(int protocolId);
-
-	/**
-	* Returns the neighbor with the given index. The contract is that
-	* listing the elements from index 0 to index degree()-1 should list
-	* each element exactly once if this object is not modified in the
-	* meantime.
-	* 
-	* @param protocolId the protocol to be used for this method
-	*/
-	public Node getNeighbor(int protocolId, int i);
-
-	public void setNeighbor(int protocolId, int i, Node node);
-
-	/**
-	*  Add a neighbor to the current set of neighbors.
-	* 
-	*  @return true if the neighbor has been inserted; false if the 
-	*    node is already a neighbor of this node
-	*/
-	public boolean addNeighbor(int protocolId, Node neighbour);
-
-	/**
-	* Returns true if the given node is a member of the neighbor set.
-	*/
-	public boolean contains(int protocolId, Node neighbor);
-	
-	/**
-	* A possibility for optimization. An implementation should try to
-	* compress its internal representation. Normally this should be called
-	* when no increase in the expected size of the neighborhood can be
-	* expected.
-	*/
-	public void pack(int protocolId);
-
 }
 

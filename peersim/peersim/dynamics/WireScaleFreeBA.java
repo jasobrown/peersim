@@ -79,6 +79,14 @@ public WireScaleFreeBA(String prefix)
 // Methods
 ////////////////////////////////////////////////////////////////////////////
 
+/** to save typing */
+private boolean addNeighbor(Node n, int pid, Node n2) {
+
+	return ((Linkable)n.getProtocol(pid)).addNeighbor(n2);
+}
+
+// -------------------------------------------------------------------------
+
 // Comment inherited from interface
 public void modify() 
 {
@@ -90,8 +98,8 @@ public void modify()
 		Node ni = Network.get(i);
 		dest[i*2] = ne;
 		dest[i*2+1] = ni;
-		ni.addNeighbor(pid, ne);
-		ne.addNeighbor(pid, ni);
+		addNeighbor(ni, pid, ne);
+		addNeighbor(ne, pid, ni);
 	}
 	
 	int len=edges*2;
@@ -102,7 +110,8 @@ public void modify()
 			Node nk;
 			do {
 				nk = dest[CommonRandom.r.nextInt(len)]; 
-				stop = ni.addNeighbor(pid, nk) && nk.addNeighbor(pid, ni);
+				stop = addNeighbor(ni, pid, nk) &&
+					addNeighbor(nk, pid, ni);
 			} while (!stop);
 			dest[len++] = ni;
 			dest[len++] = nk;

@@ -79,6 +79,15 @@ public WireScaleFreeDM(String prefix)
 // Methods
 ////////////////////////////////////////////////////////////////////////////
 
+/** to save typing */
+private boolean addNeighbor(Node n, int pid, Node n2) {
+
+	return ((Linkable)n.getProtocol(pid)).addNeighbor(n2);
+}
+
+// -------------------------------------------------------------------------
+
+
 // Comment inherited from interface
 public void modify() 
 {
@@ -94,8 +103,8 @@ public void modify()
 		for (int j=0; j < clique; j++) {
 			if (i != j) {
 				Node nj = Network.get(j);
-				ni.addNeighbor(pid, nj);
-				nj.addNeighbor(pid, ni);
+				addNeighbor(ni, pid, nj);
+				addNeighbor(nj, pid, ni);
 				links[len*2] = ni;
 				links[len*2+1] = nj;
 				len++;
@@ -110,10 +119,10 @@ public void modify()
 			int edge = CommonRandom.r.nextInt(len);
 			Node nk = links[edge*2];
 			Node nj = links[edge*2+1];
-			ni.addNeighbor(pid, nk);
-			nk.addNeighbor(pid, ni);
-			nj.addNeighbor(pid, nk);
-			nk.addNeighbor(pid, nj);
+			addNeighbor(ni, pid, nk);
+			addNeighbor(nk, pid, ni);
+			addNeighbor(nj, pid, nk);
+			addNeighbor(nk, pid, nj);
 			links[len*2] = ni;
 			links[len*2+1] = nk;
 			len++;

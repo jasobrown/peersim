@@ -101,16 +101,21 @@ protected final boolean precycle;
 
 public Scheduler(String prefix) {
 
-  int at = Configuration.getInt(prefix+"."+PAR_AT,-1);
-  if (at < 0) {
+	int at = Configuration.getInt(prefix+"."+PAR_AT,-1);
+	if( at < 0 )
+	{
 		step = Configuration.getInt(prefix+"."+PAR_STEP,1);
 		from = Configuration.getInt(prefix+"."+PAR_FROM,0);
-		until = Configuration.getInt(prefix+"."+PAR_UNTIL,Integer.MAX_VALUE);
-  } else {
-  	from = at;
-  	until = at+1;
-  	step = 1;
-  }
+		until = Configuration.getInt(
+				prefix+"."+PAR_UNTIL,Integer.MAX_VALUE);
+	}
+	else
+	{
+		from = at;
+		until = at+1;
+		step = 1;
+	}
+	
 	fin = Configuration.contains(prefix+"."+PAR_FINAL);
 	precycle = Configuration.contains(prefix+"."+PAR_PRECYCLE);
 }

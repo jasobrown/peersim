@@ -27,17 +27,16 @@ package peersim.config;
 public class MissingParameterException
 extends RuntimeException
 {
-
-	/**
-	 * 
-	 */
-	public MissingParameterException(String name, Exception e)
+	public MissingParameterException(String name)
 	{
-		super("Parameter \"" + name + "\" not found at " + 
-		e.getStackTrace()[1].getClassName()+"."+
-		e.getStackTrace()[1].getMethodName()+":"+
-		e.getStackTrace()[1].getLineNumber());
-		//e.printStackTrace();
+		super("Parameter \"" + name + "\" not found");
 	}
 
+	public String getMessage() {
+
+		return super.getMessage()+" at "+
+			getStackTrace()[1].getClassName()+"."+
+			getStackTrace()[1].getMethodName()+":"+
+			getStackTrace()[1].getLineNumber();
+	}
 }

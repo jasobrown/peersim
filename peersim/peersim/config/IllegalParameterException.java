@@ -27,26 +27,17 @@ package peersim.config;
 public class IllegalParameterException
 extends RuntimeException
 {
-
-	/**
-	 * 
-	 */
-	public IllegalParameterException(String name, String message, Exception e)
-	{
-		super("Parameter \"" + name + "\": " + message +  
-		" [at " + 
-		e.getStackTrace()[1].getClassName()+"."+
-		e.getStackTrace()[1].getMethodName()+":"+
-		e.getStackTrace()[1].getLineNumber() + "]");
-		//e.printStackTrace();
-	}
-
-	/**
-	 * 
-	 */
 	public IllegalParameterException(String name, String message)
 	{
-		super("Parameter \"" + name + "\": " + message);
+		super("Parameter \"" + name + "\": " + message); 
 	}
 
+	public String getMessage() {
+
+		return super.getMessage()+" at "+
+			getStackTrace()[1].getClassName()+"."+
+			getStackTrace()[1].getMethodName()+":"+
+			getStackTrace()[1].getLineNumber();
+	}
 }
+

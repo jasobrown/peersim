@@ -61,7 +61,6 @@ protected int maxsize;
 
 protected NodeInitializer[] inits;
 
-protected String prefix;
 
 // ====================== protected methods ============================
 // ===================================================================
@@ -126,7 +125,18 @@ protected void remove( int n ) {
 
 public DynamicNetwork(String prefix) 
 {
-	this.prefix = prefix;
+	add = Configuration.getDouble(prefix+"."+PAR_ADD);
+	substitute = Configuration.contains(prefix+"."+PAR_SUBST);
+	
+	Object[] tmp = Configuration.getInstanceArray(prefix+"."+PAR_INIT);
+	inits = new NodeInitializer[tmp.length];
+	for(int i=0; i<tmp.length; ++i)
+	{
+		inits[i] = (NodeInitializer)tmp[i];
+	}
+	maxsize = Configuration.getInt(prefix+"."+PAR_MAX,
+			Network.getCapacity());
+	minsize = Configuration.getInt(prefix+"."+PAR_MIN,0);
 }
 
 
@@ -140,28 +150,15 @@ public DynamicNetwork(String prefix)
 */
 public final void modify() 
 {
-	add = Configuration.getDouble(prefix+"."+PAR_ADD);
-	substitute = Configuration.contains(prefix+"."+PAR_SUBST);
-	
-	Object[] tmp = Configuration.getInstanceArray(prefix+"."+PAR_INIT);
-	inits = new NodeInitializer[tmp.length];
-	for(int i=0; i<tmp.length; ++i)
-	{
-		inits[i] = (NodeInitializer)tmp[i];
-	}
-	maxsize = Configuration.getInt(prefix+"."+PAR_MAX,
-			Network.getCapacity());
-	minsize = Configuration.getInt(prefix+"."+PAR_MIN,0);
-
-
-  int tochange;
-  if (add==0)
-    return;
-  if (!substitute) {
-  	if ( (maxsize <= Network.size() && add>0) || 
-				 (minsize >= Network.size() && add<0) )
+	int tochange;
+	if (add==0)
 		return;
-  }
+	if (!substitute) {
+		if ( (maxsize <= Network.size() && add>0) || 
+			(minsize >= Network.size() && add<0) )
+		return;
+	}
+	
 	int toadd = 0;
 	int toremove = 0;
 	

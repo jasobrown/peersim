@@ -76,17 +76,13 @@ public static int getInt( String name, int def ) {
 public static int getInt( String name ) {
 
 	String s = config.getProperty(name);
-	if (s == null || s.equals("")) {
-		try {
-			throw new Exception();
-		} catch (Exception e){
-			throw new MissingParameterException(name, e);
-		}
-	}
+	if (s == null || s.equals(""))
+		throw new MissingParameterException(name);
+	
 	try
 	{
-		// The value is parsed as a double and converted to an int, because it
-		// can have been obtained from a range.
+		// The value is parsed as a double and converted to an int,
+		// because it can have been obtained from a range.
 		return (int) Double.parseDouble(s);
 	}
 	catch (NumberFormatException e)
@@ -95,15 +91,15 @@ public static int getInt( String name ) {
 		// Check whether the value can be interpreted as parameter name
 		String ref = config.getProperty(s);
 		if (ref == null || ref.equals("")) {
-			throw new IllegalParameterException(name, "Value " + s + 
-				" is not an int");
+			throw new IllegalParameterException(name,
+				"Value " + s + " is not an int");
 		}
-		// It is a parameter name; we try to obtain the corresponding value.
+		// It is a parameter name; we try to obtain its value.
 		try {
 			return (int) Double.parseDouble(ref);
 		} catch (NumberFormatException e1) {
-			throw new IllegalParameterException(name, "Value " + s + 
-				" is not an int");	
+			throw new IllegalParameterException(name,
+				"Value " + s + " is not an int");	
 		}
 	}
 
@@ -137,17 +133,13 @@ public static long getLong( String name, long def ) {
 public static long getLong( String name ) {
  
 	String s = config.getProperty(name);
-	if (s == null || s.equals("")) {
-		try {
-			throw new Exception();
-		} catch (Exception e){
-			throw new MissingParameterException(name, e);
-		}
-	}
+	if (s == null || s.equals(""))
+		throw new MissingParameterException(name);
+	
 	try
 	{
-		// The value is parsed as a double and converted to a long, because it
-		// can have been obtained from a range.
+		// The value is parsed as a double and converted to a long,
+		// because it can have been obtained from a range.
 		return (long) Double.parseDouble(s);
 	}
 	catch (NumberFormatException e)
@@ -155,15 +147,15 @@ public static long getLong( String name ) {
 		// Check whether the value can be interpreted as parameter name
 		String ref = config.getProperty(s);
 		if (ref == null || ref.equals("")) {
-			throw new IllegalParameterException(name, "Value " + s + 
-				" is not an long");
+			throw new IllegalParameterException(name,
+				"Value " + s + " is not an long");
 		}
-		// It is a parameter name; we try to obtain the corresponding value.
+		// It is a parameter name; we try to obtain its value.
 		try {
 			return (long) Double.parseDouble(ref);
 		} catch (NumberFormatException e1) {
-			throw new IllegalParameterException(name, "Value " + s + 
-				"is not an long");	
+			throw new IllegalParameterException(name,
+				"Value " + s + "is not an long");	
 		}
 	}
 }
@@ -197,13 +189,9 @@ public static double getDouble( String name, double def ) {
 public static double getDouble( String name ) {
 
 	String s = config.getProperty(name);
-	if (s == null || s.equals("")) {
-		try {
-			throw new Exception();
-		} catch (Exception e){
-			throw new MissingParameterException(name, e);
-		}
-	}
+	if (s == null || s.equals(""))
+		throw new MissingParameterException(name);
+	
 	try
 	{
 		return Double.parseDouble(s);
@@ -213,15 +201,15 @@ public static double getDouble( String name ) {
 		// Check whether the value can be interpreted as parameter name
 		String ref = config.getProperty(s);
 		if (ref == null || ref.equals("")) {
-			throw new IllegalParameterException(name, "Value " + s + 
-				" is not a double");
+			throw new IllegalParameterException(name,
+				"Value " + s + " is not a double");
 		}
-		// It is a parameter name; we try to obtain the corresponding value.
+		// It is a parameter name; we try to obtain its value.
 		try {
 			return Double.parseDouble(ref);
 		} catch (NumberFormatException e1) {
-			throw new IllegalParameterException(name, "Value " + s + 
-			  "is not a double");	
+			throw new IllegalParameterException(name,
+				"Value " + s + "is not a double");	
 		}
 	}
 }
@@ -254,14 +242,8 @@ public static String getString( String name, String def ) {
 public static String getString( String name ) {
 
 	String result = config.getProperty(name);
-	if( result == null )
-	{
-		try {
-			throw new Exception();
-		} catch (Exception e) {
-			throw new MissingParameterException(name, e);
-		}
-	}
+	if( result == null ) throw new MissingParameterException(name);
+	
 	return result;
 }
 
@@ -278,14 +260,7 @@ public static String getString( String name ) {
 public static Object getInstance( String name ) {
 
 	String classname = config.getProperty(name);
-	if (classname == null)
-	{
-		try {
-			throw new Exception();
-		} catch (Exception e) {
-			throw new MissingParameterException(name, e);
-		}
-	}
+	if (classname == null) throw new MissingParameterException(name);
 	
 	try
 	{
@@ -296,13 +271,14 @@ public static Object getInstance( String name ) {
 		return cons.newInstance( objpars );
 	}
 	catch ( ClassNotFoundException e) {
-		throw new IllegalParameterException(name, "Class " + classname + 
-			" not found", e);
+		throw new IllegalParameterException(name,
+			"Class " + classname + " not found");
 	}
 	catch( NoSuchMethodException e )
 	{
-		throw new IllegalParameterException(name, "Class " + classname + 
-		  " has no " + classname + ("(String) or " + classname + 
+		throw new IllegalParameterException(name,
+			"Class " + classname + " has no " + classname +
+			("(String) or " + classname + 
 			"(String, Object) constructors"));
 	}
 	catch ( InvocationTargetException e) 
@@ -315,7 +291,7 @@ public static Object getInstance( String name ) {
 	}
 	catch( Exception e )
 	{
-		throw new IllegalParameterException(name, e.getMessage(), e);
+		throw new IllegalParameterException(name, e.getMessage());
 	} 
 }
 
@@ -337,14 +313,7 @@ public static Object getInstance( String name, Object obj ) {
 // constructor and not using the default (string) constructor
 
 	String classname = config.getProperty(name);
-	if (classname == null)
-	{
-		try {
-			throw new Exception();
-		} catch (Exception e) {
-			throw new MissingParameterException(name, e);
-		}
-	}
+	if (classname == null) throw new MissingParameterException(name);
 	
 	try
 	{
@@ -359,8 +328,8 @@ public static Object getInstance( String name, Object obj ) {
 		return getInstance( name );
 	}
 	catch ( ClassNotFoundException e) {
-		throw new IllegalParameterException(name, "Class " + classname + 
-			" not found");
+		throw new IllegalParameterException(name,
+			"Class " + classname + " not found");
 	}
 	catch ( InvocationTargetException e) 
 	{
@@ -373,7 +342,7 @@ public static Object getInstance( String name, Object obj ) {
 	}
 	catch( Exception e )
 	{
-		throw new IllegalParameterException(name, e.getMessage(), e);
+		throw new IllegalParameterException(name, e.getMessage());
 	} 
 }
 

@@ -1,0 +1,12 @@
+VERSION 0.0 RELEASED
+
+fixed some config files in lpbcast and scamp packages
+
+added curent node to CommonState. When a protocol is executing, it is
+the node hosting the protocol. Modified simulators too to record this info.
+
+fixed bug in GeneralNode with failstate handling
+
+Made NeighborListGraph public
+
+

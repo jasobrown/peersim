@@ -59,7 +59,7 @@ private class ProtocolData
 	/**
 	 * Fixed value exchanged by a malicious node.
 	 */
-	private float fixed;
+	private double fixed;
 
 }
 	
@@ -109,7 +109,7 @@ public MaliciousSecureAverageAP(String prefix)
 	p.pid = CommonState.getPid();
 	p.hid = Configuration.getPid(prefix+"."+PAR_HID);
 	p.exchanges = Configuration.getInt(prefix+"."+PAR_EXCHANGES, 1);
-	p.fixed = (float) Configuration.getDouble(prefix+"."+PAR_FIXED, 0);
+	p.fixed = (double) Configuration.getDouble(prefix+"."+PAR_FIXED, 0);
 }
 
 public Object clone() throws CloneNotSupportedException
@@ -150,15 +150,15 @@ public void nextCycle(Node node, int pid)
 //--------------------------------------------------------------------------
 
 // Comment inherited from interface
-public void deliverRequest(Node initiator, Node receiver, float rvalue)
+public void deliverRequest(Node initiator, Node receiver, double rvalue)
 {
 	/* Update history */
 	History history = (History) receiver.getProtocol(p.hid);
 	history.addReceived(initiator, rvalue, CommonState.getCycle());
 
 	/* Update the value */ // XXX Is this actually needed?
-	float lvalue = this.value;
-	this.value = (lvalue + (float) rvalue)/2;
+	double lvalue = this.value;
+	this.value = (lvalue + rvalue)/2;
 
 	/* Deliver the response, if possible */
   if (canDeliverResponse(initiator)) { 
@@ -172,7 +172,7 @@ public void deliverRequest(Node initiator, Node receiver, float rvalue)
 //--------------------------------------------------------------------------
 
 // Comment inherited from interface
-public void deliverResponse(Node initiator, Node receiver, float value)
+public void deliverResponse(Node initiator, Node receiver, double value)
 {
 	// System.err.print("+");
 	// Update value

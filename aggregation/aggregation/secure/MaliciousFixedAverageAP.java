@@ -65,7 +65,7 @@ private int exchanges;
 /**
  * Fixed value exchanged by a malicious node.
  */
-private float fixed;
+private double fixed;
 
 
 //--------------------------------------------------------------------------
@@ -79,7 +79,7 @@ public MaliciousFixedAverageAP(String prefix)
 {
 	super(prefix);
 	exchanges = Configuration.getInt(prefix+"."+PAR_EXCHANGES, 1);
-	fixed = (float) Configuration.getDouble(prefix+"."+PAR_FIXED, 0);
+	fixed = (double) Configuration.getDouble(prefix+"."+PAR_FIXED, 0);
 }
 
 //--------------------------------------------------------------------------
@@ -105,10 +105,10 @@ public void nextCycle(Node node, int pid)
 //--------------------------------------------------------------------------
 
 // Comment inherited from interface
-public void deliverRequest(Node initiator, Node receiver, float rvalue)
+public void deliverRequest(Node initiator, Node receiver, double rvalue)
 {
 	/* Update the value */
-	float lvalue = this.value;
+	double lvalue = this.value;
 	this.value = (lvalue + rvalue)/2;
 
 	if (canDeliverResponse(initiator)) {
@@ -121,7 +121,7 @@ public void deliverRequest(Node initiator, Node receiver, float rvalue)
 //--------------------------------------------------------------------------
 
 // Comment inherited from interface
-public void deliverResponse(Node initiator, Node receiver, float value)
+public void deliverResponse(Node initiator, Node receiver, double value)
 {
 	// Update value
 	this.value = (this.value+value)/2;

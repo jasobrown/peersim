@@ -134,7 +134,7 @@ public void nextCycle(Node node, int pid)
 //--------------------------------------------------------------------------
 
 // Comment inherited from interface
-public void deliverRequest(Node initiator, Node receiver, float rvalue)
+public void deliverRequest(Node initiator, Node receiver, double rvalue)
 {
 	/* Nodes that have been created during the current epoch do not
 	 * partecipate in the aggregation protocol
@@ -171,7 +171,7 @@ public void deliverRequest(Node initiator, Node receiver, float rvalue)
 	}
 
 	/* Update the value */
-	float lvalue = this.value;
+	double lvalue = this.value;
 	this.value = (lvalue + rvalue)/2;
 	
 	/* Deliver the response, if possible */
@@ -186,7 +186,7 @@ public void deliverRequest(Node initiator, Node receiver, float rvalue)
 //--------------------------------------------------------------------------
 
 // Comment inherited from interface
-public void deliverResponse(Node initiator, Node receiver, float rvalue)
+public void deliverResponse(Node initiator, Node receiver, double rvalue)
 {
 	// Update value
 	value = (value+rvalue)/2;

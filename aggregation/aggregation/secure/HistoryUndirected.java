@@ -71,7 +71,7 @@ Node[] snodes;
 int[] scycles;
 
 /** Values that have been received in the exchanges */
-float[] svalues;
+double[] svalues;
 
 /** Position at which to insert the next received exchange */
 int spos;
@@ -88,7 +88,7 @@ Node[] dnodes;
 int[] dcycles;
 
 /** Values that have been sent in the exchanges */
-float[] dvalues;
+double[] dvalues;
 
 /** Position at which to insert the next received exchange */
 int dpos;
@@ -119,10 +119,10 @@ public HistoryUndirected(String prefix)
 	int rsize = Configuration.getInt(prefix + "." + PAR_RSIZE, size);
 	int isize = Configuration.getInt(prefix + "." + PAR_ISIZE, size);
 	snodes = new Node[rsize];
-	svalues = new float[rsize];
+	svalues = new double[rsize];
 	scycles = new int[rsize];
 	dnodes = new Node[isize];
-	dvalues = new float[isize];
+	dvalues = new double[isize];
 	dcycles = new int[isize];
 	spos = 0;
 	dpos = 0;
@@ -138,10 +138,10 @@ public Object clone() throws CloneNotSupportedException
 {
 	HistoryDirected h = (HistoryDirected) super.clone();
 	h.snodes = new Node[snodes.length];
-	h.svalues = new float[snodes.length];
+	h.svalues = new double[snodes.length];
 	h.scycles = new int[snodes.length];
 	h.dnodes = new Node[dnodes.length];
-	h.dvalues = new float[dnodes.length];
+	h.dvalues = new double[dnodes.length];
 	h.dcycles = new int[dnodes.length];
 	h.spos = 0;
 	h.dpos = 0;
@@ -158,7 +158,7 @@ public void addReceived(Node source, double value, int cycle)
 {
 	snodes[spos] = source;
 	scycles[spos] = cycle;
-	svalues[spos] = (float) value;
+	svalues[spos] = (double) value;
 	spos = (spos + 1) % snodes.length;
 }
 	
@@ -169,7 +169,7 @@ public void addInitiated(Node destination, double value, int cycle)
 {
 	dnodes[dpos] = destination;
 	dcycles[dpos] = cycle;
-	dvalues[dpos] = (float) value;
+	dvalues[dpos] = (double) value;
 	dpos = (dpos + 1) % dnodes.length;
 }
 

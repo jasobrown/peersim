@@ -120,42 +120,43 @@ public MultipleCountingObserver(String name)
 // Comment inherited from interface
 public boolean analyze()
 {
-	long time = peersim.core.CommonState.getTime();
-	if ((time % epoch) == 0) {
-		initvar = -1.0;
-	}
+	int time = peersim.core.CommonState.getCycle();
 	
 	/* Initialization */
 	final int len = Network.size();
 	IncrementalStats stats = new IncrementalStats();
 
 	/* Compute max, min, average */
+	int upnodes = 0;
 	for (int i=0; i < len; i++) {
 		Node node = Network.get(i);
+		if (!node.isUp())
+			continue;
+		
+		upnodes++;
 		MultipleValues protocol = (MultipleValues) node.getProtocol(pid);
-
 		if (!protocol.isNew()) {
 			double sum = 0;
 			int count = 0;
 			for (int j=0; j < protocol.size(); j++) {
-				//if (protocol.getValue(j) > 0) {
-					sum += protocol.getValue(j);
-					count++;
-				// }
+				sum += protocol.getValue(j);
+				count++;
 			}
 			stats.add(sum/count);
 		}
 
 	}
 	double var = stats.getVar();
-	if (initvar < 0 || Double.isNaN(initvar))
-	{
+	if (time % epoch == 1)
+		initvar = -1;
+	if (initvar < 0 && !Double.isNaN(var))
 		initvar = var;
-	}
-	double rate = Math.pow(var / initvar, ((double) 1) / (time%epoch) );
+	double rate = (var == initvar ? 1 : 
+		Math.pow(var / initvar, ((double) 1) / ((time-1)%epoch) )
+	);
     
   /* Printing statistics */
-  if (!partial || ((time % epoch)==epoch-1)) {
+  if (!partial || ((time % epoch)==0)) {
     Log.println(name, 
     	" TIME " + time +
     	" VAR " + var +
@@ -165,6 +166,7 @@ public boolean analyze()
       " MAX " + (int) (stats.getMin() == 0 ? Integer.MAX_VALUE : 1/stats.getMin()) +
       " MIN " + (int) 1/stats.getMax() +
       " CNT " + stats.getN() +
+			" UPNODES " + upnodes +
       " SIZE " + len
      );
 	}

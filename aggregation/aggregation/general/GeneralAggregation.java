@@ -19,6 +19,7 @@
 package aggregation.general;
 
 import peersim.core.*;
+import peersim.vector.*;
 
 /**
  * The methods contained in this interface are used to represent a more
@@ -45,7 +46,7 @@ extends SingleValue
  * @param receiver the node that received the exchange invitation
  * @param value the value sent by the initiator
  */
-public void deliverRequest(Node initiator, Node receiver, float value);
+public void deliverRequest(Node initiator, Node receiver, double value);
 
 /**
  * Simulates the sending of a message to respond to a message from a
@@ -58,7 +59,7 @@ public void deliverRequest(Node initiator, Node receiver, float value);
  * @param receiver the node that received the exchange invitation
  * @param value the value sent by the receiver
  */
-public void deliverResponse(Node initiator, Node receiver, float value);
+public void deliverResponse(Node initiator, Node receiver, double value);
 
 /**
  * Returns true if this node has just been created, and cannot 

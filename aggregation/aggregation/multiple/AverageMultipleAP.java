@@ -106,7 +106,7 @@ private final static String PAR_ASYM_FAILUREPROB = "failure.asymmetric";
 //--------------------------------------------------------------------------
 
 /* Temporary buffer used to sort arrays */
-private static float[] buffer;
+private static double[] buffer;
 
 
 //--------------------------------------------------------------------------
@@ -114,10 +114,13 @@ private static float[] buffer;
 //--------------------------------------------------------------------------
 
 /** Value to be averaged */
-protected float[] values;
+protected double[] values;
 
 /** True if the node has just been created */
 protected boolean isNew;
+
+/** Last cycle to be executed */
+protected int last;
 
 /** Information associated to this instance */
 protected ProtocolData p;
@@ -139,8 +142,9 @@ public AverageMultipleAP(String prefix)
 	p.lid = FastConfig.getLinkable(CommonState.getPid());
 	
 	// Instance fields
-	values = new float[Configuration.getInt(prefix + "." + PAR_VALUES)];
-	isNew = true;
+	values = new double[Configuration.getInt(prefix + "." + PAR_VALUES)];
+	isNew = false;
+	last = -1;
 }
 
 //--------------------------------------------------------------------------
@@ -152,8 +156,9 @@ public AverageMultipleAP(String prefix)
 public Object clone() throws CloneNotSupportedException
 {
 	AverageMultipleAP ap = (AverageMultipleAP) super.clone();
-	ap.values = new float[values.length];
-	ap.isNew = true;
+	ap.values = new double[values.length];
+	ap.isNew = false;
+	ap.last = -1;
 	ap.p = p;
 	return ap;
 }
@@ -184,7 +189,7 @@ public double getValue(int pos)
 public void setValue(int pos, double value)
 {
 	isNew = false;
-	values[pos] = (float) value;
+	values[pos] = value;
 }
 
 //--------------------------------------------------------------------------
@@ -203,7 +208,7 @@ public int size()
  */
 protected boolean canDeliverRequest(Node node)
 {
-	if (node.getFailState() == Fallible.DEAD)
+	if (node.getFailState() != Fallible.OK)
 		return false;
 	if ((p.symProb > 0 && CommonRandom.r.nextDouble() < p.symProb) ||
 			(p.asymProb > 0 && CommonRandom.r.nextDouble() < p.asymProb))
@@ -219,7 +224,7 @@ protected boolean canDeliverRequest(Node node)
  */
 protected boolean canDeliverResponse(Node node)
 {
-	if (node.getFailState() == Fallible.DEAD)
+	if (node.getFailState() != Fallible.OK)
 		return false;
 	if (p.asymProb > 0 && CommonRandom.r.nextDouble() < p.asymProb)
 		return false;
@@ -231,6 +236,12 @@ protected boolean canDeliverResponse(Node node)
 // Comment inherited from interface
 public void nextCycle(Node node, int pid)
 {
+	if (CommonState.getCycle() != last+1) {
+		// We just woke up
+		isNew = true;
+	}
+	last = CommonState.getCycle();
+		
 	/* Nodes that have been created during the current epoch do not
 	 * partecipate in the aggregation protocol
 	 */
@@ -264,7 +275,7 @@ public void nextCycle(Node node, int pid)
  * @param value the value sent by the initiator
  * @param index the identifier of the concurrent aggregation protocol
  */
-public void deliverRequest(Node initiator, Node receiver, float rvalue, int index)
+public void deliverRequest(Node initiator, Node receiver, double rvalue, int index)
 {
 	/* Nodes that have been created during the current epoch do not
 	 * partecipate in the aggregation protocol
@@ -273,7 +284,7 @@ public void deliverRequest(Node initiator, Node receiver, float rvalue, int inde
 		return;
 
 	/* Update the value */
-	float lvalue = values[index];
+	double lvalue = values[index];
 	values[index] = (lvalue + rvalue)/2;
 	if (canDeliverResponse(initiator)) {
 		AverageMultipleAP rsrc = 
@@ -296,7 +307,7 @@ public void deliverRequest(Node initiator, Node receiver, float rvalue, int inde
  * @param value the value sent by the receiver
  * @param index the identifier of the concurrent aggregation protocol
  */
-public void deliverResponse(Node initiator, Node receiver, float rvalue, int index)
+public void deliverResponse(Node initiator, Node receiver, double rvalue, int index)
 {
 	/* Update the value */
 	values[index] = (values[index] + rvalue)/2;

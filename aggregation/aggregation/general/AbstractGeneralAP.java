@@ -90,7 +90,7 @@ private final static String PAR_ASYM_FAILUREPROB = "failure.asymmetric";
 //--------------------------------------------------------------------------
 
 /** Value to be averaged */
-protected float value;
+protected double value;
 
 /** True if the node has just been created */
 protected boolean isNew;
@@ -164,7 +164,7 @@ public double getValue()
  */
 public void setValue(double value)
 {
-	this.value = (float) value;
+	this.value = value;
 	isNew = false;
 }
 

@@ -19,6 +19,7 @@
 package aggregation;
 
 import peersim.core.*;
+import peersim.vector.*;
 import peersim.reports.*;
 import peersim.util.Log;
 import peersim.config.*;

@@ -18,7 +18,7 @@
 
 package aggregation;
 
-import peersim.core.*;
+import peersim.vector.*;
 import peersim.cdsim.CDProtocol;
 
 /**

@@ -100,20 +100,23 @@ public void modify()
   int nvalues = ((MultipleValues) Network.get(0).getProtocol(pid)
 	  ).size();
 
-	/* Compute the number of peaks and values at peaks */
-	int pn = (peaks < 1 ? (int) (peaks*Network.size()) : (int) peaks);
-	double vl = value/pn;
 
 	/* Set the values */
 	for (int j=0; j<nvalues; j++) {
-		for (int i=0; i < pn; i++) {
-			((MultipleValues) Network.get(i).getProtocol(pid)
+		int pn = (peaks < 1 ? (int) (peaks*Network.size()) : (int) peaks);
+		/* Compute the number of peaks and values at peaks */
+		double vl = value/pn;
+		for (int i=0; i < Network.size(); i++) {
+			if (pn > 0 && Network.get(i).isUp()) {
+				((MultipleValues) Network.get(i).getProtocol(pid)
 				).setValue(j, vl);
-		}
-		for (int i=pn; i < Network.size()-pn; i++) {
-			((MultipleValues) Network.get(i).getProtocol(pid)
+				pn--;
+			} else {
+				((MultipleValues) Network.get(i).getProtocol(pid)
 				).setValue(j, 0.0);
+			}
 		}
+		Network.shuffle();
 	}
 }
 

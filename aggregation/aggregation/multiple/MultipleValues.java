@@ -23,10 +23,6 @@ package aggregation.multiple;
  * implementing multiple instances of an aggregation function.
  * It enables to get and set the values to be aggregated.
  * 
- * Note that values are represented as doubles. Actual
- * implementations can store values as floats, in order to
- * reduce memory footprint.
- *
  * @author Alberto Montresor
  * @version $Revision$
  */

@@ -1,3 +1,7 @@
+GJ 3/11/2004
+- Added MedianStats class. It extracts the median value from a data collection;
+  it subclasses the IncrementalStats class.
+
 MJ 2/11/2004
 - changed config parameter name "protocolID" to "protocol" in package
   distributions. Protocol id is an internal concept now, transparent to the

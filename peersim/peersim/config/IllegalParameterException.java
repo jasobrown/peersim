@@ -34,7 +34,7 @@ extends RuntimeException
 
 	public String getMessage() {
 
-		return super.getMessage()+" at "+
+		return super.getMessage()+"\nAt "+
 			getStackTrace()[1].getClassName()+"."+
 			getStackTrace()[1].getMethodName()+":"+
 			getStackTrace()[1].getLineNumber();

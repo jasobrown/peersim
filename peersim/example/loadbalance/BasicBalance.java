@@ -20,6 +20,7 @@ package example.loadbalance;
  
  import example.aggregation.AbstractFunction;
  import peersim.config.Configuration;
+ import peersim.config.FastConfig;
  import peersim.core.*;
  
  public class BasicBalance extends AbstractFunction {
@@ -50,7 +51,7 @@ package example.loadbalance;
  
  // Implements CDProtocol interface
  public void nextCycle( Node node, int protocolID ) {
- 	int linkableID = Protocols.getLink(protocolID);
+ 	int linkableID = FastConfig.getLinkable(protocolID);
  	Linkable linkable = (Linkable) node.getProtocol( linkableID );
 	if (this.quota == 0) {
  		return; // skip this node

@@ -18,6 +18,7 @@
 package example.loadbalance;
 
 import peersim.core.*;
+import peersim.config.FastConfig;
 
 public class AvgBalance extends BasicBalance {
 
@@ -94,7 +95,7 @@ public class AvgBalance extends BasicBalance {
     }
 
     private Node getOverloadedPeer(Node node, int protocolID) {
-	int linkableID = Protocols.getLink(protocolID);
+	int linkableID = FastConfig.getLinkable(protocolID);
 	Linkable linkable = (Linkable) node.getProtocol( linkableID );
 	
 	AvgBalance neighbor=null;
@@ -121,7 +122,7 @@ public class AvgBalance extends BasicBalance {
     } 
 
     private Node getUnderloadedPeer(Node node, int protocolID) {
-	int linkableID = Protocols.getLink(protocolID);
+	int linkableID = FastConfig.getLinkable(protocolID);
 	Linkable linkable = (Linkable) node.getProtocol( linkableID );
 	
 	AvgBalance neighbor=null;

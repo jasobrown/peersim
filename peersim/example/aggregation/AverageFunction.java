@@ -20,6 +20,7 @@ package example.aggregation;
 
 import peersim.util.CommonRandom;
 import peersim.core.*;
+import peersim.config.FastConfig;
 
 /**
  * 
@@ -44,7 +45,7 @@ public Object clone() throws CloneNotSupportedException {
  */
 public void nextCycle( Node node, int protocolID )
 {
-	int linkableID = Protocols.getLink(protocolID);
+	int linkableID = FastConfig.getLinkable(protocolID);
 	Linkable linkable = (Linkable) node.getProtocol( linkableID );
 	if (linkable.degree() > 0)
 	{

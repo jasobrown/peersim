@@ -6,6 +6,7 @@ import peersim.reports.Observer;
 import peersim.init.Initializer;
 import peersim.dynamics.Dynamics;
 import peersim.util.CommonRandom;
+import java.util.Arrays;
 
 /**
 * This is the executable class for performing a cycle driven simulation.
@@ -48,8 +49,6 @@ public static final String PAR_DYN = "dynamics";
 
 public static final String PAR_OBS = "observer";
 
-public static final String PAR_FINAL = "finalizer";
-
 // --------------------------------------------------------------------
 
 /** the number of independent restarted simulations to be performed */
@@ -67,8 +66,13 @@ private static Observer[] observers=null;
 /** holds the modifiers of this simulation */
 private static Dynamics[] dynamics=null;
 
-/** Holds the finalizer of this simulation */
-private static Observer[] finalizers = null;
+/** Holds the observer schedulers of this simulation */
+private static Scheduler[] obsSchedules = null;
+
+/** Holds the dynamics schedulers of this simulation */
+private static Scheduler[] dynSchedules = null;
+
+// XXX it would be possible to schedule protocols too the same way
 
 
 // =============== protected methods ===================================
@@ -147,35 +151,31 @@ public static void main(String[] pars) throws Exception {
 		runInitializers();
 	
 		// load analizers
-		Object otmp[] = Configuration.getInstanceArray(PAR_OBS);
-		observers = new Observer[otmp.length];
-		for(int i=0; i<otmp.length; ++i)
+		String[] names = Configuration.getNames(PAR_OBS);
+		observers = new Observer[names.length];
+		obsSchedules = new Scheduler[names.length];
+		for(int i=0; i<names.length; ++i)
 		{
-			System.err.println(
-			"- Observer " + i + ": " + otmp[i].getClass());
-			observers[i]=(Observer)otmp[i];
+			observers[i]=
+				(Observer)Configuration.getInstance(names[i]);
+			obsSchedules[i] = new Scheduler(names[i]);
 		}
-	
+		System.err.println("Simulator: loaded observers "+
+			Arrays.asList(names));
+		
 		// load dynamism managers
-		otmp = Configuration.getInstanceArray(PAR_DYN);
-		dynamics = new Dynamics[otmp.length];
-		for(int i=0; i<otmp.length; ++i)
+		names = Configuration.getNames(PAR_DYN);
+		dynamics = new Dynamics[names.length];
+		dynSchedules = new Scheduler[names.length];
+		for(int i=0; i<names.length; ++i)
 		{
-			System.err.println(
-			"- Dynamics " + i + ": " + otmp[i].getClass());	
-			dynamics[i]=(Dynamics)otmp[i];
+			dynamics[i]=
+				(Dynamics)Configuration.getInstance(names[i]);
+			dynSchedules[i] = new Scheduler(names[i]);
 		}
+		System.err.println("Simulator: loaded modifiers "+
+			Arrays.asList(names));
 	
-			// load finalizer
-		otmp = Configuration.getInstanceArray(PAR_FINAL);
-		finalizers = new Observer[otmp.length];
-		for (int i = 0; i < otmp.length; ++i)
-		{
-			System.err.println(
-			"- Finalizer " + i + ": " + otmp[i].getClass());
-			finalizers[i] = (Observer) otmp[i];
-		}
-
 		// main cycle
 		System.err.println("Simulator: starting simulation");
 		CommonState.setT(0); // needed here
@@ -187,14 +187,16 @@ public static void main(String[] pars) throws Exception {
 			boolean stop = false;
 			for(int j=0; j<observers.length; ++j)
 			{
-				stop = stop || observers[j].analyze();
+				if( obsSchedules[j].active(i) )
+					stop = stop || observers[j].analyze();
 			}
 			if( stop ) break;
 		
 			// dynamism
 			for(int j=0; j<dynamics.length; ++j)
 			{
-				dynamics[j].modify();
+				if( dynSchedules[j].active(i) )
+					dynamics[j].modify();
 			}
 		
 			// do one round
@@ -203,9 +205,9 @@ public static void main(String[] pars) throws Exception {
 		}
 		
 		// analysis after the simulation
-		for(int j=0; j<finalizers.length; ++j)
+		for(int j=0; j<observers.length; ++j)
 		{
-			finalizers[j].analyze();
+			if( obsSchedules[j].fin() ) observers[j].analyze();
 		}
 	}
 	

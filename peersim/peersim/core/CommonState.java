@@ -53,7 +53,7 @@ public static void setT( int t ) {
 // -----------------------------------------------------------------
 
 /** Returns time as an Integer object */
-public static Integer getTime() {  return _time; }
+public static Integer getTimeObj() {  return _time; }
 
 
 }

@@ -324,7 +324,7 @@ private boolean addInNeighbor(Node node) {
 	{
 		inView.add( node );
 		if( inViewDates != null )
-			inViewDates.add(CommonState.getTime());
+			inViewDates.add(CommonState.getTimeObj());
 		return true;
 	}
 	else
@@ -335,7 +335,7 @@ private boolean addInNeighbor(Node node) {
 			int id = inView.indexOf(node);
 			inView.remove(id);
 			inViewDates.remove(id);
-			inViewDates.add(CommonState.getTime());
+			inViewDates.add(CommonState.getTimeObj());
 			inView.add( node );
 		}
 		return false; // false's ok though dates might've been changed
@@ -366,7 +366,7 @@ public boolean addNeighbor(Node node) {
 	{
 		outView.add( node );
 		if( outViewDates != null )
-			outViewDates.add(CommonState.getTime());
+			outViewDates.add(CommonState.getTimeObj());
 		return true;
 	}
 	else
@@ -377,7 +377,7 @@ public boolean addNeighbor(Node node) {
 			int id = outView.indexOf(node);
 			outView.remove(id);
 			outViewDates.remove(id);
-			outViewDates.add(CommonState.getTime());
+			outViewDates.add(CommonState.getTimeObj());
 			outView.add( node );
 		}
 		return false; // false's ok though dates might've been changed

@@ -215,7 +215,7 @@ public static void unsubscribe( Node n, int protocolID ) {
 		
 		// this implements the effect of adding n to unSubs
 		peer.remove(n);
-		peer.addUnSub(n,CommonState.getTime());
+		peer.addUnSub(n,CommonState.getTimeObj());
 	}
 	
 	if( i < F )

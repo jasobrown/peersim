@@ -78,7 +78,6 @@ public GraphStats(String name) {
 	nl = Configuration.getInt(name+"."+PAR_NL,0);
 	nc = Configuration.getInt(name+"."+PAR_NC,0);
 	dir = Configuration.contains(name+"."+PAR_DIR);
-System.err.println(" "+nc+" "+nl);
 }
 
 

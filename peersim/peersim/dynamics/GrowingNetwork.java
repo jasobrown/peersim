@@ -35,13 +35,6 @@ public static final String PAR_ADD = "add";
 public static final String PAR_PERC = "percentage";
 
 /** 
-* If this is eg 2, new nodes will be added in each 2nd time tick.
-* If 1, in all times, etc. Nodes will be added in time 0 in all cases.
-* Defaults to 1.
-*/
-public static final String PAR_INEACH = "ineach";
-
-/** 
 * The network is grown until reaching this number of nodes. The network
 * will never exceed this size as a result of this network manager.
 * Defaults to {@link OverlayNetwork#getCapacity()}.
@@ -55,33 +48,13 @@ public static final String PAR_MAX = "maxsize";
 */
 public static final String PAR_MIN = "minsize";
 
-/** 
-* Operation starts from this time point.
-* This operator will be applied first at this time.
-* Defaults to 0.
-*/
-public static final String PAR_FROM = "from";
-
-/** 
-* Operation ends at this time point.
-* This operator will be applied last at this time.
-* Defaults to <tt>Integer.MAX_VALUE</tt>.
-*/
-public static final String PAR_UNTIL = "until";
-
 protected final double add;
 
 protected final boolean percentage;
 
-protected final int inEach;
-
 protected final int minsize;
 
 protected final int maxsize;
-
-protected final int from;
-
-protected final int until;
 
 protected final NodeInitializer[] inits;
 
@@ -151,9 +124,6 @@ public GrowingNetwork(String prefix) {
 
 	add = Configuration.getDouble(prefix+"."+PAR_ADD);
 	percentage = Configuration.contains(prefix+"."+PAR_PERC);
-	inEach = Configuration.getInt(prefix+"."+PAR_INEACH,1);
-	from = Configuration.getInt(prefix+"."+PAR_FROM,0);
-	until = Configuration.getInt(prefix+"."+PAR_UNTIL,Integer.MAX_VALUE);
 	maxsize = Configuration.getInt(prefix+"."+PAR_MAX,
 			OverlayNetwork.getCapacity());
 	minsize = Configuration.getInt(prefix+"."+PAR_MIN,0);
@@ -177,11 +147,9 @@ public GrowingNetwork(String prefix) {
 */
 public final void modify() {
 
-	if( add == 0 || CommonState.getT() < from || 
-	    CommonState.getT() > until ||
+	if( add == 0 ||
 	    (maxsize <= OverlayNetwork.size() && add>0) || 
-	    (minsize >= OverlayNetwork.size() && add<0) || 
-	    CommonState.getT()%inEach!=0 ) return;
+	    (minsize >= OverlayNetwork.size() && add<0) ) return;
 	
 	int toadd = (int)add;
 	

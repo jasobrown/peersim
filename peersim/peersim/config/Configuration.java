@@ -284,34 +284,55 @@ public static Object getInstance( String name, Object obj ) {
 //-------------------------------------------------------------------
 
 /**
-* Reads given configuration item for class names. It returns an array of
-* instances of the class. The class must implement either a contructor which
-* takes one String parameter, which will be its full property name in the
-* configuration list, or a constructor which takes a String, as described
-* above and an integer which will be it's index in the returned array.
+* It returns an array of class instances defined by property names
+* returned by {@link getNames}.
+* The classes must implement a constructor which
+* takes one String parameter, which will be the full property name of the class
+* in the configuration.
 * Note that constructors can see the configuration information so they can
-* make use of it. The class names are defined by properties
-* name+".0", name+".1", etc.
-* @param name Prefix of the list of configuration properties. Names will be
-* name+".0", name+".1", etc.
+* make use of it. The class names are defined by the property names returned
+* by {@link getNames}.
+* @param name Prefix of the list of configuration properties which will be
+* passed to {@link getNames}.
 * @throws RuntimeException if there's any problem with creating the objects.
-* @return empty array if name+".0" does not exist. Otherwise an array of
-* n+1 objects of class types defined by name+".0", name+".1",...,name+".n"
-* where n is the largest suffix which is the last element of a continuous series
-* of suffixes. The array is referenced only by the caller after return.
 */
 public static Object[] getInstanceArray( String name ) {
 
-	LinkedList ll = new LinkedList();
+	String names[] = getNames(name);
+	Object[] result = new Object[names.length];
+	
+	for( int i=0; i<names.length; ++i )
+	{
+		result[i]=getInstance(names[i]);
+	}
+
+	return result;
+}
+
+//-------------------------------------------------------------------
+
+/**
+* Returns an array of names of maximal length of the form
+* name+".0", name+".1", etc, where all names in the list are existing
+* property names. If name+"0" is not an existing property name, returns an
+* empty array.
+* {@link #getInstanceArray} will use this method to create instances.
+* In other words, calling
+* {@link #getInstance(String)} with these names results in the
+* same instances {@link #getInstanceArray} returns.
+*/
+public static String[] getNames( String name ) {
+	
+	ArrayList ll = new ArrayList();
 	final String pref = name+".";
 	String s;
 	
 	for( int i=0; contains(s=(pref+i)); ++i )
 	{
-		ll.add( getInstance(s) );
+		ll.add( s );
 	}
 
-	return ll.toArray();
+	return (String[])ll.toArray(new String[0]);
 }
 
 }

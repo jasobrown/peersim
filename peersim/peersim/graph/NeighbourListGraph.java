@@ -29,7 +29,7 @@ import java.util.Collections;
 * Implements a graph which uses the neighbour list representation.
 * No multiple edges are allowed.
 */
-class NeighbourListGraph implements Graph, java.io.Serializable {
+public class NeighbourListGraph implements Graph, java.io.Serializable {
 
 // =================== private fields ============================
 // ===============================================================
@@ -74,7 +74,7 @@ public NeighbourListGraph( boolean directed ) {
 * If the given object is not associated with a node yet, adds a new
 * node. Returns the index of the node.
 */
-int addNode( Object o ) {
+public int addNode( Object o ) {
 
 	Object index = nodeindex.get(o);
 	if( index == null )

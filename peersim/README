@@ -6,7 +6,7 @@ and some examples.
 
 To run the examples type
 
-java -cp peersim-0.0.jar peersim.cdsim.Simulator examples/config-example1.txt
+java -cp peersim-0.1.jar peersim.cdsim.Simulator example/config-example1.txt
 
 in the directory of this README file in the extracted archive.
 

@@ -130,7 +130,7 @@ private static void doSubscribe( Node n, Node s, int protocolID ) {
 	boolean added = false;
 	int i=0;
 
-	for(; n.isUp() && !added && i<2*OverlayNetwork.size(); ++i)
+	for(; n.isUp() && !added && i<2*Network.size(); ++i)
 	{
 		Scamp scamp = (Scamp)n.getProtocol(protocolID);
 		
@@ -152,7 +152,7 @@ private static void doSubscribe( Node n, Node s, int protocolID ) {
 	
 	if( !added )
 		System.err.println("SCAMP: subscription not succesful! ("+
-			OverlayNetwork.size()+","+i+","+n.isUp()+")");
+			Network.size()+","+i+","+n.isUp()+")");
 }
 
 // ----------------------------------------------------------------------
@@ -488,9 +488,9 @@ public static String test(int protocolID) {
 	
 	if( Scamp.leaseTimeout >= 0 ) corruptInDates=corruptDates = 0 ;
 	
-	for(int i=0; i<OverlayNetwork.size(); ++i)
+	for(int i=0; i<Network.size(); ++i)
 	{
-		Node curr = OverlayNetwork.get(i);
+		Node curr = Network.get(i);
 		Scamp currsc = (Scamp)(curr.getProtocol(protocolID));
 		
 		// check out view

@@ -70,7 +70,7 @@ implements Initializer
   {
 		/* Read parameters */
 		pid = Configuration.getInt(prefix + "." + PAR_PROT);
-		nodes = OverlayNetwork.size();
+		nodes = Network.size();
 		edges = Configuration.getInt(prefix + "." + PAR_EDGES);
   }
 
@@ -85,9 +85,9 @@ implements Initializer
     Node[] dest = new Node[2*edges*nodes];
     
     // Add initial edges; 
-    Node ne = OverlayNetwork.get(edges);
+    Node ne = Network.get(edges);
     for (int i=0; i < edges; i++) {
-    	Node ni = OverlayNetwork.get(i);
+    	Node ni = Network.get(i);
     	dest[i*2] = ne;
     	dest[i*2+1] = ni;
     	ni.addNeighbor(pid, ne);
@@ -96,7 +96,7 @@ implements Initializer
     
     int len=edges*2;
     for (int i=edges+1; i < nodes; i++) {
-    	Node ni = OverlayNetwork.get(i);
+    	Node ni = Network.get(i);
     	for (int j=0; j < edges; j++) {
     		boolean stop;
     		Node nk;

@@ -50,17 +50,17 @@ public OverlayGraph( int protocolID ) {
 public boolean isEdge(int i, int j) {
 	
 	return
-		((Linkable)OverlayNetwork.node[i].getProtocol(protocolID)
-		).contains(OverlayNetwork.node[j]) &&
-		OverlayNetwork.node[j].isUp() &&
-		OverlayNetwork.node[i].isUp();
+		((Linkable)Network.node[i].getProtocol(protocolID)
+		).contains(Network.node[j]) &&
+		Network.node[j].isUp() &&
+		Network.node[i].isUp();
 }
 
 // ---------------------------------------------------------------
 
 public Collection getNeighbours(int i) {
 	
-	Linkable lble=(Linkable)OverlayNetwork.node[i].getProtocol(protocolID);
+	Linkable lble=(Linkable)Network.node[i].getProtocol(protocolID);
 	ArrayList al = new ArrayList(lble.degree());
 	for(int j=0; j<lble.degree(); ++j)
 	{
@@ -73,7 +73,7 @@ public Collection getNeighbours(int i) {
 
 // ---------------------------------------------------------------
 
-public Object getNode(int i) { return OverlayNetwork.node[i]; }
+public Object getNode(int i) { return Network.node[i]; }
 	
 // ---------------------------------------------------------------
 
@@ -85,7 +85,7 @@ public Object getEdge(int i, int j) { return null; }
 
 // ---------------------------------------------------------------
 
-public int size() { return OverlayNetwork.size(); }
+public int size() { return Network.size(); }
 
 // --------------------------------------------------------------------
 	
@@ -109,8 +109,8 @@ public boolean setEdge( int i, int j ) {
 // XXX slightly unintuitive behavior but makes sense when understood
 	
 	return
-		((Linkable)OverlayNetwork.node[i].getProtocol(protocolID)
-		).addNeighbor(OverlayNetwork.node[j]);
+		((Linkable)Network.node[i].getProtocol(protocolID)
+		).addNeighbor(Network.node[j]);
 }
 
 // ---------------------------------------------------------------
@@ -125,7 +125,7 @@ public boolean clearEdge( int i, int j ) {
 public int degree(int i) {
 	
 	return 
-	 ((Linkable)OverlayNetwork.node[i].getProtocol(protocolID)).degree();
+	 ((Linkable)Network.node[i].getProtocol(protocolID)).degree();
 }
 
 }

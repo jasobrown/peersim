@@ -97,17 +97,17 @@ protected static void nextRound() {
 
 	if( shuffle )
 	{
-		OverlayNetwork.shuffle();
+		Network.shuffle();
 	}
 	
-	for(int j=0; j<OverlayNetwork.size(); ++j)
+	for(int j=0; j<Network.size(); ++j)
 	{
 		Node node = null;
 		if( getpair_rand )
-			node = OverlayNetwork.get(
-			   CommonRandom.r.nextInt(OverlayNetwork.size()));
+			node = Network.get(
+			   CommonRandom.r.nextInt(Network.size()));
 		else
-			node = OverlayNetwork.get(j);
+			node = Network.get(j);
 		if( !node.isUp() ) continue; 
 		int len = node.protocolSize();
 		// XXX maybe should use different shuffle for each protocol?
@@ -151,7 +151,7 @@ public static void main(String[] pars) throws Exception {
 	
 		// initialization
 		System.err.println("Simulator: resetting overlay network");
-		OverlayNetwork.reset();
+		Network.reset();
 		System.err.println("Simulator: running initializers");
 		runInitializers();
 	
@@ -234,7 +234,7 @@ public static void main(String[] pars) throws Exception {
 	// undocumented testing capabilities
 	if(Configuration.contains("__t")) 
 		System.out.println(System.currentTimeMillis()-time);
-	if(Configuration.contains("__x")) OverlayNetwork.test();
+	if(Configuration.contains("__x")) Network.test();
 }
 
 }

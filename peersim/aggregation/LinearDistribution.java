@@ -74,14 +74,14 @@ public LinearDistribution(String prefix)
 // Comment inherited from interface
 public void modify()
 {
-	double step = (max-min)/(OverlayNetwork.size()-1);
+	double step = (max-min)/(Network.size()-1);
 	double sum = 0.0;
 	double tmp;
-	for(int i=0; i<OverlayNetwork.size(); ++i)
+	for(int i=0; i<Network.size(); ++i)
 	{
 		tmp = i*step+min;
 		sum += tmp;
-		((Aggregation)OverlayNetwork.get(i).getProtocol(protocolID)
+		((Aggregation)Network.get(i).getProtocol(protocolID)
 			).setValue(tmp);
 	}
 }

@@ -58,13 +58,13 @@ protected void remove( int n ) {
 
 	for(int i=0; i<n; ++i)
 	{
-		OverlayNetwork.swap(
-			OverlayNetwork.size()-1,
-			CommonRandom.r.nextInt(OverlayNetwork.size()) );
+		Network.swap(
+			Network.size()-1,
+			CommonRandom.r.nextInt(Network.size()) );
 		SimpleLpbcast.unsubscribe(
-			OverlayNetwork.get(OverlayNetwork.size()-1),
+			Network.get(Network.size()-1),
 			protocolID );
-		OverlayNetwork.remove();
+		Network.remove();
 	}
 }
 

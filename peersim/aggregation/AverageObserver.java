@@ -108,12 +108,12 @@ public class AverageObserver implements Observer
 		}
   	
 		/* Initialization */
-		final int len = OverlayNetwork.size();
+		final int len = Network.size();
 		IncrementalStats stats = new IncrementalStats();
 
 		/* Compute max, min, average */
 		for (int i=0; i < len; i++) {
-			Node node = OverlayNetwork.get(i);
+			Node node = Network.get(i);
 			Aggregation protocol = (Aggregation) node.getProtocol(pid);
 
 			boolean toBeCounted = true;

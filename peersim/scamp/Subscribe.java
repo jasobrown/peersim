@@ -56,10 +56,10 @@ private Node getContact(int size) {
 	if( single )
 	{
 		if( cont == null || !cont.isUp() )
-			cont = OverlayNetwork.get(0);
+			cont = Network.get(0);
 		return cont;
 	}
-	else return OverlayNetwork.get(CommonRandom.r.nextInt(size));
+	else return Network.get(CommonRandom.r.nextInt(size));
 }
 
 
@@ -86,7 +86,7 @@ public void initialize() {
 
 	Node contact = null;
 	
-	for(int i=1; i<OverlayNetwork.size(); ++i)
+	for(int i=1; i<Network.size(); ++i)
 	{
 		contact = getContact(i);
 		if( contact == null )
@@ -94,7 +94,7 @@ public void initialize() {
 			throw new IllegalStateException("No contact found");
 		}
 
-		Scamp.subscribe( contact, OverlayNetwork.get(i), protocolID );
+		Scamp.subscribe( contact, Network.get(i), protocolID );
 	}
 }
 
@@ -105,9 +105,9 @@ public void initialize() {
 */
 public void initialize(Node n) {
 
-	if( OverlayNetwork.size() == 0 ) return;
+	if( Network.size() == 0 ) return;
 
-	Node contact = getContact(OverlayNetwork.size());
+	Node contact = getContact(Network.size());
 	if( contact == null )
 	{
 		throw new IllegalStateException("No contact found");

@@ -70,7 +70,7 @@ implements Initializer
   {
 		/* Read parameters */
 		pid = Configuration.getInt(prefix + "." + PAR_PROT);
-		nodes = OverlayNetwork.size();
+		nodes = Network.size();
 		edges = Configuration.getInt(prefix + "." + PAR_EDGES);
   }
 
@@ -90,10 +90,10 @@ implements Initializer
 		// Add initial edges, to form a clique
 		int len=0;
 		for (int i=0; i < clique; i++) {
-			Node ni = OverlayNetwork.get(i);
+			Node ni = Network.get(i);
 			for (int j=0; j < clique; j++) {
 				if (i != j) {
-					Node nj = OverlayNetwork.get(j);
+					Node nj = Network.get(j);
 					ni.addNeighbor(pid, nj);
 					nj.addNeighbor(pid, ni);
 					links[len*2] = ni;
@@ -105,7 +105,7 @@ implements Initializer
 
     
 		for (int i=clique; i < nodes; i++) {
-			Node ni = OverlayNetwork.get(i);
+			Node ni = Network.get(i);
 			for (int j=0; j < edges; j++) {
 				int edge = CommonRandom.r.nextInt(len);
 				Node nk = links[edge*2];

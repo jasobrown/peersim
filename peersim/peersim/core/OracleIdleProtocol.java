@@ -28,10 +28,10 @@ public Object clone() throws CloneNotSupportedException { return this; }
 /** This is an expensive operation here, should not be used at all */
 public boolean contains(Node n) {
 
-	final int len = OverlayNetwork.size();
+	final int len = Network.size();
 	for (int i=0; i < len; i++)
 	{
-		if (OverlayNetwork.node[i] == n)
+		if (Network.node[i] == n)
 		return true;
 	}
 	return false;
@@ -53,14 +53,14 @@ public boolean addNeighbor(Node n) {
 */
 public Node getNeighbor(int i) {
 	
-	return OverlayNetwork.node[i];
+	return Network.node[i];
 }
 
 // --------------------------------------------------------------------
 
 public int degree() {
 	
-	return OverlayNetwork.size();
+	return Network.size();
 }
 
 // --------------------------------------------------------------------

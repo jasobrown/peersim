@@ -92,16 +92,16 @@ public PeakDistribution(String prefix)
 // Comment inherited from interface
 public void modify() 
 {
-  int pn = (peaks < 1 ? (int) (peaks*OverlayNetwork.size()) : (int) peaks);
+  int pn = (peaks < 1 ? (int) (peaks*Network.size()) : (int) peaks);
   double vl = value/pn;
-  for (int i=0; i < OverlayNetwork.size(); i++) {
-		((Aggregation)OverlayNetwork.get(i).getProtocol(pid)).setValue(0.0);
+  for (int i=0; i < Network.size(); i++) {
+		((Aggregation)Network.get(i).getProtocol(pid)).setValue(0.0);
   }
   for (int i=0; i < pn; i++) {
   	boolean found = false;
   	do {
-  		int r = CommonRandom.r.nextInt(OverlayNetwork.size());
-  		Aggregation agg = (Aggregation) OverlayNetwork.get(r).getProtocol(pid);
+  		int r = CommonRandom.r.nextInt(Network.size());
+  		Aggregation agg = (Aggregation) Network.get(r).getProtocol(pid);
   		if (agg.getValue() == 0) {
   			agg.setValue(vl);
   			found = true;

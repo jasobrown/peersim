@@ -41,8 +41,8 @@ public interface Fallible {
 	public void setFailState(int failState);
 
 	/**
-	* Convinience method to check if the node is up and running
-	* @return getFailState()==OK || getFailState()==MALICIOUS
+	* Convenience method to check if the node is up and running
+	* @return getFailState()==OK 
 	*/
 	public boolean isUp();
 }

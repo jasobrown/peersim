@@ -49,11 +49,11 @@ public WireStar(String prefix) {
 /** calls {@link GraphFactory#wireStar} if size is larger than 0.*/
 public void initialize() {
 	
-	if( OverlayNetwork.size() == 0 ) return;
+	if( Network.size() == 0 ) return;
 	
 	GraphFactory.wireStar(new OverlayGraph(protocolID));
 	
-	center = OverlayNetwork.get(0);
+	center = Network.get(0);
 }
 
 // -------------------------------------------------------------------
@@ -67,9 +67,9 @@ public void initialize() {
 */
 public void initialize(Node n) {
 	
-	if( OverlayNetwork.size() == 0 ) return;
+	if( Network.size() == 0 ) return;
 	
-	if( center == null || !center.isUp() ) center = OverlayNetwork.get(0);
+	if( center == null || !center.isUp() ) center = Network.get(0);
 
 	((Linkable)n.getProtocol(protocolID)).addNeighbor(center);
 }

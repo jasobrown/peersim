@@ -48,7 +48,7 @@ public GraphStatsObserver(String name) {
 
 public boolean analyze() {
 
-	if( node == null || !node.isUp() ) node = OverlayNetwork.get(0);
+	if( node == null || !node.isUp() ) node = Network.get(0);
 	OverlayGraph og = new OverlayGraph(protocolID);
 	Graph undirg = new ConstUndirGraph(og);
 

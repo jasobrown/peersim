@@ -10,7 +10,9 @@ import peersim.util.CommonRandom;
 * connections are removed, they are only added. So it can be used in
 * combination with other initializers.
 */
-public class WireRegularRandom implements Initializer, NodeInitializer {
+public class WireWS 
+implements Initializer 
+{
 
 
 // ========================= fields =================================
@@ -23,14 +25,21 @@ public class WireRegularRandom implements Initializer, NodeInitializer {
 public static final String PAR_PROT = "protocol";
 
 /** 
-*  String name of the parameter used to select the protocol to operate on
+*  String name of the property containing the beta parameter, i.e. the
+*  probability for a node to be re-wired.
+*/
+public static final String PAR_BETA = "bate";
+
+/** 
+*  String name of the parameter which sets defines the degree of the graph,
+* see {@link GraphFactory#wireRingLattice}.
 */
 public static final String PAR_DEGREE = "degree";
 
 /**
 * The protocol we want to wire
 */
-private final int protocolID;
+private final int pid;
 
 /**
 * The degree of the regular graph
@@ -38,14 +47,21 @@ private final int protocolID;
 private final int degree;
 
 
+/**
+* The degree of the regular graph
+*/
+private final double beta;
+
+
 // ==================== initialization ==============================
 //===================================================================
 
 
-public WireRegularRandom(String prefix) {
+public WireWS(String prefix) {
 
-	protocolID = Configuration.getInt(prefix+"."+PAR_PROT);
+	pid = Configuration.getInt(prefix+"."+PAR_PROT);
 	degree = Configuration.getInt(prefix+"."+PAR_DEGREE);
+	beta = Configuration.getDouble(prefix+"."+PAR_BETA);
 }
 
 
@@ -54,31 +70,9 @@ public WireRegularRandom(String prefix) {
 
 
 /** calls {@link GraphFactory#wireRegularRandom}.*/
-public void initialize() {
-	
-	GraphFactory.wireRegularRandom(
-		new OverlayGraph(protocolID), 
-		degree,
-		CommonRandom.r );
-}
-
-// -------------------------------------------------------------------
-
-/**
-* Takes {@link #PAR_DEGREE} random samples with replacement
-* from the node of the overlay network.
-*/
-public void initialize(Node n) {
-
-	if( Network.size() == 0 ) return;
-	
-	for(int j=0; j<degree; ++j)
-	{
-		((Linkable)n.getProtocol(protocolID)).addNeighbor(
-		    Network.get(
-			CommonRandom.r.nextInt(Network.size())));
-	}
+public void initialize() 
+{
+	GraphFactory.wireWS( new OverlayGraph(pid), degree, beta, CommonRandom.r);
 }
 
 }
-

@@ -77,7 +77,7 @@ protected void add(int n) {
 
 		try
 		{
-			newnode = (Node)OverlayNetwork.prototype.clone();
+			newnode = (Node)Network.prototype.clone();
 		}
 		catch(CloneNotSupportedException e)
 		{
@@ -91,7 +91,7 @@ protected void add(int n) {
 			inits[j].initialize( newnode );
 		}
 
-		OverlayNetwork.add(newnode);
+		Network.add(newnode);
 	}
 }
 
@@ -108,10 +108,10 @@ protected void remove( int n ) {
 
 	for(int i=0; i<n; ++i)
 	{
-		OverlayNetwork.swap(
-			OverlayNetwork.size()-1,
-			CommonRandom.r.nextInt(OverlayNetwork.size()) );
-		OverlayNetwork.remove();
+		Network.swap(
+			Network.size()-1,
+			CommonRandom.r.nextInt(Network.size()) );
+		Network.remove();
 	}
 }
 
@@ -125,7 +125,7 @@ public GrowingNetwork(String prefix) {
 	add = Configuration.getDouble(prefix+"."+PAR_ADD);
 	percentage = Configuration.contains(prefix+"."+PAR_PERC);
 	maxsize = Configuration.getInt(prefix+"."+PAR_MAX,
-			OverlayNetwork.getCapacity());
+			Network.getCapacity());
 	minsize = Configuration.getInt(prefix+"."+PAR_MIN,0);
 	
 	Object[] tmp = Configuration.getInstanceArray(prefix+"."+PAR_INIT);
@@ -148,23 +148,23 @@ public GrowingNetwork(String prefix) {
 public final void modify() {
 
 	if( add == 0 ||
-	    (maxsize <= OverlayNetwork.size() && add>0) || 
-	    (minsize >= OverlayNetwork.size() && add<0) ) return;
+	    (maxsize <= Network.size() && add>0) || 
+	    (minsize >= Network.size() && add<0) ) return;
 	
 	int toadd = (int)add;
 	
 	if( add < 0 )
 	{
 		if( percentage )
-			toadd = (int)((add*OverlayNetwork.size()-50)/100);
-		toadd = Math.max(minsize-OverlayNetwork.size(),toadd);
+			toadd = (int)((add*Network.size()-50)/100);
+		toadd = Math.max(minsize-Network.size(),toadd);
 		remove(-toadd);
 	}
 	else
 	{
 		if( percentage )
-			toadd = (int)((add*OverlayNetwork.size()+50)/100);
-		toadd = Math.min(maxsize-OverlayNetwork.size(),toadd);
+			toadd = (int)((add*Network.size()+50)/100);
+		toadd = Math.min(maxsize-Network.size(),toadd);
 		add(toadd);
 	}
 }

@@ -90,10 +90,10 @@ private int getNodeId(int i) {
 	{
 		if( traced == null )
 		{
-			int nn = (n<0?OverlayNetwork.size():n);
+			int nn = (n<0?Network.size():n);
 			traced = new Node[nn];
 			for(int j=0; j<nn; ++j)
-				traced[j]=OverlayNetwork.get(j);
+				traced[j]=Network.get(j);
 		}
 		return traced[i].getIndex();
 	}
@@ -107,7 +107,7 @@ public boolean analyze() {
 	
 	Graph og = new OverlayGraph(protocolID);
 	if( !dir ) og = new ConstUndirGraph(og);
-	final int nn = (n<0?OverlayNetwork.size():n);
+	final int nn = (n<0?Network.size():n);
  
 	if( method.equals("stats") )
 	{

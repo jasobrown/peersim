@@ -131,7 +131,7 @@ public boolean analyze() {
 	{
 		IncrementalStats stats = new IncrementalStats();
 		for(int i=0; i<nn; ++i)
-			stats.add(og.getNeighbours(getNodeId(i)).size());
+			stats.add(og.degree(getNodeId(i)));
 	
 		System.out.println(name+": "+stats);
 	}
@@ -139,7 +139,7 @@ public boolean analyze() {
 	{
 		IncrementalFreq stats = new IncrementalFreq();
 		for(int i=0; i<nn; ++i)
-			stats.add(og.getNeighbours(getNodeId(i)).size());
+			stats.add(og.degree(getNodeId(i)));
 	
 		stats.print(System.out);
 		System.out.println("\n\n");
@@ -148,8 +148,7 @@ public boolean analyze() {
 	{
 		System.out.print(name+": ");
 		for(int i=0; i<nn; ++i)
-			System.out.print(
-				og.getNeighbours(getNodeId(i)).size()+" ");
+			System.out.print(og.degree(getNodeId(i))+" ");
 		System.out.println();
 	}
 	

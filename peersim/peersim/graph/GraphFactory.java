@@ -19,7 +19,6 @@
 package peersim.graph;
 
 import java.util.*;
-import peersim.util.WeightedRandPerm;
 
 /**
 * Contains static methods for wiring certain kinds of graphs. The general

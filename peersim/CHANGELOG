@@ -1,3 +1,7 @@
+MJ (adding changes by Spyros Voulgaris) 16/02/2005
+- DegreeStats now uses the (now correct) degree method instead of the size
+  of the returned neighbor list.
+
 MJ (adding changes by Spyros Voulgaris) 15/02/2005
 - OverlayNetwork had bugs: degree and getNeighbours did not conform
   to the contract that only those links count for which both ends

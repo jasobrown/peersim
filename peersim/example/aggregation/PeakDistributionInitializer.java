@@ -90,20 +90,15 @@ public class PeakDistributionInitializer implements Dynamics
 	// Comment inherited from interface
 	public void modify()
 	{
-		int time = peersim.core.CommonState.getT();
-		// works also at initialization (time==0)
-		if (time % epochLength == 0)
-		{
-			System.err.println("Restarting: " + Network.size());
-			for (int i = 0; i < Network.size(); i++)
-			{
-				Aggregation prot = (Aggregation) Network.get(i).getProtocol(pid);
-				prot.setValue(0);
-			}
-			Aggregation prot = (Aggregation) Network.get(0).getProtocol(pid);
-			prot.setValue(value);
-			// RestartingManager.setStartTime(time);			
-		}
+	
+            System.err.println("Restarting: " + Network.size());
+            for (int i = 0; i < Network.size(); i++) {
+                Aggregation prot = (Aggregation) Network.get(i).getProtocol(pid);
+                prot.setValue(0);
+            }
+            Aggregation prot = (Aggregation) Network.get(0).getProtocol(pid);
+            prot.setValue(value);
+            
 	}
 
 }

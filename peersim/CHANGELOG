@@ -1,4 +1,8 @@
-MJ 06/01/2005:
+MJ 09/01/2005
+- Fixed a bug in PeakDistribution: it did not initialize as many nodes
+  as the number of peaks. Eg with one peak, one node is not initialized.
+
+MJ 06/01/2005
 VERSION 0.3 RELEASED
 ------------------------------------------------------------------
 ------------------------------------------------------------------

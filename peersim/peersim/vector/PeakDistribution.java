@@ -99,7 +99,7 @@ public void modify() {
 	{
 		((SingleValue)Network.get(i).getProtocol(pid)).setValue(vl);
 	}
-	for (int i=pn; i < Network.size()-pn; i++)
+	for (int i=pn; i < Network.size(); i++)
 	{
 		((SingleValue)Network.get(i).getProtocol(pid)).setValue(0.0);
 	}

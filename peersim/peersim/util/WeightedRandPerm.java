@@ -53,7 +53,6 @@ private double sum = 0.0;
 * It does not actually calculate the permutation.
 * It uses the given weights to assign probabilities to the integers.
 * The permutation can be read using method {@link #next}.
-* Calls to {@link #get} return undefined values, so {@link #next} must be used.
 * If the previous permutation was of the same length, it is more efficient.
 */
 public void reset(int k, double[] w ) {
@@ -70,7 +69,12 @@ public void reset(int k, double[] w ) {
 			weights = new double[k];
 		
 		sum = 0.0;
-		for(int i=0; i<k; ++i) sum+=(weights[i]=w[i]);
+		for(int i=0; i<k; ++i)
+		{
+			if( w[i] <= 0.0 ) throw new IllegalArgumentException(
+				"weights should be positive: "+w[i]);
+			sum+=(weights[i]=w[i]);
+		}
 	}
 	else
 	{

@@ -82,7 +82,7 @@ public static final String PAR_SHUFFLE = "simulation.shuffle";
 
 /**
  * This is the prefix for network initializers. These have to be of
- * type {@link Initializer}.
+ * type {@link Dynamics}.
  */
 public static final String PAR_INIT = "init";
 

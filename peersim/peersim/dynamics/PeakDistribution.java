@@ -24,7 +24,7 @@ import peersim.core.*;
 /**
  * Initializes the values so that {@link #PAR_PEAKS} nodes have value
  * {@link #PAR_VALUE}/{@link #PAR_PEAKS}, the rest zero.
- * Assumes nodes implement {@link #SingleValue}.
+ * Assumes nodes implement {@link SingleValue}.
  */
 public class PeakDistribution 
 implements Dynamics 

@@ -32,7 +32,7 @@ public class ExtendedRandom extends Random {
     /**
      * Extracts the next integer, according to a Poisson distribution.
      * 
-     * @param The expected mean.
+     * @param mean The expected mean.
      * @return An integer Poisson extraction.
      */
     public int nextPoisson(double mean) {

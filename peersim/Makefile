@@ -23,7 +23,7 @@ doc:
 		example.newscast \
 		example.aggregation \
 		example.hot \
-		distributions
+		peersim.vector
 
 release: all doc
 	rm -fr peersim-$(VER)

@@ -106,7 +106,7 @@ public static int getCycle()
 
 /**
  * Returns the current cycle. This method is deprecated; method
- * @link #getCycle() should be used instead.
+ * {@link #getCycle()} should be used instead.
  * 
  * @deprecated
  */
@@ -148,7 +148,7 @@ public static Integer getCycleObj()
  * time (a long-value).
  * In cycle-driven simulations, returns the current cycle (a long that
  * can safely be cast into an integer). Initializers, observers, and
- * dynamics should always call this method instead of {@link getCycle()};
+ * dynamics should always call this method instead of {@link #getCycle()};
  * in this way, they are compatible with both cycle-driven and event-driven
  * simulations.
  */

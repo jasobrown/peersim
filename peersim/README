@@ -3,7 +3,7 @@ This is version 0.3 of the Peersim high level P2P network simulator.
 
 This archive is composed of:
 - the doc/ directory containing the javadoc-generated documentation
-- the src/ directory containing the simular source
+- the src/ directory containing the simulator source
 - the example/ directory containing example configuration files
 - peersim-0.3.jar, a java archive containing the compiled bytecode
 - jep-2.24.jar, a Java Mathematical Expression Parser library from 

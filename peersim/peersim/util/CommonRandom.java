@@ -60,6 +60,46 @@ static {
 	r = new Random(seed);
 }
 
+// ======================== methods ================================
+// =================================================================
+
+/**
+* Implements nextLong(long) the same way nexInt(int) is implemented in Random.
+* @param n the bound on the random number to be returned. Must be positive.
+* @return a pseudorandom, uniformly distributed long value between 0
+* (inclusive) and n (exclusive).
+*/
+public static long nextLong(long n) {
+
+	if (n<=0)
+		throw new IllegalArgumentException("n must be positive");
+	
+	if ((n & -n) == n)  // i.e., n is a power of 2
+	{	
+		return CommonRandom.r.nextLong()&(n-1);
+	}
+	
+	long bits, val;
+	do
+	{
+		bits = (CommonRandom.r.nextLong()>>>1);
+		val = bits % n;
+	}
+	while(bits - val + (n-1) < 0);
+	
+	return val;
+}
+
+// -------------------------------------------------------------------
+
+public static void main(String[] args) {
+
+	Configuration.setConfig( new peersim.config.ConfigProperties(args) );
+	for(int i=0; i<100; ++i)
+		System.out.println(nextLong(Long.parseLong(args[0])));
+	
+}
+
 }
 
 // note that it can be initialized by any object extending java.util.Random

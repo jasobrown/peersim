@@ -21,10 +21,12 @@ package peersim.dynamics;
 import peersim.core.Node;
 
 /**
-* Generic interface to initialize a simulation. It is designed to allow
+* Generic interface to initialize a node before inserting it into the
+* simulation. Other components like {@link GrowingNetwork} can use a
+* NodeInitializer. It is designed to allow
 * maximal flexibility therefore poses virtually no restrictions on the
-* implementation. It can be used to imlpement initializations before the
-* simulation that require global knowledge of the system.
+* implementation. It can even be used to imlpement initializations
+* that require global knowledge of the system.
 */
 public interface NodeInitializer {
 

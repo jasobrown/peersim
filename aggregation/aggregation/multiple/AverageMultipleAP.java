@@ -136,7 +136,7 @@ public AverageMultipleAP(String prefix)
 	p = new ProtocolData();
 	p.symProb = Configuration.getDouble(prefix + "." + PAR_SYM_FAILUREPROB, 0.0);
 	p.asymProb = Configuration.getDouble(prefix + "." + PAR_ASYM_FAILUREPROB, 0.0);
-  p.lid = FastConfig.getLinkable(CommonState.getPid());
+	p.lid = FastConfig.getLinkable(CommonState.getPid());
 	
 	// Instance fields
 	values = new float[Configuration.getInt(prefix + "." + PAR_VALUES)];
@@ -207,7 +207,7 @@ protected boolean canDeliverRequest(Node node)
 		return false;
 	if ((p.symProb > 0 && CommonRandom.r.nextDouble() < p.symProb) ||
 			(p.asymProb > 0 && CommonRandom.r.nextDouble() < p.asymProb))
-		return false;  	
+		return false;
 	return true;
 }
 
@@ -222,7 +222,7 @@ protected boolean canDeliverResponse(Node node)
 	if (node.getFailState() == Fallible.DEAD)
 		return false;
 	if (p.asymProb > 0 && CommonRandom.r.nextDouble() < p.asymProb)
-		return false;  	
+		return false;
 	return true;
 }
 
@@ -275,10 +275,10 @@ public void deliverRequest(Node initiator, Node receiver, float rvalue, int inde
 	/* Update the value */
 	float lvalue = values[index];
 	values[index] = (lvalue + rvalue)/2;
-  if (canDeliverResponse(initiator)) {
+	if (canDeliverResponse(initiator)) {
 		AverageMultipleAP rsrc = 
 			(AverageMultipleAP) initiator.getProtocol(CommonState.getPid());
-    rsrc.deliverResponse(initiator, receiver, lvalue, index);
+		rsrc.deliverResponse(initiator, receiver, lvalue, index);
 	}
 }
 
@@ -315,7 +315,7 @@ protected Node selectNeighbor(Node node, int pid)
 	if (linkable.degree() > 0) 
 		return linkable.getNeighbor(CommonRandom.r.nextInt(linkable.degree()));
 	else
-	  return null;
+		return null;
 }
 
 //--------------------------------------------------------------------------

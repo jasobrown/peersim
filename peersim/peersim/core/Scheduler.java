@@ -84,15 +84,15 @@ public static final String PAR_FINAL = "FINAL";
 */
 public static final String PAR_PRECYCLE = "precycle";
 
-protected int step;
+protected final int step;
 
-protected int from;
+protected final int from;
 
-protected int until;
+protected final int until;
 
-protected boolean fin;
+protected final boolean fin;
 
-protected boolean precycle;
+protected final boolean precycle;
 
 
 // ==================== initialization ==============================
@@ -100,15 +100,13 @@ protected boolean precycle;
 
 
 public Scheduler(String prefix) {
-  init(prefix, true);
+	
+	this(prefix, true);
 }
+
+// ------------------------------------------------------------------
 
 public Scheduler(String prefix, boolean useDefault)
-{
-  init(prefix, useDefault);
-}
-
-public void init(String prefix, boolean useDefault)
 {
 	int at = Configuration.getInt(prefix+"."+PAR_AT,-1);
 	if( at < 0 )

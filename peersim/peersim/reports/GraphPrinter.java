@@ -50,7 +50,7 @@ public static final String PAR_BASENAME = "outf";
 /**
 * The name for the format of the output. Defaults to "neighborlist",
 * which is a plain dump of neighbors. The class
-* {@link peersim.dynamics.WireFromFile} an read this format.
+* {@link peersim.dynamics.WireFromFile} can read this format.
 */
 public static final String PAR_FORMAT = "format";
 

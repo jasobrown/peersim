@@ -166,11 +166,11 @@ public static String nextExperiment()
 {
 	// Reading parameter
 	cycles = Configuration.getInt(PAR_CYCLES, -1);
-  if (cycles < 0) {
-  	return "Configuration file not valid for class " + 
+	if (cycles < 0) {
+		return "Configuration file not valid for class " + 
 			OrderSimulator.class.getName() +  " parameter \"" + 
 			PAR_CYCLES + "\" undefined.";
-  }	
+	}	
 	String order = Configuration.getString(PAR_ORDER, null);
 	if (order == null) {
 		return "Configuration file not valid for class " + 

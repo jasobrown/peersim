@@ -1,4 +1,8 @@
 AM 30/12/2004
+- Modified Makefile to remove "distributions" from the list of
+  packages that are inserted in the distribution.
+
+AM 30/12/2004
 - Modified aggregation to use to the new vector package. All the
   implementation now use double instead of float.
 

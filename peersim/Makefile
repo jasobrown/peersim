@@ -34,7 +34,7 @@ release: all doc
 	cp README CHANGELOG peersim-$(VER)
 	mkdir peersim-$(VER)/example
 	cp example/*.txt peersim-$(VER)/example
-	jar cf peersim-$(VER).jar `find peersim distributions example \( -name "*.java" -o -name "*.class" \)`
+	jar cf peersim-$(VER).jar `find peersim example \( -name "*.java" -o -name "*.class" \)`
 	mv peersim-$(VER).jar peersim-$(VER)
 
 

@@ -57,6 +57,8 @@ protected double value;
 ////////////////////////////////////////////////////////////////////////////
 
 
+protected AbstractFunction() {}
+
 public AbstractFunction(String prefix, Object obj) {
 
 	int protocolId = ((Integer) obj).intValue();

@@ -29,10 +29,10 @@ import java.util.Collections;
 * graph algorithms and graph topology initialization methods.
 * It stores the reference of the overlay network only so it follows the
 * changes in it. However, if the nodes are reshuffled in the overlay network's
-* internal representation, or of the node list changes,
+* internal representation, or if the node list changes,
 * then the behaviour becomes unspecified.
 *
-* The indeces of nodes are from 0 to Network.size()-1.
+* The indices of nodes are from 0 to Network.size()-1.
 *
 * The fail state of nodes has an effect on the graph: all nodes are included
 * but edges are included only if both ends are up. This expresses the fact
@@ -99,15 +99,22 @@ public boolean isEdge(int i, int j) {
 
 // ---------------------------------------------------------------
 
+/**
+* Returns those neighbors that are up. IF node i is not up, it returns
+* an empty list.
+*/
 public Collection getNeighbours(int i) {
 	
 	Linkable lble=(Linkable)Network.node[i].getProtocol(protocolID);
 	ArrayList al = new ArrayList(lble.degree());
-	for(int j=0; j<lble.degree(); ++j)
-	{
-		final Node n = lble.getNeighbor(j);
-		// if acessible, we include it
-		if(n.isUp()) al.add(new Integer(n.getIndex()));
+	if( Network.node[i].isUp() )
+	{	
+		for(int j=0; j<lble.degree(); ++j)
+		{
+			final Node n = lble.getNeighbor(j);
+			// if accessible, we include it
+			if(n.isUp()) al.add(new Integer(n.getIndex()));
+		}
 	}
 	return Collections.unmodifiableList(al);
 }
@@ -172,10 +179,21 @@ public boolean clearEdge( int i, int j ) {
 
 // ---------------------------------------------------------------
 
+/**
+* Returns number of neighbors that are up. If node i is down, returns 0.
+*/
 public int degree(int i) {
-	
-	return 
-	 ((Linkable)Network.node[i].getProtocol(protocolID)).degree();
+
+	if( !Network.node[i].isUp() ) return 0;
+	Linkable lble=(Linkable)Network.node[i].getProtocol(protocolID);
+	int numNeighbours = 0;
+	for(int j=0; j<lble.degree(); ++j)
+	{
+		final Node n = lble.getNeighbor(j);
+		// if accessible, we count it
+		if(n.isUp()) numNeighbours++;
+	}
+	return numNeighbours;
 }
 
 }

@@ -688,7 +688,6 @@ private static String[] order(String[] names, String type)
 	int i=0;
 	if( order != null && !order.equals("") )
 	{
-System.err.println("'"+order+"'");
 		// split around non-word characters
 		String[] sret = order.split("\\W+");
 		for (; i < sret.length; i++)

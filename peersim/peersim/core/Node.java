@@ -15,10 +15,11 @@ public interface Node extends Fallible, Cloneable {
 	*/
 	public Protocol getProtocol(int i);
 
-	/**
-	* Sets the i-th protocol to p in this node.
-	*/
-	public void setProtocol(int i, Protocol p);
+  /**
+   *  Substitutes the i-th protocol of this node with the specified
+   *  protocol.
+   */
+  public void setProtocol(int i, Protocol protocol);
 
 	/**
 	* Returns the number of protocols included in this node.
@@ -28,7 +29,7 @@ public interface Node extends Fallible, Cloneable {
 	/**
 	* Sets an integer identifier for this node. Applications should
 	* not use this method. It is provided for the core system.
-	* It is public only becuase in a java interface it is not possible
+	* It is public only because in a java interface it is not possible
 	* to define non-public methods, and other solutions, like adapters
 	* supporting indexing increase memory consumption which is a great
 	* problem.

@@ -27,48 +27,83 @@ package peersim.core;
 public class Protocols 
 {
 
-  ////////////////////////////////////////////////////////////////////////////
-  // Fields
-  ////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////
+	// Fields
+	////////////////////////////////////////////////////////////////////////////
 
-  /**
-  * This array stores the protocol id-s of the protocols from which instances
-  * of this class get neighborhood info. If an instance of this class is
-  * configured to be protocol i and it uses protocol j as a neighborhood source
-  * then protLinks[i]=j. This means that the length of the array can be as
-  * long as the number of all the protocols, but it can be expected to be
-  * very few so this is not a performance problem. The constructor takes
-  * care of this array.
-  */
-  protected static int[] links = null;
+	/**
+	* This array stores the protocol id-s of the protocols from which instances
+	* of this class get neighborhood info. If an instance of this class is
+	* configured to be protocol i and it uses protocol j as a neighborhood source
+	* then protLinks[i]=j. This means that the length of the array can be as
+	* long as the number of all the protocols, but it can be expected to be
+	* very few so this is not a performance problem. The constructor takes
+	* care of this array.
+	*/
+	protected static int[][] links = new int[1][1];
   
-  ////////////////////////////////////////////////////////////////////////////
-  // Methods
-  ////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////
+	// Methods
+	////////////////////////////////////////////////////////////////////////////
 
-  // XXX To be described better
-  /**
-   * Returns the protocol used by the protocol protocolId.
-   */
-  public static int getLink(int protocolId)
-  {
-  	return links[protocolId];
-  }
+	// XXX To be described better
+	/**
+	 * Returns the (unique) protocol used by the protocol identified by pid.
+	 * This method must be used when a protocol depends on a single protocol.
+	 */
+	public static int getLink(int pid)
+	{
+		return links[pid][0];
+	}
   
-  /**
-   * Set the protocols
-   *
-   */
-  public static void setLink(int protocolId, int link)
-  {
-  	if (links == null || links.length<protocolId+1)
-  	{
-  		int[] tmp = links;
-  		links = new int[protocolId+1];
-  		if( tmp != null )
-  			System.arraycopy(tmp,0,links,0,tmp.length);
-  	}
-  	links[protocolId]=link;  	
-  }
+	/**
+	 * Returns one of the protocols used by the protocol identified by pid.
+	 * This method must be used when a protocol depends on multiple protocols.
+	 * In this case, variable localid is used to discriminate between them.
+	 * Each protocols is responsible for assigning local identifiers for
+	 * all the protocols on which it depends. 
+	 */
+	public static int getLink(int pid, int position)
+	{
+		return links[pid][position];
+	}
+  
+  
+	/**
+	 * Set the protocols
+	 *
+	 */
+	public static void setLink(int pid, int position, int link)
+	{
+		int xmax = (links.length > pid+1 ? links.length : pid+1);
+		int ymax = (links[0].length > position+1 ? links[0].length : position+1);
+		if (xmax > links.length || ymax > links[0].length) {
+			// Store old array
+			int[][] tmp = links;
+  		
+			// Create new array
+			links = new int[xmax][];
+			for (int i=0; i < xmax; i++) {
+				links[i] = new int[ymax];
+			}
+  		
+			// Copy array
+			for (int i=0; i < tmp.length; i++) {
+				for (int j=0; j < tmp[0].length; j++) {
+					links[i][j] = tmp[i][j];
+				}
+			}
+		}
+		links[pid][position]=link;  	
+	}
+
+	/**
+	 * Set the protocols
+	 *
+	 */
+	public static void setLink(int pid, int link)
+	{
+		setLink(pid, 0, link);
+	}
 
 }

@@ -43,7 +43,7 @@ private int failstate = Fallible.OK;
 // ================ constructor and initialization =================
 // =================================================================
 
-public GeneralNode() {
+public GeneralNode(String prefix) {
 	
 	ArrayList list = new ArrayList();
 	int i = 0;

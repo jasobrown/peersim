@@ -94,7 +94,7 @@ implements Protocol, Node, Linkable
 		return (protocol == null ? DEAD : OK);
 	}
 
-	// -----------------------------------  
+	// -----------------------------------------------------------------
 	
 	public boolean isUp() { return getFailState()==OK; }
   

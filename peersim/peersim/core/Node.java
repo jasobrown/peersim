@@ -54,7 +54,8 @@ public interface Node extends Fallible, Cloneable {
 	
 	/**
 	* Returns the index of this node. It is such that
-	* <code>Network.get(n.getIndex())<code> returns n.
+	* <code>Network.get(n.getIndex())<code> returns n. This index can
+	* change during a simulation, it is not a fixed id.
 	* @see Network#get
 	*/
 	public int getIndex();

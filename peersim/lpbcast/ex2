@@ -1,0 +1,38 @@
+# this one adds more dynamism. Nodes come and go according to the
+# configured schedule.
+
+random.seed 1234569890
+
+simulation.cycles 100
+simulation.shuffle
+
+overlay.size 1
+overlay.maxSize 10000
+
+protocol.0 lpbcast.SimpleLpbcast
+#protocol.0.l 10
+protocol.0.F 3
+protocol.0.subs 20
+protocol.0.unSubs 20
+protocol.0.unSubsTout 50
+
+dynamics.0 peersim.dynamics.GrowingNetwork
+dynamics.0.add 1000
+dynamics.0.ineach 1
+dynamics.0.until 5
+dynamics.0.init.0 peersim.init.WireRegularRandom
+dynamics.0.init.0.protocol 0
+dynamics.0.init.0.degree 2
+
+dynamics.1 lpbcast.Unsubscribe
+dynamics.1.add -10
+dynamics.1.ineach 1
+dynamics.1.from 8
+dynamics.1.protocol 0
+
+observer.0 peersim.reports.DegreeStats
+observer.0.protocol 0
+
+observer.1 peersim.reports.ConnectivityObserver
+observer.1.protocol 0
+

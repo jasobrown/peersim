@@ -1,0 +1,109 @@
+# The prefix structure of the properties in this file is self explaining.
+# One note is needed: currently for the property arrays that are defined
+# by the postfixes .0, .1, etc, there are strict restrictions. That is,
+# the first element must always have postfix be .0, and the second .1, atc.
+# This means that eg if .0 is missing, then no properties will be read
+# even if .1 is present. As another example, if .0, .1, .3 are present, only
+# 0. and .1 will be read.
+
+
+# This defines the random seed for the simulation. With the same random
+# seed the simulation should give identical results, if all the classes
+# use the central source of randomness provided (they should).
+random.seed 1234569890
+
+# the number of cycles to complete. The nodes will be visited this many
+# times
+simulation.cycles 1000
+
+# if set then in each cycle the nodes will be visited in a random order
+simulation.shuffle
+
+# this defines the initial size of the overlay network. This many nodes will
+# be generaqted during initialization
+overlay.size 50000
+# if set, it has to be larger than size, and defines the maximal size the
+# network is allowed to reach during the simulation. If it is not set, its
+# default is size, so the network is not allowed to grow.
+overlay.maxSize 500000
+
+# this tells the simulator that the first node in the protocol array should be
+# lpbcast. The value of the property is the class that implement lpbcast.
+protocol.0 lpbcast.SimpleLpbcast
+# the value of l. If not set, no view will used whatsoever and subs will
+# take over the role of view (it will define the communiaction graph)
+protocol.0.l 10
+protocol.0.F 1
+# tha maximal size of subs
+protocol.0.subs 50
+# the maximal size of unSubs
+protocol.0.unSubs 100
+# the timeout of the unsubscriptions. After this timeout, they are removed
+# from unSubs. The timeout should be understood in terms of cycles.
+protocol.0.unSubsTout 50
+
+# This is an initializer which initializes the network by adding connection
+# that define a regualr random directed graph. This make sense if we want to
+# start up a simulation with a large network with an already existing topology
+# random in this case.
+init.0 peersim.init.WireRegularRandom
+# the number of random edges that will be added to each node
+init.0.degree 20
+# this is the protocol ID of the lpbcast protocol, which we want to initialize
+init.0.protocol 0
+
+# This defines dynamism, by adding new nodes.
+dynamics.0 peersim.dynamics.GrowingNetwork
+dynamics.0.add 100
+dynamics.0.ineach 1
+dynamics.0.until 10
+# this is the class that initializes the newly added nodes. In this case,
+# each new node will get a single random contact node.
+dynamics.0.init.0 peersim.init.WireRegularRandom
+dynamics.0.init.0.protocol 0
+dynamics.0.init.0.degree 1
+
+# Class that removes nodes before the specified cycles. The removed node
+# will politely unsubscribe. If failure has to be modelled, the plain
+# GrowingNetwork class should be used which brings nodes down without any
+# action
+dynamics.1 lpbcast.Unsubscribe
+dynamics.1.add -100
+dynamics.1.ineach 1
+dynamics.1.from 1
+dynamics.1.until 1
+dynamics.1.protocol 0
+
+# this will print statistics about the degree of the nodes (size of out-view)
+# the numbers printed are min, max, number of nodes, avg, std.
+observer.0 peersim.reports.DegreeStats
+observer.0.protocol 0
+
+# prints connectivity information in the form of {x1=y1,...,xn=yn}
+# where the n is the number of weakly connected clusters, and the numbers
+# y1,... are the sizes of the clusters. x1 has no clear meaning but it has to
+# do with strong connectivity. It is true that the graph is strongly connected
+# if and only if n=1 and x1=1. If x1 != 1, then there are more strongly
+# connected clusters.
+observer.1 peersim.reports.ConnectivityObserver
+observer.1.protocol 0
+
+# prints the graph at the end of the simulation in UCINET DL format
+observer.2 peersim.reports.GraphPrinter
+observer.2.protocol 0
+
+# This observer will print the accessible nodes with incresing minimal
+# distances from several nodes. It prints lines in the form
+# a_0 a_1 ... a_maxd where ai is the number of nodes which have minimal distance
+# i from the node. Thus a_1 is the number of neighbors for example.
+observer.3 peersim.reports.BallExpansion
+observer.3.protocol 0
+# maxd will determine the number of numbers printed in each line
+observer.3.maxd 5
+# if this is set, then the directionality is ignored in the graph
+# this consumes more memory, care should be taken
+observer.3.undir
+# the number of nodes to analize (number of lines). 
+observer.3.n 10
+
+

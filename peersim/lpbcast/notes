@@ -1,0 +1,24 @@
+Some notes on the implementation.
+
+1: in the paper unsubscriptions are removed only from the view. In this
+implementation they are removed from subs too.
+
+2: in the paper a new subscription (newSub) is added to subs only if it was
+not already present in view. This constraint is not neded for view, since view
+is a set, and is maybe not intended in the case of subs. This
+implementation sticks to the paper though. Feedback is needed asap.
+
+3: since I have the suspicion that "view" is not necessary, in the
+implementation it is possible to switch it off, by simply not setting any
+value (or setting a negative value) for l in the configuration.
+When view is switched off, subs will play the role of view, ie it will define
+the communication graph. The algorithms are the same otherwise.
+
+4: Lacking a description in the paper, I invented the following unsubscription.
+When a node wants to unsubscribe, it sends a gossip message to F randomly
+selected accessible peers with its own unsubscription added to unSubs.
+This happens whenever a node wants to unsubscribe, not during the
+periodic gossip sending.
+
+
+

@@ -1,0 +1,106 @@
+# The prefix structure of the properties in this file is self explaining.
+# One note is needed: currently for the property arrays that are defined
+# by the postfixes .0, .1, etc, there are strict restrictions. That is,
+# the first element must always have postfix be .0, and the second .1, atc.
+# This means that eg if .0 is missing, then no properties will be read
+# even if .1 is present. As another example, if .0, .1, .3 are present, only
+# 0. and .1 will be read.
+
+
+# This defines the random seed for the simulation. With the same random
+# seed the simulation should give identical results, if all the classes
+# use the central source of randomness provided (they should).
+random.seed 1234569890
+
+# the number of cycles to complete. The nodes will be visited this many
+# times
+simulation.cycles 1000
+
+# if set then in each cycle the nodes will be visited in a random order
+simulation.shuffle
+
+# this defines the initial size of the overlay network. This many nodes will
+# be generaqted during initialization
+overlay.size 50000
+# if set, it has to be larger than size, and defines the maximal size the
+# network is allowed to reach during the simulation. If it is not set, its
+# default is size, so the network is not allowed to grow.
+overlay.maxSize 500000
+
+# this tells the simulator that the first protocol in the protocol array of
+# each node should be scamp. The value of the property is the class that
+# implements scamp.
+protocol.0 scamp.Scamp
+# the value of c
+protocol.0.c 0
+# The value of lease timeout. If not set, then lease is switched off.
+protocol.0.leaseTimeout 100
+# The TTL for the random redirection mechanism. If not set, no redirection
+# is applied.
+protocol.0.indirectionTTL 10
+
+# Initialization using the SCAMP subscribe protocol. As a result of this, the
+# initial network will be built by subscribing the nodes one by one, in a
+# sequential order.
+init.0 scamp.Subscribe
+# This parameter tells the initializer that scamp can be found on
+# position 0 in the protocol array.
+init.0.protocol 0
+
+# this defines a modifier which grows the network. When adding a node, it
+# will apply the SCAMP subscription protocol.
+dynamics.0 peersim.dynamics.GrowingNetwork
+dynamics.0.add 500
+dynamics.0.ineach 1
+dynamics.0.until 10
+dynamics.0.init.0 scamp.Subscribe
+dynamics.0.init.0.protocol 0
+
+# this defines a modifier which will decrease the network size. When removing
+# a node, it will apply the SCAMP unsubscription protocol. Note that if
+# failure has to be modeled, then instead of scamp.Unsubscribe, GrowingNetwork
+# should be used with a negative "add" parameter, which simply shuts
+# down nodes.
+dynamics.1 scamp.Unsubscribe
+dynamics.1.add -100
+dynamics.1.ineach 1
+dynamics.1.from 10
+dynamics.1.protocol 0
+
+# this will print statistics about the degree of the nodes (size of out-view)
+# the numbers printed are min, max, number of nodes, avg, std.
+observer.0 peersim.reports.DegreeStats
+observer.0.protocol 0
+
+# prints connectivity information in the form of {x1=y1,...,xn=yn}
+# where the n is the number of weakly connected clusters, and the numbers
+# y1,... are the sizes of the clusters. x1 has no clear meaning but it has to
+# do with strong connectivity. It is true that the graph is strongly connected
+# if and only if n=1 and x1=1. If x1 != 1, then there are more strongly
+# connected clusters.
+observer.1 peersim.reports.ConnectivityObserver
+observer.1.protocol 0
+
+# prints the graph at the end of the simulation in UCINET DL format
+observer.2 peersim.reports.GraphPrinter
+observer.2.protocol 0
+
+# prints a health test of the scamp network, in particular the state of
+# links and some other consistency checks
+observer.3 scamp.HealthTest
+observer.3.protocol 0
+
+# This observer will print the accessible nodes with incresing minimal
+# distances from several nodes. It prints lines in the form
+# a_0 a_1 ... a_maxd where ai is the number of nodes which have minimal distance
+# i from the node. Thus a_1 is the number of neighbors for example.
+observer.4 peersim.reports.BallExpansion
+observer.4.protocol 0
+# maxd will determine the number of numbers printed in each line
+observer.4.maxd 5
+# if this is set, then the directionality is ignored in the graph
+# this consumes more memory, care should be taken
+observer.4.undir
+# the number of nodes to analize (number of lines). 
+observer.4.n 10
+

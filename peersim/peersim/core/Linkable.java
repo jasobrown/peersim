@@ -1,0 +1,55 @@
+package peersim.core;
+
+
+/**
+* Instances of classes implementing this interface can form networks (graphs)
+* in the simulator framework.
+* The interface is similar to one of a container (containing neighbors),
+* only the types of the contained elements have to be {@link Node}.
+* The neighbor collection is defined in a random access list style, but
+* it must follow the contract of a set.
+* <p>
+* Also note that there is no possibility to remove elements from the
+* neighbor set. This is because removal is usually costly and it does not make
+* sense in the context of our overlay network simulation framework,
+* where this interface is used. Therefore it would only put an unnecessary
+* burden on implementors.
+*/
+public interface Linkable {
+ 
+
+	/**
+	* Returns the size of the neighbor list.
+	*/
+	public int degree();
+
+	/**
+	* Returns the neighbor with the given index. The contract is that
+	* listing the elements from index 0 to index degree()-1 should list
+	* each element exactly once if this object is not modified in the
+	* meantime.
+	*/
+	public Node getNeighbor(int i);
+
+	/**
+	*  Add a neighbor to the current set of neighbors.
+	* 
+	*  @return true if the neighbor has been inserted; false if the 
+	*    node is already a neighbor of this node
+	*/
+	public boolean addNeighbor(Node neighbour);
+
+	/**
+	* Returns true if the given node is a member of the neighbor set.
+	*/
+	public boolean contains(Node neighbor);
+	
+	/**
+	* A possibility for optimization. An implementation should try to
+	* compress its internal representation. Normally this should be called
+	* when no increase in the expected size of the neighborhood can be
+	* expected.
+	*/
+	public void pack();
+}
+

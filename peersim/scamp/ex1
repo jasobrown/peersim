@@ -1,0 +1,22 @@
+# a simplistic example to start with. It builds a SCAMP network and then
+# prints degree statistics
+
+random.seed 1234569890
+
+simulation.cycles 0
+
+overlay.size 50000
+
+protocol.0 scamp.Scamp
+protocol.0.c 0
+#protocol.0.leaseTimeout 100
+#protocol.0.indirectionTTL 10
+
+init.0 scamp.Subscribe
+init.0.protocol 0
+
+# this will print statistics about the degree of the nodes (size of out-view)
+# the numbers printed are min, max, number of nodes, avg, std.
+observer.0 peersim.reports.DegreeStats
+observer.0.protocol 0
+

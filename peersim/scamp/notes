@@ -1,0 +1,23 @@
+Some notes regarding the implementation of the SCAMP protocol
+
+1: The mechanism for handling infinite subscription forwarding in small
+networks is done differently, I use a TTL which allows a subscription to be
+forwarded at most 2*N times (N is network size). This is a pure rule of thumb,
+but in the simultions it fullfills the necessary role.
+
+2: The heartbeat mechanism is not implemented, as we agreed.
+
+3: Failure handling is absent, that is, communications are one way,
+without feedback and messages sent to failed nodes are simply lost.
+
+4: The unsubscription implementation sticks to the one described in the paper.
+It has known flaws, that is, it erodes the consistency of inViews, which
+results in the erosion of the whole graph on the long run. Some of these
+effects can be fixed by more communication as I described earlier, I haven't
+implemented it waiting for a consensus.
+
+5: The simulation of lease is still an open question. I adopted the
+version in which each node removes expired subscriptions from their own views,
+the other version, in which nodes remove their own expired subscritions from
+the views of other nodes is commented out.
+

@@ -49,12 +49,6 @@ public static final String PAR_CYCLES = "simulation.cycles";
 public static final String PAR_SHUFFLE = "simulation.shuffle";
 
 /**
- * Parameter representing the number of times the experiment is run.
- * Defaults to 1.
- */
-public static final String PAR_EXPS = "simulation.experiments";
-
-/**
 * The type of the getPair function. Defaults to "seq".
 */
 public static final String PAR_GETPAIR = "simulation.getpair";
@@ -84,9 +78,6 @@ public static final String PAR_OBS = "observer";
 protected static int cycles;
 
 protected static boolean shuffle;
-
-/** The number of independent restarted simulations to be performed */
-protected static int exps;
 
 protected static boolean getpair_rand;
 
@@ -221,10 +212,17 @@ protected static void nextRound(int cycle) {
 /**
  * Runs an experiment
  */
-protected static void nextExperiment() 
+public static String nextExperiment() 
 {
 	// Reading parameter
-	cycles = Configuration.getInt(PAR_CYCLES);
+	cycles = Configuration.getInt(PAR_CYCLES, -1);
+  if (cycles < 0) {
+  	return "Configuration file not valid for class " + 
+			Simulator.class.getName() +  " parameter \"" + 
+			PAR_CYCLES + "\" undefined.";
+  }	
+
+	
 	shuffle = Configuration.contains(PAR_SHUFFLE);
 	getpair_rand = Configuration.contains(PAR_GETPAIR);
 
@@ -287,52 +285,7 @@ protected static void nextExperiment()
 	{
 		if( obsSchedules[j].fin() ) observers[j].analyze();
 	}
-}
-
-
-// =============== public methods ======================================
-// =====================================================================
-
-
-/**
-*  Loads configuration and executes the simulation.
-*/
-public static void main(String[] pars) throws Exception {
-	
-	long time = System.currentTimeMillis();	
-
-	// loading config
-	// XXX we assume here that config is properties format
-	System.err.println("Simulator: loading configuration");
-	Configuration.setConfig( new ConfigProperties(pars) );
-
-	int exps = Configuration.getInt(PAR_EXPS,1);
-
-	try {
-
-		for(int k=0; k<exps; ++k)
-		{
-			System.err.println("Simulator: starting experiment "+k);
-			System.out.println("\n\n");
-	
-			nextExperiment();
-		}
-	
-	} catch (MissingParameterException e) {
-		System.err.println(e.getMessage());
-		System.exit(1);
-	} catch (IllegalParameterException e) {
-		System.err.println(e.getMessage());
-		System.exit(1);
-	}
-
-
-	// undocumented testing capabilities
-	if(Configuration.contains("__t")) 
-		System.out.println(System.currentTimeMillis()-time);
-	if(Configuration.contains("__x")) Network.test();
-
-
+  return null;
 }
 
 }

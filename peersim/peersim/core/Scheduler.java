@@ -84,15 +84,15 @@ public static final String PAR_FINAL = "FINAL";
 */
 public static final String PAR_PRECYCLE = "precycle";
 
-protected final int step;
+protected int step;
 
-protected final int from;
+protected int from;
 
-protected final int until;
+protected int until;
 
-protected final boolean fin;
+protected boolean fin;
 
-protected final boolean precycle;
+protected boolean precycle;
 
 
 // ==================== initialization ==============================
@@ -100,11 +100,23 @@ protected final boolean precycle;
 
 
 public Scheduler(String prefix) {
+  init(prefix, true);
+}
 
+public Scheduler(String prefix, boolean useDefault)
+{
+  init(prefix, useDefault);
+}
+
+public void init(String prefix, boolean useDefault)
+{
 	int at = Configuration.getInt(prefix+"."+PAR_AT,-1);
 	if( at < 0 )
 	{
-		step = Configuration.getInt(prefix+"."+PAR_STEP,1);
+		if (useDefault) 
+			step = Configuration.getInt(prefix+"."+PAR_STEP,1);
+		else
+			step = Configuration.getInt(prefix+"."+PAR_STEP);
 		from = Configuration.getInt(prefix+"."+PAR_FROM,0);
 		until = Configuration.getInt(
 				prefix+"."+PAR_UNTIL,Integer.MAX_VALUE);
@@ -145,6 +157,23 @@ public boolean fin() { return fin; }
 // -------------------------------------------------------------------
 
 public boolean preCycle() { return precycle; }
+
+//-------------------------------------------------------------------
+
+public int[] getSchedule(int endtime)
+{
+	int end = Math.min(endtime, until-1);
+	int size = (end-from)/step+1;
+	// System.out.println("endtime " + endtime + " until " + until + " step " + step + " size " + size);
+	int[] array = new int[size];
+	int k = from;
+	for (int i=0; i < size; i++) {
+		array[i] = k;
+		k += step;
+	}
+	return array;
+}
+
 
 }
 

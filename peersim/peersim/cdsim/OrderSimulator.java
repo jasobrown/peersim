@@ -21,8 +21,6 @@ package peersim.cdsim;
 import java.util.*;
 import peersim.config.*;
 import peersim.core.*;
-import peersim.dynamics.*;
-import peersim.reports.Observer;
 import peersim.util.*;
 
 /**
@@ -164,16 +162,25 @@ protected static void nextRound(int cycle, int pid) {
  * New style of simulation. Everything is specified by the 
  * PAR_ORDER parameter.
  */
-protected static void nextExperiment() 
+public static String nextExperiment() 
 {
 	// Reading parameter
-	cycles = Configuration.getInt(PAR_CYCLES);
-	shuffle = Configuration.contains(PAR_SHUFFLE);
+	cycles = Configuration.getInt(PAR_CYCLES, -1);
+  if (cycles < 0) {
+  	return "Configuration file not valid for class " + 
+			OrderSimulator.class.getName() +  " parameter \"" + 
+			PAR_CYCLES + "\" undefined.";
+  }	
+	String order = Configuration.getString(PAR_ORDER, null);
+	if (order == null) {
+		return "Configuration file not valid for class " + 
+		  OrderSimulator.class.getName() +  " parameter \"" + 
+		  PAR_ORDER	+ "\" undefined.";
+	}
+
+		shuffle = Configuration.contains(PAR_SHUFFLE);
 	getpair_rand = Configuration.contains(PAR_GETPAIR);
 	protocolshuffle = Configuration.contains(PAR_PSHUFFLE);
-	String order = Configuration.getString(PAR_ORDER, null);
-	if( order == null ) throw new IllegalParameterException(PAR_ORDER,
-		"You need to define parameter \"order\" for OrderSimulator");
 
 	// initialization
 	System.err.println("OrderSimulator: resetting");
@@ -297,7 +304,7 @@ protected static void nextExperiment()
 		}
 	}
 	
-	
+	return null;
 }
 
 }

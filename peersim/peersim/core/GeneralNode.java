@@ -52,9 +52,7 @@ private Protocol[] protocol = null;
 private int index;
 
 /**
-* This package private field tells the index of this node in the node
-* list of the {@link Network}. This is necessary to allow
-* the implementation of efficient graph algorithms.
+* The fail state of the node.
 */
 private int failstate = Fallible.OK;
 
@@ -109,8 +107,7 @@ public void setFailState(int failState) {
 			else failstate=OK;
 			break;
 		case DEAD:
-			// AM: I've commented this line, because in some cases I need to access
-			// data (like for example an identifier) of nodes that are dead.
+			// XXX to be decided if we need next line or not
 			// protocol = null;
 			index = -1;
 			failstate = DEAD;

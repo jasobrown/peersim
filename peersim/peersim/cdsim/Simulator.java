@@ -118,8 +118,8 @@ protected static void runInitializers() {
 
 // --------------------------------------------------------------------
 
-protected static String[] loadObservers()
-{
+protected static String[] loadObservers() {
+
 	// load observers
 	String[] names = Configuration.getNames(PAR_OBS);
 	observers = new Observer[names.length];
@@ -135,8 +135,8 @@ protected static String[] loadObservers()
 
 //---------------------------------------------------------------------
 
-protected static String[] loadDynamics()
-{
+protected static String[] loadDynamics() {
+
 	// load dynamism managers
 	String[] names = Configuration.getNames(PAR_DYN);
 	dynamics = new Dynamics[names.length];
@@ -152,8 +152,8 @@ protected static String[] loadDynamics()
 
 //---------------------------------------------------------------------
 
-protected static void loadProtocolSchedules()
-{
+protected static void loadProtocolSchedules() {
+
 	// load protocol schedulers
 	String[] names = Configuration.getNames(Node.PAR_PROT);
 	protSchedules = new Scheduler[names.length];
@@ -212,17 +212,10 @@ protected static void nextRound(int cycle) {
 /**
  * Runs an experiment
  */
-public static String nextExperiment() 
-{
-	// Reading parameter
-	cycles = Configuration.getInt(PAR_CYCLES, -1);
-  if (cycles < 0) {
-  	return "Configuration file not valid for class " + 
-			Simulator.class.getName() +  " parameter \"" + 
-			PAR_CYCLES + "\" undefined.";
-  }	
+public static void nextExperiment()  {
 
-	
+	// Reading parameter
+	cycles = Configuration.getInt(PAR_CYCLES);
 	shuffle = Configuration.contains(PAR_SHUFFLE);
 	getpair_rand = Configuration.contains(PAR_GETPAIR);
 
@@ -285,7 +278,6 @@ public static String nextExperiment()
 	{
 		if( obsSchedules[j].fin() ) observers[j].analyze();
 	}
-  return null;
 }
 
 }

@@ -1,7 +1,10 @@
 AM 6/11/2004
 - added event-based simulator in package peersim.edsim
 - added transport protocols in package peersim.transport
-
+- added class peersim.Simulator to serve as the new entry point to peersim.
+  It looks at the configuration and launches the right simulator. Check
+  the classdocs of peersim.Simulator.
+  
 MJ 3/11/2004:
 VERSION 0.2 RELEASED
 ------------------------------------------------------------------

@@ -83,7 +83,7 @@ public static final String PAR_PSHUFFLE = "simulation.shuffle.protocol";
 /**
  * This is the prefix for order specifications.
  */
-public static final String PAR_ORDER = "order";
+public static final String PAR_ORDER = "simulation.order";
 
 // --------------------------------------------------------------------
 
@@ -162,23 +162,12 @@ protected static void nextRound(int cycle, int pid) {
  * New style of simulation. Everything is specified by the 
  * PAR_ORDER parameter.
  */
-public static String nextExperiment() 
+public static void nextExperiment() 
 {
 	// Reading parameter
-	cycles = Configuration.getInt(PAR_CYCLES, -1);
-	if (cycles < 0) {
-		return "Configuration file not valid for class " + 
-			OrderSimulator.class.getName() +  " parameter \"" + 
-			PAR_CYCLES + "\" undefined.";
-	}	
-	String order = Configuration.getString(PAR_ORDER, null);
-	if (order == null) {
-		return "Configuration file not valid for class " + 
-		  OrderSimulator.class.getName() +  " parameter \"" + 
-		  PAR_ORDER	+ "\" undefined.";
-	}
-
-		shuffle = Configuration.contains(PAR_SHUFFLE);
+	cycles = Configuration.getInt(PAR_CYCLES);
+	String order = Configuration.getString(PAR_ORDER);
+	shuffle = Configuration.contains(PAR_SHUFFLE);
 	getpair_rand = Configuration.contains(PAR_GETPAIR);
 	protocolshuffle = Configuration.contains(PAR_PSHUFFLE);
 
@@ -303,8 +292,6 @@ public static String nextExperiment()
 				observers[l].analyze();
 		}
 	}
-	
-	return null;
 }
 
 }

@@ -9,6 +9,9 @@ clean:
 doc:
 	rm -rf doc/*
 	javadoc -classpath .:jep-2.24.jar -overview overview.html -d doc \
+		peersim \
+		peersim.edsim \
+		peersim.transport \
 		peersim.core \
 		peersim.cdsim \
 		peersim.config \

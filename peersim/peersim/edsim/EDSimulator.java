@@ -28,7 +28,7 @@ import peersim.reports.Observer;
 
 /**
  * Event-driven simulator. The simulator is able to run both event-driven
- * protocols (@link EDProtocol) and cycle-driven protocols (@link CDProtocol).
+ * protocols {@link EDProtocol} and cycle-driven protocols {@link CDProtocol}.
  * To execute any of the cycle-based classes (observers, dynamics, and
  * protocols), the step parameter of Schedulers must be specified, to
  * define the periodicity of cycles. 
@@ -133,7 +133,8 @@ protected static String[] loadObservers()
 		observers[i]=(Observer)Configuration.getInstance(names[i]);
 		obsSchedules[i] = new Scheduler(names[i], false);
 	}
-	System.err.println("Simulator: loaded observers "+Arrays.asList(names));
+	System.err.println("EDSimulator: loaded observers "+
+		Arrays.asList(names));
 	return names;
 }
 
@@ -150,7 +151,8 @@ protected static String[] loadDynamics()
 		dynamics[i]=(Dynamics)Configuration.getInstance(names[i]);
 		dynSchedules[i] = new Scheduler(names[i], false);
 	}
-	System.err.println("Simulator: loaded dynamics "+Arrays.asList(names));
+	System.err.println("EDSimulator: loaded dynamics "+
+		Arrays.asList(names));
 	return names;
 }
 
@@ -192,21 +194,16 @@ protected static void loadCDProtocols()
 /**
  * Runs an experiment
  */
-public static String nextExperiment() 
+public static void nextExperiment() 
 {
 	// Reading parameter
-	endtime = Configuration.getInt(PAR_ENDTIME, -1);
-  if (endtime < 0) {
-  	return "Configuration file not valid for class " + 
-			EDSimulator.class.getName() +  " parameter \"" + 
-			PAR_ENDTIME + "\" undefined.";
-  }	
+	endtime = Configuration.getInt(PAR_ENDTIME);
 	EventHandler.setShuffle(Configuration.contains(PAR_SHUFFLE));
 
 	// initialization
-	System.err.println("Simulator: resetting");
+	System.err.println("EDSimulator: resetting");
 	Network.reset();
-	System.err.println("Simulator: running initializers");
+	System.err.println("EDSimulator: running initializers");
 	CommonState.setT(0); // needed here
 	CommonState.setPhase(CommonState.PRE_DYNAMICS);
 	runInitializers();
@@ -256,8 +253,6 @@ public static String nextExperiment()
 	{
 		if( obsSchedules[j].fin() ) observers[j].analyze();
 	}
-    
-	return null;
 }
 
 }

@@ -268,6 +268,59 @@ public static String getString( String name ) {
 // -------------------------------------------------------------------
 
 /**
+ * Returns the class object for the specified classname. If the specified 
+ * class does not
+ * exist, few attempts are done to identify the correct class, or
+ * at least provide some suggestions.
+ * 
+ */
+private static Class getClass(String property, String classname)
+{
+	Class c = null;
+	try {
+		// Maybe classname is just a fully-qualified name
+		c = Class.forName(classname);
+	} catch ( ClassNotFoundException e) { }
+	if (c == null) {
+		// Maybe classname is a non-qualified name?
+		String fullname = ClassFinder.getQualifiedName(classname);
+		if (fullname != null) {
+			try {
+				c = Class.forName(fullname);
+			} catch ( ClassNotFoundException e) { }
+		}
+	}
+	if (c == null) {
+		// Maybe there are multiple classes with the same non-qualified name.
+		String fullname = ClassFinder.getQualifiedName(classname);
+		if (fullname != null && fullname.indexOf(',') >= 0) {
+			throw new IllegalParameterException(property,
+				"The non-qualified class name " + classname + 
+				" corresponds to multiple fully-qualified classes: " +
+				fullname);
+		}
+	}
+	if (c == null) {
+		// Last attempt: maybe the fully classified name is wrong, but the
+		// classname is correct. 
+		String shortname = ClassFinder.getShortName(classname);
+		String fullname = ClassFinder.getQualifiedName(shortname);
+		if (fullname != null) {
+			throw new IllegalParameterException(property,
+				"Class " + classname + 
+				" does not exists. Possible candidate(s): " +	fullname);
+		}		
+	}
+	if (c == null) {
+		throw new IllegalParameterException(property,
+				"Class " + classname + " not found");
+	}
+	return c;
+}	
+
+//-------------------------------------------------------------------
+
+/**
 * Reads given configuration item for a class name. It returns an instance of
 * the class. The class must implement a constructor that takes a String as an
 * argument. The value of this string will be <tt>name</tt>. Note that this
@@ -279,18 +332,14 @@ public static Object getInstance( String name ) {
 
 	String classname = config.getProperty(name);
 	if (classname == null) throw new MissingParameterException(name);
-	
-	try
-	{
-		Class c = Class.forName(classname);
+
+  Class c = getClass(name, classname);		
+		
+	try {
 		Class pars[] = { String.class };
 		Constructor cons = c.getConstructor( pars );
 		Object objpars[] = { name };
 		return cons.newInstance( objpars );
-	}
-	catch ( ClassNotFoundException e) {
-		throw new IllegalParameterException(name,
-			"Class " + classname + " not found");
 	}
 	catch( NoSuchMethodException e )
 	{
@@ -333,9 +382,10 @@ public static Object getInstance( String name, Object obj ) {
 	String classname = config.getProperty(name);
 	if (classname == null) throw new MissingParameterException(name);
 	
-	try
+  Class c = getClass(name, classname);		
+
+  try
 	{
-		Class c = Class.forName(config.getProperty(name));
 		Class pars[] = { String.class, Object.class };
 		Constructor cons = c.getConstructor( pars );
 		Object objpars[] = { name, obj };
@@ -344,10 +394,6 @@ public static Object getInstance( String name, Object obj ) {
 	catch( NoSuchMethodException e )
 	{
 		return getInstance( name );
-	}
-	catch ( ClassNotFoundException e) {
-		throw new IllegalParameterException(name,
-			"Class " + classname + " not found");
 	}
 	catch ( InvocationTargetException e) 
 	{

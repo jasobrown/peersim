@@ -1,3 +1,12 @@
+AM 15/10/2004
+- added the peersim.config.ClassFinder class, whose task is to
+  associate non-qualified names to qualified names. 
+- changed peersim.config.Configuration to use ClassFinder.
+  Now it is possible to specify a non-qualified class name in
+  configuration files. If a unique package-qualified class is
+  found, it is used to create new instances. Otherwise,
+  smart error messages are printed, when possible.
+
 AM 14/10/2004
 - added maxcount and mincount to the toString method of 
   peersim.util.IncrementalStats

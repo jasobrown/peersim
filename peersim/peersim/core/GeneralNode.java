@@ -76,7 +76,7 @@ public void setFailState(int failState) {
 	switch(failState)
 	{
 		case OK:
-			throw new IllegalStateException(
+			if(protocol==null) throw new IllegalStateException(
 				"Cannot set OK when already DEAD");
 		case DEAD:
 			protocol = null;

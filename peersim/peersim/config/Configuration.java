@@ -128,6 +128,8 @@ private static final String PAR_MAXDEPTH = "expressions.maxdepth";
  */
 public static final String PAR_ORDER = "order"; 
 
+// XXX it's ugly because it replicates the definition of PAR_PROT, but
+// this would be the only dependence on the rest of the core...
 /**
  * The parameter name prefix to specify the set of protocol entries that are
  * used
@@ -143,8 +145,8 @@ private static Properties config = null;
 
 
 /**
- *  Map associating string protocol names to the numeric protocol
- * identifiers.
+ * Map associating string protocol names to the numeric protocol
+ * identifiers. The protocol names are understood without prefix.
  */
 private static Map protocols;
 
@@ -176,7 +178,8 @@ public static Properties setConfig( Properties p ) {
 	String[] prots = getNames(PAR_PROT);//they're retunred in correct order
 	for(int i=0; i<prots.length; ++i)
 	{
-		protocols.put(prots[i],new Integer(i));
+		protocols.put(  prots[i].substring(PAR_PROT.length()+1),
+				new Integer(i));
 	}
 	
 	return prev;
@@ -395,9 +398,6 @@ public static int getPid( String property ) {
 	
 	String protname = getString(property);
 	Integer ret = (Integer) protocols.get(protname); 
-//	System.out.println("- " + property);
-//	System.out.println("+ " + protname);
-//	System.out.println(((Integer) protocols.get(protname)).intValue());
 	if (ret == null) {
 		throw new IllegalParameterException(property,
 			"Protocol " + protname + " is not defined");

@@ -39,11 +39,11 @@ public interface Node extends Fallible, Cloneable {
 	*/
 	public Protocol getProtocol(int i);
 
-  /**
-   *  Substitutes the i-th protocol of this node with the specified
-   *  protocol.
-   */
-  public void setProtocol(int i, Protocol protocol);
+	/**
+	 *  Substitutes the i-th protocol of this node with the specified
+	 *  protocol.
+	 */
+	public void setProtocol(int i, Protocol protocol);
 
 	/**
 	* Returns the number of protocols included in this node.
@@ -69,7 +69,7 @@ public interface Node extends Fallible, Cloneable {
 	* problem.
 	*/
 	public int getIndex();
-  
+
 	/**
 	* We have to include this to change the access right to public.
 	*/
@@ -78,7 +78,7 @@ public interface Node extends Fallible, Cloneable {
 // XXX Additional methods to simplify coding. It is somewhat ugly
 // because if Linkable changes, we have to change this too, but
 // it saves some typing. Any better idea to save typing?
-  
+
 	/**
 	* Returns the size of the neighbor list of the specified protocol.
 	* 

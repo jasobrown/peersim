@@ -104,6 +104,7 @@ public void setFailState(int failState) {
 			if(failstate==DEAD) throw new IllegalStateException(
 				"Cannot set OK when already DEAD");
 			else failstate=OK;
+			break;
 		case DEAD:
 			protocol = null;
 			index = -1;

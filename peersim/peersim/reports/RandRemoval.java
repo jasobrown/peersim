@@ -67,7 +67,7 @@ public RandRemoval(String name) {
 
 	this.name = name;
 	protocolID = Configuration.getPid(name+"."+PAR_PROT);
-	n = Configuration.getInt(name+"."+PAR_N);
+	n = Configuration.getInt(name+"."+PAR_N,1);
 	ga = new GraphAlgorithms();
 }
 

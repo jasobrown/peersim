@@ -1,3 +1,9 @@
+peersim.util.IncrementalFreq now accepts an upper bound on the
+processed values
+
+peersim.cdsim.Simulator now outputs two blank lines between
+experiments
+
 Upgraded GraphPrinter so that it can print to files that can be
 read by WireFromFile. Added method writeNeighborList to GraphIO.
 

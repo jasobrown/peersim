@@ -36,7 +36,7 @@ implements SingleValue, Protocol
 //--------------------------------------------------------------------------
 	
 /** Value held by this protocol */
-private double value;
+protected double value;
 	
 
 //--------------------------------------------------------------------------

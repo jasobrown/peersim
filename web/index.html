@@ -4,13 +4,13 @@
   <meta content="text/html; charset=ISO-8859-1"
  http-equiv="content-type">
   <link type="text/css" href="peersim_schema.css" rel="stylesheet">
-  <title>PeerSim P2P Simulation Software</title>
+  <title>PeerSim P2P Simulator</title>
 </head>
 <body id="top">
 
 <br>
 <div style="text-align: center;">
-<h1>Peersim simulation software</h1>
+<h1>Peersim Peer-to-Peer Simulator</h1>
 <p>
     [<a href="#intro">Introduction</a>]
     [<a href="#people">People</a>]
@@ -30,27 +30,29 @@
 </p>
 
 <p>
-P2P networks can reach huge dimensions such as hundreds of thousands of
-nodes and those elements can join and leave (gracefully or crashing)
-the system continously. These P2P system properties are very
-challenging to deal with. Evaluating a protocol in a such environment,
-expecially in its early stages of development, it is not&nbsp;
-feasible.&nbsp; On the Internet are available distributed
-planetary-scale open platforms (e.g.: <a
+Peer-to-peer systems can reach huge dimensions such as millions of
+nodes, which typically join and leave continously.
+These properties are very challenging to deal with.
+Evaluating a new protocol in a real environment,
+especially in its early stages of development, is not
+feasible.
+There are distributed planetary-scale open platforms (e.g., <a
  href="http://www.planet-lab.org/">PlanetLab</a>) to develop and deploy
 network services, but these solutions don't include more than about 200
-nodes: really too small compared to available P2P applications. Thus,
-for large-scale systems, a simulation testbed is mandatory.<br>
-<br>
+nodes.
+Thus, for large-scale systems, a scalable simulation testbed is mandatory.
+
+<p>
 Peersim has been developed with extreme scalability and support for
-dynamicity in mind; it should be considered as a framework composed by
-many simple extendable and pluggable components. To reach these goals,
-some simplifying assumpions have been made (such as throw away all the
-details about the transport communication protocol stack). Peersim is
-closely related with <a href="http://www.cs.unibo.it/bison">BISON</a>
-project and it is a full open source software.<br>
-All the the code is written in the Java language.<br>
-</p>
+dynamicity in mind. It is composed of
+many simple extendable and pluggable components, with a flexible
+configuration mechanism. To allow for scalability and focus on
+self-organization properties of large scale systems,
+some simplifying assumpions have been made, such as ignoring the
+details of the transport communication protocol stack. Peersim is
+devolped within the  <a href="http://www.cs.unibo.it/bison">BISON</a>
+project and it is distributed under an open source license.
+Peersim is written in the Java language.
 
 <p><table cellpadding="4" cellspacing="0" width="100%" class="title">
     <tbody><tr>
@@ -62,10 +64,9 @@ All the the code is written in the Java language.<br>
 </p>
 
 <p>
-The people involved in the peersim development process are the
-following:<br>
+The people developing peersim are:<br>
 <ul>
-  <li><a href="http://www.cs.unibo.it/%7Ejelasity">Mark Jelasity</a></li>
+  <li><a href="http://www.cs.unibo.it/%7Ejelasity">M&aacute;rk Jelasity</a></li>
   <li><a href="http://www.cs.unibo.it/%7Emontreso/">Alberto Montresor</a></li>
   <li><a href="http://jesi.web.cs.unibo.it/">Gian Paolo Jesi</a><br>
   </li>
@@ -82,11 +83,11 @@ following:<br>
 </p>
 
 <p>
-The project is hosted at&nbsp;<a
- href="http://sourceforge.net/projects/peersim/">sourceforge site</a>
-and the source code is downloadable with <a
- href="http://sourceforge.net/cvs/?group_id=91456">cvs</a>.&nbsp; <span
- style="text-decoration: underline;"><br>
+The project is hosted at <a
+ href="http://sourceforge.net">SourceForge.net</a>.
+ The source, the compiled version and other material can be downloaded from
+ the 
+ <a href="http://sourceforge.net/projects/peersim/">peersim project page</a>.
 </p>
 
 <p><table cellpadding="4" cellspacing="0" width="100%" class="title">
@@ -101,7 +102,8 @@ and the source code is downloadable with <a
 <p>
 Available documentation:<br>
 <ul>
-  <li>JavaDoc (also included in the code itself)</li>
+  <li><a href="doc/index.html">class documentation</a>
+  compiled with javadoc</li>
   <li><a href="http://peersim.sourceforge.net/peersim_HOWTO.html">peersim HOWTO</a> : an introduction
 to the simulator usage and programming<br>
   </li>
@@ -110,11 +112,11 @@ to the simulator usage and programming<br>
 
 
 <hr>
-<p align="center">
-Page author: Gian Paolo Jesi (<a href="mailto:jesi@cs.unibo.it">jesi@cs.unibo.it</a>)<br>
-Last update: Fri, 19 Dec 2003
-</p>
-<p align="center">
+<address>
+Page maintenance: Gian Paolo Jesi (<a href="mailto:jesi@cs.unibo.it">jesi@cs.unibo.it</a>)<br>
+Last update: Thu Jan 8 23:03:28 CET 2004
+</address>
+<p align="right">
 <A href="http://sourceforge.net"> <IMG src="http://sourceforge.net/sflogo.php?group_id=91456&amp;type=5" width="210" height="62" border="0" alt="SourceForge.net Logo" /></A>
 </p>
 </body>

@@ -1,4 +1,9 @@
-AM 25/11/2005
+GJ 15/12/2004
+- Added ExtendedRandom class to support power-law distribution generation
+  (thanks to Simon Patarin for this code).
+- Updated CommonRandom class: now uses the an ExtendedRandom object.  
+
+AM 25/11/2004
 - Changed the implementation of the Event-driven simulator in order to
   support 64 bits for time. Part of these bits (by default: 8) are used
   to discriminate between events that occur at the same time.

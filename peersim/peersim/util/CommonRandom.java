@@ -18,7 +18,6 @@
 		
 package peersim.util;
 
-import java.util.Random;
 import peersim.config.Configuration;
 
 /**
@@ -43,7 +42,7 @@ public static String PAR_SEED = "random.seed";
 * during an experiment (although it shouldn't) until no other sources of
 * randomness are used within the system.
 */
-public static Random r = null;
+public static ExtendedRandom r = null;
 
 // ======================== initialization =========================
 // =================================================================
@@ -57,7 +56,7 @@ static {
 	
 	long seed =
 		Configuration.getLong(PAR_SEED,System.currentTimeMillis());
-	r = new Random(seed);
+	r = new ExtendedRandom(seed);
 }
 
 // ======================== methods ================================

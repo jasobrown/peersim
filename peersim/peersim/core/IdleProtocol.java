@@ -32,10 +32,10 @@ public class IdleProtocol implements Protocol, Linkable {
 ////////////////////////////////////////////////////////////////////////////
 
 /** Neighbors */
-private Node[] neighbors;
+protected Node[] neighbors;
 
 /** Actual number of neighbors in the array */
-private int len;
+protected int len;
 
 public static final int DEFAULT_INITIAL_CAPACITY=10;
 

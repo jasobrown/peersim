@@ -8,7 +8,7 @@ clean:
 	rm -f `find -name "*.class"`
 doc:
 	rm -rf doc/*
-	javadoc -overview overview.html -d doc \
+	javadoc -classpath .:jep-2.24.jar -overview overview.html -d doc \
 		peersim.core \
 		peersim.cdsim \
 		peersim.config \

@@ -50,7 +50,7 @@ private static final String PAR_MAXDEPTH = "expressions.maxdepth";
 
 /**
  * The parameter name to configure ordering of the array as returned by
- * {@link #getInstanceArray} and {@link getNames}.
+ * {@link #getInstanceArray} and {@link #getNames}.
  * It is read by these methods. This is realy a prefix which is followed by
  * the type specifier. For example: "order.protocol" will define the
  * order of configuration entries that start with
@@ -522,8 +522,8 @@ public static Object[] getInstanceArray( String name ) {
  * <code>PAR_ORDER+"."+name</code> then the order is aplhabetical. Otherwise
  * this entry defines the order. It must contain a list of entries
  * from the values that belong to the given <code>name</code>, but
- * <em>without</em> the prefix. That is, eg "first" instead of
- * name+.first".
+ * <em>without</em> the prefix. That is, eg <code>"first"</code> instead of
+ * <code>name+".first"</code>.
  * It is assumed that these values contain only word characters (alphanumeric
  * and underscore '_'. The order configuration entry thus contains a list
  * of entries separated by any non-word characters.

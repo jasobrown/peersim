@@ -114,6 +114,7 @@ protected static void nextRound() {
 		// (instead of running all on one node at the same time?)
 		for(int k=0; k<len; ++k)
 		{
+			CommonState.setPid(k);
 			Protocol protocol = node.getProtocol(k);
 			if( protocol instanceof CDProtocol )
 			{

@@ -28,18 +28,6 @@ doc:
 release: all doc
 	rm -fr peersim-$(VER)
 	mkdir peersim-$(VER)
-	zip -r doc.zip doc
-	mv doc.zip peersim-$(VER)
-	rm -rf doc
-	cp README CHANGELOG peersim-$(VER)
-	mkdir peersim-$(VER)/example
-	cp example/*.txt peersim-$(VER)/example
-	jar cf peersim-$(VER).jar `find peersim example \( -name "*.java" -o -name "*.class" \)`
-	mv peersim-$(VER).jar peersim-$(VER)
-
-releaseall: all doc
-	rm -fr peersim-$(VER)
-	mkdir peersim-$(VER)
 	mv doc peersim-$(VER)
 	cp README CHANGELOG build.xml peersim-$(VER)
 	mkdir peersim-$(VER)/example

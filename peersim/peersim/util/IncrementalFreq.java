@@ -36,22 +36,46 @@ public class IncrementalFreq {
 // ===================== fields ========================================
 // =====================================================================
 
+
 private int n;
 
 /** freq[i] holds the frequency of i. primitive implementation, to be changed */
-private int[] freq; 
+private int[] freq = null; 
+
+/**
+* The capacity, if larger than 0. Added values larger than or equal to
+* this one will be ignored.
+*/
+private final int N;
+
 
 // ====================== initialization ==============================
 // ====================================================================
 
 
-public IncrementalFreq() { reset(); }
+/**
+* Values larger than this one will be ignored.
+*/
+public IncrementalFreq(int maxvalue) {
+	
+	N = maxvalue+1;
+	reset();
+}
+
+// --------------------------------------------------------------------
+
+public IncrementalFreq() {
+	
+	N=0;
+	reset();
+}
 
 // --------------------------------------------------------------------
 
 public void reset() {
 
-	freq = new int[0];
+	if( freq==null || N==0 ) freq = new int[0];
+	else for(int i=0; i<freq.length; ++i) freq[i]=0;
 	n = 0;
 }
 
@@ -62,6 +86,7 @@ public void reset() {
 
 public void add( int i ) {
 	
+	if( N>0 && i>=N ) return;
 	n++;
 	if( i>=0 && i<freq.length ) freq[i]++;
 	else if( i>=0 )
@@ -75,7 +100,7 @@ public void add( int i ) {
 
 // --------------------------------------------------------------------
 
-/** Returns number of data items seen.  */
+/** Returns number of processed data items.  */
 public int getN(int i) { return n; }
 
 // --------------------------------------------------------------------
@@ -99,15 +124,28 @@ public void print( PrintStream out ) {
 
 // ---------------------------------------------------------------------
 
+public String toString() {
+	
+	String result="";
+	for(int i=0; i<freq.length; ++i)
+	{
+		result = result+freq[i]+" ";
+	}
+	return result;
+}
+
+// ---------------------------------------------------------------------
+
 /** to test. Input is a list of numbers in command line. */
 public static void main(String[] pars) {
 	
-	IncrementalFreq ifq = new IncrementalFreq();
-	for(int i=0; i<pars.length; ++i)
+	IncrementalFreq ifq = new IncrementalFreq(Integer.parseInt(pars[0]));
+	for(int i=1; i<pars.length; ++i)
 	{
 		ifq.add(Integer.parseInt(pars[i]));
 	}
 	ifq.print(System.out);
+	System.out.println(ifq);
 }
 
 }

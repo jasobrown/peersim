@@ -168,6 +168,7 @@ public static void main(String[] pars) throws Exception {
 	for(int k=0; k<exps; ++k)
 	{
 		System.err.println("Simulator: starting experiment "+k);
+System.out.println("\n\n");
 
 		// initialization
 		System.err.println("Simulator: resetting overlay network");

@@ -1,3 +1,6 @@
+MJ 16/12/2004
+- Fixed docs bug in FastConfig, thanks to Spyros Voulgaris
+
 GJ 15/12/2004
 - Added ExtendedRandom class to support power-law distribution generation
   (thanks to Simon Patarin for this code).

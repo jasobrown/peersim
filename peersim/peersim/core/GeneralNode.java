@@ -100,6 +100,10 @@ public boolean isUp() { return getFailState()==OK; }
 
 public Protocol getProtocol(int i) { return protocol[i]; }
 
+// -----------------------------------------------------------------
+
+public void setProtocol(int i, Protocol p) { protocol[i]=p; }
+
 //------------------------------------------------------------------
 
 public int protocolSize() { return protocol.length; }

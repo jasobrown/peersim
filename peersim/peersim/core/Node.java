@@ -16,6 +16,11 @@ public interface Node extends Fallible, Cloneable {
 	public Protocol getProtocol(int i);
 
 	/**
+	* Sets the i-th protocol to p in this node.
+	*/
+	public void setProtocol(int i, Protocol p);
+
+	/**
 	* Returns the number of protocols included in this node.
 	*/
 	public int protocolSize();

@@ -2,12 +2,14 @@ MJ 26/03/05
 - Added boolean support to configuration (only constants so far).
   Similar in function to "contains", take care. In the future we might add
   boolean expressions, this is why it was added now.
-- Added FastUndirGraph, which is faster in ost cases than ConstUndirGraph but
+- Added FastUndirGraph, which is faster in most cases than ConstUndirGraph but
   uses a huge amount of memory.
-- Refactored the graph observers so that they all extend GraphObserver, that
-  takes care of (among other things) hugely improving performance when
-  many graph observers are run together (pre-processing of the overlay is
-  done only once).
+- Refactored the graph observers so that they all extend GraphObserver
+  (check classdocs), that takes care of (among other things) hugely improving
+  performance when many graph observers are run together (pre-processing of
+  the overlay is done only once). As a result, some old config files change
+  their semantics: now for all observers, directed graph is the default, and
+  "undir" must be specified for an undirected version.
 
 MJ 24/03/05
 - Fixed a memory leak. It was present when simulating churn with

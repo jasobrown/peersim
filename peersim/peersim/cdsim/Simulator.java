@@ -145,90 +145,99 @@ public static void main(String[] pars) throws Exception {
 	// XXX this is a hack temporarily
 	getpair_rand = Configuration.contains(PAR_GETPAIR);
 
-	for(int k=0; k<exps; ++k)
-	{
-		System.err.println("Simulator: starting experiment "+k);
-	
-		// initialization
-		System.err.println("Simulator: resetting overlay network");
-		Network.reset();
-		System.err.println("Simulator: running initializers");
-		runInitializers();
-	
-		// load analizers
-		String[] names = Configuration.getNames(PAR_OBS);
-		observers = new Observer[names.length];
-		obsSchedules = new Scheduler[names.length];
-		for(int i=0; i<names.length; ++i)
+	try {
+
+		for(int k=0; k<exps; ++k)
 		{
-			observers[i]=
-				(Observer)Configuration.getInstance(names[i]);
-			obsSchedules[i] = new Scheduler(names[i]);
-		}
-		System.err.println("Simulator: loaded observers "+
-			Arrays.asList(names));
+			System.err.println("Simulator: starting experiment "+k);
 		
-		// load dynamism managers
-		names = Configuration.getNames(PAR_DYN);
-		dynamics = new Dynamics[names.length];
-		dynSchedules = new Scheduler[names.length];
-		for(int i=0; i<names.length; ++i)
-		{
-			dynamics[i]=
-				(Dynamics)Configuration.getInstance(names[i]);
-			dynSchedules[i] = new Scheduler(names[i]);
-		}
-		System.err.println("Simulator: loaded modifiers "+
-			Arrays.asList(names));
-	
-		// main cycle
-		System.err.println("Simulator: starting simulation");
-		CommonState.setT(0); // needed here
-		for(int i=0; i<cycles; ++i)
-		{
-			CommonState.setT(i);
-			CommonState.setPhase(CommonState.PRE_DYNAMICS);
+			// initialization
+			System.err.println("Simulator: resetting overlay network");
+			Network.reset();
+			System.err.println("Simulator: running initializers");
+			runInitializers();
+		
+			// load analizers
+			String[] names = Configuration.getNames(PAR_OBS);
+			observers = new Observer[names.length];
+			obsSchedules = new Scheduler[names.length];
+			for(int i=0; i<names.length; ++i)
+			{
+				observers[i]=
+					(Observer)Configuration.getInstance(names[i]);
+				obsSchedules[i] = new Scheduler(names[i]);
+			}
+			System.err.println("Simulator: loaded observers "+
+				Arrays.asList(names));
 			
-			// analizer pre_dynamics
-			boolean stop = false;
+			// load dynamism managers
+			names = Configuration.getNames(PAR_DYN);
+			dynamics = new Dynamics[names.length];
+			dynSchedules = new Scheduler[names.length];
+			for(int i=0; i<names.length; ++i)
+			{
+				dynamics[i]=
+					(Dynamics)Configuration.getInstance(names[i]);
+				dynSchedules[i] = new Scheduler(names[i]);
+			}
+			System.err.println("Simulator: loaded modifiers "+
+				Arrays.asList(names));
+		
+			// main cycle
+			System.err.println("Simulator: starting simulation");
+			CommonState.setT(0); // needed here
+			for(int i=0; i<cycles; ++i)
+			{
+				CommonState.setT(i);
+				CommonState.setPhase(CommonState.PRE_DYNAMICS);
+				
+				// analizer pre_dynamics
+				boolean stop = false;
+				for(int j=0; j<observers.length; ++j)
+				{
+					if( obsSchedules[j].active(i) &&
+					    !obsSchedules[j].preCycle() )
+						stop = stop || observers[j].analyze();
+				}
+				if( stop ) break;
+			
+				// dynamism
+				for(int j=0; j<dynamics.length; ++j)
+				{
+					if( dynSchedules[j].active(i) )
+						dynamics[j].modify();
+				}
+			
+				CommonState.setPhase(CommonState.PRE_CYCLE);
+				
+				// analizer pre_cycle
+				for(int j=0; j<observers.length; ++j)
+				{
+					if( obsSchedules[j].active(i) &&
+					    obsSchedules[j].preCycle() )
+						stop = stop || observers[j].analyze();
+				}
+				if( stop ) break;
+				
+				// do one cycle
+				nextRound();
+				System.err.println("Simulator: cycle "+i+" done");
+			}
+			
+			CommonState.setPhase(CommonState.POST_LAST_CYCLE);
+			
+			// analysis after the simulation
 			for(int j=0; j<observers.length; ++j)
 			{
-				if( obsSchedules[j].active(i) &&
-				    !obsSchedules[j].preCycle() )
-					stop = stop || observers[j].analyze();
+				if( obsSchedules[j].fin() ) observers[j].analyze();
 			}
-			if( stop ) break;
-		
-			// dynamism
-			for(int j=0; j<dynamics.length; ++j)
-			{
-				if( dynSchedules[j].active(i) )
-					dynamics[j].modify();
-			}
-		
-			CommonState.setPhase(CommonState.PRE_CYCLE);
-			
-			// analizer pre_cycle
-			for(int j=0; j<observers.length; ++j)
-			{
-				if( obsSchedules[j].active(i) &&
-				    obsSchedules[j].preCycle() )
-					stop = stop || observers[j].analyze();
-			}
-			if( stop ) break;
-			
-			// do one cycle
-			nextRound();
-			System.err.println("Simulator: cycle "+i+" done");
 		}
-		
-		CommonState.setPhase(CommonState.POST_LAST_CYCLE);
-		
-		// analysis after the simulation
-		for(int j=0; j<observers.length; ++j)
-		{
-			if( obsSchedules[j].fin() ) observers[j].analyze();
-		}
+	} catch (MissingParameterException e) {
+		System.err.println(e.getMessage());
+		System.exit(1);
+	} catch (IllegalParameterException e) {
+		System.err.println(e.getMessage());
+		System.exit(1);
 	}
 	
 	// undocumented testing capabilities

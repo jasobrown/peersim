@@ -28,7 +28,7 @@ public static final String PAR_PROT = "protocol";
 *  String name of the property containing the beta parameter, i.e. the
 *  probability for a node to be re-wired.
 */
-public static final String PAR_BETA = "bate";
+public static final String PAR_BETA = "beta";
 
 /** 
 *  String name of the parameter which sets defines the degree of the graph,

@@ -23,12 +23,15 @@ import peersim.core.*;
 import peersim.dynamics.Dynamics;
 
 /**
-*/
-public class LinearDistribution implements Dynamics {
+ * Initializes the values to be aggregated based on a linear distribution.
+ */
+public class LinearDistribution 
+implements Dynamics 
+{
 
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 // Constants
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 
 /** 
  * String name of the parameter used to determine the upper bound of the
@@ -44,31 +47,40 @@ public static final String PAR_MIN = "min";
 
 /** 
  * String name of the parameter that defines the protocol to initialize.
- * Parameter read will has the full name
- * <tt>prefix+"."+PAR_PROT</tt>
+ * Parameter read will has the full name <tt>prefix+"."+PAR_PROT</tt>
  */
-public static final String PAR_PROT = "protocol";
+public static final String PAR_PROTID = "protocolID";
 
+//--------------------------------------------------------------------------
+// Fields
+//--------------------------------------------------------------------------
+
+/** Max value */
 private final double max;
 
+/** Min value */
 private final double min;
 
+/** Protocol identifier */
 private final int protocolID;
 
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 // Initialization
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 
+/**
+ * Reads configuration parameters.
+ */
 public LinearDistribution(String prefix)
 {
 	max = Configuration.getDouble(prefix+"."+PAR_MAX);
 	min = Configuration.getDouble(prefix+"."+PAR_MIN,-max);
-	protocolID = Configuration.getInt(prefix+"."+PAR_PROT);
+	protocolID = Configuration.getInt(prefix+"."+PAR_PROTID);
 }
 
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 // Methods
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 
 
 // Comment inherited from interface
@@ -85,5 +97,7 @@ public void modify()
 			).setValue(tmp);
 	}
 }
+
+//--------------------------------------------------------------------------
 
 }

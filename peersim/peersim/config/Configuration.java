@@ -75,16 +75,38 @@ public static int getInt( String name, int def ) {
 */
 public static int getInt( String name ) {
 
+	String s = config.getProperty(name);
+	if (s == null || s.equals("")) {
+		try {
+			throw new Exception();
+		} catch (Exception e){
+			throw new MissingParameterException(name, e);
+		}
+	}
 	try
 	{
-  		// XXX if not integer than probably config error. I'd rather
-		// handle this as an error than silently converting
-		return (int) Double.parseDouble( config.getProperty(name) );
+		// The value is parsed as a double and converted to an int, because it
+		// can have been obtained from a range.
+		return (int) Double.parseDouble(s);
 	}
-	catch( NullPointerException e )
+	catch (NumberFormatException e)
 	{
-		throw new NoSuchElementException("Property "+name+" not found");
+	
+		// Check whether the value can be interpreted as parameter name
+		String ref = config.getProperty(s);
+		if (ref == null || ref.equals("")) {
+			throw new IllegalParameterException(name, "Value " + s + 
+				" is not an int");
+		}
+		// It is a parameter name; we try to obtain the corresponding value.
+		try {
+			return (int) Double.parseDouble(ref);
+		} catch (NumberFormatException e1) {
+			throw new IllegalParameterException(name, "Value " + s + 
+				" is not an int");	
+		}
 	}
+
 }
 
 // -------------------------------------------------------------------
@@ -114,15 +136,38 @@ public static long getLong( String name, long def ) {
 */
 public static long getLong( String name ) {
  
+	String s = config.getProperty(name);
+	if (s == null || s.equals("")) {
+		try {
+			throw new Exception();
+		} catch (Exception e){
+			throw new MissingParameterException(name, e);
+		}
+	}
 	try
 	{
-		return Long.parseLong( config.getProperty(name) );
+		// The value is parsed as a double and converted to a long, because it
+		// can have been obtained from a range.
+		return (long) Double.parseDouble(s);
 	}
-	catch (NullPointerException e)
+	catch (NumberFormatException e)
 	{
-		throw new NoSuchElementException("Property "+name+" not found");
+		// Check whether the value can be interpreted as parameter name
+		String ref = config.getProperty(s);
+		if (ref == null || ref.equals("")) {
+			throw new IllegalParameterException(name, "Value " + s + 
+				" is not an long");
+		}
+		// It is a parameter name; we try to obtain the corresponding value.
+		try {
+			return (long) Double.parseDouble(ref);
+		} catch (NumberFormatException e1) {
+			throw new IllegalParameterException(name, "Value " + s + 
+				"is not an long");	
+		}
 	}
 }
+
 
 // -------------------------------------------------------------------
 
@@ -151,13 +196,33 @@ public static double getDouble( String name, double def ) {
 */
 public static double getDouble( String name ) {
 
+	String s = config.getProperty(name);
+	if (s == null || s.equals("")) {
+		try {
+			throw new Exception();
+		} catch (Exception e){
+			throw new MissingParameterException(name, e);
+		}
+	}
 	try
 	{
-		return Double.parseDouble( config.getProperty(name) );
+		return Double.parseDouble(s);
 	}
-	catch (NullPointerException e)
+	catch (NumberFormatException e)
 	{
-		throw new NoSuchElementException("Property "+name+" not found");
+		// Check whether the value can be interpreted as parameter name
+		String ref = config.getProperty(s);
+		if (ref == null || ref.equals("")) {
+			throw new IllegalParameterException(name, "Value " + s + 
+				" is not a double");
+		}
+		// It is a parameter name; we try to obtain the corresponding value.
+		try {
+			return Double.parseDouble(ref);
+		} catch (NumberFormatException e1) {
+			throw new IllegalParameterException(name, "Value " + s + 
+			  "is not a double");	
+		}
 	}
 }
 
@@ -191,7 +256,11 @@ public static String getString( String name ) {
 	String result = config.getProperty(name);
 	if( result == null )
 	{
-		throw new NoSuchElementException("Property "+name+" not found");
+		try {
+			throw new Exception();
+		} catch (Exception e) {
+			throw new MissingParameterException(name, e);
+		}
 	}
 	return result;
 }
@@ -211,7 +280,11 @@ public static Object getInstance( String name ) {
 	String classname = config.getProperty(name);
 	if (classname == null)
 	{
-		throw new NoSuchElementException("Property "+name+" not found");
+		try {
+			throw new Exception();
+		} catch (Exception e) {
+			throw new MissingParameterException(name, e);
+		}
 	}
 	
 	try
@@ -222,14 +295,27 @@ public static Object getInstance( String name ) {
 		Object objpars[] = { name };
 		return cons.newInstance( objpars );
 	}
+	catch ( ClassNotFoundException e) {
+		throw new IllegalParameterException(name, "Class " + classname + 
+			" not found", e);
+	}
+	catch( NoSuchMethodException e )
+	{
+		throw new IllegalParameterException(name, "Class " + classname + 
+		  " has no " + classname + ("(String) or " + classname + 
+			"(String, Object) constructors"));
+	}
 	catch ( InvocationTargetException e) 
 	{
-		e.printStackTrace();
-		throw new RuntimeException(""+e.getTargetException());
+		if (e.getTargetException() instanceof RuntimeException) {
+			throw (RuntimeException) e.getTargetException();
+		} else {
+			throw new RuntimeException(""+e.getTargetException());
+		}
 	}
 	catch( Exception e )
 	{
-		throw new RuntimeException(""+e);
+		throw new IllegalParameterException(name, e.getMessage(), e);
 	} 
 }
 
@@ -253,7 +339,11 @@ public static Object getInstance( String name, Object obj ) {
 	String classname = config.getProperty(name);
 	if (classname == null)
 	{
-		throw new NoSuchElementException("Property "+name+" not found");
+		try {
+			throw new Exception();
+		} catch (Exception e) {
+			throw new MissingParameterException(name, e);
+		}
 	}
 	
 	try
@@ -268,13 +358,22 @@ public static Object getInstance( String name, Object obj ) {
 	{
 		return getInstance( name );
 	}
-	catch ( InvocationTargetException e ) 
+	catch ( ClassNotFoundException e) {
+		throw new IllegalParameterException(name, "Class " + classname + 
+			" not found");
+	}
+	catch ( InvocationTargetException e) 
 	{
-		throw new RuntimeException(""+e.getTargetException());
+		if (e.getTargetException() instanceof RuntimeException) {
+			throw (RuntimeException) e.getTargetException();
+		} else {
+			e.printStackTrace();
+			throw new RuntimeException(""+e.getTargetException());
+		}
 	}
 	catch( Exception e )
 	{
-		throw new RuntimeException(""+e);
+		throw new IllegalParameterException(name, e.getMessage(), e);
 	} 
 }
 

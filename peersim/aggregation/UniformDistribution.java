@@ -24,16 +24,18 @@ import peersim.util.CommonRandom;
 import peersim.dynamics.Dynamics;
 
 /**
- * 
+ * Initializes the values to be aggregated based on a linear distribution.
  *
  * @author Alberto Montresor
  * @version $Revision$
  */
-public class UniformDistribution implements Dynamics {
+public class UniformDistribution 
+implements Dynamics 
+{
 
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 // Constants
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 
 /** 
  * String name of the parameter used to determine the upper bound of the
@@ -52,43 +54,53 @@ public static final String PAR_MIN = "min";
  * Parameter read will has the full name
  * <tt>prefix+"."+PAR_PROT</tt>
  */
-public static final String PAR_PROT = "protocol";
+public static final String PAR_PROTID = "protocolID";
 
+//--------------------------------------------------------------------------
+// Fields
+//--------------------------------------------------------------------------
+
+/** Max value */
 private final double max;
 
+/** Min value */
 private final double min;
 
-private final int protocolID;
+/** Protocol identifier */
+private final int pid;
 
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 // Initialization
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 
+/**
+ * Read configuration parameters.
+ */
 public UniformDistribution(String prefix)
 {
 	max = Configuration.getDouble(prefix+"."+PAR_MAX);
 	min = Configuration.getDouble(prefix+"."+PAR_MIN,-max);
-	protocolID = Configuration.getInt(prefix+"."+PAR_PROT);
+	pid = Configuration.getInt(prefix+"."+PAR_PROTID);
 }
 
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 // Methods
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 
 
 // Comment inherited from interface
 public void modify()
 {
 	double d = max-min;
-	double sum = 0.0;
 	double tmp;
 	for(int i=0; i<Network.size(); ++i)
 	{
 		tmp = CommonRandom.r.nextDouble()*d+min;
-		sum += tmp;
-		((Aggregation)Network.get(i).getProtocol(protocolID)
+		((Aggregation)Network.get(i).getProtocol(pid)
 			).setValue(tmp);
 	}
 }
+
+//--------------------------------------------------------------------------
 
 }

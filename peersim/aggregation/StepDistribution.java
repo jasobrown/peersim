@@ -24,11 +24,13 @@ import peersim.dynamics.Dynamics;
 
 /**
 */
-public class StepDistribution implements Dynamics {
+public class StepDistribution 
+implements Dynamics 
+{
 
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 // Constants
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 
 /** 
  * String name of the parameter used to determine the load at
@@ -42,25 +44,31 @@ public static final String PAR_VALUE = "value";
  * Parameter read will has the full name
  * <tt>prefix+"."+PAR_PROT</tt>
  */
-public static final String PAR_PROT = "protocol";
+public static final String PAR_PROTID = "protocolID";
+
+
+//--------------------------------------------------------------------------
+// Fields
+//--------------------------------------------------------------------------
 
 private final double value;
 
-private final int protocolID;
+private final int pid;
 
-////////////////////////////////////////////////////////////////////////////
+
+//--------------------------------------------------------------------------
 // Initialization
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 
 public StepDistribution(String prefix)
 {
 	value = Configuration.getDouble(prefix+"."+PAR_VALUE);
-	protocolID = Configuration.getInt(prefix+"."+PAR_PROT);
+	pid = Configuration.getInt(prefix+"."+PAR_PROTID);
 }
 
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 // Methods
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 
 
 // Comment inherited from interface
@@ -69,14 +77,16 @@ public void modify() {
 	int i = 0;
 	for(; i<Network.size()/2; ++i)
 	{
-		((Aggregation)Network.get(i).getProtocol(protocolID)
+		((Aggregation)Network.get(i).getProtocol(pid)
 			).setValue(value);
 	}
 	for(; i<Network.size(); ++i)
 	{
-		((Aggregation)Network.get(i).getProtocol(protocolID)
+		((Aggregation)Network.get(i).getProtocol(pid)
 			).setValue(0.0);
 	}
 }
+	
+//--------------------------------------------------------------------------
 
 }

@@ -21,20 +21,24 @@ package aggregation;
 import peersim.config.*;
 import peersim.core.*;
 import peersim.dynamics.Dynamics;
-import peersim.util.CommonRandom;
 
 /**
-*/
-public class PeakDistribution implements Dynamics {
+ * Initializes the values to be aggregated using a multi-peak distribution.
+ * The total value is subdivided equally among the specified number of nodes, 
+ * while all the other values have value 0.
+ */
+public class PeakDistribution 
+implements Dynamics 
+{
 
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 // Constants
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 
 /** 
  * String name of the parameter used to determine the total load in the 
- * system, to be distributed between peak nodes. Parameter read has the full 
- * name <tt>prefix+"."+PAR_VALUE</tt>
+ * system, to be equally distributed between peak nodes. Parameter read has 
+ * the full name <tt>prefix+"."+PAR_VALUE</tt>
  */
 public static final String PAR_VALUE = "value";
 
@@ -44,25 +48,19 @@ public static final String PAR_VALUE = "value";
  * the system. If this value is greater or equal than 1, it is 
  * interpreted as the actual number of peaks. If it is included in the
  * range [0, 1[ it is interpreted as a percentage with respect to the
- * current network size. Note that using this mechanism it is not 
- * possible to create a network where 100% of the nodes are peaks,
- * unless you specify the exact size of the network. 
- * Default to 1. Parameter read has the full name
- * <tt>prefix+"."+PAR_PEAKS</tt>
+ * current network size. Defaults to 1. 
  */
 public static final String PAR_PEAKS = "peaks";
 
 
 /** 
  * String name of the parameter that defines the protocol to initialize.
- * Parameter read will has the full name
- * <tt>prefix+"."+PAR_PROT</tt>
  */
-public static final String PAR_PROT = "protocol";
+public static final String PAR_PROTID = "protocolID";
 
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 // Fields
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 
 /** Total load */
 private final double value;
@@ -73,41 +71,39 @@ private final double peaks;
 /** Protocol identifier */
 private final int pid;
 
-////////////////////////////////////////////////////////////////////////////
-// Initialization
-////////////////////////////////////////////////////////////////////////////
 
+//--------------------------------------------------------------------------
+// Initialization
+//--------------------------------------------------------------------------
+
+/**
+ * Read configuration parameters.
+ */
 public PeakDistribution(String prefix)
 {
 	value = Configuration.getDouble(prefix+"."+PAR_VALUE);
-	pid = Configuration.getInt(prefix+"."+PAR_PROT);
+	pid = Configuration.getInt(prefix+"."+PAR_PROTID);
 	peaks = Configuration.getDouble(prefix+"."+PAR_PEAKS, 1);
 }
 
-////////////////////////////////////////////////////////////////////////////
-// Methods
-////////////////////////////////////////////////////////////////////////////
 
+//--------------------------------------------------------------------------
+// Methods
+//--------------------------------------------------------------------------
 
 // Comment inherited from interface
 public void modify() 
-{
+{	
   int pn = (peaks < 1 ? (int) (peaks*Network.size()) : (int) peaks);
   double vl = value/pn;
-  for (int i=0; i < Network.size(); i++) {
+  for (int i=0; i < pn; i++) {
+		((Aggregation)Network.get(i).getProtocol(pid)).setValue(vl);
+  }
+  for (int i=pn; i < Network.size()-pn; i++) {
 		((Aggregation)Network.get(i).getProtocol(pid)).setValue(0.0);
   }
-  for (int i=0; i < pn; i++) {
-  	boolean found = false;
-  	do {
-  		int r = CommonRandom.r.nextInt(Network.size());
-  		Aggregation agg = (Aggregation) Network.get(r).getProtocol(pid);
-  		if (agg.getValue() == 0) {
-  			agg.setValue(vl);
-  			found = true;
-  		}
-  	} while (!found);
-  }
 }
+
+//--------------------------------------------------------------------------
 
 }

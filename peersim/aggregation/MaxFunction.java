@@ -22,34 +22,47 @@ import peersim.util.*;
 import peersim.core.*;
 
 /**
- * 
+ * This class implements the max/min aggregation functions through an
+ * epidemic protocol based on selecting the maximum/minimum of the 
+ * values stored at two neighbor nodes.
  *
- *  @author Alberto Montresor
- *  @version $Revision$
+ * @author Alberto Montresor
+ * @version $Revision$
  */
-public class MaxFunction extends AbstractFunction
+public class MaxFunction 
+extends AbstractFunction
 {
 
+//--------------------------------------------------------------------------
+// Initialization
+//--------------------------------------------------------------------------
+
+/**
+ * Invokes the parent class' constructor to set up the relation between 
+ * this protocol and the Linkable protocol used for communication.
+ * 
+ * @param prefix string prefix for config properties
+ * @param obj configuration object, containing the protocol identifier 
+ *  for this protocol.
+ */
 public MaxFunction(String prefix, Object obj)
 {
 	super(prefix, obj);
 }
 
-public Object clone() throws CloneNotSupportedException
-{
-	MaxFunction af = (MaxFunction) super.clone();
-	af.value = value;
-	return af;
-}
+
+//--------------------------------------------------------------------------
+// Methods
+//--------------------------------------------------------------------------
 
 /**
  * Using a {@link Linkable} protocol choses a neighbor and performs a
  * variance reduction step.
  */
-public void nextCycle( Node node, int protocolID)
+public void nextCycle( Node node, int pid)
 {
-	int linkableID = Protocols.getLink(protocolID);
-	Linkable linkable = (Linkable) node.getProtocol(linkableID);
+	int lid = Protocols.getLink(pid);
+	Linkable linkable = (Linkable) node.getProtocol(lid);
 	if (linkable.degree() > 0)
 	{
 		Node peer =
@@ -59,11 +72,13 @@ public void nextCycle( Node node, int protocolID)
 		if (peer.getFailState() != Fallible.OK)
 			return;
 
-		MaxFunction neighbor = (MaxFunction) peer.getProtocol(protocolID);
+		MaxFunction neighbor = (MaxFunction) peer.getProtocol(pid);
 		double max = (this.value > neighbor.value ? this.value : neighbor.value);
 		this.value = max;
 		neighbor.value = max;
 	}
 }
+
+//--------------------------------------------------------------------------
 	
-} // END CLASS
+} 

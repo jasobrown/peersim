@@ -16,33 +16,37 @@
  *
  */
 
-package aggregation;
+package peersim.config;
 
 /**
- * This interface has to be implemented by protocol objects
- * implementing an aggregation function. It enables the
- * system to get and set the values to be aggregated.
  * 
- * Note that values are represented as doubles. Actual
- * implementations can store values as floats, in order to
- * reduce memory footprint.
  *
  * @author Alberto Montresor
  * @version $Revision$
  */
-public interface Aggregation
+public class IllegalParameterException
+extends RuntimeException
 {
 
-/**
- * Get the value to be aggregated. The method can throw an exception
- * to notify the invoker that the value is not available; e.g., because
- * the node is down, or it is not partecipating in the protocol.
- */
-public double getValue();
+	/**
+	 * 
+	 */
+	public IllegalParameterException(String name, String message, Exception e)
+	{
+		super("Parameter \"" + name + "\": " + message +  
+		" [at " + 
+		e.getStackTrace()[1].getClassName()+"."+
+		e.getStackTrace()[1].getMethodName()+":"+
+		e.getStackTrace()[1].getLineNumber() + "]");
+		//e.printStackTrace();
+	}
 
-/**
- * Set the value to be aggregated.
- */
-public void setValue(double value);
+	/**
+	 * 
+	 */
+	public IllegalParameterException(String name, String message)
+	{
+		super("Parameter \"" + name + "\": " + message);
+	}
 
 }

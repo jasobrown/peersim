@@ -71,8 +71,7 @@ public static Node prototype = null;
 // =================================================================
 
 static {
-
-  reset();
+ // reset();
 	
 }
 
@@ -90,16 +89,11 @@ public static void reset() {
 	
 	// creating prototype node
 	Node tmp = null;
-	try
-	{
-		tmp = (Node) Configuration.getInstance(PAR_NODE);
-	}
-	catch (Exception e)
-	{
-		e.printStackTrace();
-		System.err.println(
-			"OverlayNetwork: No node defined, using GeneralNode");
+	if (!Configuration.contains(PAR_NODE)) {
+		System.err.println("Network: no node defined, using GeneralNode");
 		tmp = new GeneralNode("");
+	} else {
+		tmp = (Node) Configuration.getInstance(PAR_NODE);
 	}
 	prototype = tmp;
 

@@ -108,6 +108,7 @@ protected static void nextRound() {
 			   CommonRandom.r.nextInt(OverlayNetwork.size()));
 		else
 			node = OverlayNetwork.get(j);
+		if( !node.isUp() ) continue; 
 		int len = node.protocolSize();
 		// XXX maybe should use different shuffle for each protocol?
 		// (instead of running all on one node at the same time?)
@@ -115,7 +116,10 @@ protected static void nextRound() {
 		{
 			Protocol protocol = node.getProtocol(k);
 			if( protocol instanceof CDProtocol )
+			{
 				((CDProtocol)protocol).nextCycle(node, k);
+				if( !node.isUp() ) break;
+			}
 		}
 	}
 }
@@ -182,12 +186,14 @@ public static void main(String[] pars) throws Exception {
 		for(int i=0; i<cycles; ++i)
 		{
 			CommonState.setT(i);
+			CommonState.setPhase(CommonState.PRE_DYNAMICS);
 			
-			// analizer
+			// analizer pre_dynamics
 			boolean stop = false;
 			for(int j=0; j<observers.length; ++j)
 			{
-				if( obsSchedules[j].active(i) )
+				if( obsSchedules[j].active(i) &&
+				    !obsSchedules[j].preCycle() )
 					stop = stop || observers[j].analyze();
 			}
 			if( stop ) break;
@@ -199,10 +205,23 @@ public static void main(String[] pars) throws Exception {
 					dynamics[j].modify();
 			}
 		
-			// do one round
+			CommonState.setPhase(CommonState.PRE_CYCLE);
+			
+			// analizer pre_cycle
+			for(int j=0; j<observers.length; ++j)
+			{
+				if( obsSchedules[j].active(i) &&
+				    obsSchedules[j].preCycle() )
+					stop = stop || observers[j].analyze();
+			}
+			if( stop ) break;
+			
+			// do one cycle
 			nextRound();
 			System.err.println("Simulator: cycle "+i+" done");
 		}
+		
+		CommonState.setPhase(CommonState.POST_LAST_CYCLE);
 		
 		// analysis after the simulation
 		for(int j=0; j<observers.length; ++j)

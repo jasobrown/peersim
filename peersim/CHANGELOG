@@ -1,3 +1,10 @@
+MJ 22/10/2004
+- added the possibility of excluding entities that are present in the config
+  using a simple config parameter: eg "include observer aa bb 23". This
+  works exactly like the order feature only those names that are not listed
+  are excluded. [see classdoc of Configuration]
+- some more minor refactoring of Simulator and OrderSimulator
+
 MJ 21/10/2004
 - some refactoring of the most recent changes for simplification and
   clarification and which include

@@ -35,7 +35,7 @@ import java.util.*;
 * entries are pre-processed a bit to enhance performance:
 * protocol names are associated to numeric protocol identifiers
 * through method {@link #getPid}.
-* <p>
+* <h2>Expressions</h2>
   You can use expressions in place of numeric values at all places.
   This is implemented using <a href="http://www.singularsys.com/jep/">JEP</a>.
   You can write expression using the syntax that you can
@@ -76,7 +76,7 @@ import java.util.*;
   you get an error message:
   Parameter "overlay.size": Probable recursive definition -
   exceeded maximum depth 100
-  <p>
+  <h2>Ordering</h2>
   It is possible to assign arbitrary names to multiple instances of a given
   entity, like eg an observer or protocol. For example you can write
 
@@ -104,6 +104,16 @@ import java.util.*;
   </pre>
   results in
   <code>["observer.2","observer.0","observer.conn"]</code>.
+  <p>
+  It is also possible to exclude elements from the list, while
+  ordering them. The syntax is identical to that of the above, only the
+  parameter name begins with <code>include</code>. For example
+  <pre>
+  include.observer conn 2
+  </pre>
+  will result in returning <em>only</em> <code>observer.conn</code> and
+  <code>observer.2</code>, in this order. <em>Important!</em> If inlude is
+  defined then ordering is ignored. That is, include is stronger than order.
 *
 */
 public class Configuration {
@@ -127,6 +137,16 @@ private static final String PAR_MAXDEPTH = "expressions.maxdepth";
  * "protocol", but it works for any prefix.
  */
 public static final String PAR_ORDER = "order"; 
+
+/**
+ * The parameter name to configure ordering and exclusion of the array as
+ * returned by {@link #getInstanceArray} and {@link #getNames}.
+ * It is read by these methods. This is realy a prefix which is followed by
+ * the type specifier. For example: "include.protocol" will define the
+ * set and order of configuration entries that start with
+ * "protocol", but it works for any prefix.
+ */
+public static final String PAR_INCLUDE = "include"; 
 
 // XXX it's ugly because it replicates the definition of PAR_PROT, but
 // this would be the only dependence on the rest of the core...
@@ -591,6 +611,7 @@ public static Object[] getInstanceArray( String name ) {
  *
  * <p>
  * The array is sorted as follows. If there is no config entry
+ * <code>PAR_INCLUDE+"."+name</code> or
  * <code>PAR_ORDER+"."+name</code> then the order is aplhabetical. Otherwise
  * this entry defines the order. It must contain a list of entries
  * from the values that belong to the given <code>name</code>, but
@@ -599,11 +620,14 @@ public static Object[] getInstanceArray( String name ) {
  * It is assumed that these values contain only word characters (alphanumeric
  * and underscore '_'. The order configuration entry thus contains a list
  * of entries separated by any non-word characters.
- * It is not required that all the names are listed. The returned
- * ordering is such that it is consistent with the list
- * in the order parameter: it starts with the names listed in the order
- * configuration parameter and continues with the rest of the names in
- * alphabetical order.
+ * <p>
+ * It is not required that all entries are listed.
+ * If {@link #PAR_INCLUDE} is used, then only those entries are returned
+ * that are listed.
+ * If {@link #PAR_ORDER} is used, then all names are returned,
+ * but the array will start
+ * with those that are listed. The rest of the names follow in alphabetical
+ * order.
  */
 public static String[] getNames( String name ) 
 {
@@ -617,8 +641,7 @@ public static String[] getNames( String name )
 			ll.add(key);
 	}
 	String[] ret = (String[])ll.toArray(new String[ll.size()]);
-	Configuration.order(ret,name);
-	return ret;
+	return Configuration.order(ret,name);
 }
 
 //-------------------------------------------------------------------
@@ -630,17 +653,22 @@ public static String[] getNames( String name )
  * (prefix) of these.
  * The output is in <code>names</code>, which will contain a permutation
  * of the original array.
- * Parameter PAR_ORDER+"."+type is read from the
- * configuration. If it is not defined then the order is identical to
- * that of <code>names</code>. If it is specified then it defines the
- * order the following way. The configuration entry must contain entries
+ * Parameter PAR_INCLUDE+"."+type, or if not present, PAR_ORDER+"."+type
+ * is read from the
+ * configuration. If non of them are defined then the order is identical to
+ * that of <code>names</code>. Otherwise the configuration entry must contain
+ * entries
  * from <code>names</code>. It is assumed that the entries in
  * <code>names</code> contain only word characters (alphanumeric
  * and underscore '_'. The order configuration entry thus cintains a list
  * of entries from <code>names</code> separated by any non-word characters.
- * It is not required that all entries are listed. The returned
- * ordering of <code>names</code> is such that it is consistent with the list
- * in the order parameter.
+ * <p>
+ * It is not required that all entries are listed.
+ * If PAR_INCLUDE is used, then only those entries are returned that are
+ * listed.
+ * If PAR_ORDER is used, then all names are returned, but the array will start
+ * with those that are listed. The rest of the names follow in alphabetical
+ * order.
  * 
  * 
  * @param names
@@ -648,9 +676,11 @@ public static String[] getNames( String name )
  * @param type 
  *   the string identifying the particular set of items to be inspected
  */
-private static void order(String[] names, String type)
+private static String[] order(String[] names, String type)
 {
-	String order = getString(PAR_ORDER+"."+type, null);
+	String order = getString(PAR_INCLUDE+"."+type, null);
+	boolean include = order!=null;
+	if( !include ) order = getString(PAR_ORDER+"."+type, null);
 	
 	int i=0;
 	if( order != null )
@@ -678,6 +708,10 @@ private static void order(String[] names, String type)
 	}
 	
 	Arrays.sort(names,i,names.length);
+	int retsize = ( include ? i : names.length );
+	String [] ret = new String[retsize];
+	for( int j=0; j<retsize; ++j ) ret[j] = names[j];
+	return ret;
 }
 
 

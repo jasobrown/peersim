@@ -1,0 +1,34 @@
+# PEERSIM EXAMPLE 2
+#random.seed 1234567890
+simulation.cycles 30
+simulation.shuffle
+
+overlay.size 50000
+overlay.maxsize 200000
+ 
+protocol.0 newscast.SimpleNewscast
+protocol.0.cache 20
+
+protocol.1 aggregation.AverageFunction
+protocol.1.linkable 0
+
+init.0 peersim.init.WireRegularRandom
+init.0.protocol 0
+init.0.degree 20
+ 
+#init.1 aggregation.PeakDistributionInitializer
+#init.1.value 1
+init.1 loadbalance.LinearDistributionInitializer
+init.1.protocol 1
+init.1.max 100
+init.1.min 1
+
+observer.0 aggregation.AverageObserver
+observer.0.protocol 1
+
+dynamics.0 peersim.dynamics.GrowingNetwork
+dynamics.0.add -500
+dynamics.0.minsize 4000
+dynamics.0.from 5
+dynamics.0.until 10
+ 

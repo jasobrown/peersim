@@ -1,0 +1,44 @@
+# PEERSIM EXAMPLE 3
+#random.seed 1234567890
+simulation.cycles 200
+#simulation.shuffle
+
+overlay.size 250
+overlay.maxSize 250
+
+# Comment the following 2 lines and uncomment the other next 2 to switch between
+# newscast or static topology:
+protocol.0 example.newscast.SimpleNewscast
+protocol.0.cache 20
+#protocol.0 peersim.core.IdleProtocol
+#protocol.0.capacity 20
+
+#protocol.1 example.loadbalance.AvgBalance
+protocol.1 example.loadbalance.BasicBalance
+protocol.1.linkable 0
+protocol.1.quota 1
+
+# Monitors the load distribution convergence
+observer.0 example.loadbalance.LBObserver
+observer.0.protocol 1
+observer.0.show_values 1
+
+observer.1 example.loadbalance.QuotaObserver
+observer.1.protocol 1
+
+init.0 peersim.init.WireRegularRandom
+init.0.protocol 0
+init.0.degree 20
+
+#init.1 example.aggregation.PeakDistributionInitializer
+#init.1.value 250
+init.1 example.loadbalance.LinearDistributionInitializer
+init.1.max 250
+init.1.min 1
+init.1.protocol 1 
+
+dynamics.0 example.loadbalance.ResetQuota
+dynamics.0.protocol 1
+dynamics.0.value 1
+
+

@@ -21,6 +21,7 @@ package aggregation;
 import peersim.config.*;
 import peersim.core.*;
 import peersim.dynamics.Dynamics;
+import peersim.util.CommonRandom;
 
 /**
 */
@@ -31,11 +32,26 @@ public class PeakDistribution implements Dynamics {
 ////////////////////////////////////////////////////////////////////////////
 
 /** 
- * String name of the parameter used to determine the load at
- * the peak node. Parameter read has the full name
- * <tt>prefix+"."+PAR_VALUE</tt>
+ * String name of the parameter used to determine the total load in the 
+ * system, to be distributed between peak nodes. Parameter read has the full 
+ * name <tt>prefix+"."+PAR_VALUE</tt>
  */
 public static final String PAR_VALUE = "value";
+
+
+/** 
+ * String name of the parameter used to determine the number of peaks in
+ * the system. If this value is greater or equal than 1, it is 
+ * interpreted as the actual number of peaks. If it is included in the
+ * range [0, 1[ it is interpreted as a percentage with respect to the
+ * current network size. Note that using this mechanism it is not 
+ * possible to create a network where 100% of the nodes are peaks,
+ * unless you specify the exact size of the network. 
+ * Default to 1. Parameter read has the full name
+ * <tt>prefix+"."+PAR_PEAKS</tt>
+ */
+public static final String PAR_PEAKS = "peaks";
+
 
 /** 
  * String name of the parameter that defines the protocol to initialize.
@@ -44,9 +60,18 @@ public static final String PAR_VALUE = "value";
  */
 public static final String PAR_PROT = "protocol";
 
+////////////////////////////////////////////////////////////////////////////
+// Fields
+////////////////////////////////////////////////////////////////////////////
+
+/** Total load */
 private final double value;
 
-private final int protocolID;
+/** Number of peaks */
+private final double peaks;
+
+/** Protocol identifier */
+private final int pid;
 
 ////////////////////////////////////////////////////////////////////////////
 // Initialization
@@ -55,7 +80,8 @@ private final int protocolID;
 public PeakDistribution(String prefix)
 {
 	value = Configuration.getDouble(prefix+"."+PAR_VALUE);
-	protocolID = Configuration.getInt(prefix+"."+PAR_PROT);
+	pid = Configuration.getInt(prefix+"."+PAR_PROT);
+	peaks = Configuration.getDouble(prefix+"."+PAR_PEAKS, 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -64,15 +90,24 @@ public PeakDistribution(String prefix)
 
 
 // Comment inherited from interface
-public void modify() {
-	
-	((Aggregation)OverlayNetwork.get(0).getProtocol(protocolID)
-		).setValue(value);
-	for(int i=1; i<OverlayNetwork.size(); ++i)
-	{
-		((Aggregation)OverlayNetwork.get(i).getProtocol(protocolID)
-			).setValue(0.0);
-	}
+public void modify() 
+{
+  int pn = (peaks < 1 ? (int) (peaks*OverlayNetwork.size()) : (int) peaks);
+  double vl = value/pn;
+  for (int i=0; i < OverlayNetwork.size(); i++) {
+		((Aggregation)OverlayNetwork.get(i).getProtocol(pid)).setValue(0.0);
+  }
+  for (int i=0; i < pn; i++) {
+  	boolean found = false;
+  	do {
+  		int r = CommonRandom.r.nextInt(OverlayNetwork.size());
+  		Aggregation agg = (Aggregation) OverlayNetwork.get(r).getProtocol(pid);
+  		if (agg.getValue() == 0) {
+  			agg.setValue(vl);
+  			found = true;
+  		}
+  	} while (!found);
+  }
 }
 
 }

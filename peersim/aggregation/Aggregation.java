@@ -15,7 +15,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
- 
+
 package aggregation;
 
 /**
@@ -30,17 +30,17 @@ package aggregation;
  *  @author Alberto Montresor
  *  @version $Revision$
  */
-public interface Aggregation 
+public interface Aggregation
 {
 
-   /**
-    *  Get the value to be aggregated.
-    */
-   public double getValue();
-   
-  /**
-   *  Set the value to be aggregated.
-   */
-   public void setValue(double value);
+	/**
+	 *  Get the value to be aggregated.
+	 */
+	public double getValue();
+
+	/**
+	 *  Set the value to be aggregated.
+	 */
+	public void setValue(double value);
 
 }

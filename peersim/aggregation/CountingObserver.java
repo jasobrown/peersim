@@ -22,6 +22,7 @@ import peersim.core.*;
 import peersim.reports.*;
 import peersim.util.Log;
 import peersim.config.*;
+import peersim.util.*;
 
 /**
  * Print statistics for a counting aggregation computation.
@@ -41,9 +42,9 @@ public class CountingObserver  implements Observer
 
 	/** 
 	 *  String name of the parameter used to determine the accuracy
-	 *  for standard deviation before stopping the simulation. If not 
-	 *  defined, a negative value is used which makes sure the observer 
-	 *  does not stop the simulation
+	 *  for variance before stopping the simulation. If not 
+	 *  defined, a negative value is used as default which makes sure 
+	 *  that the observer does not stop the simulation.
 	 */
   public static final String PAR_ACCURACY = "accuracy";
 
@@ -51,6 +52,22 @@ public class CountingObserver  implements Observer
    *  String name of the parameter used to select the protocol to operate on
    */
   public static final String PAR_PROT = "protocol";
+
+	/** 
+	 *  String name of the parameter used to describe the length of an epoch.
+	 *  This value is used to periodically reset the computation of the 
+	 *  variance reduction factor, which is computed over an initial variance.
+	 *  Defaults to Integer.MAX_VALUE, meaning that is never resetted by default.
+	 */
+	public static final String PAR_STEP = "epoch";
+
+	/**
+	 *  String name of the parameter used to describe whether this observer
+	 *  must print the status of the system at every cycle or at every epoch.
+	 *  If this parameter is presente, the observer will print the status
+	 *  once every epoch.
+	 */
+  public static final String PAR_PARTIAL = "partial";
 
   ////////////////////////////////////////////////////////////////////////////
   // Fields
@@ -61,12 +78,19 @@ public class CountingObserver  implements Observer
 
   /** Accuracy for standard deviation used to stop the simulation */
   private final double accuracy;
+
+  /** True if every cycle must be reported; false otherwise */
+  private final boolean partial;
   
   /** Protocol identifier */
   private final int pid;
+
+	/** Length of an epoch */
+  private final int epoch;
   
-  /** Initial standard deviation */
-  private double initsd = -1.0;
+  /** Initial variance */
+  private double initvar = -1.0;
+  
   
   ////////////////////////////////////////////////////////////////////////////
   // Constructor
@@ -78,8 +102,10 @@ public class CountingObserver  implements Observer
   public CountingObserver(String name)
   {
   	this.name = name;
+  	partial = Configuration.contains(name+"."+PAR_PARTIAL);
     accuracy = Configuration.getDouble(name+"."+PAR_ACCURACY,-1);
     pid = Configuration.getInt(name+"."+PAR_PROT);
+    epoch = Configuration.getInt(name+"."+PAR_STEP, Integer.MAX_VALUE);
   }
   
   ////////////////////////////////////////////////////////////////////////////
@@ -89,52 +115,53 @@ public class CountingObserver  implements Observer
   // Comment inherited from interface
   public boolean analyze()
   {
-	int time = peersim.core.CommonState.getT();
-  	Node node;
-  	Aggregation protocol;
+		int time = peersim.core.CommonState.getT();
+  	if ((time % epoch) == 0) {
+  		initvar = -1.0;
+  	}
   	
   	/* Initialization */
 		final int len = OverlayNetwork.size();
-		double max = Double.NEGATIVE_INFINITY;
-		double min = Double.POSITIVE_INFINITY;
-		double sum = 0.0;
-		double sqrsum = 0.0;
-		int count = 0;
+		IncrementalStats stats = new IncrementalStats();
 
 		/* Compute max, min, average */
 		for (int i=0; i < len; i++) {
-			node = OverlayNetwork.get(i);
-			protocol = (Aggregation) node.getProtocol(pid);
-			double value = protocol.getValue();
-			if (value > 0) {
-				if (value > max) max = value; 
-				if (value < min) min = value;
-				sum += value;
-				sqrsum += value*value;
-				count++;
-			}
+			Node node = OverlayNetwork.get(i);
+			Aggregation protocol = (Aggregation) node.getProtocol(pid);
+
+      boolean toBeCounted = true;
+      if (protocol instanceof GeneralAggregation) {
+				GeneralAggregation ag = (GeneralAggregation) protocol;
+				toBeCounted = ag.toBeCounted() && !ag.isNew();
+      }
+
+			if (toBeCounted) 
+				stats.add(protocol.getValue());
 		}
-		double average = sum / count;
-		double sd = Math.sqrt(
-			( ((double)count) / (count-1) ) * (sqrsum/count - average*average) );
-		if (sd > initsd) {
-			initsd=sd;
+		double var = stats.getVar();
+		if (initvar < 0 || Double.isNaN(initvar))
+		{
+			initvar = var;
 		}
-    
+		double rate = Math.pow(var / initvar, ((double) 1) / (time%epoch) );
+	    
     /* Printing statistics */
-    Log.println(name, 
-    	time + " " +             // cycle identifier
-    	sd + " " +               // standard deviation
-    	sd/initsd + " " +        // standard deviation reduction
-      (int) 1/average + " " +  // average size
-      (int) 1/min + " " +      // maximum size
-      (int) 1/max + " " +      // minimum size
-      count + " " +						 // Nodes with a value different from 0
-      len                      // actual size
-     );
+    if (!partial || ((time % epoch)==epoch-1)) {
+	    Log.println(name, 
+	    	" TIME " + time +
+	    	" VAR " + var +
+	    	" RED " + (var/initvar) +
+	    	" RATE " + rate +
+	      " AVG " + 1/stats.getAverage() + 
+	      " MAX " + (int) (stats.getMin() == 0 ? Integer.MAX_VALUE : 1/stats.getMin()) +
+	      " MIN " + (int) 1/stats.getMax() +
+	      " CNT " + stats.getN() +
+	      " SIZE " + len
+	     );
+		}
     
     /* Terminate if accuracy target is reached */
-		if (sd/initsd <= accuracy) {
+		if (var/initvar <= accuracy) {
 			return true;
 		} else {
 			return false;

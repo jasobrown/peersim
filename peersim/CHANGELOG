@@ -1,3 +1,8 @@
+MJ 3/11/2004:
+VERSION 0.2 RELEASED
+------------------------------------------------------------------
+------------------------------------------------------------------
+
 GJ 3/11/2004
 - Added MedianStats class. It extracts the median value from a data collection;
   it subclasses the IncrementalStats class.

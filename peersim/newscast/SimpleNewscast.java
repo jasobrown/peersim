@@ -122,12 +122,12 @@ protected Node getPeer() {
 */
 protected void merge( Node thisNode, SimpleNewscast peer,
 					Node peerNode, int timestamp ) {
-
 	int i1 = 0; /* Index first cache */
 	int i2 = 0; /* Index second cache */
 	boolean first;
 	boolean lastTieWinner = CommonRandom.r.nextBoolean();
 	int i = 1; // Index new cache. first element set in the end 
+	// SimpleNewscast.tn[0] is always null. it's never written anywhere
 	final int d1 = _degree();
 	final int d2 = peer._degree();
 	// cachesize is cache.length

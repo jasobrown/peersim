@@ -285,15 +285,15 @@ public static Object getInstance( String name, Object obj ) {
 
 /**
 * It returns an array of class instances defined by property names
-* returned by {@link getNames}.
+* returned by {@link #getNames(String)}.
 * The classes must implement a constructor which
 * takes one String parameter, which will be the full property name of the class
 * in the configuration.
 * Note that constructors can see the configuration information so they can
 * make use of it. The class names are defined by the property names returned
-* by {@link getNames}.
+* by {@link #getNames(String)}.
 * @param name Prefix of the list of configuration properties which will be
-* passed to {@link getNames}.
+* passed to {@link #getNames(String)}.
 * @throws RuntimeException if there's any problem with creating the objects.
 */
 public static Object[] getInstanceArray( String name ) {

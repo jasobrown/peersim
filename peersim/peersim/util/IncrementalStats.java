@@ -22,6 +22,9 @@ private double sqrsum;
 
 private int n;
 
+private int countmin;
+
+private int countmax;
 
 // ====================== initialization ==============================
 // ====================================================================
@@ -32,7 +35,9 @@ public IncrementalStats() { reset(); }
 // --------------------------------------------------------------------
 
 public void reset() {
-
+	
+	countmin=0;
+	countmax=0;
 	min = Double.POSITIVE_INFINITY;
 	max = Double.NEGATIVE_INFINITY;
 	sum = 0.0;
@@ -47,8 +52,10 @@ public void reset() {
 
 public void add( double item ) {
 	
-	if( item < min ) min = item;
-	if( item > max ) max = item;
+	if( item < min ) { min = item; countmin = 0; } 
+	if (item == min) countmin++;
+	if( item > max ) { max = item; countmax = 0; }
+	if (item == max) countmax++;  
 	n++;
 	sum += item;
 	sqrsum += item*item;
@@ -68,6 +75,16 @@ public double getMax() { return max; }
 
 /** The minimum of the data items */
 public double getMin() { return min; }
+
+// --------------------------------------------------------------------
+
+/** Returns the number of data items whose value corresponds to the max */
+public int getMaxCount() { return countmax; }
+
+// --------------------------------------------------------------------
+
+/** Returns the number of data items whose value corresponds to the min */
+public int getMinCount() { return countmin; }
 
 // --------------------------------------------------------------------
 

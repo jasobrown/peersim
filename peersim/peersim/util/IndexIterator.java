@@ -1,7 +1,5 @@
 package peersim.util;
 
-import java.util.NoSuchElementException;
-
 /**
 * This class provides iterations over the set of integers [0...,len-1].
 */

@@ -1,10 +1,12 @@
 package peersim.util;
 
+import java.util.NoSuchElementException;
+
 /**
 * This class provides a random permutation of indexes. Useful for random
 * walks and random sampling without replacement.
 */
-public class RandPermutation {
+public class RandPermutation implements IndexIterator {
 
 
 // ======================= private fields ============================
@@ -76,15 +78,9 @@ public void initPermutation(int k) {
 
 // -------------------------------------------------------------------
 
-/**
-* Returns the next element of the random permutation initialized by
-* {@link #initPermutation}.
-* @throws IndexOutOfBoundsException if called more times than the numner of
-* elements.
-*/
 public int next() {
 	
-	if( pointer < 1 ) throw new IndexOutOfBoundsException();
+	if( pointer < 1 ) throw new NoSuchElementException();
 	
 	int j = CommonRandom.r.nextInt(pointer);
 	int a = buffer[j];

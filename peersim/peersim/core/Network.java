@@ -67,13 +67,9 @@ private static int len;
 */
 public static Node prototype = null;
 
+
 // ====================== initialization ===========================
 // =================================================================
-
-static {
- // reset();
-	
-}
 
 
 public static void reset() {

@@ -24,7 +24,6 @@ doc:
 		example.aggregation \
 		example.hot \
 		distributions
-	#javadoc -overview overview.html -d doc peersim.core peersim.cdsim peersim.config peersim.graph peersim.util peersim.reports peersim.dynamics newscast aggregation scamp lpbcast dpvem lbalance myaggreg
 
 release: all doc
 	rm -fr peersim-$(VER)

@@ -16,6 +16,7 @@
     [<a href="#people">People</a>]
     [<a href="#download">Download</a>]
     [<a href="#docs">Documentation</a>]
+    [<a href="#code">Additional Code</a>]
    <!-- [<a href="#projects">Projects</a>] -->
 </p>
 </div>
@@ -50,7 +51,7 @@ configuration mechanism. To allow for scalability and focus on
 self-organization properties of large scale systems,
 some simplifying assumpions have been made, such as ignoring the
 details of the transport communication protocol stack. Peersim is
-devolped within the  <a href="http://www.cs.unibo.it/bison">BISON</a>
+developed within the  <a href="http://www.cs.unibo.it/bison">BISON</a>
 project and it is distributed under an open source license.
 Peersim is written in the Java language.
 
@@ -90,6 +91,13 @@ The project is hosted at <a
  <a href="http://sourceforge.net/projects/peersim/">peersim project page</a>.
 </p>
 
+<p>
+If you want to be kept informed about new release of Peersim, join the 
+<href="http://lists.sourceforge.net/lists/listinfo/peersim-announce">
+peersim-announce@lists.sourceforge.net</href> mailing list. The list is
+moderated and extremely low-traffic.
+</p>
+
 <p><table cellpadding="4" cellspacing="0" width="100%" class="title">
     <tbody><tr>
       <td class="title" id="docs">Documentation</td>
@@ -111,6 +119,70 @@ to the simulator usage and programming<br>
   </li>
 </ul>
 </p>
+
+<p><table cellpadding="4" cellspacing="0" width="100%" class="title">
+    <tbody><tr>
+      <td class="title" id="code">Additional Code</td>
+      <td class="top"><a href="#top">top</a></td>
+    </tr>
+    </tbody>
+</table>
+</p>
+
+We are using Peersim to simulate several P2P protocols. In this section, we make
+available the code of the more interesting protocols. If the protocol is described
+in a scientific paper, 
+
+In this section, we provide
+both the code of such protocols and the configuration files needed to reproduce
+the figures of such papers. 
+
+<ul>
+  <li>
+    <em>OverStat</em> is a collection of <em>aggregation</em> protocols.
+    Aggregation is a collective term for a set functions aimed at providing
+    statistical information over a distributed systems, such as the average 
+    load incurred by the nodes or the total size of the network. We have
+    developed extremely scalable, robust decentralized aggregation protocols.
+    <br>
+    The protocol has been described in the following papers:
+    <ul>
+      <li>
+        Alberto Montresor, M&aacute;rk Jelasity, and Ozalp Babaoglu.
+        Robust Aggregation Protocols for Large-Scale Overlay Networks.
+        In <em>Proceedings of the 2004 International Conference on
+        Dependable Systems and Networks (DSN'04)</em>}, 
+        pages 19-28, Florence, Italy, June 2004. IEEE Computer Society.
+        <a href="http://www.cs.unibo.it/bison/publications/dsn04.pdf">PDF Version</a> <br>
+      </li>
+      <li>
+        M&aacute;rk Jelasity and Alberto Montresor.
+        Epidemic-Style Proactive Aggregation in Large Overlay Networks.
+        In <em>Proceedings of the 24th International Conference on
+        Distributed Computing Systems (ICDCS'04)</em>, pages 102-109, 
+        Tokyo, Japan, March 2004. IEEE Computer Society.
+        <a href="http://www.cs.unibo.it/bison/publications/icdcs04.pdf">PDF Version</a>
+      </li>
+    </ul>  
+    A journal version of these papers has been accepted for publication in ACM Theory
+    of Computing Systems (TOCS). The code and the configuration files used to generate 
+    the journal version are available <a href="code/aggregation.tgz">here</a>.
+  </li>
+  <li>
+    <em>SG-1</em> is a protocol for self-organizing and maintaining a superpeer
+    based topology. The protocol has been described in the following paper:
+    <ul>
+      <li>
+        Alberto Montresor. A Robust Protocol for Building Superpeer Overlay Topologies.
+        In <em>Proceedings of the 4th International Conference on Peer-to-Peer Computing</em>,
+        Zurich, Switzerland, August 2004. IEEE. 
+        <a href="http://www.cs.unibo.it/techreports/2004/2004-08.pdf">PDF Version</a>
+      </li>
+    </ul>  
+    The code and the configuration files used to generate this paper are available
+    <a href="code/superpeer.tgz">here</a>.
+  </li>
+</ul>
 
 
 <hr>

@@ -3,7 +3,7 @@ VER=X.Y
 .PHONY: all clean doc release
 
 all:
-	javac `find -name "*.java"`
+	javac -classpath .:jep-2.24.jar `find -name "*.java"`
 clean:
 	rm -f `find -name "*.class"`
 doc:

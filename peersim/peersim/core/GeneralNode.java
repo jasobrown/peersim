@@ -60,9 +60,6 @@ public GeneralNode(String prefix) {
 	
 	String[] names = Configuration.getNames(PAR_PROT);
 	for (int i=0; i < names.length; i++) {
-		Configuration.setPid(names[i].substring(PAR_PROT.length()+1), i);
-	}
-	for (int i=0; i < names.length; i++) {
 		CommonState.setNode(this);
 		Protocol protocol = (Protocol) 
 			Configuration.getInstance(names[i], new Integer(i));

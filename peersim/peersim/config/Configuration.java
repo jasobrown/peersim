@@ -30,8 +30,11 @@ import java.util.*;
 * Numeric configuration items can complex expressions, that are parsed
 * through Java Expression Parser (http://www.singularsys.com/jep/).
 * <p>
-* Protocol names are associated to numeric protocol identifiers
-* through method <t>getPid()</t>.
+* The configuration is generally blind to the semantics of the entries.
+* there is an exception, the entries that start with "protocol". These
+* entries are pre-processed a bit to enhance performance:
+* protocol names are associated to numeric protocol identifiers
+* through method {@link #getPid}.
 */
 public class Configuration {
 
@@ -41,11 +44,28 @@ public class Configuration {
 
 /**
  * The parameter name to configure a maximum depth different from
- * default.
+ * default. Normally you don't want to set this. The default is 100.
  */
 private static final String PAR_MAXDEPTH = "expressions.maxdepth"; 
-	
-	
+
+/**
+ * The parameter name to configure ordering of the array as returned by
+ * {@link #getInstanceArray} and {@link getNames}.
+ * It is read by these methods. This is realy a prefix which is followed by
+ * the type specifier. For example: "order.protocol" will define the
+ * order of configuration entries that start with
+ * "protocol", but it works for any prefix.
+ */
+public static final String PAR_ORDER = "order"; 
+
+/**
+ * The parameter name prefix to specify the set of protocol entries that are
+ * used
+ * to calculate the protocol identifiers returned by {@link #getPid}.
+ */
+public static final String PAR_PROT = "protocol"; 
+
+
 /**
 * The properties object that stores all configuration information.
 */
@@ -56,7 +76,7 @@ private static Properties config = null;
  *  Map associating string protocol names to the numeric protocol
  * identifiers.
  */
-private static Map protocols = new HashMap();
+private static Map protocols;
 
 
 /**
@@ -80,6 +100,15 @@ public static Properties setConfig( Properties p ) {
 	Properties prev = config;
 	config = p;
 	maxdepth = Configuration.getInt(PAR_MAXDEPTH, 100);
+	
+	// initialize protocol id-s
+	protocols = new HashMap();
+	String[] prots = getNames(PAR_PROT);//they're retunred in correct order
+	for(int i=0; i<prots.length; ++i)
+	{
+		protocols.put(prots[i],new Integer(i));
+	}
+	
 	return prev;
 }
 
@@ -202,8 +231,8 @@ public static double getVal(String initial, String property, int depth)
 {
 	if (depth > maxdepth) {
 		throw new IllegalParameterException(initial, 
-				"Probable recursive definition - exceeded maximum depth " + 
-				maxdepth);
+		"Probable recursive definition - exceeded maximum depth " + 
+		maxdepth);
 	}
 	
 	String s = config.getProperty(property);
@@ -224,6 +253,8 @@ public static double getVal(String initial, String property, int depth)
 	return jep.getValue();
 }
 
+//-------------------------------------------------------------------
+
 /**
  * Returns an array of string, containing the symbols contained
  * in the expression parsed by the specified JEP parser.
@@ -234,14 +265,13 @@ public static double getVal(String initial, String property, int depth)
 private static String[] getSymbols(org.nfunk.jep.JEP jep)
 {
 	Hashtable h = jep.getSymbolTable();
-  String[] ret = new String[h.size()];
+	String[] ret = new String[h.size()];
 	Enumeration e = h.keys();
 	int i = 0;
 	while (e.hasMoreElements()) {
 		ret[i++] = (String) e.nextElement();
 	}
-  return ret;
-  
+	return ret;
 }
 
 
@@ -282,7 +312,10 @@ public static String getString( String property ) {
 
 /**
  * Reads the given string property and returns the associated numeric 
- * protocol identifier.
+ * protocol identifier. The value of the property should be the name of a
+ * protocol, which is an arbitrary string, and which gets mapped to a
+ * number, a protocol id, according to some sorting defined over the
+ * protocol names. By default th sorting is alphabetical.
  *  
  * @param property the property name
  * @return the numeric protocol identifier associated to the protocol
@@ -296,34 +329,13 @@ public static int getPid( String property ) {
 //	System.out.println("+ " + protname);
 //	System.out.println(((Integer) protocols.get(protname)).intValue());
 	if (ret == null) {
-		throw new IllegalParameterException(property, "Protocol " + protname +
-				" does not exist");
+		throw new IllegalParameterException(property,
+			"Protocol " + protname + " is not defined");
 	}
 	return ret.intValue();
 }
 
 //-------------------------------------------------------------------
-
-/**
- * Associates the given string protocol name to the given 
- * numeric protocol identifier. "Normal" users of peersim do
- * not need this method; it is normally invoked by the class
- * that first initializes the protocol stack; in the default
- * peersim settings, this class is {@link peersim.core.GeneralNode}.
- * Refers to the implementation of that class to see an example
- * of use of such methods.
- * 
- * @param protname the string protocol name
- * @param pid the protocol identifier associated to the name
- */
-public static void setPid( String protname, int pid)
-{
-//	System.out.println("- " + protname);
-//	System.out.println("+ " + pid);
-	protocols.put(protname, new Integer(pid));
-}
-
-// -------------------------------------------------------------------
 
 /**
  * Returns the class object for the specified classname. If the specified 
@@ -391,7 +403,7 @@ public static Object getInstance( String name ) {
 	String classname = config.getProperty(name);
 	if (classname == null) throw new MissingParameterException(name);
 
-  Class c = getClass(name, classname);		
+	Class c = getClass(name, classname);		
 		
 	try {
 		Class pars[] = { String.class };
@@ -440,9 +452,9 @@ public static Object getInstance( String name, Object obj ) {
 	String classname = config.getProperty(name);
 	if (classname == null) throw new MissingParameterException(name);
 	
-  Class c = getClass(name, classname);		
+	Class c = getClass(name, classname);		
 
-  try
+	try
 	{
 		Class pars[] = { String.class, Object.class };
 		Constructor cons = c.getConstructor( pars );
@@ -500,11 +512,26 @@ public static Object[] getInstanceArray( String name ) {
 
 /**
  * Returns an array of names starting with the specified name.
- * The returned array is sorted alphabetically. 
  * {@link #getInstanceArray} will use this method to create instances.
  * In other words, calling
  * {@link #getInstance(String)} with these names results in the
  * same instances {@link #getInstanceArray} returns.
+ *
+ * <p>
+ * The array is sorted as follows. If there is no config entry
+ * <code>PAR_ORDER+"."+name</code> then the order is aplhabetical. Otherwise
+ * this entry defines the order. It must contain a list of entries
+ * from the values that belong to the given <code>name</code>, but
+ * <em>without</em> the prefix. That is, eg "first" instead of
+ * name+.first".
+ * It is assumed that these values contain only word characters (alphanumeric
+ * and underscore '_'. The order configuration entry thus contains a list
+ * of entries separated by any non-word characters.
+ * It is not required that all the names are listed. The returned
+ * ordering is such that it is consistent with the list
+ * in the order parameter: it starts with the names listed in the order
+ * configuration parameter and continues with the rest of the names in
+ * alphabetical order.
  */
 public static String[] getNames( String name ) 
 {
@@ -519,8 +546,67 @@ public static String[] getNames( String name )
 	}
 	String[] ret = (String[])ll.toArray(new String[ll.size()]);
 	Arrays.sort(ret);
+	Configuration.order(ret,name);
 	return ret;
 }
+
+//-------------------------------------------------------------------
+
+/**
+ * The input of this method is a set of item <code>names</code>
+ * (eg initializers,
+ * observers, dynamics and protocols) and a string specifying the type
+ * (prefix) of these.
+ * The output is in <code>names</code>, which will contain a permutation
+ * of the original array.
+ * Parameter PAR_ORDER+"."+type is read from the
+ * configuration. If it is not defined then the order is identical to
+ * that of <code>names</code>. If it is specified then it defines the
+ * order the following way. The configuration entry must contain entries
+ * from <code>names</code>. It is assumed that the entries in
+ * <code>names</code> contain only word characters (alphanumeric
+ * and underscore '_'. The order configuration entry thus cintains a list
+ * of entries from <code>names</code> separated by any non-word characters.
+ * It is not required that all entries are listed. The returned
+ * ordering of <code>names</code> is such that it is consistent with the list
+ * in the order parameter.
+ * 
+ * 
+ * @param names
+ *   the set of item names to be searched
+ * @param type 
+ *   the string identifying the particular set of items to be inspected
+ */
+private static void order(String[] names, String type)
+{
+	String order = getString(PAR_ORDER+"."+type, null);
+	
+	if( order != null )
+	{
+		// split around non-word characters
+		String[] sret = order.split("\\W");
+		for (int i=0; i < sret.length; i++)
+		{
+			int j=i;
+			for(; j<names.length; ++j)
+				if( names.equals(type+"."+sret[i])) break;
+			if( j == names.length )
+			{
+				throw new IllegalParameterException(
+				PAR_ORDER+"."+type,
+				type + "." + sret[i] + " is not defined.");
+			}
+			else // swap the element to current position
+			{
+				String tmps = names[j];
+				names[j] = names[i];
+				names[i] = tmps;
+			}
+		}
+	}
+}
+
+
 
 }
 

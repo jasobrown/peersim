@@ -129,18 +129,6 @@ private static Scheduler[] dynSchedules = null;
 /** Holds the protocol schedulers of this simulation */
 private static Scheduler[] protSchedules = null;
 
-/** Holds the order in which initializers should be executed */
-private static int[] initOrder = null;
-
-/** Holds the order in which observers should be executed */
-private static int[] obsOrder = null;
-
-/** Holds the order in which dynamics should be executed */
-private static int[] dynOrder = null;
-
-/** Holds the order in which protocols should be executed */
-private static int[] protOrder = null;
-
 /** 
  * Holds the general order in which all objects should be executed;
  * alternative to the previous variables.
@@ -167,58 +155,7 @@ protected static int searchString(String[] array, String s)
 	for (j=0; j < array.length; j++)
 		if (s.equals(array[j]))
 			break;
-  return j;
-}
-
-//---------------------------------------------------------------------
-
-/**
- * The input of this method is a set of item names (item being initializers,
- * observers, dynamics and protocols) and a string specifying the type of
- * item. The output is an integer array, specifying the order in which
- * items should be considered. Parameter PAR_ORDER+"."+type is read,
- * and the different items listed there (in comma-separated form) are
- * searched in names. The corresponding indexes are returned.
- * 
- * @param names
- *   the set of item names to be searched
- * @param type 
- *   the string identifying the particular set of items to be inspected
- * @return
- */
-private static int[] getOrder(String[] names, String type)
-{
-	// Remove the type prefix (like for example "protocol.") from the
-	// names; this because just the protocol names should be listed
-	// in order.protocol
-	int[] ret;
-	String[] snames = new String[names.length];
-	for (int i=0; i < names.length; i++) {
-		snames[i] = names[i].substring(type.length()+1);
-	}
-	
-	String order = Configuration.getString(PAR_ORDER+"."+type, null);
-	if (order == null) {
-		// There is no configured order, so executes all the
-		// items in the regular order
-		ret = new int[names.length];
-		for (int i=0; i < names.length; i++) 
-			ret[i] = i;
-	} else {
-		StringTokenizer token = new StringTokenizer(order, ",");
-		int size = token.countTokens();
-		ret = new int[size];
-		for (int i=0; i < size; i++) {
-			String item = token.nextToken().trim();
-			int j = searchString(snames,item);
-			if (j == snames.length) {
-				throw new IllegalParameterException(PAR_ORDER+"."+type,
-						type + " " + item + " does not exist.");
-			}
-			ret[i] = j;
-		}
-	}
-	return ret;
+	return j;
 }
 
 //---------------------------------------------------------------------
@@ -230,32 +167,22 @@ private static int[] getOrder(String[] names, String type)
 protected static void runInitializers() {
 	
 	Object[] inits = Configuration.getInstanceArray(PAR_INIT);
-  String names[] = Configuration.getNames(PAR_INIT);
-	initOrder = getOrder(names, PAR_INIT); 
+	String names[] = Configuration.getNames(PAR_INIT);
 	
 	for(int i=0; i<inits.length; ++i)
 	{
-		int l = initOrder[i];
 		System.err.println(
-		"- Running initializer " + l + ": " + inits[l].getClass());
-		((Dynamics)inits[l]).modify();
+		"- Running initializer " +names[i]+ ": " + inits[i].getClass());
+		((Dynamics)inits[i]).modify();
 	}
 }
 
 // --------------------------------------------------------------------
 
-/**
- * Load observers. If order is true, parameter PAR_ORDER+"."+PAR_OBS
- * is read to see whether the observers are to be executed in a particular
- * order. Otherwise, the parameter is not considered. When a PAR_ORDER
- * specification is present, order is set to false.
- */
-protected static String[] loadObservers(boolean order)
+protected static String[] loadObservers()
 {
 	// load observers
 	String[] names = Configuration.getNames(PAR_OBS);
-	if (order)
-		obsOrder = getOrder(names, PAR_OBS); 
 	observers = new Observer[names.length];
 	obsSchedules = new Scheduler[names.length];
 	for(int i=0; i<names.length; ++i)
@@ -264,23 +191,15 @@ protected static String[] loadObservers(boolean order)
 		obsSchedules[i] = new Scheduler(names[i]);
 	}
 	System.err.println("Simulator: loaded observers "+Arrays.asList(names));
-  return names;
+	return names;
 }
 
 //---------------------------------------------------------------------
 
-/**
- * Load dynamics. If order is true, parameter PAR_ORDER+"."+PAR_DYN
- * is read to see whether the dynamics are to be executed in a particular
- * order. Otherwise, the parameter is not considered. When a PAR_ORDER
- * specification is present, order is set to false.
- */
-protected static String[] loadDynamics(boolean order)
+protected static String[] loadDynamics()
 {
 	// load dynamism managers
 	String[] names = Configuration.getNames(PAR_DYN);
-	if (order)
-		dynOrder = getOrder(names, PAR_DYN); 
 	dynamics = new Dynamics[names.length];
 	dynSchedules = new Scheduler[names.length];
 	for(int i=0; i<names.length; ++i)
@@ -294,19 +213,10 @@ protected static String[] loadDynamics(boolean order)
 
 //---------------------------------------------------------------------
 
-/**
- * Read the protocol schedulers (protocols are loaded in the Node 
- * implementation). If order is true, parameter PAR_ORDER+"."+PAR_PROT
- * is read to see whether the protocols are to be executed in a particular
- * order. Otherwise, the parameter is not considered. When a PAR_ORDER
- * specification is present, order is set to false.
- */
-protected static void loadProtocolSchedules(boolean order)
+protected static void loadProtocolSchedules()
 {
 	// load protocol schedulers
 	String[] names = Configuration.getNames(Node.PAR_PROT);
-	if (order)
-		protOrder = getOrder(names, Node.PAR_PROT); 
 	protSchedules = new Scheduler[names.length];
 	for(int i=0; i<names.length; ++i)
 	{
@@ -342,17 +252,16 @@ protected static void nextRound(int cycle) {
 		// (instead of running all on one node at the same time?)
 		for(int k=0; k<len; ++k)
 		{
-			int l=protOrder[k];
 			// Check if the protocol should be executed, given the
 			// associated scheduler.
-			if (!protSchedules[l].active(cycle))
+			if (!protSchedules[k].active(cycle))
 				continue;
 				
-			CommonState.setPid(l);
-			Protocol protocol = node.getProtocol(l);
+			CommonState.setPid(k);
+			Protocol protocol = node.getProtocol(k);
 			if( protocol instanceof CDProtocol )
 			{
-				((CDProtocol)protocol).nextCycle(node, l);
+				((CDProtocol)protocol).nextCycle(node, k);
 				if( !node.isUp() ) break;
 			}
 		}
@@ -370,9 +279,9 @@ protected static void nextRound(int cycle) {
 protected static void oldExperiment() 
 {
 	// Load observer, dynamics, protocol schedules
-	loadObservers(true);
-	loadDynamics(true);
-  loadProtocolSchedules(true);
+	loadObservers();
+	loadDynamics();
+	loadProtocolSchedules();
 	
 	// main cycle
 	System.err.println("Simulator: starting simulation");
@@ -383,31 +292,28 @@ protected static void oldExperiment()
 
 		// analizer pre_dynamics
 		boolean stop = false;
-		for(int j=0; j<obsOrder.length; ++j)
+		for(int j=0; j<observers.length; ++j)
 		{
-			int l=obsOrder[j]; // Use order
-			if( obsSchedules[l].active(i) &&
-			    !obsSchedules[l].preCycle() )
-				stop = stop || observers[l].analyze();
+			if( obsSchedules[j].active(i) &&
+			    !obsSchedules[j].preCycle() )
+				stop = stop || observers[j].analyze();
 		}
 		if( stop ) break;
 
 		// dynamism
-		for(int j=0; j<dynOrder.length; ++j)
+		for(int j=0; j<dynamics.length; ++j)
 		{
-			int l=dynOrder[j]; // Use order
-			if( dynSchedules[l].active(i) ) dynamics[l].modify();
+			if( dynSchedules[j].active(i) ) dynamics[j].modify();
 		}
 
 		CommonState.setPhase(CommonState.PRE_CYCLE);
 
 		// analizer pre_cycle
-		for(int j=0; j<obsOrder.length; ++j)
+		for(int j=0; j<observers.length; ++j)
 		{
-			int l=obsOrder[j]; // Use Order
-			if( obsSchedules[l].active(i) &&
-			    obsSchedules[l].preCycle() )
-				stop = stop || observers[l].analyze();
+			if( obsSchedules[j].active(i) &&
+			    obsSchedules[j].preCycle() )
+				stop = stop || observers[j].analyze();
 		}
 		if( stop ) break;
 
@@ -419,10 +325,9 @@ protected static void oldExperiment()
 	CommonState.setPhase(CommonState.POST_LAST_CYCLE);
 
 	// analysis after the simulation
-	for(int j=0; j<obsOrder.length; ++j)
+	for(int j=0; j<observers.length; ++j)
 	{
-		int l=obsOrder[j]; // Use order
-		if( obsSchedules[l].fin() ) observers[l].analyze();
+		if( obsSchedules[j].fin() ) observers[j].analyze();
 	}
 }
 
@@ -471,10 +376,10 @@ protected static void nextRound(int cycle, int pid) {
  */
 protected static void newExperiment(String order) 
 {
-	String[] obsNames = loadObservers(false);
-	String[] dynNames = loadDynamics(false);
+	String[] obsNames = loadObservers();
+	String[] dynNames = loadDynamics();
 	String[] protNames = Configuration.getNames(Node.PAR_PROT);
-	loadProtocolSchedules(false);
+	loadProtocolSchedules();
 	
 	StringTokenizer token = new StringTokenizer(order, ",");
 	int size = token.countTokens();
@@ -487,7 +392,7 @@ protected static void newExperiment(String order)
 			index[i] = searchString(obsNames, item);
 			if (index[i] == obsNames.length) {
 				throw new IllegalParameterException(PAR_ORDER,
-						"observer " + item + " does not exist.");
+				"observer." + item + " is not defined.");
 			}
 			types[i] = OBS;
 		} else if (item.startsWith(PAR_DYN)) {
@@ -495,7 +400,7 @@ protected static void newExperiment(String order)
 			index[i] = searchString(dynNames, item);
 			if (index[i] == dynNames.length) {
 				throw new IllegalParameterException(PAR_ORDER,
-						"dynamics " + item + " does not exist.");
+				"dynamics." + item + " is not defined.");
 			}
 			types[i] = DYN;
 		} else if (item.startsWith(Node.PAR_PROT)) {
@@ -503,7 +408,7 @@ protected static void newExperiment(String order)
 			index[i] = searchString(protNames, item);
 			if (index[i] == protNames.length) {
 				throw new IllegalParameterException(PAR_ORDER,
-						"protocol " + item + " does not exist.");
+				"protocol." + item + " is not defined.");
 			}
 			types[i] = PROT;
 		} else {
@@ -629,7 +534,7 @@ public static void main(String[] pars) throws Exception {
 	System.err.println("Simulator: loading configuration");
 	Configuration.setConfig( new ConfigProperties(pars) );
 
-  int exps = Configuration.getInt(PAR_EXPS,1);
+	int exps = Configuration.getInt(PAR_EXPS,1);
 
 	try {
 

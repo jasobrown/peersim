@@ -1,3 +1,7 @@
+MJ 02/02/2005
+- peersim.vetor.Normalizer now handles all zero vectors by throwing
+  an exception.
+
 MJ 01/02/2005
 - added the "undirected" option to WireFromFile, which makes it possible
   to convert a directed graph stored in a file to an undirected one.

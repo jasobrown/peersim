@@ -70,8 +70,14 @@ public void modify()
 		sum+=Math.abs(sv.getValue());
 	}
 	
-	
+	if( sum == 0.0 )
+	{
+		throw new RuntimeException(
+			"Attempted to normalize all zero vector.");
+	}
+
 	double factor = l1/sum;
+	
 	for(int i=0; i<Network.size(); ++i)
 	{
 		SingleValue sv =

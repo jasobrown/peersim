@@ -60,12 +60,20 @@ public static final String PAR_FILE = "file";
  */
 public static final String PAR_PACK = "pack";
 
+/** 
+*  String name of the parameter to set if the graph should be undirected,
+* that is, for each link (i,j) a link (j,i) will also be added.
+*/
+public static final String PAR_UNDIR = "undirected";
+
 private final int pid;
 
 private final String file;
 
 /** If true, method pack() is invoked on the initialized protocol */
 private final boolean pack;
+
+private final boolean undirected;
 
 // ==================== initialization ==============================
 // ==================================================================
@@ -76,6 +84,7 @@ public WireFromFile(String prefix) {
 	pid = Configuration.getPid(prefix+"."+PAR_PROT);
 	file = Configuration.getString(prefix+"."+PAR_FILE);
 	pack = Configuration.contains(prefix+"."+PAR_PACK);
+	undirected = Configuration.contains(prefix+"."+PAR_UNDIR);
 }
 
 
@@ -88,7 +97,7 @@ try
 {
 	FileReader fr = new FileReader(file);
 	LineNumberReader lnr = new LineNumberReader(fr);
-	Graph g = new OverlayGraph(pid);
+	Graph g = new OverlayGraph(pid,!undirected);
 	String line;
 	boolean wasOutOfRange=false;
 	while((line=lnr.readLine()) != null)

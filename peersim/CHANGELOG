@@ -1,3 +1,7 @@
+MJ 01/02/2005
+- added the "undirected" option to WireFromFile, which makes it possible
+  to convert a directed graph stored in a file to an undirected one.
+
 MJ 22/01/2005
 - Moved the wiring algorithm from WireScaleFreeBA to GraphFactory
   and added the possibility to generate a directed version.

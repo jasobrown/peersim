@@ -7,7 +7,7 @@
 \title{PeerSim HOWTO: build a new protocol for the peersim simulation
 framework}
 \author{Gian Paolo Jesi (jesi@cs.unibo.it)}
-\date{November 7, 2004}
+\date{January 24, 2005}
 
 \begin{document}
 
@@ -19,7 +19,7 @@ framework}
 
 \section{Introduction}
 
-\textbf{NOTE: This tutorial revision covers peersim release 0.2 topics.}\\
+\textbf{NOTE: This tutorial revision covers peersim release 0.3 topics.}\\
 \\
 This tutorial is aimed to give you a step by step guide to build from
 scratch a new peersim application (\url{http://sourceforge.net/projects/peersim}):
@@ -28,7 +28,7 @@ this tutorial it supposed that you and/or your workstation have:
 
 \begin{itemize}
 \item knowledge of O.O. programming and Java language;
-\item a working Java compiler ( $\geq$ JDK 1.2);
+\item a working Java compiler ( $\geq$ JDK 1.4.x);
 \item a working peersim source tree (you can download it from sourceforge
 CVS);
 \item the Java Expression Parser (download it from: \url{http://www.singularsys.com/jep/});
@@ -38,7 +38,11 @@ CVS);
 The aim of this tutorial is to be
 as pratical as possible; the goal is to give the reader the basics
 of peersim usage and the basics about howto write a simple component.
-This tutorial IS NOT exhaustive at all! 
+This tutorial IS NOT exhaustive at all!\\
+Because of the spiritus of this tutorial,
+after a brief introduction to basic concepts, we'll try to learn peersim 
+and its basic components
+using a by example metodology.
 
 
 \section{Introduction to Peersim}
@@ -108,7 +112,7 @@ manages the local view of neighbor, the reference to the protocol,
 its index identifier inside the topology global array (invisible to
 protocols)\\
 \hline 
-\emph{CDProtocol Protocol}&
+\emph{CDProtocol}&
 A protocol simply defines an operation to be performed at each cycle
 (only method nextCycle() is defined)\\
 \hline 
@@ -130,7 +134,7 @@ Objects running at each cycle modifing values of other objects\\
 \end{table}
 
 
-The lifecycle of a peersim simulation is defined inside the \emph{Simulator}
+The lifecycle of a peersim simulation is hard coded inside the \emph{Simulator}
 class. It first reads a particular configuration file (see section 
 \ref{configfile}) containing all the simulation parameters 
 concerning all the
@@ -139,9 +143,9 @@ objects are created (all the nodes making the overlay connected with
 one or more protocol object, the \emph{Observer} and
 \emph{Dynamics} objects).
 From the developer point of view, it's important to note that the
-protocols creation process is based on cloning: only one instance
+protocols creation process is based on \textbf{cloning}: only one instance
 of each protocol is actually forged (with the \textbf{new} statement)
-and then it's cloned inside all the network nodes. Thus the 
+and then it's cloned to populate all the network. Thus the 
 \emph{clone()} method has to be designed with care to avoid 
 unpredictable results.
 
@@ -156,7 +160,7 @@ to distinguish them from ordinary \emph{Dynamics} objects.\\
 The way the simulator manages the interactions between the protocol(s)
 run, the \emph{Observer} object(s) and the \emph{Dynamics} object(s)
 in each cycle can be quite sophisticated. Each object in peersim 
-(Dynamics, Observers and Protocols) can be wrapped into \emph{Scheduler} 
+(Dynamics, Observers and Protocols) is wrapped into \emph{Scheduler} 
 objects which adds fine grained scheduling facilities to each
 simulation component.
 
@@ -182,11 +186,11 @@ In the Figure\ref{obsfigure}, O1,2,3 are \emph{Observer} components
 and D represents one or more \emph{Dynamics} objects. Please note
 that before the first protocol run a first \emph{Dynamics} and \emph{Observer}
 run is performed (depicted in the interval between init and cycle
-0). The snapshots taken by the \emph{Observer} objects are sent to
+0).\\
+The snapshots taken by the \emph{Observer} objects are sent to
 standard output and can be easily redirected to a file to be collected
-for further work. Nevertheless, a developer can write \emph{Observer}
-objects with a GUI or with database connection to store data directly
-or whatever.
+for further work. When developing an Observer class, a good role is to print out 
+data using the \texttt{peersim.util.Log} static class.
 
 
 \subsection{The config file}
@@ -196,18 +200,16 @@ The config file is a plain ASCII text file, basically composed of
 key-value pairs; the lines starting with \char`\"{}\#\char`\"{} character
 are ignored (comments). The pairs are collected by a standard Java
 \emph{java.util.Properties} object when the simulator starts using
-for example the following command:\\
+for example the following command:
 
-
-\texttt{\footnotesize \$> java -cp <class-path> peersim/cdsim/Simulator
-config-file.txt}\\
-
+\begin{verbatim}
+java -cp <class-path> peersim.Simulator config-file.txt
+\end{verbatim}
+%\texttt{\footnotesize \$> java -cp <class-path> peersim.Simulator
+%config-file.txt}\\
 
 Clearly the classpath is mandatory only if you haven't set it yet
-in a global shell variable. Because of the spiritus of this tutorial,
-we'll try to learn peersim and its basic components
-using a by example metodology.
-
+in a global shell variable. 
 
 \subsection{Configuration example 1}
 
@@ -256,21 +258,26 @@ Lets comment the code line by line. The first thing to node are the
 key names: some of them are indexed and some other not (e.g. protocol.0.xxx
 versus simulation.$<$parameter$>$). That means the unindexed keys refers
 to static simulation elements, in fact the simulation itself is one
-and the same holds for the P2P network: only one network! 
+and the same holds for the P2P network: only one network!\\
+Please note that from Peersim release 0.2 the component indexes in the
+configuration can be regular strings.
 
 For the other simulation components you can think about the existance
 of a dedicated array for each of their type (one for protocols, initailizer,
 ...); the \textsf{index} is the only reference to deal with them.
 So the key for indexed components can be (informally) expressed as:
-\\
 
-
-\texttt{\footnotesize <init | protocol | observer | dynamics> . index\_number
-{[}. <parameter\_name>{]}}~\\
-{\footnotesize \par}
+\footnotesize
+\begin{verbatim}
+<init | protocol | observer | dynamics> . index_number [. <parameter_name> ]
+\end{verbatim}
+\normalsize
+%\texttt{\footnotesize <init | protocol | observer | dynamics> . index\_number
+%{[}. <parameter\_name>{]}}~\\
+%{\footnotesize \par}
 
 The final $<$parameter\_name$>$ is contained between {[}{]} to express
-that it can be not present. This is the case when the element is declared.
+that it's optional. This is the case when the element is declared.
 For example, at \textbf{line 9}, the first protocol choosen comes to life;
 the \textbf{key part} contains its type (or interface type) followed
 by the index (always starting from 0, as in arrays) and \textbf{the
@@ -308,7 +315,7 @@ protocol to do that. The value of parameter linkable is the index
 of a \emph{Linkable} interface implementing protocol (\emph{IdleProtocol}
 in the example). Clearly to know if a protocol can get access to the
 topology directly, you have to check the documentation (or source
-code!).
+code).
 
 From \textbf{line 15 to line 22}, it's time to initialize all the
 components previously declared. Again, the initialization components
@@ -340,21 +347,25 @@ Its only parameter used is protocol and clearly refers to an \emph{aggregation.
 AverageFunction} protocol type, so the parameter value is index 1
 (in fact: \texttt{protocol.1 aggregation.AverageFunction}). 
 
-Now you can try the example writing on a console the following line:\\
+Now you can try the example writing on a console the following line:
 
-
-\texttt{\footnotesize \$> java -cp <class-path> peersim/cdsim/Simulator
-example1.txt}~\\
-{\footnotesize \par}
+\begin{verbatim}
+java -cp <class-path> peersim.Simulator example1.txt
+\end{verbatim}
+%\texttt{\footnotesize \$> java -cp <class-path> peersim.Simulator
+%example1.txt}~\\
+%{\footnotesize \par}
 
 The classpath is mandatory only if the used system has not peersim
 classes in the shell CLASSPATH environment variable. To get the exact
 output that will follow, the reader should uncomment the parameter
-at \textbf{line 2}:\\
+at \textbf{line 2}:
 
-
-\texttt{\footnotesize random.seed 1234567890}~\\
-{\footnotesize \par}
+\begin{verbatim}
+random.seed 1234567890
+\end{verbatim}
+%\texttt{\footnotesize random.seed 1234567890}~\\
+%{\footnotesize \par}
 
 on top of the configuration file. This parameter is very useful to
 replicate exactly the experiments results based on (pseudo) random
@@ -699,21 +710,27 @@ of new stuff should have \textbf{modularity} in mind and should maximize
 code reuse. To acheive this, the following classes are proposed:
 
 \begin{itemize}
-\item protocol class itself: it is built on (extends) aggregation.AbstractFunction;
-this strategy permits the reuse of the aggregation protocol \char`\"{}value\char`\"{}
-field and related methods to store the load value. Sharing the same
-interface as aggregation, many other components can be used toghether
+\item \textbf{protocol class itself}: it is built on \emph{peersim.vector.SimpleValueHolder};
+it's a simple base class to access a single float variable. It shares the same
+interface as aggregation: many other components can be used toghether
 with the load balancing protocol, such as the initializers classes. 
-\item Dynamics component: it is necessary to restore the quota value at
+
+\item \textbf{Dynamics component}: it is necessary to restore the quota value at
 each node at the end of each cycle (as previously stated). This object
 is quite straighforward: it simply implements the only one method
 the interface \emph{Dynamics} declares, invoking the protected protocol
 method \emph{resetQuota()}. 
-\item Initializer and Observer components: are not needed!
-The aggregation initializers can be used directly. Also the aggregation
+
+\item \textbf{Initializer and Observer components}: they are not really needed!
+Infact the aggregation initializers can be used directly because they share the 
+same interface (both extends \emph{SingleValueHolder}). Also the aggregation
 observers can be used (the \emph{aggregation.AverageObserver} in particular).
-In addition a new observer object can be written to monitor the quota
-parameter and thus the amount of traffic performed in the overlay.
+In addition a new observer object can be written to monitor the \textbf{quota}
+parameter and thus the amount of traffic exchanged in the overlay.
+Please note that the initializers provided in the example package are "light", demo
+versions; the developer is encouraged to use the \emph{peersim.vector} package 
+initializers.
+
 \end{itemize}
 To give the reader an idea about the actual code to write, the following
 subsections are presented, in which the author put comments and explanations
@@ -721,69 +738,41 @@ in the way of the class code itself.
 
 \footnotesize
 \begin{verbatim}
- package loadbalance;
+package example.loadbalance;
  
- import peersim.util.CommonRandom;
- import aggregation.AbstractFunction;
  import peersim.config.Configuration;
+ import peersim.config.FastConfig;
  import peersim.core.*;
+ import peersim.vector.SingleValueHolder;
+ import peersim.cdsim.CDProtocol;
  
- public class BasicBalance extends AbstractFunction {
+ public class BasicBalance extends SingleValueHolder implements CDProtocol{
  // Fields:
- // allowed config file parameter
- public static final String PAR_QUOTA = "quota";
- // original quota value taken from configuration 
- private final double quota_value; 
+ public static final String PAR_QUOTA = "quota"; // allowed config file parameter
+ private final double quota_value; // original quota value taken from configuration
  
  protected double quota; // current cycle quota
  
  // Constructor:
  public BasicBalance(String prefix, Object obj) {
-     super(prefix, obj);
-     // get quota value from the config file. Default 1.
-     quota_value = (double)(Configuration.getInt(prefix+"."+PAR_QUOTA, 1));
-     quota = quota_value;
+ 	super(prefix);
+  	// get quota value from the config file. Default 1.
+ 	quota_value = (double)(Configuration.getInt(prefix+"."+PAR_QUOTA, 1));
+ 	quota = quota_value;
  }
 \end{verbatim}
 \normalsize
 
 
-It's simply standard Java code until now; the package loadbalance
-and the needed classes are declared. Extending \emph{AbstractFunction},
-we implements \emph{CDProtocol} and \emph{Protocol} interfaces automagically,
-but we need to override the previously defined methods to avoid using
-the \emph{AbstractFunction} implementation.
+It's simply standard Java code until now; the class needs also to implement
+\emph{CDProtocol} (and \emph{Protocol})  interface(s) and to provide 
+the \emph{nextCycle()} method 
+that is where the actual protocol algorithm is located.
 
 In the constructor signature, two parameters are present; the first
 one is a string corrisponding to the configuration file protocol key
-(e.g.: protocol.1 in the \emph{LoadBalance} protocol case), the second
-one is the protocol id index casted in a \emph{Object} type. These
-parameters are used in the superclass (\emph{aggregation.AbstractFunction})
-to connect this class to a Likable implementing protocol class. As
-an example, the \emph{aggregation.AbstractFunction} constructor class
-it's presented:\\
-
-\footnotesize
-\begin{verbatim}
-public AbstractFunction(String prefix, Object obj) {
-     int protocolId = ((Integer) obj).intValue();
-     int link = Configuration.getPid(prefix+"."+PAR_CONN);
-     Protocols.setLink(protocolId, link);
- }
-\end{verbatim}
-\normalsize
-
-
-The special method \emph{getPid()} is present to retrive a protocol
-identifier; the configuration property (input) is converted into a 
-numeric protocol id. The property can be any string and it's mapped to
-an integer according to the particular ordering scheme applied to the
-protocol names.\\
-The static class \emph{Protocols} collects protocol id-s of the protocols
-from which instances of this class get neighborhood info. The \emph{protocolID}
-variable represents the current class and the \emph{link} variable
-index is the \emph{Linkable} enabled protocol stated in the configuration
-file (\texttt{linkable} parameter).\\
+(e.g.: \texttt{protocol.1} in the \emph{LoadBalance} protocol case), the second
+one is the own protocol id index casted in a \emph{Object} type.
 
 \footnotesize
 \begin{verbatim}
@@ -803,64 +792,70 @@ dirty variable access performed by the dynamics object.\\
 
 \footnotesize
 \begin{verbatim}
- // Implements the Protocol interface
- public Object clone() throws CloneNotSupportedException {
-     BasicBalance af = (BasicBalance)super.clone();
-     return af;
+public Object clone() throws CloneNotSupportedException {
+ 	BasicBalance af = (BasicBalance)super.clone();
+ 	return af;
  }
  
  // Implements CDProtocol interface
  public void nextCycle( Node node, int protocolID ) {
-     int linkableID = Protocols.getLink(protocolID);
-     Linkable linkable = (Linkable) node.getProtocol( linkableID );
-     if (this.quota == 0) {
-         return; // skip this node
-     }    
-     // this takes the most distant neighbor based on local load
-     BasicBalance neighbor = null;
-     double maxdiff = 0;
-     for(int i = 0; i < linkable.degree() ; ++i)
-     {
-         Node peer = linkable.getNeighbor(i);
-         // The selected peer could be inactive
-         if(!peer.isUp()) continue; 
-         BasicBalance n = (BasicBalance)peer.getProtocol(protocolID);
-         if(n.quota!=1.0) continue;
-         double d = Math.abs(value-n.value);
-         if( d > maxdiff )
-         {
-             neighbor = n;
-             maxdiff = d;
-         }
-     }
-     if( neighbor == null ) {
-         return;
-     }
-                 
-     doTransfer(neighbor);
+ 	int linkableID = FastConfig.getLinkable(protocolID);
+ 	Linkable linkable = (Linkable) node.getProtocol( linkableID );
+	if (this.quota == 0) {
+ 		return; // skip this node
+ 	} 
+ 	// this takes the most distant neighbor based on local load
+ 	BasicBalance neighbor = null;
+ 	double maxdiff = 0;
+ 	for(int i = 0; i < linkable.degree() ; ++i)
+ 	{
+ 		Node peer = linkable.getNeighbor(i);
+ 		// The selected peer could be inactive
+ 		if(!peer.isUp()) continue; 
+ 		BasicBalance n = (BasicBalance)peer.getProtocol(protocolID);
+ 		if(n.quota!=1.0) continue;
+ 		double d = Math.abs(value-n.value);
+ 		if( d > maxdiff ) {
+			neighbor = n;
+			maxdiff = d;
+		}
+	}
+ 	if( neighbor == null ) {
+ 		return;
+	 }
+ doTransfer(neighbor);
  }
 \end{verbatim}
 \normalsize
 
 
-The first method is required by the Protocol interface and basically
+The first method is required by the \emph{Protocol} interface and basically
 calls the ancestor cloning method. So, nothing special here.
 
 The second one is required by \emph{CDProtocol} interface. It is the
-action performed by the protocol. The arguments represents a reference
+behaviour performed by the protocol. The arguments represents a reference
 to the node itself (the node on which the simulator is invoking the
-\emph{nextCycle()} method) and the index protocol identifier (\emph{BasicBalance}
-in this case). First it has to get a reference (in indexed form) to
+\emph{nextCycle()} method) and the index protocol identifier (the BasicBalance
+protocol id in this case). First it has to get a reference (in indexed form) to
 the \emph{Linkable} interface enabled protocol in the node protocol
 stack; as a remind, something implementing the \emph{Linkable} interface,
-is an entity capable of accessing to the topology. Having this linkable
+is an entity capable of accessing the topology. Having this linkable
 reference we can access to the real \emph{Linkable} interface
-implementation with: \\
+implementation with: 
 
+\begin{verbatim}
+int linkableID = FastConfig.getLinkable(protocolID);
+Linkable linkable = (Linkable)node.getProtocol(linkableID);
+\end{verbatim}
+%\texttt{\footnotesize int linkableID = FastConfig.getLinkable(protocolID);\\
+%Linkable linkable = (Linkable)node.getProtocol(linkableID);
+%}~\\
+%{\footnotesize \par}
 
-\texttt{\footnotesize Linkable linkable = (Linkable) node.getProtocol(
-linkableID );}~\\
-{\footnotesize \par}
+Using the static \emph{FastConfig} class we can get the current protocol
+corresponding Linkable identifier; this class manages the protocol \texttt{linkable} 
+parameter without direct user intervention. Then we can access the actual Linkable
+object as shown in the second line.\\
 
 If the local quota is equal to 0, means that the node we have already
 spent its amount of network traffic, so it returns.
@@ -868,19 +863,21 @@ spent its amount of network traffic, so it returns.
 To get the most distant node from the current one, a for loops on
 all neighbor node load value; the number of neighbor is equal to the
 node degree (aceesible thanks to \emph{Linkable} interface). To pick
-a node having a the \emph{Linkable} access:\\
+a node having a the \emph{Linkable} access:
 
-
-\texttt{\footnotesize Node peer = linkable.getNeighbor(i);} \\
+\begin{verbatim}
+Node peer = linkable.getNeighbor(i);
+\end{verbatim}
+%\texttt{\footnotesize Node peer = linkable.getNeighbor(i);} \\
 
 
 and from this obtained \emph{Node} interface reference it is possible
-to get the protocol interface we are interested in (\emph{BasicBalance}):\\
+to get the protocol interface we are interested in (\emph{BasicBalance}):
 
-
-\texttt{\footnotesize BasicBalance n = (BasicBalance)peer.getProtocol(protocolID);}
-\\
-
+\begin{verbatim}
+BasicBalance n = (BasicBalance)peer.getProtocol(protocolID);
+\end{verbatim}
+%texttt{\footnotesize BasicBalance n = (BasicBalance)peer.getProtocol(protocolID);}
 
 When the protocol finds a suitable neighbor, it performs a load balancing
 step invoking the \emph{doTransfer()} method.\\
@@ -957,9 +954,9 @@ amount. The quota value is decreased by the same amount at both nodes.
  
  // Dynamics interface method:
  public void modify() {
-     for(int i=0; i < OverlayNetwork.size(); ++i)
+     for(int i=0; i < Network.size(); ++i)
      {
-         ((BasicBalance)OverlayNetwork.get(i).getProtocol(protocolID)).resetQuota();
+         ((BasicBalance)Network.get(i).getProtocol(protocolID)).resetQuota();
      }
    }
  }
@@ -971,7 +968,7 @@ is very simple: only the \emph{modify()} method. The costructor takes
 care of initializing the configuration file parameters (respectively:
 the reset value and the protocol identifier to deal with). The \emph{modify()}
 method makes use of network global knowledge: it invokes the \emph{resetQuota()}
-method on all the \emph{OverlayNetwork} object elements (it's a static
+method on all the \emph{Network} object elements (it's a static
 object avaiable everywhere in the simulator environment; you can think
 about it as an array). It is clear that the simulator has global knowledge,
 but it is up to the protocol developer to make use or not of this
@@ -993,7 +990,9 @@ to use an external protocol facility instead.
 The interface defines five methods: \emph{degree()}, \emph{getNeighbor()},
 \emph{addNeighbor()}, \emph{contains()}, \emph{pack()}. These methods
 are not usually invoked by the protocol itself (except for \emph{getNeighbor()}
-), but by an \emph{Initializer} object instead. Please note that there
+), but by an \emph{Initializer} object instead (such as: 
+\emph{peersim.dynamics.WireRegularRandom}).
+Please note that there
 is no way to remove nodes from the overlay; the only chance to get
 a similar effect, is to disable a peer accessing to the \emph{peersim.core.Fallible}
 interface (extended by the \emph{Node} interface) and setting one
@@ -1085,10 +1084,10 @@ the topology shrinks as soon as the nodes reach the average load.
  
         // Method to simulate average function aggregation
      private static void calculateAVG(int protocolID) {
-         int len = OverlayNetwork.size();
+         int len = Network.size();
          double sum = 0.0;
          for (int i = 0; i < len; i++) {
-             AvgBalance protocol = (AvgBalance)OverlayNetwork.get(i).getProtocol(protocolID);
+             AvgBalance protocol = (AvgBalance)Network.get(i).getProtocol(protocolID);
              double value = protocol.getValue();
              sum += value;
          }
@@ -1111,12 +1110,13 @@ The function \emph{calculateAVG()} simulates the average aggregation
 behaviour. It makes use of global knowledge, looping on each overlay
 node. \\
 
-
-\texttt{\footnotesize protected static void suspend( Node node ) \{}{\footnotesize \par}
-
-\texttt{\footnotesize node.setFailState(Fallible.DOWN); }{\footnotesize \par}
-
-\texttt{\footnotesize \}}{\footnotesize \par}
+\footnotesize
+\begin{verbatim}
+protected static void suspend( Node node ) {
+    node.setFailState(Fallible.DOWN); }
+}
+\end{verbatim}
+\normalsize
 
 This is the utility function to exit from the topology; simply sets
 a node state from \emph{Fallible} interface.\\
@@ -1171,9 +1171,9 @@ get the most loaded or the least loaded neighbor and exchange.\\
 \footnotesize
 \begin{verbatim}
  private Node getOverloadedPeer(Node node, int protocolID) {
-         int linkableID = Protocols.getLink(protocolID);
-         Linkable linkable = (Linkable) node.getProtocol( linkableID );
-     
+        int linkableID = FastConfig.getLinkable(protocolID);
+	Linkable linkable = (Linkable) node.getProtocol( linkableID );
+	
          AvgBalance neighbor=null;
          Node neighborNode = null;
          double maxdiff = 0.0;
@@ -1195,8 +1195,8 @@ get the most loaded or the least loaded neighbor and exchange.\\
      } 
  
      private Node getUnderloadedPeer(Node node, int protocolID) {
-         int linkableID = Protocols.getLink(protocolID);
-         Linkable linkable = (Linkable) node.getProtocol( linkableID );
+        int linkableID = FastConfig.getLinkable(protocolID);
+	Linkable linkable = (Linkable) node.getProtocol( linkableID );
      
          AvgBalance neighbor=null;
          Node neighborNode = null;
@@ -1229,7 +1229,7 @@ are straighforward and very similar, but are shown for completeness.
 \section{Evaluating the protocols}
 
 The performance about load variance reduction can be analyzed with
-an \emph{aggregation.Average Observer} or a \emph{loadbalance.LBObserver}
+an \emph{aggregation.AverageObserver} or a \emph{loadbalance.LBObserver}
 (they are very similar), but don't expect huge differences. In fact,
 from this point of view, the two protocols have nearly an identical
 performance, no matter whatever distribution you are using. The 
@@ -1268,8 +1268,8 @@ is the following. \\
  
  // Observer interface implementation:
  public boolean analyze() {
-     for (int i = 0; i < OverlayNetwork.size(); i++) {
-         BasicBalance protocol =  (BasicBalance) OverlayNetwork.get(i).getProtocol(pid);
+     for (int i = 0; i < Network.size(); i++) {
+         BasicBalance protocol =  (BasicBalance) Network.get(i).getProtocol(pid);
          stats.add( protocol.quota );
      }
      System.out.println(name+": "+stats);
@@ -1293,7 +1293,7 @@ function (e.g.: average, max, min, ...) on a numeric value holded
 at each network node. In order to work, every node needs access to
 its neighbor list view on the overlay network; no particular requirements
 about the topology management protocol are imposed. In the case of
-avaraging function, a generic method \emph{updateState(a, b)} returns
+averaging function, a generic method \emph{updateState(a, b)} returns
 (a+b)/2, where a and b are values at (respectively) node a and node
 b. This kind of computation is performed by each node at each simulation
 cycle.

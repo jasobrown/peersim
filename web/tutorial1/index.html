@@ -27,7 +27,7 @@ original version by:  Nikos Drakos, CBLU, University of Leeds
 <H1 ALIGN="CENTER">PeerSim HOWTO: build a new protocol for the peersim simulation
 framework</H1>
 <P ALIGN="CENTER"><STRONG>Gian Paolo Jesi (jesi@cs.unibo.it)</STRONG></P>
-<P ALIGN="CENTER"><STRONG>November 7, 2004</STRONG></P>
+<P ALIGN="CENTER"><STRONG>January 24, 2005</STRONG></P>
 
 <P>
 
@@ -36,7 +36,7 @@ framework</H1>
 </H1>
 
 <P>
-<B>NOTE: This tutorial revision covers peersim release 0.2 topics.</B>
+<B>NOTE: This tutorial revision covers peersim release 0.3 topics.</B>
 <BR>
 <BR>
 This tutorial is aimed to give you a step by step guide to build from
@@ -53,7 +53,7 @@ this tutorial it supposed that you and/or your workstation have:
 <LI>a working Java compiler ( <IMG
  WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
  SRC="img1.png"
- ALT="$\geq$"> JDK 1.2);
+ ALT="$\geq$"> JDK 1.4.x);
 </LI>
 <LI>a working peersim source tree (you can download it from sourceforge
 CVS);
@@ -69,7 +69,12 @@ CVS);
 The aim of this tutorial is to be
 as pratical as possible; the goal is to give the reader the basics
 of peersim usage and the basics about howto write a simple component.
-This tutorial IS NOT exhaustive at all! 
+This tutorial IS NOT exhaustive at all!
+<BR>
+Because of the spiritus of this tutorial,
+after a brief introduction to basic concepts, we'll try to learn peersim 
+and its basic components
+using a by example metodology.
 
 <P>
 
@@ -166,7 +171,7 @@ manages the local view of neighbor, the reference to the protocol,
 its index identifier inside the topology global array (invisible to
 protocols)</TD>
 </TR>
-<TR><TD ALIGN="CENTER"><I>CDProtocol Protocol</I></TD>
+<TR><TD ALIGN="CENTER"><I>CDProtocol</I></TD>
 <TD ALIGN="LEFT" VALIGN="TOP" WIDTH=180>A protocol simply defines an operation to be performed at each cycle
 (only method nextCycle() is defined)</TD>
 </TR>
@@ -191,7 +196,7 @@ state</TD>
 <BR>
 
 <P>
-The lifecycle of a peersim simulation is defined inside the <I>Simulator</I>
+The lifecycle of a peersim simulation is hard coded inside the <I>Simulator</I>
 class. It first reads a particular configuration file (see section 
 <A HREF="tutorial1.html#configfile">2.3</A>) containing all the simulation parameters 
 concerning all the
@@ -200,9 +205,9 @@ objects are created (all the nodes making the overlay connected with
 one or more protocol object, the <I>Observer</I> and
 <I>Dynamics</I> objects).
 From the developer point of view, it's important to note that the
-protocols creation process is based on cloning: only one instance
+protocols creation process is based on <B>cloning</B>: only one instance
 of each protocol is actually forged (with the <B>new</B> statement)
-and then it's cloned inside all the network nodes. Thus the 
+and then it's cloned to populate all the network. Thus the 
 <I>clone()</I> method has to be designed with care to avoid 
 unpredictable results.
 
@@ -219,7 +224,7 @@ to distinguish them from ordinary <I>Dynamics</I> objects.
 The way the simulator manages the interactions between the protocol(s)
 run, the <I>Observer</I> object(s) and the <I>Dynamics</I> object(s)
 in each cycle can be quite sophisticated. Each object in peersim 
-(Dynamics, Observers and Protocols) can be wrapped into <I>Scheduler</I> 
+(Dynamics, Observers and Protocols) is wrapped into <I>Scheduler</I> 
 objects which adds fine grained scheduling facilities to each
 simulation component.
 
@@ -236,7 +241,7 @@ to retreive a final snapshot.
 <P>
 
 <P></P>
-<DIV ALIGN="CENTER"><A NAME="obsfigure"></A><A NAME="329"></A>
+<DIV ALIGN="CENTER"><A NAME="obsfigure"></A><A NAME="326"></A>
 <TABLE>
 <CAPTION ALIGN="BOTTOM"><STRONG>Figure 1:</STRONG>
 Observer and Dynamics scheduling</CAPTION>
@@ -256,11 +261,12 @@ In the Figure<A HREF="tutorial1.html#obsfigure">1</A>, O1,2,3 are <I>Observer</I
 and D represents one or more <I>Dynamics</I> objects. Please note
 that before the first protocol run a first <I>Dynamics</I> and <I>Observer</I>
 run is performed (depicted in the interval between init and cycle
-0). The snapshots taken by the <I>Observer</I> objects are sent to
+0).
+<BR>
+The snapshots taken by the <I>Observer</I> objects are sent to
 standard output and can be easily redirected to a file to be collected
-for further work. Nevertheless, a developer can write <I>Observer</I>
-objects with a GUI or with database connection to store data directly
-or whatever.
+for further work. When developing an Observer class, a good role is to print out 
+data using the <TT>peersim.util.Log</TT> static class.
 
 <P>
 
@@ -276,16 +282,15 @@ key-value pairs; the lines starting with &#34;#&#34; character
 are ignored (comments). The pairs are collected by a standard Java
 <I>java.util.Properties</I> object when the simulator starts using
 for example the following command:
-<BR>
+
 <P>
-<TT><FONT SIZE="-1">$&gt; java -cp &lt;class-path&gt; peersim/cdsim/Simulator
-config-file.txt</FONT></TT>
-<BR>
+<PRE>
+java -cp &lt;class-path&gt; peersim.Simulator config-file.txt
+</PRE>
+
 <P>
 Clearly the classpath is mandatory only if you haven't set it yet
-in a global shell variable. Because of the spiritus of this tutorial,
-we'll try to learn peersim and its basic components
-using a by example metodology.
+in a global shell variable. 
 
 <P>
 
@@ -344,7 +349,10 @@ versus simulation.<IMG
  SRC="img4.png"
  ALT="$&gt;$">). That means the unindexed keys refers
 to static simulation elements, in fact the simulation itself is one
-and the same holds for the P2P network: only one network! 
+and the same holds for the P2P network: only one network!
+<BR>
+Please note that from Peersim release 0.2 the component indexes in the
+configuration can be regular strings.
 
 <P>
 For the other simulation components you can think about the existance
@@ -352,14 +360,10 @@ of a dedicated array for each of their type (one for protocols, initailizer,
 ...); the <I>index</I> is the only reference to deal with them.
 So the key for indexed components can be (informally) expressed as:
 
-<BR>
 <P>
-<TT><FONT SIZE="-1">&lt;init | protocol | observer | dynamics&gt; . index_number
-[. &lt;parameter_name&gt;]</FONT></TT>&nbsp;
-<BR>
-<P>
-
-
+<PRE>
+&lt;init | protocol | observer | dynamics&gt; . index_number [. &lt;parameter_name&gt; ]
+</PRE>
 <P>
 The final <IMG
  WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
@@ -368,7 +372,7 @@ The final <IMG
  WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
  SRC="img4.png"
  ALT="$&gt;$"> is contained between [] to express
-that it can be not present. This is the case when the element is declared.
+that it's optional. This is the case when the element is declared.
 For example, at <B>line 9</B>, the first protocol choosen comes to life;
 the <B>key part</B> contains its type (or interface type) followed
 by the index (always starting from 0, as in arrays) and <B>the
@@ -409,7 +413,7 @@ protocol to do that. The value of parameter linkable is the index
 of a <I>Linkable</I> interface implementing protocol (<I>IdleProtocol</I>
 in the example). Clearly to know if a protocol can get access to the
 topology directly, you have to check the documentation (or source
-code!).
+code).
 
 <P>
 From <B>line 15 to line 22</B>, it's time to initialize all the
@@ -450,25 +454,22 @@ AverageFunction</I> protocol type, so the parameter value is index 1
 
 <P>
 Now you can try the example writing on a console the following line:
-<BR>
-<P>
-<TT><FONT SIZE="-1">$&gt; java -cp &lt;class-path&gt; peersim/cdsim/Simulator
-example1.txt</FONT></TT>&nbsp;
-<BR>
-<P>
 
+<P>
+<PRE>
+java -cp &lt;class-path&gt; peersim.Simulator example1.txt
+</PRE>
 
 <P>
 The classpath is mandatory only if the used system has not peersim
 classes in the shell CLASSPATH environment variable. To get the exact
 output that will follow, the reader should uncomment the parameter
 at <B>line 2</B>:
-<BR>
-<P>
-<TT><FONT SIZE="-1">random.seed 1234567890</FONT></TT>&nbsp;
-<BR>
-<P>
 
+<P>
+<PRE>
+random.seed 1234567890
+</PRE>
 
 <P>
 on top of the configuration file. This parameter is very useful to
@@ -880,23 +881,32 @@ code reuse. To acheive this, the following classes are proposed:
 <P>
 
 <UL>
-<LI>protocol class itself: it is built on (extends) aggregation.AbstractFunction;
-this strategy permits the reuse of the aggregation protocol &#34;value&#34;
-field and related methods to store the load value. Sharing the same
-interface as aggregation, many other components can be used toghether
+<LI><B>protocol class itself</B>: it is built on <I>peersim.vector.SimpleValueHolder</I>;
+it's a simple base class to access a single float variable. It shares the same
+interface as aggregation: many other components can be used toghether
 with the load balancing protocol, such as the initializers classes. 
+
+<P>
 </LI>
-<LI>Dynamics component: it is necessary to restore the quota value at
+<LI><B>Dynamics component</B>: it is necessary to restore the quota value at
 each node at the end of each cycle (as previously stated). This object
 is quite straighforward: it simply implements the only one method
 the interface <I>Dynamics</I> declares, invoking the protected protocol
 method <I>resetQuota()</I>. 
+
+<P>
 </LI>
-<LI>Initializer and Observer components: are not needed!
-The aggregation initializers can be used directly. Also the aggregation
+<LI><B>Initializer and Observer components</B>: they are not really needed!
+Infact the aggregation initializers can be used directly because they share the 
+same interface (both extends <I>SingleValueHolder</I>). Also the aggregation
 observers can be used (the <I>aggregation.AverageObserver</I> in particular).
-In addition a new observer object can be written to monitor the quota
-parameter and thus the amount of traffic performed in the overlay.
+In addition a new observer object can be written to monitor the <B>quota</B>
+parameter and thus the amount of traffic exchanged in the overlay.
+Please note that the initializers provided in the example package are "light", demo
+versions; the developer is encouraged to use the <I>peersim.vector</I> package 
+initializers.
+
+<P>
 </LI>
 </UL>
 To give the reader an idea about the actual code to write, the following
@@ -905,68 +915,41 @@ in the way of the class code itself.
 
 <P>
 <PRE>
- package loadbalance;
+package example.loadbalance;
  
- import peersim.util.CommonRandom;
- import aggregation.AbstractFunction;
  import peersim.config.Configuration;
+ import peersim.config.FastConfig;
  import peersim.core.*;
+ import peersim.vector.SingleValueHolder;
+ import peersim.cdsim.CDProtocol;
  
- public class BasicBalance extends AbstractFunction {
+ public class BasicBalance extends SingleValueHolder implements CDProtocol{
  // Fields:
- // allowed config file parameter
- public static final String PAR_QUOTA = "quota";
- // original quota value taken from configuration 
- private final double quota_value; 
+ public static final String PAR_QUOTA = "quota"; // allowed config file parameter
+ private final double quota_value; // original quota value taken from configuration
  
  protected double quota; // current cycle quota
  
  // Constructor:
  public BasicBalance(String prefix, Object obj) {
-     super(prefix, obj);
-     // get quota value from the config file. Default 1.
-     quota_value = (double)(Configuration.getInt(prefix+"."+PAR_QUOTA, 1));
-     quota = quota_value;
+ 	super(prefix);
+  	// get quota value from the config file. Default 1.
+ 	quota_value = (double)(Configuration.getInt(prefix+"."+PAR_QUOTA, 1));
+ 	quota = quota_value;
  }
 </PRE>
 <P>
-It's simply standard Java code until now; the package loadbalance
-and the needed classes are declared. Extending <I>AbstractFunction</I>,
-we implements <I>CDProtocol</I> and <I>Protocol</I> interfaces automagically,
-but we need to override the previously defined methods to avoid using
-the <I>AbstractFunction</I> implementation.
+It's simply standard Java code until now; the class needs also to implement
+<I>CDProtocol</I> (and <I>Protocol</I>)  interface(s) and to provide 
+the <I>nextCycle()</I> method 
+that is where the actual protocol algorithm is located.
 
 <P>
 In the constructor signature, two parameters are present; the first
 one is a string corrisponding to the configuration file protocol key
-(e.g.: protocol.1 in the <I>LoadBalance</I> protocol case), the second
-one is the protocol id index casted in a <I>Object</I> type. These
-parameters are used in the superclass (<I>aggregation.AbstractFunction</I>)
-to connect this class to a Likable implementing protocol class. As
-an example, the <I>aggregation.AbstractFunction</I> constructor class
-it's presented:
-<BR>
-<P>
-<PRE>
-public AbstractFunction(String prefix, Object obj) {
-     int protocolId = ((Integer) obj).intValue();
-     int link = Configuration.getPid(prefix+"."+PAR_CONN);
-     Protocols.setLink(protocolId, link);
- }
-</PRE>
-<P>
-The special method <I>getPid()</I> is present to retrive a protocol
-identifier; the configuration property (input) is converted into a 
-numeric protocol id. The property can be any string and it's mapped to
-an integer according to the particular ordering scheme applied to the
-protocol names.
-<BR>
-The static class <I>Protocols</I> collects protocol id-s of the protocols
-from which instances of this class get neighborhood info. The <I>protocolID</I>
-variable represents the current class and the <I>link</I> variable
-index is the <I>Linkable</I> enabled protocol stated in the configuration
-file (<TT>linkable</TT> parameter).
-<BR>
+(e.g.: <TT>protocol.1</TT> in the <I>LoadBalance</I> protocol case), the second
+one is the own protocol id index casted in a <I>Object</I> type.
+
 <P>
 <PRE>
  // Resets the quota. 
@@ -984,66 +967,68 @@ dirty variable access performed by the dynamics object.
 <BR>
 <P>
 <PRE>
- // Implements the Protocol interface
- public Object clone() throws CloneNotSupportedException {
-     BasicBalance af = (BasicBalance)super.clone();
-     return af;
+public Object clone() throws CloneNotSupportedException {
+ 	BasicBalance af = (BasicBalance)super.clone();
+ 	return af;
  }
  
  // Implements CDProtocol interface
  public void nextCycle( Node node, int protocolID ) {
-     int linkableID = Protocols.getLink(protocolID);
-     Linkable linkable = (Linkable) node.getProtocol( linkableID );
-     if (this.quota == 0) {
-         return; // skip this node
-     }    
-     // this takes the most distant neighbor based on local load
-     BasicBalance neighbor = null;
-     double maxdiff = 0;
-     for(int i = 0; i &lt; linkable.degree() ; ++i)
-     {
-         Node peer = linkable.getNeighbor(i);
-         // The selected peer could be inactive
-         if(!peer.isUp()) continue; 
-         BasicBalance n = (BasicBalance)peer.getProtocol(protocolID);
-         if(n.quota!=1.0) continue;
-         double d = Math.abs(value-n.value);
-         if( d &gt; maxdiff )
-         {
-             neighbor = n;
-             maxdiff = d;
-         }
-     }
-     if( neighbor == null ) {
-         return;
-     }
-                 
-     doTransfer(neighbor);
+ 	int linkableID = FastConfig.getLinkable(protocolID);
+ 	Linkable linkable = (Linkable) node.getProtocol( linkableID );
+	if (this.quota == 0) {
+ 		return; // skip this node
+ 	} 
+ 	// this takes the most distant neighbor based on local load
+ 	BasicBalance neighbor = null;
+ 	double maxdiff = 0;
+ 	for(int i = 0; i &lt; linkable.degree() ; ++i)
+ 	{
+ 		Node peer = linkable.getNeighbor(i);
+ 		// The selected peer could be inactive
+ 		if(!peer.isUp()) continue; 
+ 		BasicBalance n = (BasicBalance)peer.getProtocol(protocolID);
+ 		if(n.quota!=1.0) continue;
+ 		double d = Math.abs(value-n.value);
+ 		if( d &gt; maxdiff ) {
+			neighbor = n;
+			maxdiff = d;
+		}
+	}
+ 	if( neighbor == null ) {
+ 		return;
+	 }
+ doTransfer(neighbor);
  }
 </PRE>
 <P>
-The first method is required by the Protocol interface and basically
+The first method is required by the <I>Protocol</I> interface and basically
 calls the ancestor cloning method. So, nothing special here.
 
 <P>
 The second one is required by <I>CDProtocol</I> interface. It is the
-action performed by the protocol. The arguments represents a reference
+behaviour performed by the protocol. The arguments represents a reference
 to the node itself (the node on which the simulator is invoking the
-<I>nextCycle()</I> method) and the index protocol identifier (<I>BasicBalance</I>
-in this case). First it has to get a reference (in indexed form) to
+<I>nextCycle()</I> method) and the index protocol identifier (the BasicBalance
+protocol id in this case). First it has to get a reference (in indexed form) to
 the <I>Linkable</I> interface enabled protocol in the node protocol
 stack; as a remind, something implementing the <I>Linkable</I> interface,
-is an entity capable of accessing to the topology. Having this linkable
+is an entity capable of accessing the topology. Having this linkable
 reference we can access to the real <I>Linkable</I> interface
 implementation with: 
-<BR>
-<P>
-<TT><FONT SIZE="-1">Linkable linkable = (Linkable) node.getProtocol(
-linkableID );</FONT></TT>&nbsp;
-<BR>
-<P>
 
+<P>
+<PRE>
+int linkableID = FastConfig.getLinkable(protocolID);
+Linkable linkable = (Linkable)node.getProtocol(linkableID);
+</PRE>
 
+<P>
+Using the static <I>FastConfig</I> class we can get the current protocol
+corresponding Linkable identifier; this class manages the protocol <TT>linkable</TT> 
+parameter without direct user intervention. Then we can access the actual Linkable
+object as shown in the second line.
+<BR>
 <P>
 If the local quota is equal to 0, means that the node we have already
 spent its amount of network traffic, so it returns.
@@ -1053,18 +1038,21 @@ To get the most distant node from the current one, a for loops on
 all neighbor node load value; the number of neighbor is equal to the
 node degree (aceesible thanks to <I>Linkable</I> interface). To pick
 a node having a the <I>Linkable</I> access:
-<BR>
+
 <P>
-<TT><FONT SIZE="-1">Node peer = linkable.getNeighbor(i);</FONT></TT> 
-<BR>
+<PRE>
+Node peer = linkable.getNeighbor(i);
+</PRE>
+
 <P>
 and from this obtained <I>Node</I> interface reference it is possible
 to get the protocol interface we are interested in (<I>BasicBalance</I>):
-<BR>
-<P>
-<TT><FONT SIZE="-1">BasicBalance n = (BasicBalance)peer.getProtocol(protocolID);</FONT></TT>
 
-<BR>
+<P>
+<PRE>
+BasicBalance n = (BasicBalance)peer.getProtocol(protocolID);
+</PRE>
+
 <P>
 When the protocol finds a suitable neighbor, it performs a load balancing
 step invoking the <I>doTransfer()</I> method.
@@ -1142,9 +1130,9 @@ amount. The quota value is decreased by the same amount at both nodes.
  
  // Dynamics interface method:
  public void modify() {
-     for(int i=0; i &lt; OverlayNetwork.size(); ++i)
+     for(int i=0; i &lt; Network.size(); ++i)
      {
-         ((BasicBalance)OverlayNetwork.get(i).getProtocol(protocolID)).resetQuota();
+         ((BasicBalance)Network.get(i).getProtocol(protocolID)).resetQuota();
      }
    }
  }
@@ -1155,7 +1143,7 @@ is very simple: only the <I>modify()</I> method. The costructor takes
 care of initializing the configuration file parameters (respectively:
 the reset value and the protocol identifier to deal with). The <I>modify()</I>
 method makes use of network global knowledge: it invokes the <I>resetQuota()</I>
-method on all the <I>OverlayNetwork</I> object elements (it's a static
+method on all the <I>Network</I> object elements (it's a static
 object avaiable everywhere in the simulator environment; you can think
 about it as an array). It is clear that the simulator has global knowledge,
 but it is up to the protocol developer to make use or not of this
@@ -1182,7 +1170,9 @@ to use an external protocol facility instead.
 The interface defines five methods: <I>degree()</I>, <I>getNeighbor()</I>,
 <I>addNeighbor()</I>, <I>contains()</I>, <I>pack()</I>. These methods
 are not usually invoked by the protocol itself (except for <I>getNeighbor()</I>
-), but by an <I>Initializer</I> object instead. Please note that there
+), but by an <I>Initializer</I> object instead (such as: 
+<I>peersim.dynamics.WireRegularRandom</I>).
+Please note that there
 is no way to remove nodes from the overlay; the only chance to get
 a similar effect, is to disable a peer accessing to the <I>peersim.core.Fallible</I>
 interface (extended by the <I>Node</I> interface) and setting one
@@ -1279,10 +1269,10 @@ the topology shrinks as soon as the nodes reach the average load.
  
         // Method to simulate average function aggregation
      private static void calculateAVG(int protocolID) {
-         int len = OverlayNetwork.size();
+         int len = Network.size();
          double sum = 0.0;
          for (int i = 0; i &lt; len; i++) {
-             AvgBalance protocol = (AvgBalance)OverlayNetwork.get(i).getProtocol(protocolID);
+             AvgBalance protocol = (AvgBalance)Network.get(i).getProtocol(protocolID);
              double value = protocol.getValue();
              sum += value;
          }
@@ -1305,20 +1295,11 @@ behaviour. It makes use of global knowledge, looping on each overlay
 node. 
 <BR>
 <P>
-<TT><FONT SIZE="-1">protected static void suspend( Node node ) {</FONT></TT>
-<P>
-
-
-<P>
-<TT><FONT SIZE="-1">node.setFailState(Fallible.DOWN); </FONT></TT>
-<P>
-
-
-<P>
-<TT><FONT SIZE="-1">}</FONT></TT>
-<P>
-
-
+<PRE>
+protected static void suspend( Node node ) {
+    node.setFailState(Fallible.DOWN); }
+}
+</PRE>
 <P>
 This is the utility function to exit from the topology; simply sets
 a node state from <I>Fallible</I> interface.
@@ -1373,9 +1354,9 @@ get the most loaded or the least loaded neighbor and exchange.
 <P>
 <PRE>
  private Node getOverloadedPeer(Node node, int protocolID) {
-         int linkableID = Protocols.getLink(protocolID);
-         Linkable linkable = (Linkable) node.getProtocol( linkableID );
-     
+        int linkableID = FastConfig.getLinkable(protocolID);
+	Linkable linkable = (Linkable) node.getProtocol( linkableID );
+	
          AvgBalance neighbor=null;
          Node neighborNode = null;
          double maxdiff = 0.0;
@@ -1397,8 +1378,8 @@ get the most loaded or the least loaded neighbor and exchange.
      } 
  
      private Node getUnderloadedPeer(Node node, int protocolID) {
-         int linkableID = Protocols.getLink(protocolID);
-         Linkable linkable = (Linkable) node.getProtocol( linkableID );
+        int linkableID = FastConfig.getLinkable(protocolID);
+	Linkable linkable = (Linkable) node.getProtocol( linkableID );
      
          AvgBalance neighbor=null;
          Node neighborNode = null;
@@ -1433,7 +1414,7 @@ are straighforward and very similar, but are shown for completeness.
 
 <P>
 The performance about load variance reduction can be analyzed with
-an <I>aggregation.Average Observer</I> or a <I>loadbalance.LBObserver</I>
+an <I>aggregation.AverageObserver</I> or a <I>loadbalance.LBObserver</I>
 (they are very similar), but don't expect huge differences. In fact,
 from this point of view, the two protocols have nearly an identical
 performance, no matter whatever distribution you are using. The 
@@ -1474,8 +1455,8 @@ is the following.
  
  // Observer interface implementation:
  public boolean analyze() {
-     for (int i = 0; i &lt; OverlayNetwork.size(); i++) {
-         BasicBalance protocol =  (BasicBalance) OverlayNetwork.get(i).getProtocol(pid);
+     for (int i = 0; i &lt; Network.size(); i++) {
+         BasicBalance protocol =  (BasicBalance) Network.get(i).getProtocol(pid);
          stats.add( protocol.quota );
      }
      System.out.println(name+": "+stats);
@@ -1502,7 +1483,7 @@ function (e.g.: average, max, min, ...) on a numeric value holded
 at each network node. In order to work, every node needs access to
 its neighbor list view on the overlay network; no particular requirements
 about the topology management protocol are imposed. In the case of
-avaraging function, a generic method <I>updateState(a, b)</I> returns
+averaging function, a generic method <I>updateState(a, b)</I> returns
 (a+b)/2, where a and b are values at (respectively) node a and node
 b. This kind of computation is performed by each node at each simulation
 cycle.
@@ -1574,7 +1555,7 @@ Mathematics Department, Macquarie University, Sydney.
 The command line arguments were: <BR>
  <STRONG>latex2html</STRONG> <TT>-t 'Peersim HOWTO 1' -split 0 -nonavigation -noaddress -show_section_numbers -t 'Peersim HOWTO 1' tutorial1.tex</TT>
 <P>
-The translation was initiated by Gian_Paolo Jesi on 2004-11-07
+The translation was initiated by Gian_Paolo Jesi on 2005-01-24
 <BR><HR>
 
 </BODY>

@@ -15,13 +15,6 @@ import peersim.core.IdleProtocol;
  */
 public class InetNodeProtocol extends IdleProtocol {
     
-    /**
-     * String name of the parameter used to select the linkable protocol 
-    * used to obtain information about neighbors.
-    */
-    public static final String PAR_CONN = "linkableID";
-
-    
     // coordinates in space:
     public double x;
     public double y;
@@ -41,7 +34,11 @@ public class InetNodeProtocol extends IdleProtocol {
     
     public Object clone() throws CloneNotSupportedException {
 	InetNodeProtocol af = (InetNodeProtocol) super.clone();
-	
+	af.isroot = this.isroot;
+        af.x = this.x;
+        af.y = this.y;
+        af.in_degree = this.in_degree;
+        af.hops = this.hops;
 	return af;
     }
     

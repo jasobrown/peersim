@@ -6,15 +6,11 @@
 
 package example.hot;
 
-import hot.InetNodeProtocol;
+import example.hot.InetNodeProtocol;
 import peersim.graph.*;
 import peersim.core.Node;
-import peersim.core.Linkable;
-import peersim.core.Network;
-import peersim.config.Configuration;
 import java.util.Random;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /** This class is an extention to the peersim standard graph factory 
  * @see peersim.graph.GraphFactory . It arranges the graph edges according

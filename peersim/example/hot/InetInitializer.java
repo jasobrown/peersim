@@ -68,9 +68,6 @@ public class InetInitializer implements peersim.dynamics.Dynamics {
         pid = Configuration.getInt(prefix+"."+PAR_PROT);
         d = Configuration.getInt(prefix+"."+PAR_OUTDEGREE);
         alfa = Configuration.getDouble(prefix+"."+PAR_ALFA);
-        //graph_filename = Configuration.getString(prefix + "." + PAR_GFILE, "");
-        //dg_filename = Configuration.getString(prefix + "." + PAR_DGFILE, "");
-        
         
         graph_filename = "cmplxnet_d"+ d + "_alfa"+alfa+".dat";
         dg_filename = "degree_d"+ d + "_alfa"+alfa+".dat";
@@ -95,10 +92,9 @@ public class InetInitializer implements peersim.dynamics.Dynamics {
         graphToFile(ogr);
         dgDistribToFile(ogr);
         
-        System.out.println("In-degree stats: "+degreeStats(ogr));
-        
-        
-         RobustnessEvaluator rev= new RobustnessEvaluator(ogr);
+        //System.out.println("In-degree stats: "+degreeStats(ogr));
+       
+        RobustnessEvaluator rev= new RobustnessEvaluator(ogr);
         System.out.println("Metrica 1 : "+rev.getMetric1());
         try {
             String f1name = "fail-metric1-d" + d + "_alfa" + alfa + ".dat";

@@ -68,23 +68,36 @@ public void reset() {
 // ====================================================================
 
 
-public void add( double item ) {
+public void add( double item ) { add(item,1); }
+
+// --------------------------------------------------------------------
+
+/** Adds item k times */
+public void add( double item, int k ) {
 	
 	if( item < min )
 	{
 		min = item;
 		countmin = 0;
 	} 
-	if( item == min ) countmin++;
+	if( item == min ) countmin+=k;
 	if( item > max )
 	{
 		max = item;
 		countmax = 0;
 	}
-	if(item == max) countmax++;  
-	n++;
-	sum += item;
-	sqrsum += item*item;
+	if(item == max) countmax+=k;  
+	n+=k;
+	if( k == 1 )
+	{
+		sum += item;
+		sqrsum += item*item;
+	}
+	else
+	{
+		sum += item*k;
+		sqrsum += item*item*k;
+	}
 }
 
 // --------------------------------------------------------------------

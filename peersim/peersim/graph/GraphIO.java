@@ -82,6 +82,31 @@ public static void writeGML( Graph g, PrintStream out ) {
 
 /**
 * Saves the given graph to
+* the given stream to be read by NETMETER. It should be ok also for Pajek.
+*/
+public static void writeNetmeter( Graph g, PrintStream out ) {
+
+	out.println("*Vertices "+g.size());
+	for(int i=0; i<g.size(); ++i)
+		out.println((i+1)+" \""+(i+1)+"\"");
+	
+	out.println("*Arcs");
+	for(int i=0; i<g.size(); ++i)
+	{
+		Iterator it=g.getNeighbours(i).iterator();
+		while(it.hasNext())
+		{
+			out.println((i+1)+" "+
+				(((Integer)it.next()).intValue()+1)+" 1");
+		}
+	}
+	out.println("*Edges");
+}
+
+// --------------------------------------------------------------------
+
+/**
+* Saves the given graph to
 * the given stream in UCINET DL nodelist format.
 */
 public static void writeUCINET_DL( Graph g, PrintStream out ) {

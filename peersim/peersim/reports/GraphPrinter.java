@@ -51,6 +51,8 @@ public static final String PAR_BASENAME = "outf";
 * The name for the format of the output. Defaults to "neighborlist",
 * which is a plain dump of neighbors. The class
 * {@link peersim.dynamics.WireFromFile} can read this format.
+* Other supported formats are "chaco" to be used with Yehuda Koren's
+* Embedder, and "netmeter" to be used with Sergi Valverde's netmeter.
 */
 public static final String PAR_FORMAT = "format";
 
@@ -114,6 +116,8 @@ try {
 		GraphIO.writeNeighborList(og, pstr);
 	else if( format.equals("chaco") )
 		GraphIO.writeChaco(og, pstr);
+	else if( format.equals("netmeter") )
+		GraphIO.writeNetmeter(og, pstr);
 	else
 		System.err.println(name+": unsupported format "+format);
 	

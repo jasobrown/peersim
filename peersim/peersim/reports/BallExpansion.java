@@ -20,6 +20,7 @@ package peersim.reports;
 
 import peersim.core.*;
 import peersim.config.Configuration;
+import peersim.util.IncrementalStats;
 import peersim.graph.*;
 
 /**
@@ -40,7 +41,8 @@ public static final String PAR_PROT = "protocol";
 
 /** 
 * Name for the parameter maxd, which defines the maximal distance which
-* we print. Defaults to 10.
+* we print. Defaults to the network size. Note that this default is
+* normally way too much (for random graphs with a low diameter).
 */
 public static final String PAR_MAXD = "maxd";
 
@@ -55,6 +57,12 @@ public static final String PAR_N = "n";
 * Not defined by default;
 */
 public static final String PAR_UNDIR = "undir";
+
+/** 
+* If defines, statistics are printed instead over the minimal path lengths.
+* Not defined by default;
+*/
+public static final String PAR_STATS = "stats";
   
 /** The name of this observer in the configuration */
 private final String name;
@@ -66,6 +74,8 @@ private final int maxd;
 private final int n;
 
 private final boolean undir;
+
+private final boolean stats;
 
 private final GraphAlgorithms ga = new GraphAlgorithms();
 
@@ -81,9 +91,10 @@ public BallExpansion(String name) {
 
 	this.name = name;
 	protocolID = Configuration.getPid(name+"."+PAR_PROT);
-	maxd = Configuration.getInt(name+"."+PAR_MAXD,10);
+	maxd = Configuration.getInt(name+"."+PAR_MAXD,Network.size());
 	n = Configuration.getInt(name+"."+PAR_N,1000);
 	undir = Configuration.contains(name+"."+PAR_UNDIR);
+	stats = Configuration.contains(name+"."+PAR_STATS);
 	b = new int[maxd];
 }
 
@@ -97,16 +108,35 @@ public boolean analyze() {
 	Graph g = new OverlayGraph(protocolID);
 	if( undir ) g = new ConstUndirGraph(g);
 
-	System.out.println(name+":");
+	System.out.print(name+": ");
 	
-	for(int i=0; i<n && i<g.size(); ++i)
+	if(stats)
 	{
-		ga.flooding( g, b, i );
-		for(int j=0; j<b.length; ++j)
+		IncrementalStats is = new IncrementalStats();
+		for(int i=0; i<n && i<g.size(); ++i)
 		{
-			System.out.print(b[j]+" ");
+			ga.flooding( g, b, i );
+			int j=1;
+			while(j<b.length && b[j]>0)
+			{
+				is.add(j,b[j++]);
+			}
 		}
+		System.out.println(is);
+	}
+	else
+	{
 		System.out.println();
+		for(int i=0; i<n && i<g.size(); ++i)
+		{
+			ga.flooding( g, b, i );
+			int j=0;
+			while(j<b.length && b[j]>0)
+			{
+				System.out.print(b[j++]+" ");
+			}
+			System.out.println();
+		}
 	}
 	
 	return false;

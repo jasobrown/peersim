@@ -1,3 +1,7 @@
+Added new modifiers, which can set numeric parameters of network
+nodes according the some specified pattern. Originally this was in
+aggregation but refactored to be more general.
+
 Refactoring: added peersim.init into peersim.dynamics and now Dynamics
 is used also instead of the old Initializer. This involved quite a number of
 files. Note that config files don't break because the init entries

@@ -45,14 +45,17 @@ public interface Linkable {
 	* Returns the neighbor with the given index. The contract is that
 	* listing the elements from index 0 to index degree()-1 should list
 	* each element exactly once if this object is not modified in the
-	* meantime.
+	* meantime. It throws an IndexOutOfBounds exception if i is negative
+	* or larger than or equal to {@link #degree}.
 	*/
 	public Node getNeighbor(int i);
 
 	/**
-	*  Add a neighbor to the current set of neighbors.
-	* 
-	*  @return true if the neighbor has been inserted; false if the 
+	* Add a neighbor to the current set of neighbors. If neighbor
+	* is not yet a neighbor but it cannot be added from other reasons,
+	* this method should not return normally, that is, it must throw
+	* a runtime exception.
+	* @return true if the neighbor has been inserted; false if the 
 	*    node is already a neighbor of this node
 	*/
 	public boolean addNeighbor(Node neighbour);
@@ -64,8 +67,9 @@ public interface Linkable {
 	
 	/**
 	* A possibility for optimization. An implementation should try to
-	* compress its internal representation. Normally this should be called
-	* when no increase in the expected size of the neighborhood can be
+	* compress its internal representation. Normally this is called
+	* by initializers or other components when
+	* no increase in the expected size of the neighborhood can be
 	* expected.
 	*/
 	public void pack();

@@ -1,13 +1,19 @@
-Wed Nov  3 13:07:55 CET 2004
-This is version 0.2 of the Peersim high level P2P network simulator.
+Mon Jan  3 14:05:33 CET 2005
+This is version 0.3 of the Peersim high level P2P network simulator.
 
-This archive contains the javadoc generated documentation,
-and a java archive containing the simulator source and bytecode
-and some examples.
+This archive is composed of:
+- the doc/ directory containing the javadoc-generated documentation
+- the src/ directory containing the simular source
+- the example/ directory containing example configuration files
+- peersim-0.3.jar, a java archive containing the compiled bytecode
+- jep-2.24.jar, a Java Mathematical Expression Parser library from 
+  Singular Systems (http://www.singularsys.com/jep/).
+  JEP is needed by the peersim core; it is distributed under
+  the GNU General Public License (GPL)
 
-To run the examples type
+To run the examples type:
 
-java -cp peersim-0.2.jar:jep-2.24.jar peersim.cdsim.Simulator example/config-example1.txt
+java -cp peersim-0.3.jar:jep-2.24.jar peersim.Simulator example/config-example1.txt
 
 in the directory of this README file in the extracted archive.
 
@@ -16,10 +22,4 @@ sourceforge:
 
 http://peersim.sourceforge.net/
 
-
-------------------------------------------------------------------------
-
-Boundled with this release you can find JEP - a Java Mathematical Expression
-Parser, version 2.24, from Singular Systems http://www.singularsys.com/jep/
-JEP is distributed under the GNU General Public License (GPL)
 

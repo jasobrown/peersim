@@ -61,7 +61,7 @@ public Object clone() throws CloneNotSupportedException
 }
 
 //--------------------------------------------------------------------------
-//Constants
+//methods
 //--------------------------------------------------------------------------
 
 // Comment inherited from interface
@@ -79,5 +79,10 @@ public void setValue(double value)
 }
 
 //--------------------------------------------------------------------------
+
+/**
+ * Returns the value as a string.
+ */
+public String toString() { return ""+value; }
 
 }

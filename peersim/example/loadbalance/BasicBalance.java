@@ -22,8 +22,9 @@ package example.loadbalance;
  import peersim.config.FastConfig;
  import peersim.core.*;
  import distributions.SingleValueHolder;
+ import peersim.cdsim.CDProtocol;
  
- public class BasicBalance extends SingleValueHolder {
+ public class BasicBalance extends SingleValueHolder implements CDProtocol{
  // Fields:
  public static final String PAR_QUOTA = "quota"; // allowed config file parameter
  private final double quota_value; // original quota value taken from configuration

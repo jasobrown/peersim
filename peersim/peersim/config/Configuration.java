@@ -250,10 +250,10 @@ public static boolean getBoolean(String name, boolean def) {
 * @param name Name of configuration property.
 */
 public static boolean getBoolean(String name) {
-	
+
 	if( config.getProperty(name) == null )
 		throw new MissingParameterException(name);
-	if( config.getProperty(name).matches("\\P{Blank}*") )
+	if( config.getProperty(name).matches("\\p{Blank}*") )
 		throw new MissingParameterException(name,
 		"Blank value is not accepted when parsing Boolean.");
 	

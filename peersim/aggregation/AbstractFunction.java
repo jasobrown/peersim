@@ -28,8 +28,7 @@ import peersim.cdsim.CDProtocol;
  *  @author Alberto Montresor
  *  @version $Revision$
  */
-public abstract class AbstractFunction
-implements CDProtocol, Aggregation
+public abstract class AbstractFunction implements CDProtocol, Aggregation
 {
 
 

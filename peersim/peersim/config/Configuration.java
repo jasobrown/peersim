@@ -112,7 +112,10 @@ import java.util.*;
   include.observer conn 2
   </pre>
   will result in returning <em>only</em> <code>observer.conn</code> and
-  <code>observer.2</code>, in this order. <em>Important!</em> If inlude is
+  <code>observer.2</code>, in this order.
+  Note that for example the empy list resutls in a zero length array in this
+  case.
+  <em>Important!</em> If inlude is
   defined then ordering is ignored. That is, include is stronger than order.
 *
 */
@@ -683,8 +686,9 @@ private static String[] order(String[] names, String type)
 	if( !include ) order = getString(PAR_ORDER+"."+type, null);
 	
 	int i=0;
-	if( order != null )
+	if( order != null && !order.equals("") )
 	{
+System.err.println("'"+order+"'");
 		// split around non-word characters
 		String[] sret = order.split("\\W+");
 		for (; i < sret.length; i++)
@@ -695,7 +699,7 @@ private static String[] order(String[] names, String type)
 			if( j == names.length )
 			{
 				throw new IllegalParameterException(
-				PAR_ORDER+"."+type,
+				(include?PAR_INCLUDE:PAR_ORDER)+"."+type,
 				type + "." + sret[i]+ " is not defined.");
 			}
 			else // swap the element to current position

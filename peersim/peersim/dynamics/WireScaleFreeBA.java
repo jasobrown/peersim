@@ -113,9 +113,10 @@ public void modify()
 				stop = addNeighbor(ni, pid, nk) &&
 					addNeighbor(nk, pid, ni);
 			} while (!stop);
-			dest[len++] = ni;
-			dest[len++] = nk;
+			dest[len+2*j] = ni;
+			dest[len+2*j+1] = nk;
 		}
+		len+=edges*2;
 	}
 }
 

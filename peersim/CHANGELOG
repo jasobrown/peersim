@@ -1,3 +1,7 @@
+MJ 02/01/2005
+- Fixed bug in WireScaleFreeBA: it ocasionally generated loop edges and in
+  general did not follow the BA model.
+
 AM 30/12/2004
 - Modified Makefile to remove "distributions" from the list of
   packages that are inserted in the distribution.

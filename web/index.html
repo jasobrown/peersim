@@ -45,14 +45,16 @@ Thus, for large-scale systems, a scalable simulation testbed is mandatory.
 
 <p>
 Peersim has been developed with extreme scalability and support for
-dynamicity in mind. It is composed of
+dynamicity in mind. We use it in our everyday research and chose to
+release it to the public under the GPL open source licence.
+It is composed of
 many simple extendable and pluggable components, with a flexible
 configuration mechanism. To allow for scalability and focus on
 self-organization properties of large scale systems,
 some simplifying assumpions have been made, such as ignoring the
 details of the transport communication protocol stack. Peersim is
 developed within the  <a href="http://www.cs.unibo.it/bison">BISON</a>
-project and it is distributed under an open source license.
+project.
 Peersim is written in the Java language.
 
 <p><table cellpadding="4" cellspacing="0" width="100%" class="title">
@@ -129,22 +131,20 @@ to the simulator usage and programming<br>
 </table>
 </p>
 
-We are using Peersim to simulate several P2P protocols. In this section, we make
+We use Peersim to simulate several P2P protocols. In this section, we make
 available the code of the more interesting protocols. If the protocol is described
-in a scientific paper, 
-in this section, we provide
-both the code of such protocols and the configuration files needed to reproduce
-the figures of such papers. 
+in a scientific paper, we provide
+both the code of the protocols and the configuration files needed to reproduce
+the experiments described in the publications. 
 
 <ul>
   <li>
     <em>OverStat</em> is a collection of <em>aggregation</em> protocols.
-    Aggregation is a collective term for a set functions aimed at providing
-    statistical information over a distributed systems, such as the average 
-    load incurred by the nodes or the total size of the network. We have
-    developed extremely scalable, robust decentralized aggregation protocols.
-    <br>
-    The protocol has been described in the following papers:
+    Aggregation is a collective term for a set of functions aimed at providing
+    statistical information over distributed systems, such as the average 
+    load of the nodes or the size of the network. We have
+    developed extremely scalable, robust and decentralized aggregation protocols.
+    The protocols are described in the following papers:
     <ul>
       <li>
         Alberto Montresor, M&aacute;rk Jelasity, and Ozalp Babaoglu.
@@ -163,14 +163,15 @@ the figures of such papers.
         <a href="http://www.cs.unibo.it/bison/publications/icdcs04.pdf">PDF Version</a>
       </li>
     </ul>  
-    A journal version of these papers has been accepted for publication in
+    A journal paper covering also these papers has been accepted for publication in
     ACM Transactions on Computer Systems
-    (TOCS). The code and the configuration files used to generate 
-    the journal version are available <a href="code/aggregation.tgz">here</a>.
+    (TOCS). The code and the configuration files needed to reproduce our results
+    (with detailed reference to the actual figures in the journal paper)
+    are available <a href="code/aggregation.tgz">here</a>.
   </li>
   <li>
     <em>SG-1</em> is a protocol for self-organizing and maintaining a superpeer
-    based topology. The protocol has been described in the following paper:
+    based topology. The protocol is described in the following paper:
     <ul>
       <li>
         Alberto Montresor. A Robust Protocol for Building Superpeer Overlay Topologies.
@@ -179,12 +180,13 @@ the figures of such papers.
         <a href="http://www.cs.unibo.it/techreports/2004/2004-08.pdf">PDF Version</a>
       </li>
     </ul>  
-    The code and the configuration files used to generate this paper are available
+    The code and the configuration files used to generate the experimental results in
+    this paper are available
     <a href="code/superpeer.tgz">here</a>.
   </li>
   <li>
-    We have introduced the <em>peer sampling service</em>, that can be used as a source of
-    random peers by each peer. We performed extensive experiments
+    We introduced the <em>peer sampling service</em>, that can be used as a source of
+    random peers by participating peers. We performed extensive experiments
     on several gossip based implementations of the service.
     <ul>
 	<!-- Authors: Mark Jelasity and Rachid Guerraoui and Anne Marie Kermarrec and
@@ -198,8 +200,7 @@ the figures of such papers.
       </li>
     </ul>  
     The experiments can be reproduced using the <a href="code/middleware04-exp.tar.gz">archive</a>
-    that contains the implementation
-    of the protocols and the configuration files for peersim.
+    that contains the implementation of the protocols and the configuration files for peersim.
   </li>
 </ul>
 

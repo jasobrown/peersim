@@ -155,6 +155,11 @@ AM 15/10/2004
   found, it is used to create new instances. Otherwise,
   smart error messages are printed, when possible.
 
+
+MJ 14/10/2004:
+VERSION 0.1 RELEASED
+
+
 AM 14/10/2004
 - added maxcount and mincount to the toString method of 
   peersim.util.IncrementalStats

@@ -124,6 +124,18 @@ public void print( PrintStream out ) {
 
 // ---------------------------------------------------------------------
 
+public void print( String prefix ) 
+{
+	
+	for(int i=0; i<freq.length; ++i)
+	{
+		if (freq[i] != 0)
+			Log.println(prefix, i+" "+freq[i]);
+	}
+}
+
+// ---------------------------------------------------------------------
+
 public String toString() {
 	
 	String result="";

@@ -76,13 +76,8 @@ public static final String PAR_CYCLES = "simulation.cycles";
 public static final String PAR_SHUFFLE = "simulation.shuffle";
 
 /**
-<<<<<<< RangeSimulator.java
- * This is the prefix for network initializers. These have to be of type
- * {@link Initializer}.
-=======
  * This is the prefix for network initializers. These have to be of
  * type {@link Dynamics}.
->>>>>>> 1.5
  */
 public static final String PAR_INIT = "init";
 
@@ -197,6 +192,7 @@ private static ConfigProperties selectConfigFile(File configdir, File resultdir)
 	}
 	// Search file not executed yet in config dir
 	File[] files = configdir.listFiles();
+	Arrays.sort(files);
 	ConfigProperties properties = null;
 	for (int i = 0; i < files.length && properties == null; i++) {
 		String name = files[i].getName();
@@ -379,6 +375,7 @@ public static void doExperiments(ConfigProperties properties)
 		// by Network.reset()
 		CommonState.setT(0);
 		Network.reset();
+		System.gc();
 		loadObservers();
 		loadDynamics();
 		// Read idle parameters
@@ -393,6 +390,7 @@ public static void doExperiments(ConfigProperties properties)
 		performSimulation(cycles, shuffle);
 		// Increment values
 		nextValues(idx, values);
+		System.gc();
 	}
 	if (Configuration.contains("__x"))
 		Network.test();
@@ -484,6 +482,7 @@ protected static void nextRound(boolean shuffle)
 	}
 	for (int j = 0; j < Network.size(); ++j) {
 		Node node = Network.get(j);
+		CommonState.setNode(node);
 		int len = node.protocolSize();
 		// XXX maybe should use different shuffle for each protocol?
 		// (instead of running all on one node at the same time?)

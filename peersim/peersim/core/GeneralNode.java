@@ -109,7 +109,9 @@ public void setFailState(int failState) {
 			else failstate=OK;
 			break;
 		case DEAD:
-			protocol = null;
+			// AM: I've commented this line, because in some cases I need to access
+			// data (like for example an identifier) of nodes that are dead.
+			// protocol = null;
 			index = -1;
 			failstate = DEAD;
 			break;

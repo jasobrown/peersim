@@ -404,18 +404,20 @@ public static Object[] getInstanceArray( String name ) {
 * {@link #getInstance(String)} with these names results in the
 * same instances {@link #getInstanceArray} returns.
 */
-public static String[] getNames( String name ) {
-	
+public static String[] getNames( String name ) 
+{
 	ArrayList ll = new ArrayList();
 	final String pref = name+".";
-	String s;
-	
-	for( int i=0; contains(s=(pref+i)); ++i )
-	{
-		ll.add( s );
-	}
 
-	return (String[])ll.toArray(new String[0]);
+	Enumeration e = config.propertyNames();
+	while (e.hasMoreElements()) {
+		String key = (String) e.nextElement();
+		if (key.startsWith(pref) && key.indexOf(".", pref.length())<0)
+			ll.add(key);
+	}
+	String[] ret = (String[])ll.toArray(new String[0]);
+	Arrays.sort(ret);
+	return ret;
 }
 
 }

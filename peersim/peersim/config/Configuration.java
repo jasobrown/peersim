@@ -407,7 +407,8 @@ public static String getString( String property ) {
 //-------------------------------------------------------------------
 
 /**
- * Reads the given string property and returns the associated numeric 
+ * Reads the given string property from the ocnfiguration and returns the
+ * associated numeric 
  * protocol identifier. The value of the property should be the name of a
  * protocol, which is an arbitrary string, and which gets mapped to a
  * number, a protocol id, according to some sorting defined over the
@@ -420,10 +421,27 @@ public static String getString( String property ) {
 public static int getPid( String property ) {
 	
 	String protname = getString(property);
+	return lookupPid(protname);
+}
+
+//-------------------------------------------------------------------
+
+/**
+ * Reads the given string property and returns the associated numeric 
+ * protocol identifier. The parameter should be the name of a
+ * protocol, which is an arbitrary string, and which gets mapped to a
+ * number, a protocol id, according to some sorting defined over the
+ * protocol names. By default the sorting is alphabetical.
+ * 
+ * @param protname the protocol name.
+ * @return the numeric protocol identifier associated to the protocol
+ *   name
+ */
+public static int lookupPid( String protname ) {
+	
 	Integer ret = (Integer) protocols.get(protname); 
 	if (ret == null) {
-		throw new IllegalParameterException(property,
-			"Protocol " + protname + " is not defined");
+		throw new MissingParameterException(PAR_PROT+"."+protname);
 	}
 	return ret.intValue();
 }

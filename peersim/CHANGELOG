@@ -1,3 +1,7 @@
+MJ 25/10/2004
+- added method lookupPid to Configuration to make it possible to search
+  for a protocol id based on the protocol name
+
 MJ 22/10/2004
 - added the possibility of excluding entities that are present in the config
   using a simple config parameter: eg "include observer aa bb 23". This

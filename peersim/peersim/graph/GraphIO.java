@@ -33,20 +33,22 @@ protected GraphIO() {}
 
 
 /**
-* Saves the given graph to
-* the given stream as lists of edges. Each line will contain a pair "i j".
-* Nodes are indexed from 1,...,N.
+* Prints graph in neighbor list format. Each line starts with the
+* id of a node followed by the ids of its neighbors separated by space.
 */
-public static void writeEdgeList( Graph g, PrintStream out ) {
+public static void writeNeighborList( Graph g, PrintStream out ) {
 
+	out.println("# "+g.size());
+	
 	for(int i=0; i<g.size(); ++i)
 	{
+		out.print(i+" ");
 		Iterator it=g.getNeighbours(i).iterator();
 		while(it.hasNext())
 		{
-			out.println(
-			   (i+1) + " " + (((Integer)it.next()).intValue()+1) );
+			out.print(it.next()+" ");
 		}
+		out.println();
 	}
 }
 

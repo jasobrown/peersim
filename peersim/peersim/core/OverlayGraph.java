@@ -32,6 +32,8 @@ import java.util.Collections;
 * internal representation, or of the node list changes,
 * then the behaviour becomes unspecified.
 *
+* The indeces of nodes are from 0 to Network.size()-1.
+*
 * The fail state of nodes has an effect on the graph: all nodes are included
 * but edges are included only if both ends are up. This expresses the fact
 * that this graph is in fact defined by the "can communicate with" relation.

@@ -1,7 +1,10 @@
+Upgraded GraphPrinter so that it can print to files that can be
+read by wireFromFile. Added method writeNeighborList to GraphIO.
+
 Added new class peersim.dynamics.WireFromFile
 
 Fixed bug in peersim.util.WeightedRandPerm which accepted
-non-positive weights.
+non-positive weights
 
 Added peersim.reports.SingleValueObserver
 

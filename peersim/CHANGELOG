@@ -1,3 +1,5 @@
+Added new class peersim.dynamics.WireFromFile
+
 Fixed bug in peersim.util.WeightedRandPerm which accepted
 non-positive weights.
 

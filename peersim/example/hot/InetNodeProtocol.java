@@ -8,7 +8,7 @@ package example.hot;
 
 import peersim.core.IdleProtocol;
 
-/** This class does nothing! It is simply a container inside each node to 
+/** This class does nothing. It is simply a container inside each node to 
  * collect some useful data such as coordinates, hop count and degree count.
  *
  * @author  giampa

@@ -62,7 +62,7 @@ public static final String PAR_TRACE = "trace";
 * Selects a method to use when printing results. Three methods are known:
 * "stats" will create and print a {@link IncrementalStats} object.
 * "freq" will create and print a {@link IncrementalFreq} object.
-* "list" will print the degrees of the samle nodes one by one in one line.
+* "list" will print the degrees of the sample nodes one by one in one line.
 * Default is "stats".
 */
 public static final String PAR_METHOD = "method";

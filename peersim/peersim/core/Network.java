@@ -110,6 +110,7 @@ public static void reset() {
 		tmp = (Node) Configuration.getInstance(PAR_NODE);
 	}
 	prototype = tmp;
+	prototype.setIndex(-1);
 
 	// cloning the nodes
 	if(len > 0 )

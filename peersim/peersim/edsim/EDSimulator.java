@@ -55,6 +55,13 @@ public class EDSimulator
 public static final String PAR_ENDTIME = "simulation.endtime";	
 
 /**
+ * The string name of the configuration parameter that specifies
+ * how often the simulator should log the current time on the
+ * console. Standard error is used for such logs.
+ */
+public static final String PAR_LOGTIME = "simulation.logtime";	
+
+/**
  * If this parameter is present, the order of visiting each node for
  * cycle-based protocols is shuffled
  * at each cycle. The default is no shuffle.
@@ -88,6 +95,19 @@ public static final String PAR_DYN = "dynamics";
  */
 public static final String PAR_OBS = "observer";
 
+/**
+ * Some protocols may implement both the CDProtocol and EDProtocol
+ * interfaces, for convenience. To avoid them being scheduled
+ * both as cycle-driven protocols and event-driven protocols,
+ * there are two possibilities:
+ * <ul>
+ * <li>To run them just as a CDProtocol, do not schedule any
+ *   event-driven event. </li>
+ * <li>To run them just as a EDProtocol, include this parameter
+ *   in the protocol description </li>
+ * <ul>
+ */
+public static final String PAR_ED = "ed";
 
 //---------------------------------------------------------------------
 //Fields
@@ -95,6 +115,9 @@ public static final String PAR_OBS = "observer";
 
 /** Maximum time for simulation */
 protected static long endtime;
+
+/** Log time */
+protected static long logtime;
 
 /** If true, when executing a cycle-based protocols nodes are shuffled */
 private static boolean shuffle;
@@ -123,6 +146,7 @@ protected static Scheduler[] protSchedules = null;
 /** Ordered list of events (heap) */
 protected static Heap heap = new Heap();
 
+protected static long nextlog = 0;
 
 //---------------------------------------------------------------------
 //Private methods
@@ -193,7 +217,8 @@ protected static void loadCDProtocols()
 	int[] pids = new int[size];
 	int count = 0;
 	for (int i=0; i < size; i++) {
-		if (node.getProtocol(i) instanceof CDProtocol) {
+		boolean ed = Configuration.contains(names[i] + "." + PAR_ED);
+		if (!ed && node.getProtocol(i) instanceof CDProtocol) {
 			pids[count++] = i;
 		}
 	}
@@ -239,6 +264,10 @@ private static boolean executeNext()
 {
 	Heap.Event ev = heap.removeFirst();
 	long time = ev.time >> rbits;
+	if (time >= nextlog) {
+		System.err.println("Current time: " + time);
+		nextlog = nextlog+logtime;
+	}
 	if (time > endtime)
 		return true;
 	CommonState.setTime(time);
@@ -247,6 +276,9 @@ private static boolean executeNext()
 		// Cycle-based event; handled through a special method
 		CycleEvent cycle = (CycleEvent) ev.event;
 		return cycle.execute(shuffle);
+	} else if (ev.node == Network.prototype) {
+		// Do nothing; the prototype may schedule itself 
+		return false;
 	} else {
 		// Check if the node is up; if not, skip this event.
 		if (!ev.node.isUp()) 
@@ -279,6 +311,7 @@ public static void nextExperiment()
 				"should be equal or large then 8 or smaller than 64");
 	}
 	endtime = Configuration.getLong(PAR_ENDTIME);
+	logtime = Configuration.getLong(PAR_LOGTIME, Long.MAX_VALUE);
 	shuffle = Configuration.contains(PAR_SHUFFLE);
 
 	// initialization

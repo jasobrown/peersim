@@ -196,6 +196,23 @@ public int degree(int i) {
 	return numNeighbours;
 }
 
+
+// ========================= other methods =======================
+// ===============================================================
+
+
+/**
+* Returns number of neighbors that are either up or down.
+* If node i is down, returns 0.
+*/
+public int fullDegree(int i) {
+
+	if( !Network.node[i].isUp() ) return 0;
+	Linkable lble=(Linkable)Network.node[i].getProtocol(protocolID);
+	return lble.degree();
+}
+
+
 }
 
 

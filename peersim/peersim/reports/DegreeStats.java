@@ -22,6 +22,7 @@ import peersim.core.*;
 import peersim.config.Configuration;
 import peersim.util.*;
 import peersim.graph.*;
+import peersim.config.IllegalParameterException;
 
 /**
  */
@@ -67,6 +68,17 @@ public static final String PAR_TRACE = "trace";
 */
 public static final String PAR_METHOD = "method";
 
+/**
+* Selects the types of links to print information about.
+* Three methods are known:
+* "live": links pointing to live nodes,
+* "dead": links pointing to nodes that are unavailable and
+* "all": both dead and live links summed.
+* "all" and "dead" require parameter {@link PAR_DIR} to be set.
+* Default is "live". 
+*/
+public static final String PAR_TYPE = "linktype";
+
 /** The name of this observer in the configuration */
 private final String name;
 
@@ -82,6 +94,8 @@ private Node[] traced=null;
 
 private final String method;
 
+private final String type;
+
 
 // ===================== initialization ================================
 // =====================================================================
@@ -95,6 +109,14 @@ public DegreeStats(String name) {
 	dir = Configuration.contains(name+"."+PAR_DIR);
 	trace = Configuration.contains(name+"."+PAR_TRACE);
 	method = Configuration.getString(name+"."+PAR_METHOD,"stats");
+	type = Configuration.getString(name+"."+PAR_TYPE,"live");
+	if( (type.equals("all") || type.equals("dead")) && !dir )
+	{
+		throw new IllegalParameterException(name+"."+PAR_TYPE,
+			" Parameter "+
+			name+"."+PAR_DIR+" has to be defined if "+
+			name+"."+PAR_TYPE+"="+type+".");
+	}
 }
 
 
@@ -130,16 +152,50 @@ public boolean analyze() {
 	if( method.equals("stats") )
 	{
 		IncrementalStats stats = new IncrementalStats();
-		for(int i=0; i<nn; ++i)
-			stats.add(og.degree(getNodeId(i)));
-	
+		
+		if( type.equals("live") )
+		{
+			for(int i=0; i<nn; ++i)
+				stats.add(og.degree(getNodeId(i)));
+		}
+		else if( type.equals("all") )
+		{
+			for(int i=0; i<nn; ++i)
+				stats.add(
+				((OverlayGraph)og).fullDegree(getNodeId(i)));
+		}
+		else if( type.equals("dead") )
+		{
+			for(int i=0; i<nn; ++i)
+				stats.add(
+				((OverlayGraph)og).fullDegree(getNodeId(i))-
+				og.degree(getNodeId(i)) );
+		}
+		
 		System.out.println(name+": "+stats);
 	}
 	else if( method.equals("freq") )
 	{
 		IncrementalFreq stats = new IncrementalFreq();
-		for(int i=0; i<nn; ++i)
-			stats.add(og.degree(getNodeId(i)));
+		
+		if( type.equals("live") )
+		{
+			for(int i=0; i<nn; ++i)
+				stats.add(og.degree(getNodeId(i)));
+		}
+		else if( type.equals("all") )
+		{
+			for(int i=0; i<nn; ++i)
+				stats.add(
+				((OverlayGraph)og).fullDegree(getNodeId(i)));
+		}
+		else if( type.equals("dead") )
+		{
+			for(int i=0; i<nn; ++i)
+				stats.add(
+				((OverlayGraph)og).fullDegree(getNodeId(i))-
+				og.degree(getNodeId(i)) );
+		}
 	
 		stats.print(System.out);
 		System.out.println("\n\n");
@@ -147,8 +203,27 @@ public boolean analyze() {
 	else if( method.equals("list") )
 	{
 		System.out.print(name+": ");
-		for(int i=0; i<nn; ++i)
-			System.out.print(og.degree(getNodeId(i))+" ");
+		
+		if( type.equals("live") )
+		{
+			for(int i=0; i<nn; ++i)
+				System.out.print(og.degree(getNodeId(i))+" ");
+		}
+		else if( type.equals("all") )
+		{
+			for(int i=0; i<nn; ++i)
+				System.out.print(
+				((OverlayGraph)og).fullDegree(getNodeId(i))
+				+" ");
+		}
+		else if( type.equals("dead") )
+		{
+			for(int i=0; i<nn; ++i)
+				System.out.print((
+				((OverlayGraph)og).fullDegree(getNodeId(i))-
+					og.degree(getNodeId(i)))+" ");
+		}
+		
 		System.out.println();
 	}
 	

@@ -1,3 +1,7 @@
+MJ 02/03/2005
+- DegreeStats is extended by new options, to collect statistics about
+  dead links. See class documentation.
+
 MJ (adding changes by Spyros Voulgaris) 16/02/2005
 - DegreeStats now uses the (now correct) degree method instead of the size
   of the returned neighbor list.

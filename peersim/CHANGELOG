@@ -1,3 +1,8 @@
+MJ 2/11/2004
+- changed config parameter name "protocolID" to "protocol" in package
+  distributions. Protocol id is an internal concept now, transparent to the
+  user and protocol name should be used (which can also be a number of course).
+
 MJ 29/10/2004
 - new constructor parameter for OverlayGraph so that setEdge could work in
   an undirected manner (sets opposite edge too). OverlayGraph is interpreted as

@@ -55,7 +55,7 @@ public static final String PAR_PEAKS = "peaks";
 /** 
  * String name of the parameter that defines the protocol to initialize.
  */
-public static final String PAR_PROTID = "protocolID";
+public static final String PAR_PROT = "protocol";
 
 //--------------------------------------------------------------------------
 // Fields
@@ -81,7 +81,7 @@ private final int pid;
 public PeakDistribution(String prefix)
 {
 	value = Configuration.getDouble(prefix+"."+PAR_VALUE);
-	pid = Configuration.getPid(prefix+"."+PAR_PROTID);
+	pid = Configuration.getPid(prefix+"."+PAR_PROT);
 	peaks = Configuration.getDouble(prefix+"."+PAR_PEAKS, 1);
 }
 

@@ -22,6 +22,13 @@ public interface Fallible {
 	*/
 	public int DEAD = 1;
 
+  /**
+   * Fail state indicating that the object is running, but it may behave
+   * in a malicious way.
+   */
+  public int MALICIOUS = 2;
+
+
 	/**
 	* Returns the state of this object. Must be one of the constants
 	* defined in interface {@link Fallible}.
@@ -35,8 +42,8 @@ public interface Fallible {
 	public void setFailState(int failState);
 
 	/**
-	* Convinience method to check if fail state is OK.
-	* @return getFailState()==OK
+	* Convinience method to check if the node is up and running
+	* @return getFailState()==OK || getFailState()==MALICIOUS
 	*/
 	public boolean isUp();
 }

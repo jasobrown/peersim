@@ -1,0 +1,1692 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="content-type"
+ content="text/html; charset=ISO-8859-1">
+  <title>peersim HOWTO</title>
+</head>
+<body>
+<div style="text-align: center;">
+<h1 style="font-weight: bold;">PEERSIM HOWTO: build a new protocol for
+the&nbsp; peersim&nbsp; simulation framework</h1>
+<div style="text-align: left;">
+<div style="text-align: center;"></div>
+<h3 style="text-align: center;">by Gian Paolo Jesi (<a
+ href="mailto:jesi@cs.unibo.it">jesi@cs.unibo.it</a>)</h3>
+<h2>Introduction</h2>
+This tutorial is aimed to give you a step by step guide to build from
+scratch a new peersim application&nbsp; (<a
+ href="http://sourceforge.net/projects/peersim/">http://sourceforge.net/projects/peersim</a>):
+a framework to experiment with large scale P2P overlay
+networks.<br>
+In this tutorial it supposed that you and/or your workstation have:<br>
+<ul>
+  <li>knowledge of O.O. programming and Java language<br>
+  </li>
+  <li>a working Java compiler ( &gt;= JDK 1.2)<br>
+  </li>
+  <li>a working peersim source tree (you can download it from
+sourceforge <a href="http://sourceforge.net/cvs/?group_id=91456">CVS</a>)<br>
+  </li>
+</ul>
+<ul>
+  <li>(suggested) gnuplot software</li>
+</ul>
+The aim of this tutorial is to be as pratical as possible; the goal is
+to give the reader the basics of peersim usage and the basics about
+howto write a simple component. This tutorial IS NOT exhaustive at all!<br>
+<br>
+<h2>Introduction to Peersim</h2>
+<h3>Why peersim</h3>
+One of the P2P system&nbsp; properties is that they can be extremely
+large scale (millions of nodes!); another issue to deal with, is the
+high dinamicity of such
+systems: nodes in the network join and leave continously. Setting up a
+protocol experiments in a such simulated environent it's not an easy
+task at all!<br>
+Peersim has been developed to cope with these P2P properties and thus
+to reach extreme scalability and to support dynamicity. In addition,
+the simulator structure is based on components and makes easy to fast
+prototype
+a simulation joining toghether different pluggable building blocks. The
+term "components" used here has no relation with high level component
+architectures (e.g.: CORBA, DOM+).<br>
+<br>
+The peersim performances can be reached only assuming some relaxing
+assumpions about the simulation details. For example, the overhead
+introduced by the low level communication protocol stack (e.g.: TCP or
+UDP) in not taken into account because of the huge additional memory
+and cpu time requiremets needed to accomplish this task. Another
+simplifying assumption is the obsence of concurrency: in peersim the
+simulation is sequential and based on the concept of cycle in which
+every node can select a neighbor (the neighborhood relation could be
+defined by a fixed topology or defined by an overlay managenent
+protocol such as <span style="font-style: italic;">newscast</span>)
+and perform a protocol defined function.<br>
+<h3>Peersim simulation lifecycle<br>
+</h3>
+The peersim structure is aimed to promote modular programming
+of building
+blocks. Every such block is easily replaceable by another component
+having a similar function, that means, in brief, having the same
+interface. In the peersim framework, a simulation is carried by the <span
+ style="font-style: italic;">Simulator</span> class. The general idea
+of the simulation model is:<br>
+<ol>
+  <li>choose a nework size (number of nodes);</li>
+  <li>choose 1 or more protocol to experiment with and eventually
+initialize
+the protocol(s); this step will build a topology on top of raw nodes
+inserted at the previous point;<br>
+  </li>
+  <li>choose 1 or more <span style="font-style: italic;">Observer</span>
+object to monitor what you are interested in;</li>
+  <li>optionally, choose 1 or more <span style="font-style: italic;">Dynamics</span>
+object to modify during execution the parameters of the simulation
+(e.g.: the size of the network, update particular values inside
+protocols, ...);<br>
+  </li>
+  <li>... run your simulation invoking the <span
+ style="font-style: italic;">Simulator</span> class<br>
+  </li>
+</ol>
+This is a very general model to give the reader an idea to start with,
+but it can be extremely more complex.<br>
+All the object created during the simulation are instances of classes
+that implements one or more well defined framework interfaces. The main
+interfaces I suggest you to become familiar with are the following:<br>
+<br>
+<br>
+<table cellpadding="2" cellspacing="2" border="1"
+ style="width: 100%; text-align: left;">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top; font-style: italic;">Node</td>
+      <td style="vertical-align: top;">All the elements of a P2P
+network are called nodes, the interface manages the local view of
+neighbor, the reference to the protocol, its index identifier inside
+the topology global array (invisible to protocols)<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-style: italic;">CDProtocol,
+Protocol</td>
+      <td style="vertical-align: top;">A protocol simply defines an
+operation to be performed at each cycle (only method <span
+ style="font-style: italic;">nextCycle()</span> is defined)<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-style: italic;">Linkable</td>
+      <td style="vertical-align: top;">A class implementing this
+interface has access to the underling network: can access to its local
+view of neighbor<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-style: italic;">Observer</td>
+      <td style="vertical-align: top;">Objects running at
+each cycle collecting data about the current simulation state<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-style: italic;">Dynamics</td>
+      <td style="vertical-align: top;">Objects running at each cycle
+modifing values of other objects<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-style: italic;">Initializer</td>
+      <td style="vertical-align: top;">Objects running only once before
+starting the simulation itself<br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<br>
+The lifecycle of a peersim simulation is defined inside the <span
+ style="font-style: italic;">Simulator</span>
+class. It first reads a particular configuration file (<a
+ href="The_confi_file">about configuration file</a>) containing all the
+simulation parameters concerning all the objects involved in the
+experiment. If no error occurs, the requested objects are created (all
+the nodes making the overlay connected with one or more protocol
+object, the <span style="font-style: italic;">Initializer</span>, <span
+ style="font-style: italic;">Observer</span>, <span
+ style="font-style: italic;">Dynamics</span> objects), the <span
+ style="font-style: italic;">Initializers</span> objects (if any) are
+created and executed to actually initialize. <br>
+Once the initalization phase is completed, the simulation starts.<br>
+<br>
+The way the simulator manages the interactions between the protocol(s)
+run, the <span style="font-style: italic;">Observer</span> object(s)
+and the <span style="font-style: italic;">Dynamics</span> object(s) in
+each cycle can be quite sophisticated. Each Observer and <span
+ style="font-style: italic;">Dynamics</span> object is wrapped into a <span
+ style="font-style: italic;">Scheduler</span> class which adds fine
+grained scheduling facilities to their run.<br>
+Before executing the protocol code, the simulator runs the <span
+ style="font-style: italic;">Dynamics</span> and <span
+ style="font-style: italic;">Observer</span> object(s), but the
+developer can choose and define the execution order of these components
+and the cycle interval to work in. For example, as depicted in Figure
+1, we can choose to run one or more <span style="font-style: italic;">Observer</span>
+object before and/or one or more <span style="font-style: italic;">Observer</span>
+objects after the <span style="font-style: italic;">Dynamics</span>
+object(s). <br>
+Nevertheless, also after the last cycle we can choose to run an <span
+ style="font-style: italic;">Observer</span> to retreive a final
+snapshot.<br>
+<br>
+<br>
+<div style="text-align: center;"><img align="middle"
+ style="width: 244px; height: 39px;"
+ alt="Observer and Dynamics scheduling" src="sceduling.gif"><br>
+<br>
+Figure 1:&nbsp; Observer and Dynamics scheduling<br>
+</div>
+<br>
+In the figure, O1,2,3 are <span style="font-style: italic;">Observer</span>
+components and D represents one or more <span
+ style="font-style: italic;">Dynamics</span> objects. Please note that
+before the first protocol run a first <span style="font-style: italic;">Dynamics</span>
+and <span style="font-style: italic;">Observer</span> run is performed
+(depicted in the interval between init and cycle 0).<br>
+The snapshots taken by the <span style="font-style: italic;">Observer</span>
+objects are sent to
+standard output and can be easily redirected to a file to be collected
+for further work. Nevertheless, a developer can write <span
+ style="font-style: italic;">Observer</span> objects with a GUI or with
+database connection to store data directly or whatever.<br>
+&nbsp;<br>
+<h2><a name="The_config_file"></a>The config file</h2>
+The understanding and the writing af a configuration file is the
+trickyest part of peersim (as stated by most users!) and it's harder
+than writing a new protocol code!<br>
+Well, the configuration itself at least on the average case, it is not
+so difficult, but needs a little bit of attention and practice. <br>
+<br>
+The config file is a plain ASCII text file, basically composed of
+key-value pairs;&nbsp; the lines starting with "#" character are
+ignored (comments). The pairs are collected by a standard Java <span
+ style="font-style: italic;">java.util.Properties</span> object when
+the Simulator starts using for example the following command:<br>
+<br>
+$&gt; java -cp &lt;class-path&gt; peersim/cdsim/Simulator&nbsp;
+config-file.txt<br>
+<br>
+Clearly the classpath is mandatory only if you haven't set it yet in a
+global shell variable.<br>
+Because of the spiritus of this tutorial, we'll try to learn peersim
+configuration using a by example metodology.<br>
+<br>
+<h3>Configuration example 1</h3>
+First of all, what we are going to do in this first experiment?<br>
+We are going to impose a fixed P2P random topology composed by 50000
+node network; the choosen protocol is <span style="font-style: italic;">aggregation</span>
+(<a href="#Appendix_A">what is&nbsp; aggregation?</a>) using an average
+function. The values to be aggregated (averaged) at each node are
+initialized using a linear distribution on the interval [0, 100].
+Finally an <span style="font-style: italic;">Observer</span> monitors
+the averaging values. Looks easy!!<br>
+<br>
+<span style="font-family: monospace;"><br>
+<span style="font-family: monospace;">1&nbsp; # PEERSIM EXAMPLE 1</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">2&nbsp; #</span></span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">3&nbsp; simulation.cycles 30</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">4&nbsp; simulation.shuffle</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">5 </span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">6&nbsp; overlay.size 50000</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">7&nbsp; overlay.maxsize 100000</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">8 </span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">9&nbsp; protocol.0
+peersim.core.IdleProtocol</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">10 protocol.0.degree 20</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">11</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">12 protocol.1
+aggregation.AverageFunction</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">13 protocol.1.linkable 0</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">14</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">15 init.0
+peersim.init.WireRegularRandom</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">16 init.0.protocol 0</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">17 init.0.degree 20</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">18</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">19 init.1
+loadbalance.LinearDistributionInitializer</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">20 init.1.protocol 1</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">21 init.1.max 100</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">22 init.1.min 1</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">23</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">24 observer.0
+aggregation.AverageObserver</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">25 observer.0.protocol 1</span><br
+ style="font-family: monospace;">
+<br>
+Lets comment the code line by line. <br>
+The first thing to node are the key
+names: some of them are indexed and some other not (e.g. protocol.0.xxx
+versus simulation.&lt;parameter&gt;). That means the unindexed keys
+refers to static simulation elements, in fact the simulation itself is
+one and the same holds for the P2P network: only one network!<br>
+For the other simulation components you can think about the existance
+of a dedicated array for each of their type (one for protocols,
+initailizer, ...); the index is the only reference to deal with them.
+So the key for indexed components can be (informally) expressed as: <br>
+<br>
+&lt;init | protocol | observer | dynamics&gt; . index_number [.
+&lt;parameter_name&gt;]<br>
+<br>
+The final &lt;parameter_name&gt; is contained between [] to express
+that it can be not present. This is the case when the element is
+declared. For example, at line 9, the first protocol choosen comes to
+life; the <span style="font-weight: bold;">key part</span> contains
+its type (or interface type) followed by the index (always starting
+from 0, as in arrays) and the <span style="font-weight: bold;">value
+part</span> contains the desired component
+class full package path (you have to check the javadoc files or the
+source tree to
+discover the correct package path).<br>
+In the case of a component parameter declaration, the <span
+ style="font-weight: bold;">key part</span> contains the parameter name
+and the <span style="font-weight: bold;">value part</span> is simply
+the value desired (usually an integer or a float).<br>
+<br>
+At this point, should be clear that from <span
+ style="font-weight: bold;">line 3 to line 7</span> some global
+simulation properties are imposed; these are the total number of
+simulation cycles and the overlay network size.&nbsp; The&nbsp;
+parameter <span style="font-family: monospace;">simulation.shuffle</span>
+(<span style="font-weight: bold;">line 4</span>) it is a little
+different from what we have stated until now; it is used as a flag, so
+it does not need a parameter. Its job is to shuffle the order in which
+the nodes are visited in each cycle. The parameter <span
+ style="font-family: monospace;">overlay.maxsize</span> (<span
+ style="font-weight: bold;">line7</span>) sets an upper bound on the
+network size, but in this example it is useless (you can comment it
+out) and it's only present for sake of completeness (will be
+useful&nbsp; next).<br>
+<br>
+From <span style="font-weight: bold;">line 9 to line 13</span>, two
+protocols are put in the arena. The first one,
+peersim.core.IdleProtocol does nothing! It is useful because of its
+ability to access to the topology, in fact it provides neighbour links
+to each node. This feature is present because <span
+ style="font-style: italic;">IdleProtocol</span> is an implementation
+of the <span style="font-style: italic;">Linkable</span> interface.
+Next line declares the graph degree.<br>
+The second protocol (index 1: <span style="font-family: monospace;">protocol.1
+aggregation.AverageFunction</span>) is the averaging version of
+aggregation. Its parameter (<span style="font-family: monospace;">linkable</span>)
+is extremely important: it expresses&nbsp; the need to access the
+topology using&nbsp; not&nbsp; this protocol itself
+(aggregation).&nbsp; This is due to&nbsp; the structure of aggregation:
+it does&nbsp; not implement&nbsp; the <span style="font-style: italic;">Linkable</span>
+interface, so it can't see the neighbor list by itself and it must use
+some other protocol to do that. The value of parameter <span
+ style="font-family: monospace;">linkable</span> is the index of a <span
+ style="font-style: italic;">Linkable</span> interface implementing
+protocol (<span style="font-style: italic;">IdleProtocol</span> in the
+example).<br>
+Clearly to know if a protocol can get access to the topology directly,
+you have to check the documentation (or source code!).<br>
+<br>
+From <span style="font-weight: bold;">line 15 to line 22</span>, it's
+time to initialize all the components previously declared. Again, the
+initialization components are 2 and are indexed as usual. The first
+initializer <span style="font-family: monospace;">peersim.init.WireRegularRandom</span>,
+imposes a topology. The nodes using the declared <span
+ style="font-family: monospace;">protocol</span> are linked randomly to
+aechother to form a random graph having the specified <span
+ style="font-family: monospace;">degree</span> parameter. Please note
+that this degree
+declaration is exactly the same of the previous (the one dedicated to
+the first protocol creation).<br>
+The second initializer task is to initialize the aggregation function
+value-field to be averaged. The initialization values follows a linear
+distribution fashion. The parameters declared are three: <span
+ style="font-family: monospace;">protocol,</span> <span
+ style="font-family: monospace;">max,</span> <span
+ style="font-family: monospace;">min</span>. Respectively, their
+meaning is:<br>
+<ul>
+  <li>a protocol to point to: the initializer needs a reference (index)
+to a protocol extending <span style="font-style: italic;">aggregation.AbstractFunction</span>
+Class to get access to the value to be aggregated (averaged);&nbsp; it
+is clear that this protocol must be&nbsp; <span
+ style="font-style: italic;">aggregation.AverageFunction</span> (index
+1);</li>
+  <li>the maximum value&nbsp; in the linear distribution;</li>
+  <li>the minimum value in the linear distribution&nbsp;<br>
+  </li>
+</ul>
+Finally at <span style="font-weight: bold;">line 24,25</span> the last
+component is declared: <span style="font-family: monospace;">aggregation.averageObserver</span>.
+Its only parameter used is <span style="font-family: monospace;">protocol</span>
+and clearly refers to an <span style="font-style: italic;">aggregation.AverageFunction
+</span>protocol type, so the parameter value is index <span
+ style="font-style: italic;"></span>1 (in fact: <span
+ style="font-family: monospace;">protocol.1 aggregationAverageFunction</span>).<br>
+<br>
+Now you can try the example writing on a console the following line:<br>
+<br>
+$&gt; java -cp &lt;class-path&gt; peersim/cdsim/Simulator&nbsp;
+example1.txt<br>
+<br>
+The classpath is mandatory only if the used system has not peersim
+classes in the shell CLASSPATH environment variable.<br>
+To get the exact output that will follow, the reader can add the
+parameter:<br>
+<br>
+<div style="text-align: center;"><span style="font-family: monospace;">random.seed
+1234567890</span><br>
+</div>
+<br>
+on top of the configuration file. This parameter is very useful to
+replicate exactly the experiments results based on (pseudo) random
+behaviour.<br>
+The experiment output is (some initialization string may be different):<br>
+<br>
+<span style="font-family: monospace;">Simulator: loading configuration</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">ConfigProperties: File example
+loaded.</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">Simulator: starting experiment 0</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">Simulator: resetting overlay
+network</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">OverlayNetwork: No node defined,
+using GeneralNode</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">Simulator: running initializers</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">- Running initializer 0: class
+peersim.init.WireRegularRandom</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">- Running initializer 1: class
+loadbalance.LinearDistributionInitializer</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">Simulator: loaded observers
+[observer.0]</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">Simulator: loaded modifiers []</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">Simulator: starting simulation</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">observer.0 0 28.57969570575493
+1.0 50.49999999999998 100.0 1.0 50000 50000</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">Simulator: cycle 0 done</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">observer.0 1 15.774113542136039
+0.5519342719579655 50.49999999999994 99.06443128862577
+2.4127582551651034 50000 50000</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">Simulator: cycle 1 done</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">observer.0 2 8.835484033675945
+0.30915248799856165 50.49999999999997 88.7184768695374
+13.891357202144043 50000 50000</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">Simulator: cycle 2 done</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">observer.0 3 4.931169850658448
+0.17254102008040229 50.500000000000156 76.02686389665294
+28.248574073043958 50000 50000</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">Simulator: cycle 3 done</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">observer.0 4 2.781383346547945
+0.09732025754171601 50.5000000000003 64.13883082352008
+36.735682385156494 50000 50000</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">Simulator: cycle 4 done</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">observer.0 5 1.5585321453695304
+0.05453284602521845 50.49999999999991 57.95305057712483
+42.365281065863776 50000 50000</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">Simulator: cycle 5 done</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">observer.0 6 0.8817544926685187
+0.030852480087496692 50.49999999999987 55.79705503651233
+45.179259619159374 50000 50000</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">Simulator: cycle 6 done</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">observer.0 7 0.49662960256781125
+0.01737700805778026 50.49999999999985 53.475386753133584
+47.561197221137206 50000 50000</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">Simulator: cycle 7 done</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">observer.0 8 0.2791489898463698
+0.009767388453690191 50.50000000000021 52.01212279333069
+48.98195197062567 50000 50000</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">Simulator: cycle 8 done</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">observer.0 9 0.15665356159770558
+0.005481288646686366 50.500000000000206 51.43402168091945
+49.59630792352769 50000 50000</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">Simulator: cycle 9 done</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">observer.0 10 0.08798088416341113
+0.003078440199966682 50.49999999999999 51.01528062721777
+50.029362269648146 50000 50000</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">Simulator: cycle 10 done</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">observer.0 11 0.04955901607015236
+0.001734063811609196 50.49999999999944 <span
+ style="text-decoration: underline;">50.782237280656425
+50.204518029962884</span> 50000 50000</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">Simulator: cycle 11 done</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">observer.0 12 0.02787478949963527
+9.753354194748226E-4 50.4999999999994 50.65073784826623
+50.350009217606306 50000 50000</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">Simulator: cycle 12 done</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">observer.0 13 0.01566887602462972
+5.48252024302504E-4 50.499999999999396 50.59137786021026
+50.3826755046714 50000 50000</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">Simulator: cycle 13 done</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">observer.0 14
+0.008869003234550827 3.103253206703991E-4 50.49999999999983
+50.550065544787316 50.43478266999748 50000 50000</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">Simulator: cycle 14 done</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">observer.0 15
+0.004970950314615429 1.7393293356914426E-4 50.50000000000042
+50.52980114494357 50.47146250394515 50000 50000</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">Simulator: cycle 15 done</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">observer.0 16
+0.0027954164029263973 9.781127243994765E-5 50.49999999999947
+50.51730103735326 50.48227152068037 50000 50000</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">Simulator: cycle 16 done</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">observer.0 17
+0.0015800119643194935 5.5284422220119566E-5 50.50000000000025
+50.50856931736749 50.49058939793816 50000 50000</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">Simulator: cycle 17 done</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">observer.0 18 8.92255216973727E-4
+3.1219899125590015E-5 50.50000000000017 50.50549577966541
+50.49510397037146 50000 50000</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">Simulator: cycle 18 done</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">observer.0 19
+5.033106630068788E-4 1.7610777532020047E-5 50.5 50.50309546455102
+50.497507949230894 50000 50000</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">Simulator: cycle 19 done</span><br>
+<br>
+The observer component produces many numbers, but looking at 6th and
+7th data columns (respectively the maximum of averages and the minimum
+of averages) it's easy to see how the variance decreases very quickly.
+At cicle 11 (look at the underlined data), quite all the nodes has a
+very good approximation of the real average (50).<br>
+<br>
+Try to experiment with different numbers and then to change the init
+distribution (e.g.: using <span style="font-family: monospace;">aggregation.PeakDistributionInitializer</span>)&nbsp;
+and / or the protocol stack (put <span style="font-style: italic;">Newscast</span>
+or <span style="font-style: italic;">SCAMP</span> instead of <span
+ style="font-style: italic;">IdleProtocol</span>).<br>
+<br>
+<h3>Configuration example 2</h3>
+This second example is an improved version of the first one. What's
+new? Now the aggregation protocol runs on top of Newscast and it's easy
+to switch to the peak distribution (comment 4 lines and uncomment 2
+lines). Moreover, there is a Dynamics object that changes the network
+size (it shrinks it by cutting out 500 nodes each time).&nbsp; &nbsp; <br>
+<br>
+<span style="font-family: monospace;">1&nbsp; simulation.cycles 30</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">2&nbsp; simulation.shuffle</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">3</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">4&nbsp; overlay.size 50000</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">5&nbsp; overlay.maxsize 200000</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">6</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">7&nbsp; protocol.0
+newscast.SimpleNewscast</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">8&nbsp; protocol.0.cache 20</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">9</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">10 protocol.1
+aggregation.AverageFunction</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">11 protocol.1.linkable 0</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">12</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">13 init.0
+peersim.init.WireRegularRandom</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">14 init.0.protocol 0</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">15 init.0.degree 20</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">16 </span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">17 #init.1
+aggregation.PeakDistributionInitializer</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">18 #init.1.value 1</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">19 init.1
+loadbalance.LinearDistributionInitializer</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">20 init.1.protocol 1</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">21 init.1.max 100</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">22 init.1.min 1</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">23</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">24 observer.0
+aggregation.AverageObserver</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">25 observer.0.protocol 1</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">26</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">27 dynamics.0
+peersim.dynamics.GrowingNetwork</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">28 dynamics.0.add -500</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">29 dynamics.0.minsize 4000</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">30 dynamics.0.from 5</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">31 dynamics.0.until 10</span><br>
+<br>
+The global parameters are the same as in the previous example; only new
+additions are discussed below.<br>
+At <span style="font-weight: bold;">line 7-8</span> there is the <span
+ style="font-style: italic;">Newscast</span> (<a href="#apendix_b">what
+is newscast</a>?) component declaration with
+its only parameter <span style="font-family: monospace;">cache</span>
+(plese note: cache size should be at least as large as network degree
+size). At <span style="font-weight: bold;">line 17-18</span> there is
+a different distribution type: <span style="font-family: monospace;">aggregation.PeakDistributionInitializer</span>,
+but it's inactive. To switch it on, simply delete the preceeding simbol
+"#" and comment out the following 4 lines. The peak distribution
+initializes all nodes except one with 0 value and the node left takes
+the value declared in parameter <span style="font-family: monospace;">value</span>.<br>
+From <span style="font-weight: bold;">line 27 to 32</span> is present
+the last new component: <span style="font-family: monospace;">dynamics.0
+peersim.dynamics.GrowingNetwork</span>. As stated previously, a <span
+ style="font-style: italic;">Dynamics</span>&nbsp; interface
+implementing object is able to change some other object properties; the
+change can be performed at each simulation cycle (default behaviour) or
+using a more sophisticated idea. The object choosen in the example
+deletes 500 nodes from the net at each time (well, it is not completely
+correct to talk about deletion in the peersim vision, in fact the <span
+ style="font-style: italic;">Linkable</span> interface does not support
+node deletion from the overlay; so it's better to think about
+"unlinking" nodes from the overlay). The parameters <span
+ style="font-family: monospace;">add,</span><span
+ style="font-family: monospace;"> </span><span
+ style="font-family: monospace;">minsize, </span><span
+ style="font-family: monospace;">from </span>and<span
+ style="font-family: monospace;"> </span><span
+ style="font-family: monospace;">until </span>have respectively the
+following meaning:<br>
+<ul>
+  <li>adds the specified number of nodes (if negative subracts);</li>
+  <li>the minimum size ir referred to the overlay: it can't be less
+than what's stated here</li>
+  <li>the cycle number from which the <span style="font-style: italic;">Dynamics</span>
+object can start running</li>
+  <li>the cycle number until which the <span
+ style="font-style: italic;">Dynamics</span> object can run</li>
+</ul>
+Other parameters are avaiable, please check the source!<br>
+It's interesting to note that not all the parameters associated to a <span
+ style="font-style: italic;">Dynamics</span> component can be found in
+the <span style="font-style: italic;">Dynamics</span> itself source
+code (or documentation); this is due to the Simulator class behaviour.
+When it creates the <span style="font-style: italic;">Dynamics</span>
+object instances (this hold also for <span style="font-style: italic;">Initializer</span>
+and <span style="font-style: italic;">Observer</span> objects), it
+wraps them in a <span style="font-style: italic;">Scheduler</span>
+class object: this is the class where some parameters (such as <span
+ style="font-family: monospace;">step</span>, <span
+ style="font-family: monospace;">from</span>, <span
+ style="font-family: monospace;">until</span>) are actually defined.<br>
+<br>
+<h2>Writing a new protocol</h2>
+This section covers the description of&nbsp; how to write a new
+protocol.<br>
+<br>
+<h3>Which kind of protocol?</h3>
+The protocol we are going to develop is a simple load balancing
+algorithm. It works as follows. The state of a node is composed of two
+values: the local load and the quota; the second one is the amount of
+"load" the node is allowed to transfer at each cycle. The quota is
+necessary in order to make real load balancing, otherwise it would be
+simply averaging. Every node contacts the most <span
+ style="font-weight: bold;">distant</span> neighbor in its local view
+and then exchanges at maximum the quota value. The concept of
+"distance" is expressed in terms of maximally different load from&nbsp;
+the current node local load. Comparing the distance to the actual node
+load, the protocol chooses to perform a load balance step using a push
+or pull approach.<br>
+<br>
+After each cycle, the quota value is restored to allow further
+computation.<br>
+The protocol does not care about topology management and relies on
+other components to get access to this feature (e.g.: Newscast,
+IdleProtocol).<br>
+<br>
+<h3>Needed components</h3>
+Now we have a general idea on what we want to code and it's time to
+adapt it to the peersim framework. Writing a the protocol class itselt,
+it is usually not sufficient. Some companion components are required.
+For example, to restore the quota value for each node at the end of
+each cycle, a specific <span style="font-style: italic;">Dynamics</span>
+object is required. <br>
+Peersim is basically a collection of interchangeable components, so the
+development of new stuff should have <span style="font-weight: bold;">modularity</span>
+in mind and should maximize code reuse. To acheive this, the following
+classes are proposed:<br>
+<ul>
+  <li>protocol class itself: it is built on (extends) <span
+ style="font-style: italic;">aggregation.AbstractFunction</span>; this
+strategy permits the reuse of the aggregation protocol "value" field
+and related methods to store the load value. Sharing the same interface
+as aggregation, many other components can be used toghether with the
+load balancing protocol, such as the initializers classes.</li>
+  <li>Dynamics component: it is necessary to restore the quota value at
+each node at the end of each cycle (as previously stated). This object
+is quite straighforward: it simply implements the only one method the
+interface <span style="font-style: italic;">Dynamics</span> declares,
+invoking the protected protocol method <span
+ style="font-style: italic;">resetQuota().</span></li>
+  <li>Initializer and Observer components: are not needed! The
+aggregation initializers can be used directly. Also the aggregation
+observers can be used (the <span style="font-style: italic;">aggregation.AverageObserver</span>
+in particular). In addition a new observer object can be written to
+monitor the quota parameter and thus the amount of traffic performed in
+the overlay.</li>
+</ul>
+To give the reader an idea about the actual code to write, the
+following subsections are presented, in which the author put comments
+and explanations in the way of the class code itself.<br>
+<h3>Load balancing protocol class code</h3>
+<span style="font-family: monospace;">package loadbalance;</span><br
+ style="font-family: monospace;">
+<br style="font-family: monospace;">
+<span style="font-family: monospace;">import peersim.util.CommonRandom;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">import
+aggregation.AbstractFunction;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">import
+peersim.config.Configuration;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">import peersim.core.*;</span><br
+ style="font-family: monospace;">
+<br style="font-family: monospace;">
+<span style="font-family: monospace;">public class BasicBalance extends
+AbstractFunction {</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">// Fields:</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">public static final String
+PAR_QUOTA = "quota"; // allowed config file parameter</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">private final double quota_value;
+// original quota value taken from configuration<br>
+<br style="font-family: monospace;">
+</span><span style="font-family: monospace;">protected double quota; //
+current cycle quota</span><br style="font-family: monospace;">
+<br style="font-family: monospace;">
+<span style="font-family: monospace;">// Constructor:</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">public BasicBalance(String
+prefix, Object obj) {</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; super(prefix,
+obj);<br>
+&nbsp;&nbsp;&nbsp; // get quota value from the config file. Default 1.<br
+ style="font-family: monospace;">
+</span><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+quota_value = (double)(Configuration.getInt(prefix+"."+PAR_QUOTA, 1));</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; quota =
+quota_value;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">}</span><br
+ style="font-family: monospace;">
+<br>
+It's simply standard Java code until now; the package <span
+ style="font-family: monospace;">loadbalance</span> and the needed
+classes are declared. Extending <span style="font-style: italic;">AbstractFunction,</span>&nbsp;
+we implements <span style="font-style: italic;">CDProtocol</span>
+and <span style="font-style: italic;">Protocol</span> interfaces
+automagically, but
+we need to override the previously defined methods to avoid using the
+AbstractFunction implementation!<br>
+In the constructor signature, two parameters are present; the first one
+is a string corrisponding to the configuration file protocol key (e.g.:
+protocol.1 in the <span style="font-style: italic;">LoadBalance</span>
+protocol case), the second one is the protocol id index casted in a <span
+ style="font-style: italic;">Object</span> type. These parameters are
+used in the superclass (<span style="font-style: italic;">aggregation.AbstractFunction</span>)
+to connect this class to a <span style="font-style: italic;">Likable</span>
+implementing protocol class. As an example, the <span
+ style="font-style: italic;">aggregation.AbstractFunction</span>
+constructor class it's presented:<span style="font-family: monospace;"><br>
+<br>
+public AbstractFunction(String prefix, Object obj) {<br>
+&nbsp;&nbsp;&nbsp; int protocolId = ((Integer) obj).intValue();<br>
+&nbsp;&nbsp;&nbsp; int link = Configuration.getInt(prefix+"."+PAR_CONN);<br>
+&nbsp;&nbsp;&nbsp; Protocols.setLink(protocolId, link);<br>
+}<br>
+<br>
+</span>The static class <span style="font-style: italic;">Protocols</span>
+collects protocol id-s of the protocols from which instances of this
+class get neighborhood info.<br>
+The <span style="font-style: italic;">protocolID</span> variable
+represents the current class and the <span style="font-style: italic;">link</span>
+variable index is the <span style="font-style: italic;">Linkable</span>
+enabled protocol stated in the configuration file (<span
+ style="font-family: monospace;">linkable</span> parameter).<span
+ style="font-family: monospace;"><br>
+</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">// Resets the quota. </span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">protected void resetQuota() {</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; this.quota =
+quota_value;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">}<br>
+<br style="font-family: monospace;">
+</span>The <span style="font-style: italic;">resetQuota()</span>
+method is called
+by the dynamics object at the cycle end. Clearly a suitable <span
+ style="font-family: monospace;">dynamics</span> entry should be
+present in the configuration file (such as: <span
+ style="font-family: monospace;">dynamics.0 loadbalance.ResetQuota</span>
+and <span style="font-family: monospace;">dynamics.0.protocol
+protocol-index</span>). This method is not mandatory, but it's much
+more software engineering oriented then a dirty variable access
+performed by the dynamics object.<br>
+<span style="font-family: monospace;"><br
+ style="font-family: monospace;">
+</span><span style="font-family: monospace;">// Implements the Protocol
+interface</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">public Object clone() throws
+CloneNotSupportedException {</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; BasicBalance
+af = (BasicBalance)super.clone();</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; return af;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">}</span><br
+ style="font-family: monospace;">
+<br style="font-family: monospace;">
+<span style="font-family: monospace;">// Implements CDProtocol interface</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">public void nextCycle( Node node,
+int protocolID ) {</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; int linkableID
+= Protocols.getLink(protocolID);</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; Linkable
+linkable = (Linkable) node.getProtocol( linkableID );</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; if (this.quota
+== 0) {</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; return; // skip this node</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+}&nbsp;&nbsp;&nbsp; </span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; // this takes
+the most distant neighbor based on local load</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; BasicBalance
+neighbor = null;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; double maxdiff
+= 0;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; for(int i = 0;
+i &lt; linkable.degree() ; ++i)</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; {</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; Node peer = linkable.getNeighbor(i);<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; // The selected peer could be
+inactive<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; if(!peer.isUp()) continue; <br
+ style="font-family: monospace;">
+</span><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; BasicBalance n =</span><span
+ style="font-family: monospace;">
+(BasicBalance)peer.getProtocol(protocolID);</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; if(n.quota!=1.0) continue;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; double d = Math.abs(value-n.value);</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; if( d &gt; maxdiff )</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; {</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; neighbor = n;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; maxdiff = d;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; }</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; }</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; if( neighbor
+== null ) {</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; return;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; }</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; </span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+doTransfer(neighbor);</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">}</span><br
+ style="font-family: monospace;">
+<br>
+The first method is required by the <span style="font-style: italic;">Protocol</span>
+interface and basically
+calls the ancestor cloning method. So, nothing special here.<br>
+The second one is required by <span style="font-style: italic;">CDProtocol</span>
+interface. It is the action
+performed by the protocol. The arguments represents a reference to the
+node itself (the node on which the simulator is invoking the <span
+ style="font-style: italic;">nextCycle()</span> method) and the index
+protocol identifier (<span style="font-style: italic;">BasicBalance</span>
+in this case). First it has to get a reference (in indexed form) to the
+<span style="font-style: italic;">Linkable</span> interface enabled
+protocol in the node protocol stack; as a remind, something
+implementing the <span style="font-style: italic;">Linkable</span>
+interface, is an entity capable of accessing to the topology. <br>
+Having this linkable reference (index) we can access to the real
+<span style="font-style: italic;">Linkable</span> interface
+implementation with: <br>
+<br>
+<span style="font-family: monospace;"></span>
+<div style="text-align: center;"><span style="font-family: monospace;">Linkable
+linkable = (Linkable) node.getProtocol( linkableID );</span><br>
+</div>
+<br>
+If the local quota is equal to 0, means that the node we have already
+spent its amount of network traffic, so it returns.<br>
+To get the most distant node from the current one, a for loops on all
+neighbor node load value; the number of neighbor is equal to the node
+degree (aceesible thanks to <span style="font-style: italic;">Linkable</span>
+interface). To pick a node having a the <span
+ style="font-style: italic;">Linkable</span> access:<br>
+<br>
+<div style="text-align: center;"><span style="font-family: monospace;">Node
+peer = linkable.getNeighbor(i);</span><br>
+<span style="font-family: monospace;"></span></div>
+<span style="font-family: monospace;"><br>
+</span>and from this obtained <span style="font-style: italic;">Node</span>
+interface reference it is possible
+to get the protocol interface we are interested in (<span
+ style="font-style: italic;">BasicBalance</span>):<span
+ style="font-family: monospace;"><br>
+<br>
+</span>
+<div style="text-align: center;"><span style="font-family: monospace;"><span
+ style="font-family: monospace;">BasicBalance n =</span><span
+ style="font-family: monospace;">
+(BasicBalance)peer.getProtocol(protocolID);</span></span><br>
+<span style="font-family: monospace;"></span></div>
+<span style="font-family: monospace;"><br>
+</span>When the protocol finds a suitable neighbor, it performs a load
+balancing step invoking the <span style="font-style: italic;">doTransfer()</span>
+method.<br>
+<span style="font-family: monospace;"><br>
+<br style="font-family: monospace;">
+</span><span style="font-family: monospace;">// Performs the actual
+load
+exchange selecting to make a PUSH or PULL approach.</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">// It affects the involved nodes
+quota. </span><br style="font-family: monospace;">
+<span style="font-family: monospace;">protected void
+doTransfer(BasicBalance neighbor) {</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; double a1 =
+this.value;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; double a2 =
+neighbor.value;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; double
+maxTrans = Math.abs((a1-a2)/2);</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; double trans =
+Math.min(maxTrans,quota);</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; trans =
+Math.min(trans, neighbor.quota);</span><br
+ style="font-family: monospace;">
+<br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; if( a1 &lt;=
+a2 ) // PULL</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; {</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; a1+=trans;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; a2-=trans;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; }</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; else // PUSH</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; {</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; a1-=trans;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; a2+=trans;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; }</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; </span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; this.value =
+a1;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; this.quota -=
+trans;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; neighbor.value
+= a2;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; neighbor.quota
+-= trans;&nbsp;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">}</span><br>
+<br>
+The last method takes as parameter a reference to the picked neighbor.
+This is the place where it's time to decide to perform a pull or a push
+load balancing approach. To make this choice the local load value is
+compared with the neighbor load value.&nbsp; In case of a push choice,
+the
+local value is increased and the other node value is decresed; in the
+other case (pull) the exact opposite holds. The<span
+ style="font-style: italic;"> maxTrans</span> variable is the absolute
+amount of "load" to transfer to reach the balance between the two
+involved nodes; because of the quota upper bound on the transfers at
+each cycle, the algorithm chooses the minimum between the quota itself
+and the aimed <span style="font-style: italic;">maxTrans</span>
+amount.&nbsp; The quota value is
+decreased by the same amount at both nodes.<br>
+<br>
+<h3>Load balancing dynamics class code</h3>
+<span style="font-family: monospace;">package loadbalance;</span><br
+ style="font-family: monospace;">
+<br style="font-family: monospace;">
+<span style="font-family: monospace;">import peersim.config.*;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">import peersim.core.*;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">import peersim.dynamics.Dynamics;</span><br
+ style="font-family: monospace;">
+<br style="font-family: monospace;">
+<span style="font-family: monospace;">public class ResetQuota
+implements Dynamics {</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">// Fields:</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">public static final String
+PAR_VALUE = "value";</span><br style="font-family: monospace;">
+<br style="font-family: monospace;">
+<span style="font-family: monospace;">public static final String
+PAR_PROT = "protocol";</span><br style="font-family: monospace;">
+<br style="font-family: monospace;">
+<span style="font-family: monospace;">private final double value;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">private final int protocolID;</span><br
+ style="font-family: monospace;">
+<br style="font-family: monospace;">
+<span style="font-family: monospace;">// Constructor:</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">public ResetQuota(String prefix)</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">{</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; value =
+Configuration.getDouble(prefix+"."+PAR_VALUE);</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; protocolID =
+Configuration.getInt(prefix+"."+PAR_PROT);</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">}</span><br
+ style="font-family: monospace;">
+<br>
+<span style="font-family: monospace;">// Dynamics interface method:</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">public void modify() {</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; for(int i=0; i
+&lt; OverlayNetwork.size(); ++i)</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; {</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;
+((BasicBalance)OverlayNetwork.get(i).getProtocol(protocolID)).resetQuota();</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; }</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp; }</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">}<br>
+</span><br>
+The code is very compact because the <span style="font-style: italic;">Dynamics</span>
+interface itself is very simple: only the modify() method. The
+costructor takes care of initializing the configuration file parameters
+(respectively: the reset value and the protocol index to deal with).
+The modify() method makes use of network global knowledge: it invokes
+the <span style="font-style: italic;">resetQuota()</span> method on
+all the <span style="font-style: italic;">OverlayNetwork</span> object
+elements (it's a static object avaiable everywhere in the simulator
+environment; you can think about it as an array).<br>
+It is clear that the simulator has global knowledge, but it is up to
+the protocol developer to make use or not of this facility according to
+the consistency of the simulation itself.<span
+ style="font-family: monospace;"><br>
+<br>
+</span>
+<h3>Implementing the Linkable interface</h3>
+In this howto there are a lot of references about the Linkable
+interface and about its importance, so for the sake of completeness,
+it's time to give a look at how to implement it in brief. It's
+interesting to node that this interface should be implemented by low
+level or by topology management protocols and not by a higher level
+protocol such as a load balancing one. The reason to discurage the
+implementation is the risk to affect modularity. At least, the reader
+should consider the ability to switch off the&nbsp; built in <span
+ style="font-style: italic;">Linkable</span> interface and to use an
+external protocol facility instead. <br>
+<br>
+The interface defines five methods: <span style="font-style: italic;">degree()</span>,
+<span style="font-style: italic;">getNeighbor()</span>, <span
+ style="font-style: italic;">addNeighbor()</span>, <span
+ style="font-style: italic;">contains()</span>, <span
+ style="font-style: italic;">pack()</span>. These methods are not
+usually invoked by the protocol itself (except for <span
+ style="font-style: italic;">getNeighbor()</span> ), but by an
+Initializer object instead. Please note that there is no way to remove
+nodes from the overlay; the only chance to get a similar effect, is to
+disable a peer accessing to the <span style="font-style: italic;">peersim.core.Fallible</span>
+interface (extended by the <span style="font-style: italic;">Node</span>
+interface) and setting one of the available node states (<span
+ style="font-style: italic;">peersim.core.Fallible.OK|DEAD|MALICIUS|DOWN</span>).<br>
+<br>
+A feasible implementation could be the following.<br>
+First of all, the class (e.g.: <span style="font-style: italic;">BasicBalance</span>)
+needs a structure to represent the neighbor view: an <span
+ style="font-style: italic;">ArrayList</span> structure it's fine.<br>
+<br>
+<span style="font-family: monospace;">protected ArrayList nView = null;<br>
+// Constructor:<br style="font-family: monospace;">
+</span>
+</div>
+<div style="text-align: left;"><span style="font-family: monospace;">public
+BasicBalance(String prefix, Object obj) {</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; ...</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; nView = new
+ArrayList();</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; ...</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">}<br>
+// Linkable interface implementation methods:<br>
+public int degree() {<br>
+&nbsp;&nbsp;&nbsp; return nView.size();<br>
+}<br>
+<br>
+public Node getNeighbor(int i) {<br>
+&nbsp;&nbsp;&nbsp; return (Node)nView.get(i);<br>
+} <br>
+<br>
+public boolean addNeighbor(Node n) {<br>
+&nbsp;&nbsp;&nbsp; if (!contains(n)) {<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; nView.add(n);<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; return true;<br>
+&nbsp;&nbsp;&nbsp; }<br>
+&nbsp;&nbsp;&nbsp; else {return false;}<br>
+}<br>
+<br>
+public boolean contains(Node n) {<br>
+&nbsp;&nbsp;&nbsp; return nView.contains(n);<br>
+}<br>
+<br>
+public void pack() { ; } // unused!<br>
+<br>
+</span>Again the code is quite straightforward. All the elements inside
+the view are <span style="font-style: italic;">Node</span> class
+(interface) types. All methods are simple functions built upon the <span
+ style="font-style: italic;">ArrayList</span> structure. The last
+method is included in the interface description with the aim to provide
+a view size compression facility, but it's usually not implemented (the
+size of each view is tipically quite small).<br>
+<span style="font-weight: bold;"><br>
+</span>
+<h2>A second new protocol</h2>
+This new protocol is an extensions of the previous one.&nbsp; The
+general core is quite the same, but&nbsp; the algorithm uses the global
+load average value instead of the most distant neighbor load value. To
+calculate the global load average, a little trick is used; it would be
+possible to calculate this value using aggregation, but we can <span
+ style="font-weight: bold;">simulate</span> the aggregation effect
+(alias calculating the average load) by running a static method with
+global knowledge once. This method will initialize a global variable
+available to all nodes.<br>
+This protocol is targeted to gain advantage from the newscast protocol
+features; when a node reaches the global load value (average), it
+switches to a DOWN state. In this way, the node exits from the overlay
+and the newscast protocol no more cares about it. The effect is
+that the topology shrinks as soon as the nodes reach the average load. <br>
+<br>
+The code is the following.<br>
+<br>
+<span style="font-family: monospace;">package loadbalance;</span><br
+ style="font-family: monospace;">
+<br style="font-family: monospace;">
+<span style="font-family: monospace;">import peersim.util.CommonRandom;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">import
+aggregation.AbstractFunction;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">import peersim.core.*;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;"></span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">public class AvgBalance extends
+BasicBalance {</span><br style="font-family: monospace;">
+<br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; public static
+double average = 0.0;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; public static
+boolean avg_done = false;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; // Costructor:<br style="font-family: monospace;">
+</span><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; public
+AvgBalance(String prefix, Object obj) {</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; super(prefix, obj);</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; }</span><br
+ style="font-family: monospace;">
+<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <span style="font-family: monospace;">//
+Method to simulate average function aggregation</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; private static
+void calculateAVG(int protocolID) {</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; int len = OverlayNetwork.size();</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; double sum = 0.0;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; for (int i = 0; i &lt; len; i++)</span><span
+ style="font-family: monospace;"> {</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; AvgBalance protocol =</span><span
+ style="font-family: monospace;">
+(AvgBalance)OverlayNetwork.get(i).getProtocol(protocolID);</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; double value =
+protocol.getValue();</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp; sum += value;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; </span><span style="font-family: monospace;">}</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; average = sum / len;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; avg_done = true;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; }</span><br
+ style="font-family: monospace;">
+<br>
+The first part is straightforward. Two global variables are defined:
+average, and avg_done; the second is a flag used to be sure not to
+perform the calculation more than once. A different and much more
+elegant approach is to define the average calculation method inside a
+static constructor, but this solution is <span
+ style="font-weight: bold;">wrong</span>! When the node protocol
+objects are created, the load distribution is not defined yet, so the
+global average result will be 0.<br>
+The function <span style="font-style: italic;">calculateAVG()</span>
+simulates the average aggregation
+behaviour. It makes use of global knowledge, looping on each overlay
+node.<span style="font-family: monospace;"><span
+ style="font-family: monospace;"><br>
+</span></span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; protected
+static void suspend( Node node ) {</span><span
+ style="font-family: monospace;"></span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; node.setFailState(Fallible.DOWN);</span><span
+ style="font-family: monospace;"></span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; }</span><br
+ style="font-family: monospace;">
+<br>
+This is the utility function to exit from the topology; simply sets a
+node state from <span style="font-style: italic;">Fallible</span>
+interface.<br>
+<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <span style="font-family: monospace;">//
+CDProtocol Interface implementation. Overrides the BasicBalance
+implementation:</span><br style="font-family: monospace;">
+<span style="font-family: monospace;"></span><span
+ style="font-family: monospace;">&nbsp;&nbsp;&nbsp; public void
+nextCycle( Node node, int protocolID ) {</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; // Do that only once</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; if (avg_done == false) {</span><span
+ style="font-family: monospace;"></span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; calculateAVG(protocolID);</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; &nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp; System.out.println("AVG only once "+average);</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; }</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp; </span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; if( Math.abs(value-average) &lt; 1 )</span><span
+ style="font-family: monospace;"> {</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; &nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp; AvgBalance.suspend(node); // switch off node</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; &nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; &nbsp;
+&nbsp;&nbsp; &nbsp; }</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; </span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;
+if (quota == 0 ) return;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; </span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; Node n = null;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; if (value &lt; average ) {</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; n = getOverloadedPeer(node,
+protocolID);</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; if (n != null) {
+doTransfer((AvgBalance)n.getProtocol(protocolID)); } </span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; }</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; else {</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+&nbsp;&nbsp; &nbsp; n = getUnderloadedPeer(node, protocolID);</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; if (n != null) {
+doTransfer((AvgBalance)n.getProtocol(protocolID)); } </span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; } </span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; </span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+if( Math.abs(value-average) &lt; 1 ) AvgBalance.suspend(node);</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;
+if (n != null) {</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;
+&nbsp;&nbsp;&nbsp; if( Math.abs(
+((AvgBalance)n.getProtocol(protocolID)).value-average) &lt; 1 )
+AvgBalance.suspend(n);</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; }</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; }</span><br
+ style="font-family: monospace;">
+<br>
+Method <span style="font-style: italic;">nextCycle()</span> is the
+protocol algorithm core. It first checks for the average calculation:
+if the flag is not set, it performs the computation.<br>
+If the difference between the current and the average load is less then
+1 (the fixed quota value per cycle) the node is suspended and thus
+exits from the topology defined by the newscast protocol; moreover, if
+the quota has been already spent, it returns.<br>
+The protocol then checks if the local value is less or grater then the
+average and respectively get the most loaded or the least loaded
+neighbor and exchanges load with it (according to quota capacity). This
+is simply a push-pull approach using the average.<br>
+<br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; private Node
+getOverloadedPeer(Node node, int protocolID) {</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; int linkableID = Protocols.getLink(protocolID);</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; Linkable linkable = (Linkable) node.getProtocol(
+linkableID );</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; </span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; AvgBalance neighbor=null;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; Node neighborNode = null;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; double maxdiff = 0.0;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; for(int i = 0; i &lt; linkable.degree(); ++i)</span><span
+ style="font-family: monospace;"> {</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Node peer =
+linkable.getNeighbor(i); </span><span style="font-family: monospace;"></span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; if(!peer.isUp()) continue;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; AvgBalance n =
+(AvgBalance)peer.getProtocol(protocolID);</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; if(n.quota==0) continue;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; if(value &gt;= average &amp;&amp;
+n.value &gt;= average) continue;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; if(value &lt;= average &amp;&amp;
+n.value &lt;= average) continue;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; double d =
+Math.abs(value-n.value); </span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; if( d &gt; maxdiff )</span><span
+ style="font-family: monospace;"> {</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+&nbsp;&nbsp; &nbsp; &nbsp;&nbsp;&nbsp; neighbor = n;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp; neighborNode = peer;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp; maxdiff = d;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; }</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; &nbsp; &nbsp;
+return neighborNode;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; } </span><br
+ style="font-family: monospace;">
+<br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; private Node
+getUnderloadedPeer(Node node, int protocolID) {</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; int linkableID = Protocols.getLink(protocolID);</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; Linkable linkable = (Linkable) node.getProtocol(
+linkableID );</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; </span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;
+AvgBalance neighbor=null;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;
+Node neighborNode = null;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;
+double maxdiff = 0.0;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;
+for(int i = 0; i &lt; linkable.degree(); ++i)</span><span
+ style="font-family: monospace;"> {</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; Node peer = linkable.getNeighbor(i);</span><span
+ style="font-family: monospace;"></span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; &nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp; if(!peer.isUp()) continue;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; &nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp; AvgBalance n =
+(AvgBalance)peer.getProtocol(protocolID);</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; &nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp; if(n.quota==0) continue;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; &nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp; if(value &gt;= average &amp;&amp; n.value
+&gt;= average) continue;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; &nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp; if(value &lt;= average &amp;&amp; n.value
+&lt;= average) continue;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; &nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp; double d = Math.abs(value-n.value); </span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; &nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp; if( d &lt; maxdiff )</span><span
+ style="font-family: monospace;"> {</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+&nbsp;&nbsp; &nbsp; &nbsp;&nbsp;&nbsp; neighbor = n;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+&nbsp;&nbsp; &nbsp; &nbsp;&nbsp;&nbsp; neighborNode = peer;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp; &nbsp; maxdiff = d;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; &nbsp; &nbsp;
+&nbsp;&nbsp;&nbsp; }</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; }</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; return neighborNode;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; }</span> <br>
+} // end of class<br>
+<br>
+The methods to get the the most loaded or the least loaded neighbor are
+straighforward and very similar, but are shown for completeness.<br>
+<br>
+<h2>Evaluating the protocols</h2>
+The performance about load variance reduction can be analyzed with an <span
+ style="font-style: italic;">aggregation.AverageObserver</span> or a <span
+ style="font-style: italic;">loadbalance.LBObserver</span> (they are
+very similar), but don't expect huge differences!! In fact, from this
+point of view, the two protocols have nearly an identical performance,
+no matter whatever distribution you are using.<br>
+The <span style="font-style: italic;">AVGBalance</span> protocol
+improvement over the <span style="font-style: italic;">BasicBalance</span>
+one is about the acheived overall load transfer. The <span
+ style="font-style: italic;">AVGBalance </span>amount of transfer is
+minimal and it is pratically the same of the theoretical minimal amount
+of transfer needed to solve the problem (<a
+ href="http://www.cs.unibo.it/bison/publications/modular-p2p.pdf">more
+about this</a>).<br>
+<br>
+The <span style="font-style: italic;">Observer</span> class code
+to&nbsp; inspect the load transfer amount is the following. <br>
+<br>
+<span style="font-family: monospace;">package loadbalance;</span><br
+ style="font-family: monospace;">
+<br style="font-family: monospace;">
+<span style="font-family: monospace;">import peersim.core.*;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">import peersim.reports.*;</span><span
+ style="font-family: monospace;"></span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">import peersim.config.*;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">import
+peersim.util.IncrementalStats;</span><span
+ style="font-family: monospace;"></span><br
+ style="font-family: monospace;">
+<br style="font-family: monospace;">
+<span style="font-family: monospace;">public class QuotaObserver
+implements Observer {</span><br style="font-family: monospace;">
+<br style="font-family: monospace;">
+<span style="font-family: monospace;">public static final String
+PAR_PROT = "protocol";</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">private final String
+name;&nbsp;&nbsp; </span><br style="font-family: monospace;">
+<span style="font-family: monospace;">private final int
+pid;&nbsp;&nbsp; // protocol id to monitor</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">private IncrementalStats
+stats;&nbsp;&nbsp; // object to compute statistics</span><br
+ style="font-family: monospace;">
+<br style="font-family: monospace;">
+<span style="font-family: monospace;">// Constructor:</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">public QuotaObserver(String name)</span><span
+ style="font-family: monospace;"> {</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; this.name =
+name;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; pid =
+Configuration.getInt(name + "." + PAR_PROT);</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; stats = new
+IncrementalStats();</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">}</span><br
+ style="font-family: monospace;">
+<br style="font-family: monospace;">
+<span style="font-family: monospace;">// Observer interface
+implementation:</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">public boolean analyze()</span><span
+ style="font-family: monospace;"> {</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; for (int i =
+0; i &lt; OverlayNetwork.size(); i++)</span><span
+ style="font-family: monospace;"> {</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; BasicBalance protocol =&nbsp; (BasicBalance)
+OverlayNetwork.get(i).getProtocol(pid);</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; stats.add( protocol.quota );</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; }</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+System.out.println(name+": "+stats);</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; return false;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">}</span><br
+ style="font-family: monospace;">
+<br style="font-family: monospace;">
+<span style="font-family: monospace;">} // end of class</span><br>
+<br>
+The idea is very simple: at each simulation cycle it collects all node
+values about quota and print statistics on the console.<br>
+<br>
+</div>
+</div>
+<h2><a name="Appendix_A"></a>Appendix A: a few words about Aggregation</h2>
+It is a very fast epidemic-style protocol targeted to compute a
+particular function (e.g.: average, max, min, ...) on a numeric value
+holded at each network node.&nbsp; In order to work, every node needs
+access to its neighbor list view on the overlay network; no particular
+requirements about the topology management protocol are imposed. In the
+case of avaraging function, a generic method <span
+ style="font-style: italic;">updateState(a, b)</span> returns (a+b)/2,
+where a and b are values at (respectively) node a and node b. This kind
+of computation is performed by each node at each simulation cycle.<br>
+The global average is not affected, but the variance over all the
+estimates decreses very fast in a few cycles (the convergence rate is
+exponential and it does not care about the network size). The
+aggregation protocol is also very robust in case of nede failues.<br>
+<br>
+Suggested readings: project&nbsp;<a
+ href="http://www.cs.unibo.it/bison/pub.shtml">BISON</a> publication
+page.<br>
+<h2><a name="apendix_b"></a>Appendix B: a few words about Newscast</h2>
+Newscast is an epidemic content distribution and topology management
+protocol. Every peer in the system has a partial view knowledge about
+the topology which is modeled as a fixed size (c) set of node
+descriptors. Each descriptor is a tuple consisting of a peer address
+and a timestamp recording the time when the descriptor was created.<br>
+Each node updates its state by choosing a random neighbor and
+exchanging with it the view. The exchanging process merges the two
+involved peer partial view, keeping the c freshest descriptors. in this
+manner, old information (descriptor) are automagically removed from the
+system as time goes on. This process allows the protocol to repair the
+overlay topology removing dead links with minimum effort and this is a
+great feature for a highly dynamic oriented system where nodes join and
+leave continously.<br>
+The protocol relies on the timestamps, but it doesn't need synchronized
+clocks: timestamps have to be only mutually consistent. To acheive
+this, a simple time normalization of the received descriptors is
+performed. So time precision is not critical at all.<br>
+<br>
+The emergent topology from newscast topology management has a very low
+diameter and it is very close to a random graph with (out) degree c.<br>
+<br>
+&nbsp;Suggested readings: <a
+ href="http://citeseer.nj.nec.com/jelasity02largescale.html">Large-Scale
+Newscast Computing on the Internet</a>.<br>
+<br>
+<br>
+<br>
+<br>
+</body>
+</html>

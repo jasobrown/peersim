@@ -49,6 +49,12 @@ public class OverlayGraph implements Graph {
 */
 public final int protocolID;
 
+/**
+* Tells if the graph should be wired in an undirected way.
+* Method {@link #directed} returns true always, this affects only
+* method {@link #setEdge}: if false, then the opposite edge is set too.
+*/
+public final boolean wireDirected;
 
 // ====================== public constructors ===================
 // ==============================================================
@@ -60,6 +66,21 @@ public final int protocolID;
 public OverlayGraph( int protocolID ) {
 
 	this.protocolID = protocolID;
+	wireDirected = true;
+}
+
+// --------------------------------------------------------------
+
+/**
+* @param protocolID The protocol on which this adaptor is supposed
+* to operate.
+* @param wireDirected specifies if {@link #setEdge} whould wire the
+* opposit edge too.
+*/
+public OverlayGraph( int protocolID, boolean wireDirected ) {
+
+	this.protocolID = protocolID;
+	this.wireDirected = wireDirected;
 }
 
 
@@ -124,10 +145,19 @@ public boolean directed() { return true; }
 * <p>Conecptually one can think of it as a succesful operation which is
 * immediately overruled by the dynamics of the underlying overlay network.
 * Let's not forget that this class is an adaptor only.
+*
+* <p>
+* The behaviour of this method is affected by parameter {@link #wireDirected}.
+* If it is false, then the opposite edge is set too.
 */
 public boolean setEdge( int i, int j ) {
 // XXX slightly unintuitive behavior but makes sense when understood
 	
+	if( !wireDirected ) 
+		((Linkable)Network.node[j].getProtocol(protocolID)
+		).addNeighbor(Network.node[i]);
+
+
 	return
 		((Linkable)Network.node[i].getProtocol(protocolID)
 		).addNeighbor(Network.node[j]);

@@ -93,7 +93,6 @@ public LinearDistribution(String prefix)
 public void modify()
 {
 	double step = (max-min)/(Network.size()-1);
-	double tmp;
 	for(int i=0; i<Network.size(); ++i)
 	{
 		lastval = i*step+min;

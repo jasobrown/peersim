@@ -41,9 +41,15 @@ public class WireRegularRandom implements Dynamics, NodeInitializer {
 public static final String PAR_PROT = "protocol";
 
 /** 
-*  String name of the parameter used to select the protocol to operate on
+*  String name of the parameter to set the out-degree degree of the graph.
 */
 public static final String PAR_DEGREE = "degree";
+
+/** 
+*  String name of the parameter to set if the graph should be undirected,
+* that is, for each link (i,j) a link (j,i) will also be added.
+*/
+public static final String PAR_UNDIR = "undirected";
 
 /**
 * The protocol we want to wire
@@ -55,6 +61,8 @@ private final int protocolID;
 */
 private final int degree;
 
+private final boolean undirected;
+
 
 // ==================== initialization ==============================
 //===================================================================
@@ -64,6 +72,7 @@ public WireRegularRandom(String prefix) {
 
 	protocolID = Configuration.getPid(prefix+"."+PAR_PROT);
 	degree = Configuration.getInt(prefix+"."+PAR_DEGREE);
+	undirected = Configuration.contains(prefix+"."+PAR_UNDIR);
 }
 
 
@@ -75,7 +84,7 @@ public WireRegularRandom(String prefix) {
 public void modify() {
 	
 	GraphFactory.wireRegularRandom(
-		new OverlayGraph(protocolID), 
+		new OverlayGraph(protocolID,!undirected), 
 		degree,
 		CommonRandom.r );
 }

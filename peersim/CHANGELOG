@@ -1,3 +1,11 @@
+MJ 29/10/2004
+- new constructor parameter for OverlayGraph so that setEdge could work in
+  an undirected manner (sets opposite edge too). OverlayGraph is interpreted as
+  directed, nontheless, because setEdge is not the only way to set edges.
+- wireRegularRandom has new config parameter "undirected", which uses the
+  feature above 
+- new toString to IdleProtocol, 
+
 MJ 25/10/2004
 - added method lookupPid to Configuration to make it possible to search
   for a protocol id based on the protocol name

@@ -226,6 +226,41 @@ public static boolean contains(String name) {
 * @param name Name of configuration property
 * @param def default value
 */
+public static boolean getBoolean(String name, boolean def) {
+
+	try
+	{
+		return Configuration.getBoolean(name);
+	}
+	catch( Exception e )
+	{
+		return def;
+	}
+}
+
+// -------------------------------------------------------------------
+
+/**
+* Reads given configuration item. If not found, throws a
+* MissingParameterException.
+* True is returned if the lowercase value of
+* the item is "true", otherwise false is returned.
+* @param name Name of configuration property.
+*/
+public static boolean getBoolean(String name) {
+
+	if( config.getProperty(name) == null )
+		throw new MissingParameterException(name);
+	return (new Boolean(config.getProperty(name))).booleanValue();
+}
+
+// -------------------------------------------------------------------
+
+/**
+* Reads given configuration item. If not found, returns the default value.
+* @param name Name of configuration property
+* @param def default value
+*/
 public static int getInt( String name, int def ) {
 
 	try
@@ -241,8 +276,8 @@ public static int getInt( String name, int def ) {
 // -------------------------------------------------------------------
 
 /**
-* Reads given configuration item. If not found, throws an 
-* IllegalArgumentException.
+* Reads given configuration item. If not found, throws a 
+* MissingParameterException.
 * @param name Name of configuration property
 */
 public static int getInt( String name ) 
@@ -272,8 +307,8 @@ public static long getLong( String name, long def ) {
 // -------------------------------------------------------------------
 
 /**
-* Reads given configuration item. If not found, throws an 
-* IllegalArgumentException.
+* Reads given configuration item. If not found, throws a 
+* MissingParameterException.
 * @param name Name of configuration property
 */
 public static long getLong( String name ) 
@@ -304,8 +339,8 @@ public static double getDouble( String name, double def ) {
 // -------------------------------------------------------------------
 
 /**
-* Reads given configuration item. If not found, throws an 
-* IllegalArgumentException.
+* Reads given configuration item. If not found, throws a 
+* MissingParameterException.
 * @param name Name of configuration property
 */
 public static double getDouble( String name ) 

@@ -25,6 +25,17 @@ private static int time = 0;
 */
 private static Integer _time = new Integer(0);
 
+/**
+* Information about where exactly the simulation is. 
+*/
+private static int phase = 0;
+
+public static final int PRE_DYNAMICS = 0;
+
+public static final int PRE_CYCLE = 1;
+
+public static final int POST_LAST_CYCLE = 2;
+
 
 // ======================== initialization =========================
 // =================================================================
@@ -38,6 +49,7 @@ static { }
 // =================================================================
 
 
+/** Returns the current time. */
 public static int getT() { return time; }
 
 // -----------------------------------------------------------------
@@ -50,9 +62,26 @@ public static void setT( int t ) {
 
 // -----------------------------------------------------------------
 
-/** Returns time as an Integer object */
+/** Returns current time as an Integer object */
 public static Integer getTimeObj() {  return _time; }
 
+// -----------------------------------------------------------------
+
+/**
+* Returns the phase within a time step. Currently the following phases are
+* understood.
+* <ul>
+* <li> {@link #PRE_DYNAMICS} Nothing has been done in the current cycle </li>
+* <li> {@link #PRE_CYCLE} The dynamism managers have been run but the
+* cycle has not started yet </li>
+* <li> {@link #POST_LAST_CYCLE} the simulation is completed </li>
+* </ul>
+*/
+public static int getPhase() { return phase; }
+
+// -----------------------------------------------------------------
+
+public static void setPhase( int p ) { phase = p; }
 
 }
 

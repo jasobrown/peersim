@@ -51,6 +51,15 @@ public static final String PAR_UNTIL = "until";
 */
 public static final String PAR_FINAL = "FINAL";
 
+/**
+* This is currently used for observers only, it is ignored for all other
+* components.
+* If defined the component will be run right before the cycle begins,
+* after the dynamism managers have been run, and not before the dynamism
+* managers. It is not defined by default.
+*/
+public static final String PAR_PRECYCLE = "precycle";
+
 protected final int step;
 
 protected final int from;
@@ -58,6 +67,8 @@ protected final int from;
 protected final int until;
 
 protected final boolean fin;
+
+protected final boolean precycle;
 
 
 // ==================== initialization ==============================
@@ -70,6 +81,7 @@ public Scheduler(String prefix) {
 	from = Configuration.getInt(prefix+"."+PAR_FROM,0);
 	until = Configuration.getInt(prefix+"."+PAR_UNTIL,Integer.MAX_VALUE);
 	fin = Configuration.contains(prefix+"."+PAR_FINAL);
+	precycle = Configuration.contains(prefix+"."+PAR_PRECYCLE);
 }
 
 
@@ -93,6 +105,10 @@ public boolean active() {
 // -------------------------------------------------------------------
 
 public boolean fin() { return fin; }
+
+// -------------------------------------------------------------------
+
+public boolean preCycle() { return precycle; }
 
 }
 

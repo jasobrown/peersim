@@ -33,6 +33,13 @@ private Protocol[] protocol = null;
 */
 private int index;
 
+/**
+* This package private field tells the index of this node in the node
+* list of the {@link OverlayNetwork}. This is necessary to allow
+* the implementation of efficient graph algorithms.
+*/
+private int failstate = Fallible.OK;
+
 // ================ constructor and initialization =================
 // =================================================================
 
@@ -76,11 +83,16 @@ public void setFailState(int failState) {
 	switch(failState)
 	{
 		case OK:
-			if(protocol==null) throw new IllegalStateException(
+			if(failstate==DEAD) throw new IllegalStateException(
 				"Cannot set OK when already DEAD");
+			else failstate=OK;
 		case DEAD:
 			protocol = null;
 			index = -1;
+			failstate = DEAD;
+			break;
+		case DOWN:
+			failstate = DOWN;
 			break;
 		default:
 			throw new IllegalArgumentException(
@@ -90,11 +102,11 @@ public void setFailState(int failState) {
 
 // -----------------------------------------------------------------
 
-public int getFailState() { return (protocol==null ? DEAD : OK); }
+public int getFailState() { return failstate; }
 
 // ------------------------------------------------------------------
 
-public boolean isUp() { return getFailState()==OK; }
+public boolean isUp() { return failstate==OK; }
 
 // -----------------------------------------------------------------
 

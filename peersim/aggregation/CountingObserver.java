@@ -129,14 +129,13 @@ public class CountingObserver  implements Observer
 			Node node = Network.get(i);
 			Aggregation protocol = (Aggregation) node.getProtocol(pid);
 
-      boolean toBeCounted = true;
-      if (protocol instanceof GeneralAggregation) {
-				GeneralAggregation ag = (GeneralAggregation) protocol;
-				toBeCounted = ag.toBeCounted() && !ag.isNew();
-      }
-
-			if (toBeCounted) 
+			try {
 				stats.add(protocol.getValue());
+			} catch (Exception e) {
+				/* 
+				 * We do nothing; the node should not be counted in the
+				 */ 
+			}
 		}
 		double var = stats.getVar();
 		if (initvar < 0 || Double.isNaN(initvar))

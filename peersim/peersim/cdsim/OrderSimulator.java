@@ -30,6 +30,37 @@ import peersim.util.*;
 * The class is completely static as at the same time we expect to have only
 * one simulation running in a virtual machine.
 * The simulation is highly configurable.
+
+Using this class, ou can write an order specification in the configuration
+like this:
+<pre>
+order observer.0,protocol.sort,observer.2,protocol.rank,dynamics.crash
+</pre>
+deciding the exact order in which you want to execute everything (except
+initializers, that are executed at begininning, ordered by order.init,
+as with the other Simulators).
+You can also write:
+<pre>
+order 0,sort,2,rank,crash
+</pre>
+but all the names should be unique, otherwise it will print a message
+like this:
+<pre>
+Parameter "order": Item 0 corresponds to observer.0, dynamics.0, protocol.0
+</pre>
+And clearly, the item name should exist, otherwise you will have
+errors like this:
+<pre>
+order pippo
+
+Parameter "order": Item pippo does not corresponds to any of the 
+observers, dynamics or protocols
+</pre>
+You can even shuffle the network before each protocol, and not
+just before each cycle, using the parameter 
+<pre>
+simulation.shuffle.protocol.
+</pre>
 */
 public class OrderSimulator extends Simulator{
 

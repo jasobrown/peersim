@@ -35,6 +35,76 @@ import java.util.*;
 * entries are pre-processed a bit to enhance performance:
 * protocol names are associated to numeric protocol identifiers
 * through method {@link #getPid}.
+* <p>
+  You can use expressions in place of numeric values at all places.
+  This is implemented using <a href="http://www.singularsys.com/jep/">JEP</a>.
+  You can write expression using the syntax that you can
+  find <a href="http://www.singularsys.com/jep/doc/html/op_and_func.html">
+  here</a>. For example,
+  <pre>
+  MAG 2
+  SIZE 2^MAG
+  </pre>
+  SIZE=4.
+  You can also have complex expression trees like this:
+  <pre>
+  A B+C
+  B D+E
+  C E+F
+  D 1
+  E F
+  F 2
+  </pre>
+  that results in A=7, B=3, C=4, D=1, E=2, F=2
+
+  <p>Expressions are parsed recursively. Note that no optimization are
+  done, so expression F may be evaluated three times here (due to the
+  fact that appears twice in C and once in B). But since this should 
+  be done only in the initialization phase, this is not a real problem.
+
+  <p>Finally, recursive definitions are not allowed (and without
+  function definitions, they do not mean anything). Since it is
+  difficult to discover complex recursive chains, I've decided
+  to use a simple trick: if the depth of recursion is greater
+  than a given threshold (configurable, currently 100), an error
+  message is printed. This avoid to fill the stack, that results
+  in an anonymous OutOfMemoryError. So, if you write
+  <pre>
+  overlay.size SIZE
+  SIZE SIZE-1
+  </pre>
+  you get an error message:
+  Parameter "overlay.size": Probable recursive definition -
+  exceeded maximum depth 100
+  <p>
+  It is possible to assign arbitrary names to multiple instances of a given
+  entity, like eg an observer or protocol. For example you can write
+
+  <pre>
+  observer.conn ConnectivityObserver
+  observer.0 Class1
+  observer.2 Class2
+  </pre>
+  This trick works with any prefix, not only observer. When method
+  {@link #getNames} or {@link #getInstanceArray} are called, eg
+  <code>getNames("observer")</code>, the the order in which these
+  are returned is alphabetical:
+  <code>["observer.0","observer.2","observer.conn"]</code>.
+  If you are not satisfied with lexicographic order,
+  you can specify the order in this way.
+  <pre>
+  order.observer 2,conn,0
+  </pre>
+  where the names are separated by any non-word character (non alphanumeric
+  or underscore).
+  If not all names are listed then the given order is followed by alphabetical
+  order of the rest of the items, eg
+  <pre>
+  order.observer 2
+  </pre>
+  results in
+  <code>["observer.2","observer.0","observer.conn"]</code>.
+*
 */
 public class Configuration {
 

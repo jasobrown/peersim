@@ -62,7 +62,6 @@ static {
 	
 	String[] names = Configuration.getNames(Configuration.PAR_PROT);
 	links = new int[names.length];
-	for(int i=0; i<links.length; ++i) links[i]=-1;
 	for(int i=0; i<links.length; ++i)
 	{
 		if( Configuration.contains(names[i]+"."+PAR_LINKABLE) )

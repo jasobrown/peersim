@@ -1,5 +1,5 @@
 JM 9/11/2004
-- removed Protocols, added peersim.config.FastConfig insted. The new feature
+- removed Protocols, added peersim.config.FastConfig instead. The new feature
   is that FastConfig is automatic, it reads and stores "linkable" config lines
   in a transparent fashion to the protocols.
 

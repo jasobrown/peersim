@@ -51,7 +51,7 @@ public static final String PAR_OBS = "observer";
 * ({@link CommonState#getCycleT}). The first cycletime is 0.
 * Defaults to 1.
 */
-public static final String PAR_STEP = "step";
+public static final String PAR_STEP = "cstep";
 
 // --------------------------------------------------------------------
 

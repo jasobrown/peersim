@@ -1,11 +1,14 @@
+JM 17/11/2004
+- Small non-critical changes like docs, message texts, formatting, etc, plus
+  changes step to cstep in DaemonProtocol to avoid conflict with scheduling
+
 GJ 11/11/2004
 - Refactored aggregation and load balancing example code: now they use 
   distribution.SingleValueHolder class and peersim.core.SingleValue interface
   instead of example.aggregation.AbstractFunction and 
   example.aggregation.Aggregation interface.
-
-- example.aggregation.AbstractFunction class and example.aggregation.Aggregation 
-  interface removed to avoid code replication.
+- example.aggregation.AbstractFunction class and
+  example.aggregation.Aggregationinterface removed to avoid code replication.
 
 JM 9/11/2004
 - removed Protocols, added peersim.config.FastConfig instead. The new feature

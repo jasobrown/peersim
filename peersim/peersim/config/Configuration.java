@@ -361,24 +361,26 @@ private static Class getClass(String property, String classname)
 		}
 	}
 	if (c == null) {
-		// Maybe there are multiple classes with the same non-qualified name.
+		// Maybe there are multiple classes with the same
+		// non-qualified name.
 		String fullname = ClassFinder.getQualifiedName(classname);
 		if (fullname != null && fullname.indexOf(',') >= 0) {
 			throw new IllegalParameterException(property,
-				"The non-qualified class name " + classname + 
-				" corresponds to multiple fully-qualified classes: " +
-				fullname);
+			"The non-qualified class name " + classname + 
+			" corresponds to multiple fully-qualified classes: " +
+			fullname);
 		}
 	}
 	if (c == null) {
-		// Last attempt: maybe the fully classified name is wrong, but the
-		// classname is correct. 
+		// Last attempt: maybe the fully classified name is wrong,
+		// but the classname is correct. 
 		String shortname = ClassFinder.getShortName(classname);
 		String fullname = ClassFinder.getQualifiedName(shortname);
 		if (fullname != null) {
 			throw new IllegalParameterException(property,
-				"Class " + classname + 
-				" does not exists. Possible candidate(s): " +	fullname);
+			"Class " + classname + 
+			" does not exists. Possible candidate(s): " +
+			fullname);
 		}		
 	}
 	if (c == null) {

@@ -61,6 +61,15 @@ public class AverageObserver implements Observer
 	 */
 	public static final String PAR_STEP = "epoch";
 
+
+	/**
+	 *  String name of the parameter used to describe whether this observer
+	 *  must print the status of the system at every cycle or at every epoch.
+	 *  If this parameter is presente, the observer will print the status
+	 *  once every epoch.
+	 */
+	public static final String PAR_PARTIAL = "partial";
+
 	////////////////////////////////////////////////////////////////////////////
 	// Fields
 	////////////////////////////////////////////////////////////////////////////
@@ -77,6 +86,9 @@ public class AverageObserver implements Observer
 	/** Length of an epoch */
 	private final int epoch;
   
+	/** True if every cycle must be reported; false otherwise */
+	private final boolean partial;
+
 	/** Initial variance */
 	private double initvar = -1.0;
 
@@ -91,6 +103,7 @@ public class AverageObserver implements Observer
 	{
 		this.name = name;
 		accuracy = Configuration.getDouble(name+"."+PAR_ACCURACY,-1);
+		partial = Configuration.contains(name+"."+PAR_PARTIAL);
 		pid = Configuration.getInt(name+"."+PAR_PROT);
 		epoch = Configuration.getInt(name+"."+PAR_STEP, Integer.MAX_VALUE);
 	}
@@ -132,17 +145,21 @@ public class AverageObserver implements Observer
 		double rate = Math.pow(var / initvar, ((double) 1) / (time%epoch) );
 	    
 		/* Printing statistics */
+		if (!partial || ((time % epoch)==epoch-1)) {
 		Log.println(name, 
 			" TIME " + time +
-			" VAR " + var +
-			" RED " + (var/initvar) +
+			" VAR "  + var +
+			" RED "  + (var/initvar) +
 			" RATE " + rate +
-			" AVG " + 1/stats.getAverage() + 
-			" MAX " + (int) 1/stats.getMin() +
-			" MIN " + (int) 1/stats.getMax() +
-			" CNT " + stats.getN() +
-			" SIZE " + len
+			" AVG "  + 1/stats.getAverage() + 
+			" MAX "  + (int) 1/stats.getMin() +
+			" MIN "  + (int) 1/stats.getMax() +
+			" CNT "  + stats.getN() +
+			" SIZE " + len +
+			" MAXN " + stats.getMaxCount() +
+			" MINN " + stats.getMinCount()
 		 );
+		}
     
 		/* Terminate if accuracy target is reached */
 		if (var/initvar <= accuracy) {

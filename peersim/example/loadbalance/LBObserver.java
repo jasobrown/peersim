@@ -77,7 +77,7 @@ public class LBObserver implements Observer
 	this.name = name;
 	// Other parameters from config file:
 	accuracy = Configuration.getDouble(name+"."+PAR_ACCURACY, -1);
-	pid = Configuration.getInt(name + "." + PAR_PROT);
+	pid = Configuration.getPid(name + "." + PAR_PROT);
 	show_values = Configuration.getInt(name + "." + PAR_SHOW_VALUES, 0);
 	stats = new IncrementalStats();
 	target_node = CommonRandom.r.nextInt(len);

@@ -62,7 +62,7 @@ public LinearDistributionInitializer(String prefix)
 {
 	max = Configuration.getDouble(prefix+"."+PAR_MAX);
 	min = Configuration.getDouble(prefix+"."+PAR_MIN,-max);
-	protocolID = Configuration.getInt(prefix+"."+PAR_PROT);
+	protocolID = Configuration.getPid(prefix+"."+PAR_PROT);
 }
 
 ////////////////////////////////////////////////////////////////////////////

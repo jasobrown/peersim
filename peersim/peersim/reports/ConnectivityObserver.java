@@ -61,7 +61,7 @@ private final GraphAlgorithms ga;
 public ConnectivityObserver(String name) {
 
 	this.name = name;
-	protocolID = Configuration.getInt(name+"."+PAR_PROT);
+	protocolID = Configuration.getPid(name+"."+PAR_PROT);
 	sizestats = Configuration.contains(name+"."+PAR_SIZESTATS);
 	ga = new GraphAlgorithms();
 }

@@ -61,7 +61,7 @@ protected AbstractFunction() {}
 public AbstractFunction(String prefix, Object obj) {
 
 	int protocolId = ((Integer) obj).intValue();
-	int link = Configuration.getInt(prefix+"."+PAR_CONN);
+	int link = Configuration.getPid(prefix+"."+PAR_CONN);
 	Protocols.setLink(protocolId, link);
 }
 

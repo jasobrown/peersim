@@ -57,7 +57,7 @@ private IncrementalStats stats;
 public QuotaObserver(String name)
 {
 	this.name = name;
-	pid = Configuration.getInt(name + "." + PAR_PROT);
+	pid = Configuration.getPid(name + "." + PAR_PROT);
 	stats = new IncrementalStats();
 }
 

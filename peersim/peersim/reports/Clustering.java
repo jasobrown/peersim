@@ -68,7 +68,7 @@ private final boolean undir;
 public Clustering(String name) {
 
 	this.name = name;
-	protocolID = Configuration.getInt(name+"."+PAR_PROT);
+	protocolID = Configuration.getPid(name+"."+PAR_PROT);
 	n = Configuration.getInt(name+"."+PAR_N,Integer.MAX_VALUE);
 	undir = Configuration.contains(name+"."+PAR_UNDIR);
 }

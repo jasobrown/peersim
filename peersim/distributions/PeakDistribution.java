@@ -81,7 +81,7 @@ private final int pid;
 public PeakDistribution(String prefix)
 {
 	value = Configuration.getDouble(prefix+"."+PAR_VALUE);
-	pid = Configuration.getInt(prefix+"."+PAR_PROTID);
+	pid = Configuration.getPid(prefix+"."+PAR_PROTID);
 	peaks = Configuration.getDouble(prefix+"."+PAR_PEAKS, 1);
 }
 

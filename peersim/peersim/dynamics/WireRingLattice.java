@@ -63,7 +63,7 @@ private final int k;
 
 public WireRingLattice(String prefix) {
 
-	protocolID = Configuration.getInt(prefix+"."+PAR_PROT);
+	protocolID = Configuration.getPid(prefix+"."+PAR_PROT);
 	k = Configuration.getInt(prefix+"."+PAR_K);
 }
 

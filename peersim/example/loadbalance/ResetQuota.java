@@ -56,7 +56,7 @@ private final int protocolID;
 public ResetQuota(String prefix)
 {
 	value = Configuration.getDouble(prefix+"."+PAR_VALUE);
-	protocolID = Configuration.getInt(prefix+"."+PAR_PROT);
+	protocolID = Configuration.getPid(prefix+"."+PAR_PROT);
 }
 
 ////////////////////////////////////////////////////////////////////////////

@@ -34,11 +34,6 @@ public class GeneralNode implements Node, Fallible, Cloneable {
 // ================= fields ========================================
 // =================================================================
 
-/** 
-* prefix of the parameters that defines protocols.
-*/
-public static final String PAR_PROT = "protocol";
-
 /**
 * The protocols composing this node.
 */
@@ -62,17 +57,16 @@ private int failstate = Fallible.OK;
 public GeneralNode(String prefix) {
 	
 	ArrayList list = new ArrayList();
-	int i = 0;
-	String protpar = PAR_PROT + "." + i;
-	CommonState.setNode(this);
-	while( Configuration.contains(protpar) )
-	{
+	
+	String[] names = Configuration.getNames(PAR_PROT);
+	for (int i=0; i < names.length; i++) {
+		Configuration.setPid(names[i].substring(PAR_PROT.length()+1), i);
+	}
+	for (int i=0; i < names.length; i++) {
+		CommonState.setNode(this);
 		Protocol protocol = (Protocol) 
-			Configuration.getInstance(PAR_PROT + "." + i,
-				new Integer(i));
+			Configuration.getInstance(names[i], new Integer(i));
 		list.add(protocol);
-		i++;
-		protpar = PAR_PROT + "." + i;
 	}
 	protocol = new Protocol[list.size()];
 	list.toArray(protocol);

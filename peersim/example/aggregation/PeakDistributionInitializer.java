@@ -79,7 +79,7 @@ public class PeakDistributionInitializer implements Dynamics
 	public PeakDistributionInitializer(String prefix)
 	{
 		value = Configuration.getDouble(prefix + "." + PAR_VALUE);
-		pid = Configuration.getInt(prefix + "." + PAR_PROT);
+		pid = Configuration.getPid(prefix + "." + PAR_PROT);
 		epochLength = Configuration.getInt(prefix + "." + PAR_EPOCH_LEN, 30);
 	}
 

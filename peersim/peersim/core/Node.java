@@ -28,6 +28,12 @@ package peersim.core;
 public interface Node extends Fallible, Cloneable {
 // XXX ugly design with the indexes but efficiency is first
 
+	/** 
+	* prefix of the parameters that defines protocols.
+	*/
+	public static final String PAR_PROT = "protocol";
+
+
 	/**
 	* Returns the i-th protocol in this node.
 	*/

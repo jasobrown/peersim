@@ -69,7 +69,7 @@ int edges;
 public WireScaleFreeDM(String prefix)
 {
 	/* Read parameters */
-	pid = Configuration.getInt(prefix + "." + PAR_PROT);
+	pid = Configuration.getPid(prefix + "." + PAR_PROT);
 	nodes = Network.size();
 	edges = Configuration.getInt(prefix + "." + PAR_EDGES);
   }

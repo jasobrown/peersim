@@ -62,7 +62,7 @@ private final int degree;
 
 public WireRegularRandom(String prefix) {
 
-	protocolID = Configuration.getInt(prefix+"."+PAR_PROT);
+	protocolID = Configuration.getPid(prefix+"."+PAR_PROT);
 	degree = Configuration.getInt(prefix+"."+PAR_DEGREE);
 }
 

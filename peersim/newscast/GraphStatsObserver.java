@@ -55,7 +55,7 @@ private Node node = null;
 public GraphStatsObserver(String name) {
 
 	this.name = name;
-	protocolID = Configuration.getInt(name+"."+PAR_PROT);
+	protocolID = Configuration.getPid(name+"."+PAR_PROT);
 	ga = new GraphAlgorithms();
 }
 

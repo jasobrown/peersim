@@ -71,7 +71,7 @@ private final String format;
 public GraphPrinter(String name) {
 
 	this.name = name;
-	protocolID = Configuration.getInt(name+"."+PAR_PROT);
+	protocolID = Configuration.getPid(name+"."+PAR_PROT);
 	baseName = Configuration.getString(name+"."+PAR_BASENAME,null);
 	format = Configuration.getString(name+"."+PAR_FORMAT,"neighborlist");
 }

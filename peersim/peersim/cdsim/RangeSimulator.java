@@ -18,13 +18,10 @@
 
 package peersim.cdsim;
 
-import peersim.config.*;
-import peersim.core.*;
-import peersim.reports.*;
-import peersim.util.*;
-import peersim.dynamics.*;
-import java.util.Arrays;
 import java.io.*;
+import java.util.*;
+import peersim.config.*;
+import peersim.util.*;
 
 /**
  * This is the executable class for performing a cycle driven simulation. The
@@ -65,59 +62,6 @@ public static final String PAR_RANGE = "range";
  */
 public static final String PAR_EXPS = "simulation.experiments";
 
-/**
- * This config property defines the number of cycles to complete
- */
-public static final String PAR_CYCLES = "simulation.cycles";
-
-/**
- * If set, it means the order of visiting each node is shuffled in each cycle
- */
-public static final String PAR_SHUFFLE = "simulation.shuffle";
-
-/**
- * This is the prefix for network initializers. These have to be of
- * type {@link Dynamics}.
- */
-public static final String PAR_INIT = "init";
-
-/**
- * This is the prefix for network dynamism managers. These have to be of type
- * {@link Dynamics}.
- */
-public static final String PAR_DYN = "dynamics";
-
-/**
- * This is the prefix for network observers. These have to be of type
- * {@link Observer}.
- */
-public static final String PAR_OBS = "observer";
-
-/**
- * This parameter can be added to protocol specifications to avoid
- * the execution of the protocol. 
- */
-public static final String PAR_IDLE = "idle";
-
-////////////////////////////////////////////////////////////////////////////
-// Static fields
-////////////////////////////////////////////////////////////////////////////
-/** holds the observer of this simulation */
-private static Observer[] observers = null;
-
-/** holds the observer of this simulation */
-private static Dynamics[] dynamics = null;
-
-/** Holds the observer schedulers of this simulation */
-private static Scheduler[] obsSchedules = null;
-
-/** Holds the dynamics schedulers of this simulation */
-private static Scheduler[] dynSchedules = null;
-
-// XXX it would be possible to schedule protocols too the same way
-
-/** Idle array */
-private static boolean[] idle;
 
 ////////////////////////////////////////////////////////////////////////////
 // Methods
@@ -208,6 +152,7 @@ private static ConfigProperties selectConfigFile(File configdir, File resultdir)
 }
 
 //--------------------------------------------------------------------
+
 /**
  * Test a config file; read its content in order to verify whether it contains
  * concurrent experiments. If so, it test whether any of them has to be
@@ -292,6 +237,7 @@ private static ConfigProperties checkFile(File config, File resultdir)
 }
 
 //--------------------------------------------------------------------
+
 /**
  * Parses a collection of range specifications and returns the set of parameter
  * that will change during the simulation and the values that will be used for
@@ -319,6 +265,7 @@ private static void parseRanges(String[] ranges, String pars[], double[][] value
 }
 
 //--------------------------------------------------------------------
+
 /**
  * Selects the next set of values by incrementing the specified index array.
  * The index array is treated as a vector of digits; the first is managed
@@ -336,11 +283,10 @@ private static void nextValues(int[] idx, double[][] values)
 }
 
 //--------------------------------------------------------------------
+
 public static void doExperiments(ConfigProperties properties)
 {
 	// Parsing simulation parameters
-	int cycles = Configuration.getInt(PAR_CYCLES);
-	boolean shuffle = Configuration.contains(PAR_SHUFFLE);
 	// Parse range parameters
 	String[] pars;
 	double[][] values;
@@ -369,129 +315,16 @@ public static void doExperiments(ConfigProperties properties)
 			log.append(" ");
 		}
 		Log.setPrefix(log.toString());
-		// Perform simulation
 		System.err.println(log);
-		// This is necessary, because if the initialization caused
-		// by Network.reset()
-		CommonState.setT(0);
-		Network.reset();
-		System.gc();
-		loadObservers();
-		loadDynamics();
-		// Read idle parameters
-		// We assume here that the network has at least one node
-		idle = new boolean[Network.get(0).protocolSize()];
-		for (int i = 0; i < idle.length; i++) {
-			String protpar = GeneralNode.PAR_PROT + "." + i + "." + PAR_IDLE;
-			idle[i] = Configuration.contains(protpar) || !(Network.get(0).getProtocol(i) instanceof CDProtocol);
-			if (idle[i])
-				System.out.println("Protocol " + i + " is idle");
-		}
-		performSimulation(cycles, shuffle);
+
+		// Perform simulation
+		Simulator.nextExperiment();
+		
 		// Increment values
 		nextValues(idx, values);
+
+		// Help garbage collection; not sure it is useful.
 		System.gc();
-	}
-	if (Configuration.contains("__x"))
-		Network.test();
-}
-
-//--------------------------------------------------------------------
-private static void loadObservers()
-{
-	// load analizers
-	String[] names = Configuration.getNames(PAR_OBS);
-	observers = new Observer[names.length];
-	obsSchedules = new Scheduler[names.length];
-	for (int i = 0; i < names.length; ++i) {
-		observers[i] = (Observer) Configuration.getInstance(names[i]);
-		obsSchedules[i] = new Scheduler(names[i]);
-	}
-	System.err.println("Simulator: loaded observers " + Arrays.asList(names));
-}
-
-//--------------------------------------------------------------------
-private static void loadDynamics()
-{
-	// load dynamism managers
-	String[] names = Configuration.getNames(PAR_DYN);
-	dynamics = new Dynamics[names.length];
-	dynSchedules = new Scheduler[names.length];
-	for (int i = 0; i < names.length; ++i) {
-		dynamics[i] = (Dynamics) Configuration.getInstance(names[i]);
-		dynSchedules[i] = new Scheduler(names[i]);
-	}
-	System.err.println("Simulator: loaded modifiers " + Arrays.asList(names));
-}
-
-//--------------------------------------------------------------------
-protected static void runInitializers()
-{
-	Object[] inits = Configuration.getInstanceArray(PAR_INIT);
-
-	for(int i=0; i<inits.length; ++i)
-	{
-		System.err.println(
-		"- Running initializer " + i + ": " + inits[i].getClass());
-		((Dynamics)inits[i]).modify();
-	}
-}
-
-// --------------------------------------------------------------------
-private static void performSimulation(int cycles, boolean shuffle)
-{
-	// initialization
-	System.err.println("Simulator: running initializers");
-	CommonState.setT(0); // needed here
-	runInitializers();
-	// main cycle
-	System.err.println("Simulator: starting simulation");
-	CommonState.setT(0); // needed here
-	for(int i=0; i<cycles; ++i)
-	{
-		CommonState.setT(i);
-		// dynamism
-		for (int j = 0; j < dynamics.length; ++j) {
-			if (dynSchedules[j].active(i))
-				dynamics[j].modify();
-		}
-		// analizer
-		boolean stop = false;
-		for (int j = 0; j < observers.length; ++j) {
-			if (obsSchedules[j].active(i))
-				stop = stop || observers[j].analyze();
-		}
-		if (stop)
-			break;
-		// do one round
-		nextRound(shuffle);
-		System.err.println("Simulator: cycle " + i + " done");
-	}
-	// analysis after the simulation
-	for (int j = 0; j < observers.length; ++j) {
-		if (obsSchedules[j].fin())
-			observers[j].analyze();
-	}
-}
-
-// --------------------------------------------------------------------
-protected static void nextRound(boolean shuffle)
-{
-	if (shuffle) {
-		Network.shuffle();
-	}
-	for (int j = 0; j < Network.size(); ++j) {
-		Node node = Network.get(j);
-		CommonState.setNode(node);
-		int len = node.protocolSize();
-		// XXX maybe should use different shuffle for each protocol?
-		// (instead of running all on one node at the same time?)
-		for (int k = 0; k < len; ++k) {
-			CommonState.setPid(k);
-			Protocol protocol = node.getProtocol(k);
-			if (!idle[k])
-				((CDProtocol) protocol).nextCycle(node, k);
-		}
 	}
 }
 

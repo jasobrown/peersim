@@ -65,7 +65,7 @@ private final String file;
 
 public WireFromFile(String prefix) {
 
-	protocolID = Configuration.getInt(prefix+"."+PAR_PROT);
+	protocolID = Configuration.getPid(prefix+"."+PAR_PROT);
 	file = Configuration.getString(prefix+"."+PAR_FILE);
 }
 

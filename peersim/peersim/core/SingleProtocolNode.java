@@ -31,11 +31,6 @@ implements Protocol, Node, Linkable
 	// Constants
 	//////////////////////////////////////////////////////////////////////
 
-	/** 
-	 * Prefix of the parameters that defines protocols.
-	 */
-	public static final String PAR_PROT = "protocol";
-
 	public static final int DEFAULT_INITIAL_CAPACITY=10;
 
 	public static final String PAR_INITCAP = "capacity";

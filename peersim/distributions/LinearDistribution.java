@@ -81,7 +81,7 @@ public LinearDistribution(String prefix)
 {
 	max = Configuration.getDouble(prefix+"."+PAR_MAX, Network.size()-1);
 	min = Configuration.getDouble(prefix+"."+PAR_MIN,-max);
-	protocolID = Configuration.getInt(prefix+"."+PAR_PROTID);
+	protocolID = Configuration.getPid(prefix+"."+PAR_PROTID);
 }
 
 //--------------------------------------------------------------------------

@@ -79,7 +79,7 @@ public class AverageObserver implements Observer
 	{
 		this.name = name;
 		accuracy = Configuration.getDouble(name + "." + PAR_ACCURACY, -1);
-		pid = Configuration.getInt(name + "." + PAR_PROT);
+		pid = Configuration.getPid(name + "." + PAR_PROT);
 	}
 
 	////////////////////////////////////////////////////////////////////////////

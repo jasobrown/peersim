@@ -32,6 +32,11 @@ extends RuntimeException
 		super("Parameter \"" + name + "\" not found");
 	}
 
+	public MissingParameterException(String name, String motivation)
+	{
+		super("Parameter \"" + name + "\" not found" + motivation);
+	}
+
 	public String getMessage() {
 
 		return super.getMessage()+" at "+

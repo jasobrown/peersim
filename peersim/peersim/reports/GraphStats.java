@@ -86,7 +86,7 @@ private final GraphAlgorithms ga = new GraphAlgorithms();
 public GraphStats(String name) {
 
 	this.name = name;
-	protocolID = Configuration.getInt(name+"."+PAR_PROT);
+	protocolID = Configuration.getPid(name+"."+PAR_PROT);
 	nl = Configuration.getInt(name+"."+PAR_NL,0);
 	nc = Configuration.getInt(name+"."+PAR_NC,0);
 	dir = Configuration.contains(name+"."+PAR_DIR);

@@ -64,7 +64,7 @@ public class InetInitializer implements peersim.dynamics.Dynamics {
     /** Creates a new instance of HotInitializer */
     public InetInitializer(String prefix) {
         // super(prefix);
-        pid = Configuration.getInt(prefix+"."+PAR_PROT);
+        pid = Configuration.getPid(prefix+"."+PAR_PROT);
         d = Configuration.getInt(prefix+"."+PAR_OUTDEGREE);
         alfa = Configuration.getDouble(prefix+"."+PAR_ALFA);
         

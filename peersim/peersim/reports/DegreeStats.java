@@ -90,7 +90,7 @@ private final String method;
 public DegreeStats(String name) {
 
 	this.name = name;
-	protocolID = Configuration.getInt(name+"."+PAR_PROT);
+	protocolID = Configuration.getPid(name+"."+PAR_PROT);
 	n = Configuration.getInt(name+"."+PAR_N,-1);
 	dir = Configuration.contains(name+"."+PAR_DIR);
 	trace = Configuration.contains(name+"."+PAR_TRACE);

@@ -77,7 +77,7 @@ private final double beta;
 
 public WireWS(String prefix) {
 
-	pid = Configuration.getInt(prefix+"."+PAR_PROT);
+	pid = Configuration.getPid(prefix+"."+PAR_PROT);
 	degree = Configuration.getInt(prefix+"."+PAR_DEGREE);
 	beta = Configuration.getDouble(prefix+"."+PAR_BETA);
 }

@@ -56,7 +56,7 @@ private Node center=null;
 
 public WireStar(String prefix) {
 
-	protocolID = Configuration.getInt(prefix+"."+PAR_PROT);
+	protocolID = Configuration.getPid(prefix+"."+PAR_PROT);
 }
 
 

@@ -79,7 +79,7 @@ public UniformDistribution(String prefix)
 {
 	max = Configuration.getDouble(prefix+"."+PAR_MAX);
 	min = Configuration.getDouble(prefix+"."+PAR_MIN,-max);
-	pid = Configuration.getInt(prefix+"."+PAR_PROTID);
+	pid = Configuration.getPid(prefix+"."+PAR_PROTID);
 }
 
 //--------------------------------------------------------------------------

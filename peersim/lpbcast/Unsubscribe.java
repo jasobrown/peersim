@@ -59,7 +59,7 @@ public Unsubscribe( String prefix ) {
 	if( add > 0 )
 		System.err.println("Lpbcast.Unsubscribe: not supposed to be"+
 			" used for growing networks");
-	protocolID = Configuration.getInt(prefix+"."+PAR_PROT);
+	protocolID = Configuration.getPid(prefix+"."+PAR_PROT);
 }
 
 

@@ -80,7 +80,7 @@ private final int[] b;
 public BallExpansion(String name) {
 
 	this.name = name;
-	protocolID = Configuration.getInt(name+"."+PAR_PROT);
+	protocolID = Configuration.getPid(name+"."+PAR_PROT);
 	maxd = Configuration.getInt(name+"."+PAR_MAXD,10);
 	n = Configuration.getInt(name+"."+PAR_N,1000);
 	undir = Configuration.contains(name+"."+PAR_UNDIR);

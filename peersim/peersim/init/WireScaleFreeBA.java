@@ -45,7 +45,7 @@ implements Initializer
 	 * This config property represents the number of edges added to each new
 	 * node (apart from those forming the initial network).
 	 */
-	public static final String PAR_EDGES = "edges";
+	public static final String PAR_EDGES = "degree";
 
 
 	////////////////////////////////////////////////////////////////////////////

@@ -44,9 +44,5 @@ public boolean analyze() {
 	return false;
 }
 
-// ---------------------------------------------------------------------
-
-public void finalAnalyze() { analyze(); }
-
 }
 

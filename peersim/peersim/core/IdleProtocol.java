@@ -123,4 +123,7 @@ public String toString() {
 	}
 	return buffer.append("]").toString();
 }
+
+public void onKill() { neighbors=null; }
+
 }

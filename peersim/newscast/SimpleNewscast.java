@@ -30,7 +30,6 @@ import peersim.cdsim.*;
  */
 public class SimpleNewscast implements CDProtocol, Linkable {
 
-
 // =============== static fields =======================================
 // =====================================================================
 
@@ -322,6 +321,10 @@ public boolean contains(Node n)
 	}
 	return false;
 }
+
+// --------------------------------------------------------------------
+
+public void onKill() { cache=null; tstamps=null; }
 
 
 // ===================== CDProtocol implementations ===================

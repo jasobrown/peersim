@@ -33,7 +33,7 @@ package peersim.core;
 * where this interface is used. Therefore it would only put an unnecessary
 * burden on implementors.
 */
-public interface Linkable {
+public interface Linkable extends Cleanable {
  
 
 	/**

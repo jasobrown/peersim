@@ -87,6 +87,10 @@ public void pack() {}
 
 // --------------------------------------------------------------------
 
+public void onKill() {}
+
+// --------------------------------------------------------------------
+
 public String toString() {
 
 	return degree()+" [all the nodes of the overlay network]";

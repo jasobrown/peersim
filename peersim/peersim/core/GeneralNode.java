@@ -100,10 +100,12 @@ public void setFailState(int failState) {
 			else failstate=OK;
 			break;
 		case DEAD:
-			// XXX to be decided if we need next line or not
-			// protocol = null;
+			//protocol = null;
 			index = -1;
 			failstate = DEAD;
+			for(int i=0;i<protocol.length;++i)
+				if(protocol[i] instanceof Cleanable)
+					((Cleanable)protocol[i]).onKill();
 			break;
 		case DOWN:
 			failstate = DOWN;

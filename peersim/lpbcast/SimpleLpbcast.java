@@ -320,6 +320,16 @@ public boolean contains(Node n) {
 	return ( view == null ? subs.contains(n) : view.contains(n) );
 }
 
+// --------------------------------------------------------------------
+
+public void onKill() {
+
+	view = null;
+	subs = null;
+	unSubs = null;
+	unSubsDates = null;
+}
+
 
 // ===================== CDProtocol implementations ===================
 // ====================================================================

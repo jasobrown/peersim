@@ -245,6 +245,10 @@ public void pack()
   
 //------------------------------------------------------------------
 
+public void onKill() { neighbors=null; }
+
+//------------------------------------------------------------------
+
 public String toString() {
 	
 	StringBuffer buffer = new StringBuffer();

@@ -413,6 +413,16 @@ public boolean contains(Node node) {
 	return outView.contains(node);
 }
 
+// --------------------------------------------------------------------
+
+public void onKill() {
+	
+	inView=null;
+	inViewDates=null;
+	outView=null;
+	outViewDates=null;
+}
+
 
 // ===================== CDProtocol implementations ===================
 // ====================================================================

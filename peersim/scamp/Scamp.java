@@ -108,7 +108,7 @@ public Scamp(String n) {
 		outViewDates = new ArrayList();
 		inViewDates = new ArrayList();
 	}
-	birthDate = CommonState.getT();
+	birthDate = CommonState.getCycle();
 }
 
 // ---------------------------------------------------------------------
@@ -126,7 +126,7 @@ public Object clone() throws CloneNotSupportedException {
 		scamp.outViewDates = (ArrayList)outViewDates.clone();
 	if( inViewDates != null )
 		scamp.inViewDates = (ArrayList)inViewDates.clone();
-	scamp.birthDate = CommonState.getT();
+	scamp.birthDate = CommonState.getCycle();
 	return scamp;
 }
 
@@ -342,7 +342,7 @@ private boolean addInNeighbor(Node node) {
 	{
 		inView.add( node );
 		if( inViewDates != null )
-			inViewDates.add(CommonState.getTimeObj());
+			inViewDates.add(CommonState.getCycleObj());
 		return true;
 	}
 	else
@@ -353,7 +353,7 @@ private boolean addInNeighbor(Node node) {
 			int id = inView.indexOf(node);
 			inView.remove(id);
 			inViewDates.remove(id);
-			inViewDates.add(CommonState.getTimeObj());
+			inViewDates.add(CommonState.getCycleObj());
 			inView.add( node );
 		}
 		return false; // false's ok though dates might've been changed
@@ -384,7 +384,7 @@ public boolean addNeighbor(Node node) {
 	{
 		outView.add( node );
 		if( outViewDates != null )
-			outViewDates.add(CommonState.getTimeObj());
+			outViewDates.add(CommonState.getCycleObj());
 		return true;
 	}
 	else
@@ -395,7 +395,7 @@ public boolean addNeighbor(Node node) {
 			int id = outView.indexOf(node);
 			outView.remove(id);
 			outViewDates.remove(id);
-			outViewDates.add(CommonState.getTimeObj());
+			outViewDates.add(CommonState.getCycleObj());
 			outView.add( node );
 		}
 		return false; // false's ok though dates might've been changed
@@ -425,8 +425,8 @@ public void nextCycle( Node thisNode, int protocolID ){
 	// lease (re-subscription)
 	if( outViewDates != null )
 	{
-		if((CommonState.getT()-birthDate)%Scamp.leaseTimeout == 0 &&
-			degree() > 0 && CommonState.getT() > birthDate )
+		if((CommonState.getCycle()-birthDate)%Scamp.leaseTimeout == 0 &&
+			degree() > 0 && CommonState.getCycle() > birthDate )
 		{	
 			Scamp.subscribe(
 				getNeighbor(CommonRandom.r.nextInt(degree())),
@@ -438,7 +438,7 @@ public void nextCycle( Node thisNode, int protocolID ){
 		// entries are always ordered in increasing time. We remove
 		// the first i elements which are expired from both views
 		int i=0;
-		while( i<degree() && CommonState.getT() - 
+		while( i<degree() && CommonState.getCycle() - 
 				((Integer)outViewDates.get(i)).intValue() >= 
 			Scamp.leaseTimeout ) ++i;
 		if( i > 0 )
@@ -447,7 +447,7 @@ public void nextCycle( Node thisNode, int protocolID ){
 			outViewDates.subList(0,i).clear();
 		}
 		i = 0;
-		while( i<inView.size() && CommonState.getT() - 
+		while( i<inView.size() && CommonState.getCycle() - 
 				((Integer)inViewDates.get(i)).intValue() >= 
 			Scamp.leaseTimeout ) ++i;
 		if( i > 0 )
@@ -462,8 +462,8 @@ public void nextCycle( Node thisNode, int protocolID ){
 	// the winner, it has to be fixed.
 	if( outViewDates != null )
 	{
-		if((CommonState.getT()-birthDate)%Scamp.leaseTimeout == 0 &&
-			degree() > 0 && CommonState.getT() > birthDate )
+		if((CommonState.getCycle()-birthDate)%Scamp.leaseTimeout == 0 &&
+			degree() > 0 && CommonState.getCycle() > birthDate )
 		{	
 			Scamp.subscribe(
 				getNeighbor(CommonRandom.r.nextInt(degree())),

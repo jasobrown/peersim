@@ -93,9 +93,9 @@ try {
 	if( baseName != null )
 	{
 		fos = new FileOutputStream(
-			baseName+CommonState.getT()+".graph");
+			baseName+CommonState.getTime()+".graph");
 		System.out.println("writing to file "+
-			baseName+CommonState.getT()+".graph");
+			baseName+CommonState.getTime()+".graph");
 		pstr = new PrintStream(fos);
 	}
 	else	System.out.println();

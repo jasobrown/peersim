@@ -97,7 +97,7 @@ public void send(Node src, Node dest, Object msg, int pid)
 	E2ETransport receiver = (E2ETransport) dest.getProtocol(tid);
 	int latency =
 	   E2ENetwork.getLatency(sender.router, receiver.router) + local*2;
-	EventHandler.add(latency, msg, dest, pid);
+	EDSimulator.add(latency, msg, dest, pid);
 }
 
 //---------------------------------------------------------------------

@@ -52,6 +52,13 @@ public static final String PAR_DEGREE = "degree";
 public static final String PAR_UNDIR = "undirected";
 
 /**
+ * If this parameter is defined, after the link insertion phase, method
+ * pack() is invoked on the initialized protocol. Default to false.
+ */
+public static final String PAR_PACK = "pack";
+
+
+/**
 * The protocol we want to wire
 */
 private final int protocolID;
@@ -60,6 +67,9 @@ private final int protocolID;
 * The degree of the regular graph
 */
 private final int degree;
+
+/** If true, method pack() is invoked on the initialized protocol */
+private final boolean pack;
 
 private final boolean undirected;
 
@@ -72,6 +82,7 @@ public WireRegularRandom(String prefix) {
 
 	protocolID = Configuration.getPid(prefix+"."+PAR_PROT);
 	degree = Configuration.getInt(prefix+"."+PAR_DEGREE);
+	pack = Configuration.contains(prefix+"."+PAR_PACK);
 	undirected = Configuration.contains(prefix+"."+PAR_UNDIR);
 }
 
@@ -87,6 +98,13 @@ public void modify() {
 		new OverlayGraph(protocolID,!undirected), 
 		degree,
 		CommonRandom.r );
+	if (pack) {
+		int size = Network.size();
+		for (int i=0; i < size; i++) {
+			Linkable link = (Linkable) Network.get(i).getProtocol(protocolID);
+			link.pack();
+		}
+	}
 }
 
 // -------------------------------------------------------------------

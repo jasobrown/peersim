@@ -84,7 +84,13 @@ static {
 */
 public static int getLinkable(int pid) {
 
-	return links[pid];
+	if (links[pid] < 0) {
+		String[] names = Configuration.getNames(Configuration.PAR_PROT);		
+		throw new IllegalParameterException(names[pid], "Protocol " + pid + 
+				" has no linkable parameter");
+	}
+				
+		return links[pid];
 }
   
 

@@ -20,9 +20,8 @@ package aggregation.multiple;
 
 import peersim.core.*;
 import peersim.reports.*;
-import peersim.util.Log;
-import peersim.config.*;
 import peersim.util.*;
+import peersim.config.*;
 
 /**
  * Print statistics for a collection of concurrent aggregation computations.
@@ -48,7 +47,7 @@ public class MultipleCountingObserver  implements Observer
 /** 
  * String name of the parameter used to select the protocol to operate on
  */
-public static final String PAR_PROTID = "protocolID";
+public static final String PAR_PROTOCOL = "protocol";
 
 /** 
  * String name of the parameter used to determine the accuracy
@@ -69,7 +68,7 @@ public static final String PAR_STEP = "epoch";
 /**
  * String name of the parameter used to describe whether this observer
  * must print the status of the system at every cycle or at every epoch.
- * If this parameter is presente, the observer will print the status
+ * If this parameter is present, the observer will print the status
  * once every epoch.
  */
 public static final String PAR_PARTIAL = "partial";
@@ -110,7 +109,7 @@ public MultipleCountingObserver(String name)
 	this.name = name;
 	partial = Configuration.contains(name+"."+PAR_PARTIAL);
   accuracy = Configuration.getDouble(name+"."+PAR_ACCURACY,-1);
-  pid = Configuration.getPid(name+"."+PAR_PROTID);
+  pid = Configuration.getPid(name+"."+PAR_PROTOCOL);
   epoch = Configuration.getInt(name+"."+PAR_STEP, Integer.MAX_VALUE);
 }
 
@@ -121,7 +120,7 @@ public MultipleCountingObserver(String name)
 // Comment inherited from interface
 public boolean analyze()
 {
-	int time = peersim.core.CommonState.getT();
+	long time = peersim.core.CommonState.getTime();
 	if ((time % epoch) == 0) {
 		initvar = -1.0;
 	}
@@ -133,7 +132,7 @@ public boolean analyze()
 	/* Compute max, min, average */
 	for (int i=0; i < len; i++) {
 		Node node = Network.get(i);
-		MultipleAggregation protocol = (MultipleAggregation) node.getProtocol(pid);
+		MultipleValues protocol = (MultipleValues) node.getProtocol(pid);
 
 		if (!protocol.isNew()) {
 			double sum = 0;

@@ -89,7 +89,7 @@ public class AverageObserver implements Observer
 	// Comment inherited from interface
 	public boolean analyze()
 	{
-		int time = peersim.core.CommonState.getT();
+		long time = peersim.core.CommonState.getTime();
 		
 		/* Initialization */
 		final int len = Network.size();

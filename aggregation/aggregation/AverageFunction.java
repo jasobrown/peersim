@@ -18,8 +18,9 @@
 
 package aggregation;
 
-import peersim.util.*;
 import peersim.core.*;
+import peersim.util.*;
+import peersim.config.*;
 
 /**
  * This class implements the average aggregation functions through an
@@ -38,16 +39,13 @@ extends AbstractFunction
 //--------------------------------------------------------------------------
 
 /**
- * Invokes the parent class' constructor to set up the relation between 
- * this protocol and the Linkable protocol used for communication.
+ * Invokes the parent class' constructor.
  * 
  * @param prefix string prefix for config properties
- * @param obj configuration object, containing the protocol identifier 
- *  for this protocol.
  */
-public AverageFunction(String prefix, Object obj) 
+public AverageFunction(String prefix) 
 { 
-	super(prefix, obj); 
+	super(prefix); 
 }
 
 //--------------------------------------------------------------------------
@@ -70,17 +68,17 @@ public Object clone() throws CloneNotSupportedException
  */
 public void nextCycle( Node node, int pid )
 {
-	int linkableID = Protocols.getLink(pid);
-	Linkable linkable = (Linkable) node.getProtocol( linkableID );
+	Linkable linkable = 
+		(Linkable) node.getProtocol( FastConfig.getLinkable(pid) );
 	if (linkable.degree() > 0)
 	{
 		Node peer = linkable.getNeighbor(
 				CommonRandom.r.nextInt(linkable.degree()));
 		
-		// XXX quick and dirty handling of failure
+		// XXX quick and dirty handling of failures
 		if (peer.getFailState()!=Fallible.OK) return;
 		
-		AverageFunction neighbor = (AverageFunction)peer.getProtocol(pid);
+		AverageFunction neighbor = (AverageFunction) peer.getProtocol(pid);
 		double mean = (this.value + neighbor.value) / 2;
 		this.value = mean;
 		neighbor.value = mean;

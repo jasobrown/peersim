@@ -57,7 +57,7 @@ public static final String PAR_PEAKS = "peaks";
 /** 
  * String name of the parameter that defines the protocol to initialize.
  */
-public static final String PAR_PROTID = "protocolID";
+public static final String PAR_PROTOCOL = "protocol";
 
 
 //--------------------------------------------------------------------------
@@ -84,7 +84,7 @@ private final int pid;
 public MultiplePeakDistribution(String prefix)
 {
 	value = Configuration.getDouble(prefix+"."+PAR_VALUE);
-	pid = Configuration.getPid(prefix+"."+PAR_PROTID);
+	pid = Configuration.getPid(prefix+"."+PAR_PROTOCOL);
 	peaks = Configuration.getDouble(prefix+"."+PAR_PEAKS, 1);
 }
 
@@ -97,7 +97,7 @@ public MultiplePeakDistribution(String prefix)
 public void modify() 
 {
 	/* Obtain the number of concurrent instances of aggregation */
-  int nvalues = ((MultipleAggregation) Network.get(0).getProtocol(pid)
+  int nvalues = ((MultipleValues) Network.get(0).getProtocol(pid)
 	  ).size();
 
 	/* Compute the number of peaks and values at peaks */
@@ -107,11 +107,11 @@ public void modify()
 	/* Set the values */
 	for (int j=0; j<nvalues; j++) {
 		for (int i=0; i < pn; i++) {
-			((MultipleAggregation) Network.get(i).getProtocol(pid)
+			((MultipleValues) Network.get(i).getProtocol(pid)
 				).setValue(j, vl);
 		}
 		for (int i=pn; i < Network.size()-pn; i++) {
-			((MultipleAggregation) Network.get(i).getProtocol(pid)
+			((MultipleValues) Network.get(i).getProtocol(pid)
 				).setValue(j, 0.0);
 		}
 	}

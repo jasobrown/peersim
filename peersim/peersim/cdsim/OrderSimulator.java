@@ -175,7 +175,10 @@ public static void nextExperiment()
 	System.err.println("OrderSimulator: resetting");
 	Network.reset();
 	System.err.println("OrderSimulator: running initializers");
-	CommonState.setT(0); // needed here
+	// Initializers are run at 
+	// cycle 0 (cycle-driven) / time 0 (event-driven)
+	CommonState.setCycle(0);
+	CommonState.setTime(0);
 	CommonState.setPhase(CommonState.PRE_DYNAMICS);
 	runInitializers();
 	
@@ -254,7 +257,11 @@ public static void nextExperiment()
 	boolean stop = false;
 	for(int i=0; i<cycles && !stop; ++i) {
 
-		CommonState.setT(i);
+		// In cycle-driven simulations, the concept of "time" corresponds
+		// the concept of cycle; so both the cycle and the time are set
+		// to the equal value.
+		CommonState.setCycle(i);
+		CommonState.setTime(i);
 
 		// Shuffling pre-cycle
 		if( shuffle )

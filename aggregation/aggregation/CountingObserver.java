@@ -43,7 +43,7 @@ public class CountingObserver  implements Observer
 /** 
  * String name of the parameter used to select the protocol to operate on
  */
-public static final String PAR_PROTID = "protocolID";
+public static final String PAR_PROTID = "protocol";
 
 /** 
  * String name of the parameter used to determine the accuracy
@@ -116,7 +116,7 @@ public CountingObserver(String name)
 // Comment inherited from interface
 public boolean analyze()
 {
-	int time = peersim.core.CommonState.getT();
+	long time = peersim.core.CommonState.getTime();
 	if ((time % epoch) == 0) {
 		initvar = -1.0;
 	}
@@ -128,7 +128,7 @@ public boolean analyze()
 	/* Compute max, min, average */
 	for (int i=0; i < len; i++) {
 		Node node = Network.get(i);
-		Aggregation protocol = (Aggregation) node.getProtocol(pid);
+		SingleValue protocol = (SingleValue) node.getProtocol(pid);
 
 		try {
 			stats.add(protocol.getValue());

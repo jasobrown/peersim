@@ -39,6 +39,31 @@ implements MaliciousProtocol
 {
 
 //--------------------------------------------------------------------------
+//Protocol class data
+//--------------------------------------------------------------------------
+
+private class ProtocolData
+{
+
+	/** This protocol identifier */
+	int pid;
+	
+	/** History identifier */
+	int hid;
+
+	/**
+	 * Number of exchanges started by a malicious node.
+	 */
+	private int exchanges;
+
+	/**
+	 * Fixed value exchanged by a malicious node.
+	 */
+	private float fixed;
+
+}
+	
+//--------------------------------------------------------------------------
 // Constants
 //--------------------------------------------------------------------------
 
@@ -59,25 +84,15 @@ public static final String PAR_FIXED = "value";
  */
 public static final String PAR_HID = "historyID";
 
-/** This is not really nice, because we are extending a protocol that
- * is already using protocol 0... */
-public static final int POS_HISTORY = 1;
-
 
 //--------------------------------------------------------------------------
 // Static fields
 //--------------------------------------------------------------------------
 
 /**
- * Number of exchanges started by a malicious node.
+ * This protocol data
  */
-private int exchanges;
-
-/**
- * Fixed value exchanged by a malicious node.
- */
-private float fixed;
-
+private ProtocolData p;
 
 //--------------------------------------------------------------------------
 // Constructor
@@ -87,14 +102,14 @@ private float fixed;
  * @param prefix
  * @param obj
  */
-public MaliciousSecureAverageAP(String prefix, Object obj)
+public MaliciousSecureAverageAP(String prefix)
 {
-	super(prefix, obj);
-	int pid = ((Integer) obj).intValue();
-	int hid = Configuration.getPid(prefix+"."+PAR_HID);
-	Protocols.setLink(pid, POS_HISTORY, hid);
-	exchanges = Configuration.getInt(prefix+"."+PAR_EXCHANGES, 1);
-	fixed = (float) Configuration.getDouble(prefix+"."+PAR_FIXED, 0);
+	super(prefix);
+	p = new ProtocolData();
+	p.pid = CommonState.getPid();
+	p.hid = Configuration.getPid(prefix+"."+PAR_HID);
+	p.exchanges = Configuration.getInt(prefix+"."+PAR_EXCHANGES, 1);
+	p.fixed = (float) Configuration.getDouble(prefix+"."+PAR_FIXED, 0);
 }
 
 public Object clone() throws CloneNotSupportedException
@@ -111,7 +126,7 @@ public Object clone() throws CloneNotSupportedException
 // Comment inherited from interface
 public void nextCycle(Node node, int pid)
 {
-	for (int i=0; i < exchanges; i++) {
+	for (int i=0; i < p.exchanges; i++) {
 		
 		/* Select a non malicious neighbor */
 		Node receiver = selectNeighbor(node, pid);
@@ -120,14 +135,14 @@ public void nextCycle(Node node, int pid)
 		 * sure whether the message has been delivered 
 		 */
 		History history = 
-			(History) node.getProtocol(Protocols.getLink(pid, POS_HISTORY));
-		history.addInitiated(receiver, value, CommonState.getT());
+			(History) node.getProtocol(p.hid);
+		history.addInitiated(receiver, value, CommonState.getCycle());
 
 		if (canDeliverRequest(receiver)) {
 			/* Send request */
 			GeneralAggregation rdst = 
 			  (GeneralAggregation) receiver.getProtocol(pid);
-			rdst.deliverRequest(node, receiver, fixed);
+			rdst.deliverRequest(node, receiver, p.fixed);
 		}
 	}
 }
@@ -138,9 +153,8 @@ public void nextCycle(Node node, int pid)
 public void deliverRequest(Node initiator, Node receiver, float rvalue)
 {
 	/* Update history */
-	int hid = Protocols.getLink(CommonState.getPid(), POS_HISTORY);
-	History history = (History) receiver.getProtocol(hid);
-	history.addReceived(initiator, rvalue, CommonState.getT());
+	History history = (History) receiver.getProtocol(p.hid);
+	history.addReceived(initiator, rvalue, CommonState.getCycle());
 
 	/* Update the value */ // XXX Is this actually needed?
 	float lvalue = this.value;
@@ -149,8 +163,8 @@ public void deliverRequest(Node initiator, Node receiver, float rvalue)
 	/* Deliver the response, if possible */
   if (canDeliverResponse(initiator)) { 
 		GeneralAggregation rsrc = 
-			(GeneralAggregation) initiator.getProtocol(CommonState.getPid());
-    rsrc.deliverResponse(initiator, receiver, fixed);
+			(GeneralAggregation) initiator.getProtocol(p.pid);
+    rsrc.deliverResponse(initiator, receiver, p.fixed);
 	}
 	
 }

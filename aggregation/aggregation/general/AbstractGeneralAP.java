@@ -39,14 +39,30 @@ implements GeneralAggregation, CDProtocol
 {
 
 //--------------------------------------------------------------------------
-// Constants
+// Protocol data helper class
 //--------------------------------------------------------------------------
+	
+public class ProtocolData
+{
+	
+/**
+ * Probability of symmetric communication failure.  
+ */
+protected double symProb;
 
 /**
- * String name of the parameter used to select the linkable protocol 
- * used to obtain information about neighbors.
+ * Probability of asymmetric communicaton failure. 
  */
-public static final String PAR_CONN = "linkableID";
+protected double asymProb;
+
+/** Linkable identifier */
+protected int lid;
+
+}
+	
+//--------------------------------------------------------------------------
+// Constants
+//--------------------------------------------------------------------------
 
 /** 
  * String name of the parameter containing the probability of 
@@ -68,31 +84,6 @@ private final static String PAR_SYM_FAILUREPROB = "failure.symmetric";
  */
 private final static String PAR_ASYM_FAILUREPROB = "failure.asymmetric";
 
-/** 
- * The position of the linkable protocol in the array of protocols used 
- * by this one.
- */
-public static final int POS_LINKABLE = 0;
-
-
-//--------------------------------------------------------------------------
-// Static fields
-//--------------------------------------------------------------------------
-
-/**
- * Symmetric failure probability.
- * Temporarily, this implementation is based on the assumption that
- * multiple instances of this protocol share the same probabilities.
- */
-private static double symProb;
-
-/**
- * Asymmetric failure probability.
- * Temporarily, this implementation is based on the assumption that
- * multiple instances of this protocol share the same probabilities.
- */
-private static double asymProb;
-
 
 //--------------------------------------------------------------------------
 // Fields
@@ -104,6 +95,8 @@ protected float value;
 /** True if the node has just been created */
 protected boolean isNew;
 
+protected AbstractGeneralAP.ProtocolData p;
+
 //--------------------------------------------------------------------------
 // Initialization
 //--------------------------------------------------------------------------
@@ -112,14 +105,13 @@ protected boolean isNew;
  * Create a new protocol instance. The instance is considered
  * new, so it cannot partecipate in the aggregation protocol.
  */
-public AbstractGeneralAP(String prefix, Object obj)
+public AbstractGeneralAP(String prefix)
 {
 	// One-time configuration
-	int pid = ((Integer) obj).intValue();
-	int link = Configuration.getPid(prefix + "." + PAR_CONN);
-	Protocols.setLink(pid, POS_LINKABLE, link);
-	symProb = Configuration.getDouble(prefix + "." + PAR_SYM_FAILUREPROB, 0.0);
-	asymProb = Configuration.getDouble(prefix + "." + PAR_ASYM_FAILUREPROB, 0.0);
+  p = new ProtocolData();
+	p.symProb = Configuration.getDouble(prefix + "." + PAR_SYM_FAILUREPROB, 0.0);
+	p.asymProb = Configuration.getDouble(prefix + "." + PAR_ASYM_FAILUREPROB, 0.0);
+	p.lid = FastConfig.getLinkable(CommonState.getPid());
 	
 	// Instance fields
 	isNew = true;
@@ -186,8 +178,8 @@ protected boolean canDeliverRequest(Node node)
 {
 	if (node.getFailState() == Fallible.DEAD)
 	  return false;
-	if ((symProb > 0 && CommonRandom.r.nextDouble() < symProb) ||
-	    (asymProb > 0 && CommonRandom.r.nextDouble() < asymProb))
+	if ((p.symProb > 0 && CommonRandom.r.nextDouble() < p.symProb) ||
+	    (p.asymProb > 0 && CommonRandom.r.nextDouble() < p.asymProb))
 	  return false;  	
 	return true;
 }
@@ -202,7 +194,7 @@ protected boolean canDeliverResponse(Node node)
 {
 	if (node.getFailState() == Fallible.DEAD)
 		return false;
-	if (asymProb > 0 && CommonRandom.r.nextDouble() < asymProb)
+	if (p.asymProb > 0 && CommonRandom.r.nextDouble() < p.asymProb)
 		return false;  	
 	return true;
 }

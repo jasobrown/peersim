@@ -1,3 +1,15 @@
+AM 25/11/2005
+- Changed the implementation of the Event-driven simulator in order to
+  support 64 bits for time. Part of these bits (by default: 8) are used
+  to discriminate between events that occur at the same time.
+- Added getCycle and getTime methods to CommonState. getCycle() is just
+  new version of getT, which is now deprecated. getTime() returns the
+  current time in event-based simulations, and the current cycle in
+  cycle-based ones.
+- Modified all the peersim observers and dynamics that uses time, that
+  now use getTime instead of getCycle. In this way, they are compatible
+  with both ed and cd simulations.
+
 JM 17/11/2004
 - Small non-critical changes like docs, message texts, formatting, etc, plus
   changes step to cstep in DaemonProtocol to avoid conflict with scheduling

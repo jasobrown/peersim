@@ -18,8 +18,9 @@
 
 package aggregation;
 
-import peersim.util.*;
+import peersim.config.*;
 import peersim.core.*;
+import peersim.util.*;
 
 /**
  * This class implements the max/min aggregation functions through an
@@ -45,9 +46,9 @@ extends AbstractFunction
  * @param obj configuration object, containing the protocol identifier 
  *  for this protocol.
  */
-public MaxFunction(String prefix, Object obj)
+public MaxFunction(String prefix)
 {
-	super(prefix, obj);
+	super(prefix);
 }
 
 
@@ -61,8 +62,8 @@ public MaxFunction(String prefix, Object obj)
  */
 public void nextCycle( Node node, int pid)
 {
-	int lid = Protocols.getLink(pid);
-	Linkable linkable = (Linkable) node.getProtocol(lid);
+	Linkable linkable = 
+		(Linkable) node.getProtocol(FastConfig.getLinkable(pid));
 	if (linkable.degree() > 0)
 	{
 		Node peer =

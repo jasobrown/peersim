@@ -28,7 +28,7 @@ import peersim.core.*;
  *  @author Alberto Montresor
  *  @version $Revision$
  */
-public class Heap {
+class Heap {
 
 //--------------------------------------------------------------------------
 // Constants
@@ -49,7 +49,7 @@ private static final int SIZE = 65536;
 private Object[] events;
 
 /** Time componenent of the heap */
-private int[] times;
+private long[] times;
 
 /** Node component of the heap */
 private Node[] nodes;
@@ -81,7 +81,7 @@ public Heap() {
  */
 public Heap(int size) {
 	events = new Object[size];
-	times = new int[size];
+	times = new long[size];
 	nodes = new Node[size];
 	pids = new byte[size];
 }
@@ -108,7 +108,7 @@ public int size()
  * @param node the node at which the event has to be delivered
  * @param pid the protocol that handles the event
  */
-public void add(int time, Object event, Node node, byte pid) 
+public void add(long time, Object event, Node node, byte pid) 
 {
 	size++;
 	int pos = size;
@@ -163,7 +163,7 @@ public String toString()
 public class Event
 {
 	Object event;
-	int time;
+	long time;
 	Node node;
 	byte pid;
 }
@@ -178,13 +178,13 @@ public class Event
 private void minHeapify(int index) 
 {
 	// The time to be placed of the current node
-	int time = getTime(index);  
+	long time = getTime(index);  
 	// Left, right children of the current index
 	int l,r; 
 	// Their associated time
-	int lt, rt;
+	long lt, rt;
 	// The minimum time between val, lt, rt
-	int mintime;
+	long mintime;
 	// The index of the mininum time
 	int minindex = index; 
 	do {
@@ -220,7 +220,7 @@ private void swap(int i1, int i2) {
 	events[i1] = events[i2];
 	events[i2] = te;
 	
-	int tt = times[i1];
+	long tt = times[i1];
 	times[i1] = times[i2];
 	times[i2] = tt;
 	
@@ -238,7 +238,7 @@ private void swap(int i1, int i2) {
 /**
  * 
  */
-private int getTime(int index) {
+private long getTime(int index) {
 	/* Compute first and second index, and return the value */
 	index--;
 	return times[index];
@@ -249,7 +249,7 @@ private int getTime(int index) {
 /**
  * 
  */
-private void put(int index, int time, Object event, Node node, byte pid) {
+private void put(int index, long time, Object event, Node node, byte pid) {
 	
 	index--;
 	if (index >= events.length) {
@@ -273,7 +273,7 @@ private void doubleCapacity() {
 	Object[] te = new Object[newsize];
 	System.arraycopy(events, 0, te, 0, oldsize);
 	events = te;
-	int[] tt = new int[newsize];
+	long[] tt = new long[newsize];
 	System.arraycopy(times, 0, tt, 0, oldsize);
 	times = tt;
 	Node[] tn = new Node[newsize];
@@ -293,7 +293,7 @@ public static void main(String[] argc) {
 	Heap heap = new Heap();
 	int rep = 1000000;
 	int[] values1 = new int[rep];
-	int[] values2 = new int[rep];
+	long[] values2 = new long[rep];
 	for (int i = 0; i < rep; i++) {
 		values1[i] = random.nextInt(1000000000); 
 	}

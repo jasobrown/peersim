@@ -16,11 +16,13 @@
  *
  */
 
-package peersim.cdsim;
+package peersim;
 
 import java.io.*;
 import java.util.*;
+import peersim.cdsim.*;
 import peersim.config.*;
+import peersim.edsim.*;
 import peersim.util.*;
 
 /**
@@ -29,7 +31,7 @@ import peersim.util.*;
  * simulation running in a virtual machine. The simulation is highly
  * configurable.
  */
-public class RangeSimulator
+public class RangeSimulator extends Simulator
 {
 
 ////////////////////////////////////////////////////////////////////////////
@@ -69,7 +71,7 @@ public static final String PAR_EXPS = "simulation.experiments";
 /**
  * Main method of the system.
  */
-public static void main(String[] args) throws IOException
+public static void main(String[] args)
 {
 	// Check if there are no arguments or there is an explicit --help
 	// flag; if so, print the usage of the class
@@ -315,11 +317,32 @@ public static void doExperiments(ConfigProperties properties)
 			log.append(" ");
 		}
 		Log.setPrefix(log.toString());
-		System.err.println(log);
+		final int simid = getSimID();
+		System.err.print("Starting simulation " + log);
+		System.err.println(" invoking "+simName[simid]);
+		System.out.println("\n\n");
 
 		// Perform simulation
-		Simulator.nextExperiment();
+		if (simid == UNKNOWN) {
+			System.err.println(
+			    "Simulator: unable to identify configuration, exiting.");
+			return;
+		}
 		
+		// XXX could be done through reflection, but
+		// this is easier to read.
+		switch(simid) {
+			case CDORDSIM:
+				OrderSimulator.nextExperiment();
+				break;
+			case CDSIM:
+			     	peersim.cdsim.Simulator.nextExperiment();
+				break;
+			case EDSIM:
+				EDSimulator.nextExperiment();
+				break;
+	  }
+
 		// Increment values
 		nextValues(idx, values);
 

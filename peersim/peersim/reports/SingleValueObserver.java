@@ -97,7 +97,7 @@ public boolean analyze()
 	System.out.println(name+": "+stats);
 
 	/* Terminate if accuracy target is reached */
-	return (stats.getStD()<=accuracy && CommonState.getT()>0);
+	return (stats.getStD()<=accuracy && CommonState.getTime()>0);
 }
 
 }

@@ -23,7 +23,6 @@ import peersim.core.*;
 import peersim.edsim.*;
 import peersim.util.*;
 import peersim.transport.*;
-import aggregation.*;
 
 
 /**
@@ -32,17 +31,11 @@ import aggregation.*;
  * @author Alberto Montresor
  * @version $Revision$
  */
-public class EventAggregation implements Aggregation, EDProtocol
+public class EventAggregation implements SingleValue, EDProtocol
 {
 
 private static boolean DEBUG = false;
 	
-/**
- * String name of the parameter used to configure the identifier
- * of the linkable protocol.
- */	
-private static final String PAR_LINKABLE = "linkable";
-
 /**
  * String name of the parameter used to configure the identifier
  * of the transport protocol.
@@ -55,10 +48,10 @@ private static final String PAR_TRANSPORT = "transport";
 private static final String PAR_CLENGTH = "cyclelength";
 	
 /** Identifier of the linkable ID */
-private static int linkableID;
+private static int lid;
 
 /** Identifier of the transport ID */
-private static int transportID;
+private static int tid;
 	
 /** Length (in time units) of a cycle */
 private static int cyclelength;
@@ -79,8 +72,8 @@ private boolean initiated = false;
  */
 public EventAggregation(String prefix)
 {
-	linkableID = Configuration.getPid(prefix+"."+PAR_LINKABLE);
-	transportID = Configuration.getPid(prefix+"."+PAR_TRANSPORT);
+	lid = FastConfig.getLinkable(CommonState.getPid());
+	tid = Configuration.getPid(prefix+"."+PAR_TRANSPORT);
   cyclelength = Configuration.getInt(prefix+"."+PAR_CLENGTH);
 	initSchedule();
 }
@@ -99,7 +92,7 @@ private void initSchedule()
 	Node node = CommonState.getNode();
 	int delay = CommonRandom.r.nextInt(5000);
 	Message msg = new Message(true, node, this, cycle, 0);
-	EventHandler.add(delay, msg, node, CommonState.getPid());
+	EDSimulator.add(delay, msg, node, CommonState.getPid());
 }
 
 // Comment inherited from interface
@@ -117,28 +110,28 @@ public void processEvent(Node node, int pid, Object event)
 		cycle++;
 		
 		// Select a random neighbor
-		Linkable link = (Linkable) node.getProtocol(linkableID);
+		Linkable link = (Linkable) node.getProtocol(lid);
     if (link.degree() <= 0) { 
 			System.out.print(link.degree()+" ");
 			return;
 	  }
 		int r = CommonRandom.r.nextInt(link.degree());
 		remote = link.getNeighbor(r);
-		Transport trans = (Transport) node.getProtocol(transportID);
+		Transport trans = (Transport) node.getProtocol(tid);
 		
 		// Prepares message and sends it.
 		if (DEBUG && value > 0) {
-			System.out.println(node.getIndex() + ": Sent init msg " + CommonState.getT() + " " + value);
+			System.out.println(node.getIndex() + ": Sent init msg " + CommonState.getTime() + " " + value);
 		}
 
-		EventHandler.add(2000, null, node, pid);
+		EDSimulator.add(2000, null, node, pid);
 		
 		Message request = new Message(true, node, this, cycle, value);
 		trans.send(node, remote, request, pid);
 		initiated = true;
 
 		// Creates a new timer event (re-using the same message)
-		EventHandler.add(cyclelength, msg, node, pid);
+		EDSimulator.add(cyclelength, msg, node, pid);
 		
 	} else { // it's a real message
 	  
@@ -154,13 +147,13 @@ public void processEvent(Node node, int pid, Object event)
 			double rv = msg.value;
 			Node sender = msg.src;
 			msg.set(false, node, this, value);
-			Transport trans = (Transport) node.getProtocol(transportID);
+			Transport trans = (Transport) node.getProtocol(tid);
 			trans.send(node, sender, msg, pid);
 			double old = value;
 			value = (rv + value) / 2;
 
 			if (DEBUG && (value > 0 || msg.value > 0)) {
-				System.out.println(node.getIndex() + " at " + CommonState.getT() + 
+				System.out.println(node.getIndex() + " at " + CommonState.getTime() + 
 						": Received request msg from " + sender.getIndex() + " Recv value: " + 
 						rv + " Old value " + old + " new value " + value);
 			}
@@ -168,7 +161,7 @@ public void processEvent(Node node, int pid, Object event)
 		} else {
 			// Do some checkes 
 			if (DEBUG && (value > 0 || msg.value > 0)) {
-				System.out.println(node.getIndex() + " at " + CommonState.getT() + 
+				System.out.println(node.getIndex() + " at " + CommonState.getTime() + 
 						": Received response msg from " + msg.src.getIndex() + " Recv value: " + 
 						msg.value + " Old value " + value + " new value " + (msg.value + value) / 2);
 				System.out.println("msg.sender " + msg.src.getIndex() +

@@ -45,23 +45,18 @@ implements Observer
  * actually malicious, in order to collect statistics about false/true
  * positives and negatives.
  */
-public static final String PAR_PID = "protocolID";
+public static final String PAR_PID = "protocol";
 
 /** 
  * String name of the parameter used to select the blacklist protocol.
  */
-public static final String PAR_BLID = "blacklistID";
+public static final String PAR_BLID = "blacklist";
 
 
 //--------------------------------------------------------------------------
 // Static fields
 //--------------------------------------------------------------------------
 
-/** 
- * For each node, the number of nodes that suspect it. It is used a 
- * singleton array to avoid garbage collection. 
- */
-private static int[] nsuspects;
 
 
 //--------------------------------------------------------------------------
@@ -72,10 +67,16 @@ private static int[] nsuspects;
 private final String name;
 
 /** Identifier of the controlled protocol */
-private final int protocolID;
+private final int pid;
 
 /** Identifier of the blacklist protocol */
-private final int blacklistID;
+private final int blid;
+
+/** 
+ * For each node, the number of nodes that suspect it. 
+ */
+private int[] nsuspects;
+
 
 //--------------------------------------------------------------------------
 // Constructor
@@ -88,8 +89,8 @@ private final int blacklistID;
 public BlacklistObserver(String name)
 {
 	this.name = name;
-	protocolID = Configuration.getPid(name+"."+PAR_PID);
-	blacklistID = Configuration.getPid(name+"."+PAR_BLID);
+	pid = Configuration.getPid(name+"."+PAR_PID);
+	blid = Configuration.getPid(name+"."+PAR_BLID);
 }
 
 
@@ -118,7 +119,7 @@ public boolean analyze()
 	IncrementalStats nsize = new IncrementalStats();
 	for (int i=0; i < size; i++) {
 		Node node = Network.get(i);
-		Blacklist rp = (Blacklist) node.getProtocol(blacklistID);
+		Blacklist rp = (Blacklist) node.getProtocol(blid);
 		Iterator it = rp.iterator();
 		Set set = new HashSet();
 		int count = 0;
@@ -139,7 +140,7 @@ public boolean analyze()
 		while (it.hasNext()) {
 			Node suspect = (Node) it.next();
 			if (suspect != null) {
-				if (suspect.getProtocol(protocolID) instanceof MaliciousProtocol) {
+				if (suspect.getProtocol(pid) instanceof MaliciousProtocol) {
 					tp++;
 				} else {
 					fp++;
@@ -158,12 +159,12 @@ public boolean analyze()
 	for (int i=0; i < size; i++) {
 		Node node = Network.get(i);
 		if (nsuspects[i] > 0) {
-			if (node.getProtocol(protocolID) instanceof MaliciousProtocol) 
+			if (node.getProtocol(pid) instanceof MaliciousProtocol) 
 				tp++;
 			else 
 				fp++;
 		} else {
-			if (node.getProtocol(protocolID) instanceof MaliciousProtocol)
+			if (node.getProtocol(pid) instanceof MaliciousProtocol)
 				fn++;
 			else
 				tn++;

@@ -36,27 +36,42 @@ extends AbstractGeneralAP
 {
 
 //--------------------------------------------------------------------------
-// Constants
+//
+//--------------------------------------------------------------------------
+
+class SecureAverageData
+{
+	/** This protocol identifier */
+	int pid;
+	
+	/** History protocol identifier */
+	int hid;
+	
+	/** Blacklist protocol identifier */
+	int blid;
+	
+}
+	
+	
+//--------------------------------------------------------------------------
+// Parameter
 //--------------------------------------------------------------------------
 
 /** 
  * String name of the parameter used to identify the blacklist protocol.
  */
-public static final String PAR_BLID = "blacklistID";
-
-/** This is not really nice, because we are extending a protocol that
- * is already using protocol 0... */
-public static final int POS_BLACKLIST = 1;
+public static final String PAR_BLID = "blacklist";
 
 /** 
  * String name of the parameter used to identify the history protocol.
  */
-public static final String PAR_HID = "historyID";
+public static final String PAR_HID = "history";
 
-/** This is not really nice, because we are extending a protocol that
- * is already using protocol 0... */
-public static final int POS_HISTORY = 2;
+//--------------------------------------------------------------------------
+//Fields
+//--------------------------------------------------------------------------
 
+protected SecureAverageData sad;
 
 //--------------------------------------------------------------------------
 // Constructor
@@ -66,16 +81,22 @@ public static final int POS_HISTORY = 2;
  * @param prefix
  * @param obj
  */
-public SecureAverageAP(String prefix, Object obj)
+public SecureAverageAP(String prefix)
 {
-	super(prefix, obj);
-	int pid = ((Integer) obj).intValue();
-	int blacklistID = Configuration.getPid(prefix+"."+PAR_BLID);
-	Protocols.setLink(pid, POS_BLACKLIST, blacklistID);
-	int historyID = Configuration.getPid(prefix+"."+PAR_HID);
-	Protocols.setLink(pid, POS_HISTORY, historyID);
+	super(prefix);
+  sad = new SecureAverageData();
+  sad.pid  = CommonState.getPid();
+  sad.blid = Configuration.getPid(prefix+"."+PAR_BLID);
+  sad.hid  = Configuration.getPid(prefix+"."+PAR_HID);
 }
 
+
+public Object clone() throws CloneNotSupportedException
+{
+	SecureAverageAP clone = (SecureAverageAP) super.clone();
+	clone.sad = sad;
+	return clone;
+}
 
 //--------------------------------------------------------------------------
 // Methods
@@ -90,13 +111,8 @@ public void nextCycle(Node node, int pid)
 	if (isNew)
 		return;
 
-	int blacklistID = 
-	  Protocols.getLink(CommonState.getPid(), POS_BLACKLIST);
-	int historyID = 
-	  Protocols.getLink(pid, POS_HISTORY);
-
 	/* Selects a random node */
-	Blacklist blacklist = (Blacklist) node.getProtocol(blacklistID);
+	Blacklist blacklist = (Blacklist) node.getProtocol(sad.blid);
 	Node receiver = selectNeighbor(node, blacklist);
 	if (receiver == null)
 		return;
@@ -104,15 +120,8 @@ public void nextCycle(Node node, int pid)
 	/* In any case, add the exchange to the local tables; we cannot be
 	 * sure whether the message will be delivered 
 	 */
-	History history = (History) node.getProtocol(historyID);
-	/*
-	Node[] nodes = history.checkRandomNode(node, historyID);
-	if (nodes != null) {
-		blacklist.add(blacklistID, node, nodes[0], nodes[1]);
-		return;
-	}
-	*/
-	history.addInitiated(receiver, value, CommonState.getT());
+	History history = (History) node.getProtocol(sad.hid);
+	history.addInitiated(receiver, value, CommonState.getCycle());
 
 	if (canDeliverRequest(receiver)) {
 		/* Send request */
@@ -133,18 +142,12 @@ public void deliverRequest(Node initiator, Node receiver, float rvalue)
 	if (isNew)
 		return;
 
-	/* Identifiers */
-	int blacklistID = 
-	  Protocols.getLink(CommonState.getPid(), POS_BLACKLIST);
-	int historyID =	
-	  Protocols.getLink(CommonState.getPid(), POS_HISTORY);
-
 	/* Update history */
-	History hreceiver = (History) receiver.getProtocol(historyID);
-	hreceiver.addReceived(initiator, rvalue, CommonState.getT());
+	History hreceiver = (History) receiver.getProtocol(sad.hid);
+	hreceiver.addReceived(initiator, rvalue, CommonState.getCycle());
 
 	/* Check whether the node is contained in the protocol */
-	Blacklist bl = (Blacklist) receiver.getProtocol(blacklistID);
+	Blacklist bl = (Blacklist) receiver.getProtocol(sad.blid);
 	if (bl.contains(initiator))
 		return;
 
@@ -159,10 +162,10 @@ public void deliverRequest(Node initiator, Node receiver, float rvalue)
 		/* 
 		 * Check the history.
 		 */
-		History hinitiator = (History) initiator.getProtocol(historyID);
-		Node[] nodes = hinitiator.checkRandomNode(initiator, historyID);
+		History hinitiator = (History) initiator.getProtocol(sad.hid);
+		Node[] nodes = hinitiator.checkRandomNode(initiator, sad.hid);
 		if (nodes != null) {
-			bl.add(blacklistID, receiver, nodes[0], nodes[1]);
+			bl.add(sad.blid, receiver, nodes[0], nodes[1]);
 			return;
 		}
 	}
@@ -174,7 +177,7 @@ public void deliverRequest(Node initiator, Node receiver, float rvalue)
 	/* Deliver the response, if possible */
 	if (canDeliverResponse(initiator)) { 
 		GeneralAggregation rsrc = 
-			(GeneralAggregation) initiator.getProtocol(CommonState.getPid());
+			(GeneralAggregation) initiator.getProtocol(sad.pid);
 		rsrc.deliverResponse(initiator, receiver, lvalue);
 	}
 
@@ -210,9 +213,8 @@ private static Node[] array = null;
  */
 protected Node selectNeighbor(Node node, Blacklist blacklist)
 {
-	int pid = CommonState.getPid();
-	int linkableID = Protocols.getLink(pid, POS_LINKABLE);
-	Linkable linkable = (Linkable) node.getProtocol(linkableID);
+	int lid = FastConfig.getLinkable(CommonState.getPid());
+	Linkable linkable = (Linkable) node.getProtocol(lid);
 	if (array == null || array.length < linkable.degree()) {
 		array = new Node[linkable.degree()];
 	}

@@ -51,7 +51,7 @@ public static final String PAR_ACCURACY = "accuracy";
 /** 
  * String name of the parameter used to select the protocol to operate on
  */
-public static final String PAR_PROTID = "protocolID";
+public static final String PAR_PROTID = "protocol";
 
 /** 
  * String name of the parameter used to describe the length of an epoch.
@@ -117,7 +117,7 @@ public AverageObserver(String name)
 // Comment inherited from interface
 public boolean analyze()
 {
-	int time = peersim.core.CommonState.getT();
+	long time = peersim.core.CommonState.getTime();
 	if ((time % epoch) == 0) {
 		initvar = -1.0;
 	}
@@ -130,7 +130,7 @@ public boolean analyze()
 	for (int i=0; i < len; i++) {
 		Node node = Network.get(i);
 		if (node.isUp()) {
-			Aggregation protocol = (Aggregation) node.getProtocol(pid);
+			SingleValue protocol = (SingleValue) node.getProtocol(pid);
 			try {
 				stats.add(protocol.getValue());
 			} catch (Exception e) {

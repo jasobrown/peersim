@@ -40,9 +40,9 @@ extends AbstractGeneralAP
 /**
  * Default constructor for configurable objects.
  */
-public AverageGeneralAP(String prefix, Object obj)
+public AverageGeneralAP(String prefix)
 {
-	super(prefix, obj);
+	super(prefix);
 }
 
 //--------------------------------------------------------------------------
@@ -107,8 +107,7 @@ public void deliverResponse(Node initiator, Node receiver, float rvalue)
  */
 protected Node selectNeighbor(Node node, int pid)
 {
-	int linkableID = Protocols.getLink(pid, POS_LINKABLE);
-	Linkable linkable = (Linkable) node.getProtocol(linkableID);
+	Linkable linkable = (Linkable) node.getProtocol(p.lid);
 	Node rnode = null;
 	if (linkable.degree() > 0) 
 		return linkable.getNeighbor(CommonRandom.r.nextInt(linkable.degree()));

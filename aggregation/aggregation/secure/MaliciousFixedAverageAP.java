@@ -75,9 +75,9 @@ private float fixed;
 /**
  * Default constructor for configurable objects.
  */
-public MaliciousFixedAverageAP(String prefix, Object obj)
+public MaliciousFixedAverageAP(String prefix)
 {
-	super(prefix, obj);
+	super(prefix);
 	exchanges = Configuration.getInt(prefix+"."+PAR_EXCHANGES, 1);
 	fixed = (float) Configuration.getDouble(prefix+"."+PAR_FIXED, 0);
 }

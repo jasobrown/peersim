@@ -19,7 +19,6 @@
 package aggregation;
 
 import peersim.core.*;
-import peersim.config.Configuration;
 import peersim.cdsim.CDProtocol;
 
 /**
@@ -32,19 +31,8 @@ import peersim.cdsim.CDProtocol;
  * @version $Revision$
  */
 public abstract class AbstractFunction 
-implements CDProtocol, Aggregation
+implements CDProtocol, SingleValue
 {
-
-//--------------------------------------------------------------------------
-// Constants
-//--------------------------------------------------------------------------
-
-/**
- * String name of the parameter used to select the linkable protocol 
- * used to obtain information about neighbors.
- */
-public static final String PAR_CONN = "linkableID";
-
 
 //--------------------------------------------------------------------------
 //Fields
@@ -62,18 +50,12 @@ protected double value;
 protected AbstractFunction() {}
 
 /**
- * Set up the relation between this protocol and the Linkable protocol
- * used for communication.
+ * Main constructor. No initialization is done.
  * 
  * @param prefix string prefix for config properties
- * @param obj configuration object, containing the protocol identifier 
- *  for this protocol.
  */
-public AbstractFunction(String prefix, Object obj) {
-
-	int pid = ((Integer) obj).intValue();
-	int link = Configuration.getPid(prefix+"."+PAR_CONN);
-	Protocols.setLink(pid, link);
+public AbstractFunction(String prefix) 
+{
 }
 
 //--------------------------------------------------------------------------
@@ -81,10 +63,9 @@ public AbstractFunction(String prefix, Object obj) {
 /**
  * Clones the object, by copying the value.
  */
-public Object clone() throws CloneNotSupportedException {
-
+public Object clone() throws CloneNotSupportedException 
+{
 	AbstractFunction af = (AbstractFunction) super.clone();
-	af.value = value;
 	return af;
 }
 

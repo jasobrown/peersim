@@ -18,7 +18,6 @@
 
 package aggregation.general;
 
-import aggregation.*;
 import peersim.core.*;
 
 /**
@@ -31,7 +30,7 @@ import peersim.core.*;
  * @version $Revision$
  */
 public interface GeneralAggregation 
-extends Aggregation
+extends SingleValue
 {
 
 /**

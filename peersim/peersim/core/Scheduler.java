@@ -94,6 +94,7 @@ protected final boolean fin;
 
 protected final boolean precycle;
 
+protected int current;
 
 // ==================== initialization ==============================
 // ==================================================================
@@ -125,7 +126,7 @@ public Scheduler(String prefix, boolean useDefault)
 		until = at+1;
 		step = 1;
 	}
-	
+	current = from;
 	fin = Configuration.contains(prefix+"."+PAR_FINAL);
 	precycle = Configuration.contains(prefix+"."+PAR_PRECYCLE);
 }
@@ -135,17 +136,17 @@ public Scheduler(String prefix, boolean useDefault)
 // ===================================================================
 
 
-public boolean active(int time) {
+public boolean active(int cycle) {
 	
-	if( time < from || time >= until ) return false;
-	return (time - from)%step == 0; 
+	if( cycle < from || cycle >= until ) return false;
+	return (cycle - from)%step == 0; 
 }
 
 // -------------------------------------------------------------------
 
 public boolean active() {
 	
-	return active( CommonState.getT() );
+	return active( CommonState.getCycle() );
 }
 
 // -------------------------------------------------------------------
@@ -158,20 +159,14 @@ public boolean preCycle() { return precycle; }
 
 //-------------------------------------------------------------------
 
-public int[] getSchedule(int endtime)
+public long getNext()
 {
-	int end = Math.min(endtime, until-1);
-	int size = (end-from)/step+1;
-	// System.out.println("endtime " + endtime + " until " + until + " step " + step + " size " + size);
-	int[] array = new int[size];
-	int k = from;
-	for (int i=0; i < size; i++) {
-		array[i] = k;
-		k += step;
-	}
-	return array;
+	long ret = current;
+	current += step;
+	return ret;
 }
 
+//-------------------------------------------------------------------
 
 }
 

@@ -223,7 +223,10 @@ public static void nextExperiment()  {
 	System.err.println("Simulator: resetting");
 	Network.reset();
 	System.err.println("Simulator: running initializers");
-	CommonState.setT(0); // needed here
+	// Initializers are run at 
+	// cycle 0 (cycle-driven) / time 0 (event-driven)
+	CommonState.setCycle(0);
+	CommonState.setTime(0);
 	CommonState.setPhase(CommonState.PRE_DYNAMICS);
 	runInitializers();
 			
@@ -236,7 +239,8 @@ public static void nextExperiment()  {
 	System.err.println("Simulator: starting simulation");
 	for(int i=0; i<cycles; ++i)
 	{
-		CommonState.setT(i);
+		CommonState.setCycle(i);
+		CommonState.setTime(i);
 		CommonState.setPhase(CommonState.PRE_DYNAMICS);
 
 		// analizer pre_dynamics

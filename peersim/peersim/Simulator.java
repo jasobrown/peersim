@@ -18,7 +18,6 @@
 
 package peersim;
 
-import java.util.*;
 import peersim.config.*;
 import peersim.core.*;
 import peersim.cdsim.OrderSimulator;
@@ -52,18 +51,18 @@ public class Simulator {
 // ======================================================================
 
 /** {@link peersim.cdsim.Simulator} */
-private static final int CDSIM = 0;
+protected static final int CDSIM = 0;
 
 /** {@link OrderSimulator} */
-private static final int CDORDSIM = 1;
+protected static final int CDORDSIM = 1;
 
 /** {@link EDSimulator} */
-private static final int EDSIM = 2;
+protected static final int EDSIM = 2;
 
-private static final int UNKNOWN = -1;
+protected static final int UNKNOWN = -1;
 
 /** the class names of simulators used */
-private static final String[] simName = {
+protected static final String[] simName = {
 	"peersim.cdsim.Simulator",
 	"peersim.cdsim.OrderSimulator",
 	"peersim.edsim.EDSimulator",
@@ -81,7 +80,7 @@ public static final String PAR_EXPS = "simulation.experiments";
 /**
 * Returns the numeric id of the simulator to invoke.
 */
-private static int getSimID() {
+protected static int getSimID() {
 	
 	if( Configuration.getString(OrderSimulator.PAR_ORDER,null) != null )
 	{
@@ -134,7 +133,7 @@ public static void main(String[] args)
 				OrderSimulator.nextExperiment();
 				break;
 			case CDSIM:
-			     	peersim.cdsim.Simulator.nextExperiment();
+				peersim.cdsim.Simulator.nextExperiment();
 				break;
 			case EDSIM:
 				EDSimulator.nextExperiment();

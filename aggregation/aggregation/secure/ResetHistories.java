@@ -42,7 +42,7 @@ implements Dynamics
  * Parameter read will has the full name
  * <tt>prefix+"."+PAR_PROT</tt>
  */
-public static final String PAR_PROTID = "protocolID";
+public static final String PAR_PROTOCOL = "protocol";
 
 
 //--------------------------------------------------------------------------
@@ -62,7 +62,7 @@ private final int pid;
  */
 public ResetHistories(String prefix)
 {
-	pid = Configuration.getPid(prefix+"."+PAR_PROTID);
+	pid = Configuration.getPid(prefix+"."+PAR_PROTOCOL);
 }
 
 

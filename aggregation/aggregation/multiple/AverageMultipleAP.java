@@ -31,18 +31,48 @@ import peersim.cdsim.*;
  * @version $Revision$
  */
 public class AverageMultipleAP
-implements MultipleAggregation, CDProtocol
+implements MultipleValues, CDProtocol
 {
 
 //--------------------------------------------------------------------------
-// Constants
+// Protocol data helper class
 //--------------------------------------------------------------------------
+	
+	
+protected class ProtocolData
+{
+	
+/**
+ * The probability of symmetric failure in communication. If the failure
+ * is symmetric, it means that a node A can communicate with a node B if 
+ * and only if B can communicate with A. This failure probability is
+ * indipendent from the probability of asymmetric failure.
+ * Temporarily, this implementation is based on the assumption that
+ * there multiple instances of this protocol share the same probabilities.
+ */
+protected double symProb;
 
 /**
- * String name of the parameter used to select the linkable protocol 
- * used to obtain information about neighbors.
+ * The probability of asymmetric failure in communication. If the failure
+ * is asymmetric, it means that at each communication, there is the 
+ * probability of losing a single message. This failure probability is
+ * indipendent from the probability of symmetric failure.
+ * Temporarily, this implementation is based on the assumption that
+ * there multiple instances of this protocol share the same probabilities.
  */
-public static final String PAR_CONN = "linkableID";
+protected double asymProb;
+
+/** 
+ * Identifier of the linkable protocol. 
+ */
+protected int lid;	
+	
+}
+	
+	
+//--------------------------------------------------------------------------
+// Constants
+//--------------------------------------------------------------------------
 
 /**
  * String name of the parameter determining the number of concurrent 
@@ -70,41 +100,13 @@ private final static String PAR_SYM_FAILUREPROB = "failure.symmetric";
  */
 private final static String PAR_ASYM_FAILUREPROB = "failure.asymmetric";
 
-/** 
- * The position of the linkable protocol in the array of protocols used 
- * by this one.
- */
-public static final int POS_LINKABLE = 0;
-
 
 //--------------------------------------------------------------------------
 // Static fields
 //--------------------------------------------------------------------------
 
-/**
- * The probability of symmetric failure in communication. If the failure
- * is symmetric, it means that a node A can communicate with a node B if 
- * and only if B can communicate with A. This failure probability is
- * indipendent from the probability of asymmetric failure.
- * Temporarily, this implementation is based on the assumption that
- * there multiple instances of this protocol share the same probabilities.
- */
-private static double symProb;
-
-/**
- * The probability of asymmetric failure in communication. If the failure
- * is asymmetric, it means that at each communication, there is the 
- * probability of losing a single message. This failure probability is
- * indipendent from the probability of symmetric failure.
- * Temporarily, this implementation is based on the assumption that
- * there multiple instances of this protocol share the same probabilities.
- */
-private static double asymProb;
-
 /* Temporary buffer used to sort arrays */
 private static float[] buffer;
-
-private static int excluded;
 
 
 //--------------------------------------------------------------------------
@@ -117,6 +119,8 @@ protected float[] values;
 /** True if the node has just been created */
 protected boolean isNew;
 
+/** Information associated to this instance */
+protected ProtocolData p;
 
 //--------------------------------------------------------------------------
 // Initialization
@@ -126,15 +130,14 @@ protected boolean isNew;
  * Create a new protocol instance. The instance is considered
  * new, so it cannot partecipate in the aggregation protocol.
  */
-public AverageMultipleAP(String prefix, Object obj)
+public AverageMultipleAP(String prefix)
 {
 	// One-time configuration
-	int pid = ((Integer) obj).intValue();
-	int link = Configuration.getPid(prefix + "." + PAR_CONN);
-	Protocols.setLink(pid, POS_LINKABLE, link);
-	symProb = Configuration.getDouble(prefix + "." + PAR_SYM_FAILUREPROB, 0.0);
-	asymProb = Configuration.getDouble(prefix + "." + PAR_ASYM_FAILUREPROB, 0.0);
-
+	p = new ProtocolData();
+	p.symProb = Configuration.getDouble(prefix + "." + PAR_SYM_FAILUREPROB, 0.0);
+	p.asymProb = Configuration.getDouble(prefix + "." + PAR_ASYM_FAILUREPROB, 0.0);
+  p.lid = FastConfig.getLinkable(CommonState.getPid());
+	
 	// Instance fields
 	values = new float[Configuration.getInt(prefix + "." + PAR_VALUES)];
 	isNew = true;
@@ -151,6 +154,7 @@ public Object clone() throws CloneNotSupportedException
 	AverageMultipleAP ap = (AverageMultipleAP) super.clone();
 	ap.values = new float[values.length];
 	ap.isNew = true;
+	ap.p = p;
 	return ap;
 }
 
@@ -172,14 +176,6 @@ public double getValue(int pos)
 	if (isNew)
 		throw new UnsupportedOperationException();
 	return values[pos];
-}
-
-//--------------------------------------------------------------------------
-
-//Comment inherited from interface
-public void setValue(double value)
-{
-	throw new UnsupportedOperationException();
 }
 
 //--------------------------------------------------------------------------
@@ -209,8 +205,8 @@ protected boolean canDeliverRequest(Node node)
 {
 	if (node.getFailState() == Fallible.DEAD)
 		return false;
-	if ((symProb > 0 && CommonRandom.r.nextDouble() < symProb) ||
-			(asymProb > 0 && CommonRandom.r.nextDouble() < asymProb))
+	if ((p.symProb > 0 && CommonRandom.r.nextDouble() < p.symProb) ||
+			(p.asymProb > 0 && CommonRandom.r.nextDouble() < p.asymProb))
 		return false;  	
 	return true;
 }
@@ -225,7 +221,7 @@ protected boolean canDeliverResponse(Node node)
 {
 	if (node.getFailState() == Fallible.DEAD)
 		return false;
-	if (asymProb > 0 && CommonRandom.r.nextDouble() < asymProb)
+	if (p.asymProb > 0 && CommonRandom.r.nextDouble() < p.asymProb)
 		return false;  	
 	return true;
 }
@@ -314,8 +310,7 @@ public void deliverResponse(Node initiator, Node receiver, float rvalue, int ind
  */
 protected Node selectNeighbor(Node node, int pid)
 {
-	int linkableID = Protocols.getLink(pid, POS_LINKABLE);
-	Linkable linkable = (Linkable) node.getProtocol(linkableID);
+	Linkable linkable = (Linkable) node.getProtocol(p.lid);
 	Node rnode = null;
 	if (linkable.degree() > 0) 
 		return linkable.getNeighbor(CommonRandom.r.nextInt(linkable.degree()));

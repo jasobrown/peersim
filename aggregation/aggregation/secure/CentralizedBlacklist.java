@@ -52,7 +52,7 @@ implements Observer, Blacklist, Protocol
  * String name of the parameter used to select the protocol that is
  * controlled by this blacklist.
  */
-public static final String PAR_PROTID = "protocolID";
+public static final String PAR_PROTID = "protocol";
 
 /**
  * String name of the parameter that determines the threshold factor
@@ -66,7 +66,7 @@ private static final String PAR_THRESHOLD = "threshold";
 //--------------------------------------------------------------------------
 
 /** The identifier of the controlled protocol */
-private static int protocolID;
+private static int pid;
 
 /** Hashmap representing the blacklist */
 private static Map map = new HashMap();
@@ -97,7 +97,7 @@ public CentralizedBlacklist(String name)
 {
 	this.name = name;
 	threshold = Configuration.getDouble(name + "." + PAR_THRESHOLD, 2);
-	protocolID = Configuration.getPid(name+"."+PAR_PROTID);
+	pid = Configuration.getPid(name+"."+PAR_PROTID);
 }
 
 //--------------------------------------------------------------------------
@@ -178,7 +178,7 @@ public boolean analyze()
 		Entry entry = (Entry) map.get(node);
 		//System.out.print("("+ node.getIndex()+","+entry.count+") ");
 		if (entry.count > threshold*average) {
-			if (node.getProtocol(protocolID) instanceof MaliciousProtocol)
+			if (node.getProtocol(pid) instanceof MaliciousProtocol)
 			  correct++;
 			else 
 			  falsePositives++;

@@ -233,7 +233,7 @@ public static void unsubscribe( Node n, int protocolID ) {
 		
 		// this implements the effect of adding n to unSubs
 		peer.remove(n);
-		peer.addUnSub(n,CommonState.getTimeObj());
+		peer.addUnSub(n,CommonState.getCycleObj());
 	}
 	
 	if( i < F )
@@ -334,7 +334,7 @@ public void nextCycle( Node thisNode, int protocolID ) {
 		while( i<unSubsDates.size() )
 		{
 			int tstamp = ((Integer)unSubsDates.get(i)).intValue();
-			if(CommonState.getT()-tstamp>SimpleLpbcast.unSubsTout)
+			if(CommonState.getCycle()-tstamp>SimpleLpbcast.unSubsTout)
 			{
 				unSubs.remove(i);
 				unSubsDates.remove(i);

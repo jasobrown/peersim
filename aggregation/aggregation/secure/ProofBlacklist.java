@@ -43,7 +43,7 @@ implements CDProtocol, Blacklist
  * String name of the parameter used to select the linkable protocol 
  * used to obtain information about neighbors.
  */
-public static final String PAR_CONN = "linkableID";
+public static final String PAR_CONN = "linkable";
 
 /**
  * String name of the parameter that determines the maximum life of
@@ -105,13 +105,8 @@ private Set set;
  * Construct a new blacklist instance by reading configuration parameters
  * and creating appropriate data structures.
  */
-public ProofBlacklist(String prefix, Object obj)
+public ProofBlacklist(String prefix)
 {
-	/* Store info about the linkable value */
-	int pid = ((Integer) obj).intValue();
-	int link = Configuration.getPid(prefix+"."+PAR_CONN);
-	Protocols.setLink(pid, link);
-
 	/* Read parameters */
   maxttl = (byte) Configuration.getInt(prefix+"."+PAR_MAXTTL);
   ttls = new Integer[maxttl];
@@ -173,9 +168,10 @@ private boolean isMalicious(Node node)
 //--------------------------------------------------------------------------
 
 // Comment inherited from interface
-public void nextCycle(Node node, int protocolID)
+public void nextCycle(Node node, int pid)
 {
-	int linkableID = Protocols.getLink(protocolID);
+	
+	int linkableID = FastConfig.getLinkable( CommonState.getPid() );
 	Linkable linkable = (Linkable) node.getProtocol( linkableID );
 	if (linkable.degree() == 0)
 	  return;

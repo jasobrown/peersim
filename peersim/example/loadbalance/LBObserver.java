@@ -91,7 +91,6 @@ public class LBObserver implements Observer {
         double agavg = 0.0;
         double max = Double.NEGATIVE_INFINITY;
         double min = Double.POSITIVE_INFINITY;
-        int time = peersim.core.CommonState.getT();
         int count_zero = 0;
         int count_avg = 0;
         int temp_avg = 0;
@@ -119,7 +118,7 @@ public class LBObserver implements Observer {
         
         temp_avg = (int)(sum/len);
         Log.println(name,
-        time + " " + // cycle identifier
+        CommonState.getTime() + " " + // cycle identifier
         stats.getAverage() +" " +
         stats.getMax() +" "+
         stats.getMin() +" "+

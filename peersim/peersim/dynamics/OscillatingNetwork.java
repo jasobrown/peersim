@@ -120,7 +120,7 @@ public class OscillatingNetwork implements Dynamics
 	// Methods
 	////////////////////////////////////////////////////////////////////////////
 
-	private void add(int time, int toAdd)
+	private void add(int toAdd)
 	{
 
 		Node[] newnodes = new Node[Math.min(maxsize - Network.size(), toAdd)];
@@ -169,7 +169,7 @@ public class OscillatingNetwork implements Dynamics
 
 	public void modify()
 	{
-		int time = CommonState.getT();
+		long time = CommonState.getTime();
 		int oscillation = (maxsize - minsize) / 2;
 		int newsize = (maxsize + minsize) / 2 + 
 		  (int) (Math.sin(((double) time) / periodicity * 3.14) * oscillation);
@@ -177,7 +177,7 @@ public class OscillatingNetwork implements Dynamics
 		if (diff < 0)
 			remove(-diff);
 		else
-			add(time, diff);
+			add(diff);
 	}
 
 }

@@ -291,7 +291,7 @@ public boolean addNeighbor(Node node) {
 	
 	if (i < cache.length)
 	{
-		if( i > 0 && tstamps[i-1]<CommonState.getT())
+		if( i > 0 && tstamps[i-1]<CommonState.getCycle())
 		{
 			// we need to insert to the first position
 			for(int j=cache.length-2; j>=0; --j)
@@ -302,7 +302,7 @@ public boolean addNeighbor(Node node) {
 			i = 0;
 		}
 		cache[i] = node;
-		tstamps[i] = CommonState.getT();
+		tstamps[i] = CommonState.getCycle();
 		return true;
 	}
 	else	throw new IndexOutOfBoundsException();
@@ -338,7 +338,7 @@ public void nextCycle( Node n, int protocolID )
 	}
 
 	SimpleNewscast peer=(SimpleNewscast)(peerNode.getProtocol(protocolID));
-	merge( n, peer, peerNode, CommonState.getT() );
+	merge( n, peer, peerNode, CommonState.getCycle() );
 	
 	// set new cache in this and peer
 	System.arraycopy(SimpleNewscast.tn,0,cache,0,cache.length);
@@ -347,7 +347,7 @@ public void nextCycle( Node n, int protocolID )
 	System.arraycopy(SimpleNewscast.ts,0,peer.tstamps,0,tstamps.length);
 	
 	// set first element
-	tstamps[0] = peer.tstamps[0] = CommonState.getT();
+	tstamps[0] = peer.tstamps[0] = CommonState.getCycle();
 	cache[0] = peerNode;
 	peer.cache[0] = n;
 }

@@ -42,13 +42,13 @@ implements Dynamics
 /** 
  * String name of the parameter that defines the protocol to initialize. 
  */
-public static final String PAR_PROTID = "protocolID";
+public static final String PAR_PROTID = "protocol";
 
 /** 
  * String name of the parameter that describes the malicious protocol
  * to be used.
  */
-public static final String PAR_PROTOCOL = "protocol";
+public static final String PAR_PROTOCOL = "malicious";
 
 /** 
  * String name of the parameter used to determine the number
@@ -116,7 +116,7 @@ public void modify()
 			boolean stop = false;
 			do {
 				int k = CommonRandom.r.nextInt(Network.size());
-				Node node = Network.get(k);
+				ModifiableNode node = (ModifiableNode) Network.get(k);
 				Protocol prot = node.getProtocol(protocolID);
 				if (!(prot instanceof MaliciousProtocol)) {
 					node.setProtocol(protocolID, (Protocol) prototype.clone());

@@ -24,15 +24,18 @@ import peersim.config.*;
 import peersim.core.*;
 import peersim.dynamics.*;
 import peersim.reports.Observer;
+import peersim.util.*;
 
 
 /**
  * Event-driven simulator. The simulator is able to run both event-driven
  * protocols {@link EDProtocol} and cycle-driven protocols {@link CDProtocol}.
  * To execute any of the cycle-based classes (observers, dynamics, and
- * protocols), the step parameter of Schedulers must be specified, to
- * define the periodicity of cycles. 
- * XXX To be completed.
+ * protocols), the <code>step</code> parameter of the {@link Scheduler} 
+ * associated to the class must be specified, to define the length of 
+ * cycles. 
+ * 
+ * 
  *
  * @author Alberto Montresor
  * @version $Revision$
@@ -45,15 +48,27 @@ public class EDSimulator
 //---------------------------------------------------------------------
 	
 /**
- * 
+ * The string name of the configuration parameter that specifies
+ * the ending time for simulation. No event after this value
+ * will be executed.
  */
 public static final String PAR_ENDTIME = "simulation.endtime";	
 
 /**
- * If this parameter is present, the order of visiting each node is shuffled
+ * If this parameter is present, the order of visiting each node for
+ * cycle-based protocols is shuffled
  * at each cycle. The default is no shuffle.
  */
 public static final String PAR_SHUFFLE = "simulation.shuffle";
+
+/** 
+ * String name of the configuration parameter that specifies how many
+ * bits are used to order events that occurs at the same time. Defaults
+ * to 8. A value smaller than 8 causes an IllegalParameterException.
+ * Higher values allow for a better discrimination, but may reduce
+ * the granularity of time values. 
+ */	
+public static final String PAR_RBITS = "simulation.timebits";
 
 /**
  * This is the prefix for initializers. These have to be of type
@@ -79,7 +94,13 @@ public static final String PAR_OBS = "observer";
 //---------------------------------------------------------------------
 
 /** Maximum time for simulation */
-protected static int endtime;
+protected static long endtime;
+
+/** If true, when executing a cycle-based protocols nodes are shuffled */
+private static boolean shuffle;
+
+/** Number of bits used for random */
+private static int rbits;
 
 /** holds the observers of this simulation */
 protected static Observer[] observers=null;
@@ -98,6 +119,9 @@ protected static int[] cdprotocols = null;
 
 /** Holds the protocol schedulers of this simulation */
 protected static Scheduler[] protSchedules = null;
+
+/** Ordered list of events (heap) */
+protected static Heap heap = new Heap();
 
 
 //---------------------------------------------------------------------
@@ -162,7 +186,7 @@ protected static void loadCDProtocols()
 {
 	// CDProtocol instances are searched in Network.prototype, which
 	// contains the prototype node for the network (even if the network
-	// size is 0.
+	// size is 0).
 	String[] names = Configuration.getNames(Node.PAR_PROT);
 	Node node = Network.prototype;
 	int size = node.protocolSize();
@@ -187,6 +211,58 @@ protected static void loadCDProtocols()
 	}
 }
 
+/**
+ * Adds a new event to be scheduled, specifying the number of time units
+ * of delay, plust
+ * 
+ * @param time 
+ *   The actual time at which the next event should be scheduled.
+ * @param order
+ *   The index used to specify the order in which cycle-based events
+ *   should be executed, if they happen to be at the same time.
+ * @param event 
+ *   The object associated to this event
+ */
+static void addCycleEvent(long time, int order, Object event)
+{
+	time = (time << rbits) | order;
+	heap.add(time, event, null, (byte) 0);
+}
+
+//---------------------------------------------------------------------
+
+/**
+ * Execute and remove the next event from the ordered event list.
+ * @return true if the execution should be stopped.
+ */
+private static boolean executeNext()
+{
+	Heap.Event ev = heap.removeFirst();
+	long time = ev.time >> rbits;
+	if (time > endtime)
+		return true;
+	CommonState.setTime(time);
+	int pid = ev.pid;
+	if (ev.node == null) {
+		// Cycle-based event; handled through a special method
+		CycleEvent cycle = (CycleEvent) ev.event;
+		return cycle.execute(shuffle);
+	} else {
+		// Check if the node is up; if not, skip this event.
+		if (!ev.node.isUp()) 
+			return false;
+		CommonState.setPid(pid);
+		try {
+			EDProtocol prot = (EDProtocol) ev.node.getProtocol(pid);
+			prot.processEvent(ev.node, pid, ev.event);
+		} catch (ClassCastException e) {
+			throw new IllegalArgumentException("Protocol " + pid + 
+					" does not implement EDProtocol");
+		}
+		return false;
+	}
+}
+
 //---------------------------------------------------------------------
 //Public methods
 //---------------------------------------------------------------------
@@ -197,14 +273,19 @@ protected static void loadCDProtocols()
 public static void nextExperiment() 
 {
 	// Reading parameter
-	endtime = Configuration.getInt(PAR_ENDTIME);
-	EventHandler.setShuffle(Configuration.contains(PAR_SHUFFLE));
+	rbits = Configuration.getInt(PAR_RBITS, 8);	
+	if (rbits < 8 && rbits >= 64) {
+		throw new IllegalParameterException(PAR_RBITS, "This parameter" +
+				"should be equal or large then 8 or smaller than 64");
+	}
+	endtime = Configuration.getLong(PAR_ENDTIME);
+	shuffle = Configuration.contains(PAR_SHUFFLE);
 
 	// initialization
 	System.err.println("EDSimulator: resetting");
 	Network.reset();
 	System.err.println("EDSimulator: running initializers");
-	CommonState.setT(0); // needed here
+	CommonState.setTime(0); // needed here
 	CommonState.setPhase(CommonState.PRE_DYNAMICS);
 	runInitializers();
 			
@@ -214,47 +295,89 @@ public static void nextExperiment()
 	loadCDProtocols();
 
 	int[] times;
+	int order = 0;
+	
 	// Schedule observers execution
 	for (int i=0; i < observers.length; i++) {
-		times = obsSchedules[i].getSchedule(endtime);
-		for (int j=0; j < times.length; j++) {
-			EventHandler.add(
-			  times[j], observers[i], null, EventHandler.OBSERVER);
+		if (!obsSchedules[i].preCycle()) {
+			CycleEvent event = new CycleEvent(observers[i], obsSchedules[i], order++, CommonState.PRE_DYNAMICS);
+			if (order > ((1 << rbits)-1))
+				throw new 
+				IllegalArgumentException("Too many cycle-based entities");
 		}
-		System.out.println("");
 	}
 
 	// Schedule dynamics execution
 	for (int i=0; i < dynamics.length; i++) {
-		times = dynSchedules[i].getSchedule(endtime);
-		for (int j=0; j < times.length; j++) {
-			System.out.print(times[j] + ", ");
-			EventHandler.add(
-			  times[j], dynamics[i], null, EventHandler.DYNAMICS);
+		CycleEvent event = 
+			new CycleEvent(dynamics[i], dynSchedules[i], order++);
+		if (order > ((1 << rbits)-1))
+			throw new 
+			IllegalArgumentException("Too many cycle-based entities");
+	}
+
+	for (int i=0; i < observers.length; i++) {
+		if (obsSchedules[i].preCycle()) {
+			CycleEvent event = 
+				new CycleEvent(observers[i], obsSchedules[i], order++, 
+						CommonState.PRE_CYCLE);
+			if (order > ((1 << rbits)-1))
+				throw new 
+				IllegalArgumentException("Too many cycle-based entities");
 		}
-		System.out.println("");
 	}
 
 	// Schedule protocol execution
 	for (int i=0; i < cdprotocols.length; i++) {
-		times = protSchedules[i].getSchedule(endtime);
-		for (int j=0; j < times.length; j++) {
-			EventHandler.add(times[j], null, null, cdprotocols[i]);
-		}
-		System.out.println("");
+		CycleEvent event = new CycleEvent(i, protSchedules[i], order++);
+		if (order > ((1 << rbits)-1))
+			throw new 
+			IllegalArgumentException("Too many cycle-based entities");
 	}
 	
-	// Perform the actual simulation
+	// Perform the actual simulation; executeNext() will tell when to
+	// stop.
 	boolean exit = false;
-	do {
-		exit = EventHandler.executeNext(endtime);
-	} while (!exit);
+	while (!exit) {
+		exit = executeNext();
+	}
 
 	// analysis after the simulation
+	CommonState.setPhase(CommonState.POST_LAST_CYCLE);
 	for(int j=0; j<observers.length; ++j)
 	{
 		if( obsSchedules[j].fin() ) observers[j].analyze();
 	}
 }
+
+//---------------------------------------------------------------------
+
+/**
+ * Adds a new event to be scheduled, specifying the number of time units
+ * of delay, and the node and the protocol identifier to which the event
+ * will be delivered.
+ * 
+ * @param delay 
+ *   The number of time units before the event is scheduled
+ * @param event 
+ *   The object associated to this event
+ * @param node 
+ *   The node associated to the event. A value of null corresponds to a 
+ *   cycle-based event and will handled opportunely    
+ * @param pid 
+ *   The identifier of the protocol to which the event will be delivered
+ */
+public static void add(long delay, Object event, Node node, int pid)
+{
+	if (pid > Byte.MAX_VALUE) 
+		throw new IllegalArgumentException(
+				"This version does not support more than " 
+				+ Byte.MAX_VALUE + " protocols");
+	long time = ((CommonState.getTime()+delay) << rbits) | 
+		CommonRandom.r.nextInt(1 << rbits);
+	heap.add(time, event, node, (byte) pid);
+}
+
+//---------------------------------------------------------------------
 
 }

@@ -86,7 +86,7 @@ public Object clone()
 public void send(Node src, Node dest, Object msg, int pid)
 {
 	int delay = min + CommonRandom.r.nextInt(range);
-	EventHandler.add(delay, msg, dest, pid);
+	EDSimulator.add(delay, msg, dest, pid);
 }
 
 }

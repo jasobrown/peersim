@@ -16,10 +16,11 @@
  *
  */
 
-package peersim.dynamics;
+package distributions;
 
 import peersim.config.*;
 import peersim.core.*;
+import peersim.dynamics.*;
 
 /**
  * Initializes the values so that {@link #PAR_PEAKS} nodes have value

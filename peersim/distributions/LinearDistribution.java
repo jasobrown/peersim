@@ -16,10 +16,11 @@
  *
  */
 
-package peersim.dynamics;
+package distributions;
 
 import peersim.config.*;
 import peersim.core.*;
+import peersim.dynamics.*;
 
 /**
  * Initializes the values of nodes from {@link #PAR_MIN} to {@link #PAR_MAX}
@@ -27,7 +28,7 @@ import peersim.core.*;
  * Assumes nodes implement {@link SingleValue}.
  */
 public class LinearDistribution 
-implements Dynamics 
+implements Dynamics, NodeInitializer
 {
 
 //--------------------------------------------------------------------------
@@ -36,7 +37,7 @@ implements Dynamics
 
 /** 
  * String name of the parameter used to determine the upper bound of the
- * values.
+ * values. Defaults to Network.size()-1
  */
 public static final String PAR_MAX = "max";
 
@@ -65,6 +66,10 @@ private final double min;
 /** Protocol identifier */
 private final int protocolID;
 
+/** Last value assigned to a node */
+private double lastval;
+
+
 //--------------------------------------------------------------------------
 // Initialization
 //--------------------------------------------------------------------------
@@ -74,7 +79,7 @@ private final int protocolID;
  */
 public LinearDistribution(String prefix)
 {
-	max = Configuration.getDouble(prefix+"."+PAR_MAX);
+	max = Configuration.getDouble(prefix+"."+PAR_MAX, Network.size()-1);
 	min = Configuration.getDouble(prefix+"."+PAR_MIN,-max);
 	protocolID = Configuration.getInt(prefix+"."+PAR_PROTID);
 }
@@ -88,18 +93,26 @@ public LinearDistribution(String prefix)
 public void modify()
 {
 	double step = (max-min)/(Network.size()-1);
-	double sum = 0.0;
 	double tmp;
 	for(int i=0; i<Network.size(); ++i)
 	{
-		tmp = i*step+min;
-		sum += tmp;
+		lastval = i*step+min;
 		((SingleValue)Network.get(i).getProtocol(protocolID)
-			).setValue(tmp);
+			).setValue(lastval);
 	}
 }
 
 //--------------------------------------------------------------------------
 
+// Comment inherited from interface
+public void initialize(Node n)
+{
+	lastval += (max-min)/(Network.size()-1);
+	if (lastval > max)
+		lastval = min;
+	((SingleValue) n.getProtocol(protocolID)).setValue(lastval);
 }
 
+//--------------------------------------------------------------------------
+
+}

@@ -9,7 +9,6 @@ package example.hot;
 import peersim.config.Configuration;
 import peersim.util.CommonRandom;
 import peersim.core.OverlayGraph;
-import peersim.util.CommonRandom;
 import peersim.util.IncrementalStats;
 import java.util.Iterator;
 import peersim.core.Node;

@@ -66,6 +66,7 @@ public GeneralNode(String prefix) {
 	ArrayList list = new ArrayList();
 	int i = 0;
 	String protpar = PAR_PROT + "." + i;
+	CommonState.setNode(this);
 	while( Configuration.contains(protpar) )
 	{
 		Protocol protocol = (Protocol) 
@@ -86,8 +87,10 @@ public Object clone() throws CloneNotSupportedException {
 	
 	GeneralNode result = (GeneralNode)super.clone();
 	result.protocol = new Protocol[protocol.length];
-	for(int i=0; i<protocol.length; ++i)
+	CommonState.setNode(result);
+	for(int i=0; i<protocol.length; ++i) {
 		result.protocol[i] = (Protocol)protocol[i].clone();
+	}
 	return result;
 }
 

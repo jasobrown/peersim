@@ -18,7 +18,6 @@
 		
 package peersim.dynamics;
 
-import peersim.config.Configuration;
 import peersim.core.*;
 
 /**

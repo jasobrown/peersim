@@ -18,7 +18,6 @@
 
 package example.loadbalance;
  
- import peersim.util.CommonRandom;
  import example.aggregation.AbstractFunction;
  import peersim.config.Configuration;
  import peersim.core.*;

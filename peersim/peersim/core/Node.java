@@ -112,5 +112,6 @@ public interface Node extends Fallible, Cloneable {
 	* expected.
 	*/
 	public void pack(int protocolId);
+
 }
 

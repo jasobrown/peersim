@@ -17,8 +17,6 @@
  */
 package example.loadbalance;
 
-import peersim.util.CommonRandom;
-import example.aggregation.AbstractFunction;
 import peersim.core.*;
 
 public class AvgBalance extends BasicBalance {

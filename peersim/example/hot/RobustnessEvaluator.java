@@ -13,8 +13,6 @@ package example.hot;
 import java.util.Random;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Iterator;
-import java.util.Collection;
 import peersim.graph.Graph;
 import peersim.graph.GraphAlgorithms;
 import peersim.core.Node;

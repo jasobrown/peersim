@@ -1,3 +1,28 @@
+AM 22/6/2004:
+In GeneralNode, when creating/cloning a node, the CommonState.setNode()
+method is invoked to set the current node being created.
+
+AM 22/6/2004:
+peersim.cdsim.RangeSimulator, added support for idle protocols. When
+a protocol has the idle flag in its specification (like protocol.0.idle),
+the nextCycle method is not called. This can be useful for protocols
+reuse.
+
+AM 22/6/2004:
+peersim.core.Shuffle, example.hot.InetInitializer, example.hot.RobustnessEvaluator,
+example.loadbalance.AvgBalance, example.loadbalance.BasicBalance
+removed unused import(s)
+
+AM 22/6/2004:
+Moved LinearDistribution, UniformDistribution and PeakDistribution to
+a new package called distributions (outside peersim, but to be included
+in the peersim software distribution).
+
+Implemented NodeInitializer in LinearDistribution and UniformDistribution,
+to provide values also when new nodes are added dynamically.
+
+Added classes SingleValueHolder and SingleValueComparator
+
 Name change: peersim.util.ExtendedStats => peersim.util.MomentStats 
 
 Added peersim.cdsim.DaemonProtocol as a generic entry point for all

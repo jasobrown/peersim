@@ -16,11 +16,12 @@
  *
  */
 
-package peersim.dynamics;
+package distributions;
 
 import peersim.config.*;
 import peersim.core.*;
-import peersim.util.CommonRandom;
+import peersim.util.*;
+import peersim.dynamics.*;
 
 /**
  * Initializes the values drawing uniform random samples from 
@@ -28,7 +29,7 @@ import peersim.util.CommonRandom;
  * Assumes nodes implement {@link SingleValue}.
 */
 public class UniformDistribution 
-implements Dynamics 
+implements Dynamics, NodeInitializer
 {
 
 //--------------------------------------------------------------------------
@@ -96,6 +97,16 @@ public void modify()
 		tmp = CommonRandom.r.nextDouble()*d+min;
 		((SingleValue)Network.get(i).getProtocol(pid)).setValue(tmp);
 	}
+}
+
+//--------------------------------------------------------------------------
+
+// Comment inherited from interface
+public void initialize(Node n)
+{
+	double d = max-min;
+	double tmp = CommonRandom.r.nextDouble()*d+min;
+	((SingleValue) n.getProtocol(pid)).setValue(tmp);
 }
 
 //--------------------------------------------------------------------------

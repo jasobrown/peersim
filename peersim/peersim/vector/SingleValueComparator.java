@@ -16,7 +16,7 @@
  *
  */
 
-package distributions;
+package peersim.vector;
 
 import peersim.core.*;
 import java.util.*;

@@ -21,6 +21,7 @@ package example.aggregation;
 import peersim.config.*;
 import peersim.core.*;
 import peersim.dynamics.Dynamics;
+import peersim.vector.SingleValue;
 
 /**
  * Initialize an aggregation protocol using a peak distribution.

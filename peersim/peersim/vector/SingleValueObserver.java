@@ -16,7 +16,7 @@
  *
  */
 		
-package peersim.reports;
+package peersim.vector;
 
 import peersim.core.*;
 import peersim.config.*;
@@ -29,7 +29,7 @@ import peersim.util.IncrementalStats;
 * deviation reduction, average/maximum/minimum of averages,
 * and actual size.
 */
-public class SingleValueObserver implements Observer {
+public class SingleValueObserver implements peersim.reports.Observer {
 
 
 ////////////////////////////////////////////////////////////////////////////

@@ -21,7 +21,7 @@ package example.loadbalance;
  import peersim.config.Configuration;
  import peersim.config.FastConfig;
  import peersim.core.*;
- import distributions.SingleValueHolder;
+ import peersim.vector.SingleValueHolder;
  import peersim.cdsim.CDProtocol;
  
  public class BasicBalance extends SingleValueHolder implements CDProtocol{

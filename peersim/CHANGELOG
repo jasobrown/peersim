@@ -1,3 +1,11 @@
+MJ 30/12/2004
+- Refactoring of classes that have to do with vector-like operations
+  on an array of values, where each element of the array is stored
+  by an instance of a SingleValue protocol. A new package called
+  peersim.vector was created and everything is moved there.
+- New classes dealing with vectors (see above) are added such as
+  observers and dynamics, into package peersim.vector.
+
 MJ 27/12/2004
 - Changed print in IncrementalFreq to print only those lines that have
   non-zero frequency. Thanks to Spyros Voulgaris for pointing out the

@@ -16,7 +16,7 @@
  *
  */
 
-package peersim.core;
+package peersim.vector;
 
 /**
 * The implementor class has a single parameter. This interface

@@ -21,6 +21,7 @@ package example.loadbalance;
 import peersim.config.*;
 import peersim.core.*;
 import peersim.dynamics.Dynamics;
+import peersim.vector.SingleValue;
 
 public class LinearDistributionInitializer  implements Dynamics {
 

@@ -21,7 +21,7 @@ package example.aggregation;
 import peersim.util.CommonRandom;
 import peersim.core.*;
 import peersim.config.FastConfig;
-import distributions.SingleValueHolder;
+import peersim.vector.SingleValueHolder;
 import peersim.cdsim.CDProtocol;
 
 /**

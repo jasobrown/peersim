@@ -16,19 +16,19 @@
  *
  */
 
-package distributions;
+package peersim.vector;
 
 import peersim.config.*;
 import peersim.core.*;
 import peersim.dynamics.*;
 
 /**
- * Initializes the values so that {@link #PAR_PEAKS} nodes have value
- * {@link #PAR_VALUE}/{@link #PAR_PEAKS}, the rest zero.
+ * Initializes the values of nodes from {@link #PAR_MIN} to {@link #PAR_MAX}
+ * linearly increasing.
  * Assumes nodes implement {@link SingleValue}.
  */
-public class PeakDistribution 
-implements Dynamics 
+public class LinearDistribution 
+implements Dynamics, NodeInitializer
 {
 
 //--------------------------------------------------------------------------
@@ -36,24 +36,20 @@ implements Dynamics
 //--------------------------------------------------------------------------
 
 /** 
- * String name of the parameter used to determine the sum of values in the 
- * system, to be equally distributed between peak nodes.
+ * String name of the parameter used to determine the upper bound of the
+ * values. Defaults to Network.size()-1
  */
-public static final String PAR_VALUE = "value";
-
+public static final String PAR_MAX = "max";
 
 /** 
- * String name of the parameter used to determine the number of peaks in
- * the system. If this value is greater or equal than 1, it is 
- * interpreted as the actual number of peaks. If it is included in the
- * range [0, 1[ it is interpreted as a percentage with respect to the
- * current network size. Defaults to 1. 
+ * String name of the parameter used to determine the lower bound of the
+ * values. Defaults to -max.
  */
-public static final String PAR_PEAKS = "peaks";
-
+public static final String PAR_MIN = "min";
 
 /** 
  * String name of the parameter that defines the protocol to initialize.
+ * Parameter read will has the full name <tt>prefix+"."+PAR_PROT</tt>
  */
 public static final String PAR_PROT = "protocol";
 
@@ -61,14 +57,17 @@ public static final String PAR_PROT = "protocol";
 // Fields
 //--------------------------------------------------------------------------
 
-/** Total load */
-private final double value;
+/** Max value */
+private final double max;
 
-/** Number of peaks */
-private final double peaks;
+/** Min value */
+private final double min;
 
 /** Protocol identifier */
-private final int pid;
+private final int protocolID;
+
+/** Last value assigned to a node */
+private double lastval;
 
 
 //--------------------------------------------------------------------------
@@ -76,33 +75,41 @@ private final int pid;
 //--------------------------------------------------------------------------
 
 /**
- * Read configuration parameters.
+ * Reads configuration parameters.
  */
-public PeakDistribution(String prefix)
+public LinearDistribution(String prefix)
 {
-	value = Configuration.getDouble(prefix+"."+PAR_VALUE);
-	pid = Configuration.getPid(prefix+"."+PAR_PROT);
-	peaks = Configuration.getDouble(prefix+"."+PAR_PEAKS, 1);
+	max = Configuration.getDouble(prefix+"."+PAR_MAX, Network.size()-1);
+	min = Configuration.getDouble(prefix+"."+PAR_MIN,-max);
+	protocolID = Configuration.getPid(prefix+"."+PAR_PROT);
 }
-
 
 //--------------------------------------------------------------------------
 // Methods
 //--------------------------------------------------------------------------
 
-// Comment inherited from interface
-public void modify() {
 
-	int pn = (peaks < 1 ? (int) (peaks*Network.size()) : (int) peaks);
-	double vl = value/pn;
-	for (int i=0; i < pn; i++)
+// Comment inherited from interface
+public void modify()
+{
+	double step = (max-min)/(Network.size()-1);
+	for(int i=0; i<Network.size(); ++i)
 	{
-		((SingleValue)Network.get(i).getProtocol(pid)).setValue(vl);
+		lastval = i*step+min;
+		((SingleValue)Network.get(i).getProtocol(protocolID)
+			).setValue(lastval);
 	}
-	for (int i=pn; i < Network.size()-pn; i++)
-	{
-		((SingleValue)Network.get(i).getProtocol(pid)).setValue(0.0);
-	}
+}
+
+//--------------------------------------------------------------------------
+
+// Comment inherited from interface
+public void initialize(Node n)
+{
+	lastval += (max-min)/(Network.size()-1);
+	if (lastval > max)
+		lastval = min;
+	((SingleValue) n.getProtocol(protocolID)).setValue(lastval);
 }
 
 //--------------------------------------------------------------------------

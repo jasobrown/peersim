@@ -24,6 +24,7 @@ import peersim.util.Log;
 import peersim.util.IncrementalStats;
 import peersim.util.CommonRandom;
 import peersim.config.*;
+import peersim.vector.SingleValue;
 
 public class LBObserver implements Observer {
     // Constant fields:

@@ -22,6 +22,7 @@ import peersim.core.*;
 import peersim.reports.*;
 import peersim.util.Log;
 import peersim.config.*;
+import peersim.vector.SingleValue;
 
 /**
  * Print statistics for an average aggregation computation.

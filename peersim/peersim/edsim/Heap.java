@@ -86,9 +86,9 @@ public Heap(int size) {
 	pids = new byte[size];
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 // Methods
-////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 
 /**
  * Returns the current number of event in the system.
@@ -267,7 +267,7 @@ private void put(int index, int time, Object event, Node node, byte pid) {
  * 
  */
 private void doubleCapacity() {
-  int oldsize = events.length;
+	int oldsize = events.length;
 	int newsize = oldsize*2;
 	System.out.println(newsize);
 	Object[] te = new Object[newsize];
@@ -316,7 +316,7 @@ public static void main(String[] argc) {
 	for (int i=0; i<rep; i++) {
 		if (values1[i] != values2[i])
 			System.out.print("+");
-  }
+	}
 }
 
 } // END Heap

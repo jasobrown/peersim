@@ -218,7 +218,8 @@ public static void nextExperiment()
 	for (int i=0; i < observers.length; i++) {
 		times = obsSchedules[i].getSchedule(endtime);
 		for (int j=0; j < times.length; j++) {
-			EventHandler.add(times[j], observers[i], null, EventHandler.OBSERVER);
+			EventHandler.add(
+			  times[j], observers[i], null, EventHandler.OBSERVER);
 		}
 		System.out.println("");
 	}
@@ -228,7 +229,8 @@ public static void nextExperiment()
 		times = dynSchedules[i].getSchedule(endtime);
 		for (int j=0; j < times.length; j++) {
 			System.out.print(times[j] + ", ");
-			EventHandler.add(times[j], dynamics[i], null, EventHandler.DYNAMICS);
+			EventHandler.add(
+			  times[j], dynamics[i], null, EventHandler.DYNAMICS);
 		}
 		System.out.println("");
 	}

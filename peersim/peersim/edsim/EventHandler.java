@@ -79,7 +79,8 @@ private static boolean shuffle;
 public static void add(int delay, Object event, Node node, int pid)
 {
 	if (pid > Byte.MAX_VALUE) 
-		throw new IllegalArgumentException("This version does not support more than " 
+		throw new IllegalArgumentException(
+				"This version does not support more than " 
 				+ Byte.MAX_VALUE + " protocols");
 	heap.add(CommonState.getT()+delay, event, node, (byte) pid);
 }
@@ -96,7 +97,7 @@ public static boolean executeNext(int endtime)
 	if (ev.time > endtime)
 		return true;
 	CommonState.setT(ev.time);
-  int pid = ev.pid;
+	int pid = ev.pid;
 	if (ev.node == null) {
 		// Cycle-based event; handled through a special method
 		return handleCycleEvent(ev);
@@ -119,12 +120,13 @@ public static boolean executeNext(int endtime)
 //---------------------------------------------------------------------
 
 /**
- * Executes a cycle-based event. If ev.pid < 0, this event corresponds to an 
+ * Executes a cycle-based event. If ev.pid is negative,
+ * this event corresponds to an 
  * observer or a dynamics. If it larger than 0, it corresponds to the execution
  * of a CDProtocol.
  *
  * @param ev The event to be executed.
- * @return
+ * @return true if the simulation has to be stopped
  */
 private static boolean handleCycleEvent(Heap.Event ev) 
 {
@@ -146,9 +148,9 @@ private static boolean handleCycleEvent(Heap.Event ev)
 			prot.nextCycle(node, pid);
 		}
 	} else {
-   	throw new IllegalStateException("Illegal process identifier");
-  }
-  return false;
+	 	throw new IllegalStateException("Illegal process identifier");
+	}
+	return false;
 }
 
 //---------------------------------------------------------------------

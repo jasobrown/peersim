@@ -294,13 +294,10 @@ public void flooding( Graph g, int[] b, int k ) {
 		d[i]=color[i]=WHITE; // we use that WHITE=0
 	for(int i=0; i<b.length; ++i) b[i]=0;
 
-	int diam = 0;
-
 	bfs(g,k);
 	
 	for(int i=0; i<d.length; ++i)
 	{
-		if( d[i] > diam ) diam = d[i];
 		if( d[i] > 0 && d[i] < b.length ) b[d[i]]++;
 	}
 

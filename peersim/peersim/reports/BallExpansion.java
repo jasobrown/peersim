@@ -21,6 +21,7 @@ package peersim.reports;
 import peersim.core.*;
 import peersim.config.Configuration;
 import peersim.util.IncrementalStats;
+import peersim.util.RandPermutation;
 import peersim.graph.*;
 
 /**
@@ -38,6 +39,8 @@ public class BallExpansion extends GraphObserver {
 * Name for the parameter maxd, which defines the maximal distance which
 * we print. Defaults to the network size. Note that this default is
 * normally way too much (for random graphs with a low diameter).
+* Also note that the <em>initial</em> network size is used if no value is
+* given which might not be what you want if eg the network is growing.
 */
 public static final String PAR_MAXD = "maxd";
 
@@ -61,6 +64,8 @@ private final boolean stats;
 
 /** working variable */
 private final int[] b;
+
+private final RandPermutation rp = new RandPermutation();
 
 
 // ===================== initialization ================================
@@ -87,12 +92,13 @@ public boolean analyze() {
 	
 	System.out.print(name+": ");
 	
+	rp.reset(g.size());
 	if(stats)
 	{
 		IncrementalStats is = new IncrementalStats();
 		for(int i=0; i<n && i<g.size(); ++i)
 		{
-			ga.flooding( g, b, i );
+			ga.flooding( g, b, rp.next() );
 			int j=1;
 			while(j<b.length && b[j]>0)
 			{
@@ -106,7 +112,7 @@ public boolean analyze() {
 		System.out.println();
 		for(int i=0; i<n && i<g.size(); ++i)
 		{
-			ga.flooding( g, b, i );
+			ga.flooding( g, b, rp.next() );
 			int j=0;
 			while(j<b.length && b[j]>0)
 			{

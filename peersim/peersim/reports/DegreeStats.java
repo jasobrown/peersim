@@ -77,6 +77,8 @@ private final String method;
 
 private final String type;
 
+private final RandPermutation rp = new RandPermutation();
+
 
 // ===================== initialization ================================
 // =====================================================================
@@ -117,7 +119,7 @@ private int getNodeId(int i) {
 		return traced[i].getIndex();
 	}
 
-	return i;
+	return rp.next();
 }
 
 // ---------------------------------------------------------------------
@@ -125,6 +127,7 @@ private int getNodeId(int i) {
 public boolean analyze() {
 	
 	updateGraph();
+	if(!trace) rp.reset(g.size());
 	
 	final int nn = (n<0?Network.size():n);
  

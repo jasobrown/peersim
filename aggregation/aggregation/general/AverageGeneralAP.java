@@ -83,10 +83,10 @@ public void deliverRequest(Node initiator, Node receiver, float rvalue)
 	float lvalue = this.value;
 	this.value = (lvalue + rvalue)/2;
 
-  if (canDeliverResponse(initiator)) {
-		GeneralAggregation rsrc = 
-			(GeneralAggregation) initiator.getProtocol(CommonState.getPid());
-    rsrc.deliverResponse(initiator, receiver, lvalue);
+	if (canDeliverResponse(initiator)) {
+		GeneralAggregation rsrc = (GeneralAggregation)
+			initiator.getProtocol(CommonState.getPid());
+		rsrc.deliverResponse(initiator, receiver, lvalue);
 	}
 }
 
@@ -110,9 +110,10 @@ protected Node selectNeighbor(Node node, int pid)
 	Linkable linkable = (Linkable) node.getProtocol(p.lid);
 	Node rnode = null;
 	if (linkable.degree() > 0) 
-		return linkable.getNeighbor(CommonRandom.r.nextInt(linkable.degree()));
+		return linkable.getNeighbor(
+				CommonRandom.r.nextInt(linkable.degree()));
 	else
-	  return null;
+		return null;
 }
 
 //--------------------------------------------------------------------------

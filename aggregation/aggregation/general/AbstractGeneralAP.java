@@ -108,9 +108,9 @@ protected AbstractGeneralAP.ProtocolData p;
 public AbstractGeneralAP(String prefix)
 {
 	// One-time configuration
-  p = new ProtocolData();
-	p.symProb = Configuration.getDouble(prefix + "." + PAR_SYM_FAILUREPROB, 0.0);
-	p.asymProb = Configuration.getDouble(prefix + "." + PAR_ASYM_FAILUREPROB, 0.0);
+	p = new ProtocolData();
+	p.symProb = Configuration.getDouble(prefix+"."+PAR_SYM_FAILUREPROB,0.0);
+	p.asymProb=Configuration.getDouble(prefix+"."+PAR_ASYM_FAILUREPROB,0.0);
 	p.lid = FastConfig.getLinkable(CommonState.getPid());
 	
 	// Instance fields

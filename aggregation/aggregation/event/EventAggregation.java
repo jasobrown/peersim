@@ -74,7 +74,7 @@ public EventAggregation(String prefix)
 {
 	lid = FastConfig.getLinkable(CommonState.getPid());
 	tid = Configuration.getPid(prefix+"."+PAR_TRANSPORT);
-  cyclelength = Configuration.getInt(prefix+"."+PAR_CLENGTH);
+	cyclelength = Configuration.getInt(prefix+"."+PAR_CLENGTH);
 	initSchedule();
 }
 
@@ -111,10 +111,10 @@ public void processEvent(Node node, int pid, Object event)
 		
 		// Select a random neighbor
 		Linkable link = (Linkable) node.getProtocol(lid);
-    if (link.degree() <= 0) { 
+		if (link.degree() <= 0) { 
 			System.out.print(link.degree()+" ");
 			return;
-	  }
+		}
 		int r = CommonRandom.r.nextInt(link.degree());
 		remote = link.getNeighbor(r);
 		Transport trans = (Transport) node.getProtocol(tid);
@@ -134,7 +134,6 @@ public void processEvent(Node node, int pid, Object event)
 		EDSimulator.add(cyclelength, msg, node, pid);
 		
 	} else { // it's a real message
-	  
 		
 		// Check if this message has been initiated
 		if (msg.initiated) { 
@@ -192,8 +191,8 @@ public void setValue(double value)
 class Message 
 {
 	boolean initiated;
-  Node src;
-  EventAggregation sender;
+	Node src;
+	EventAggregation sender;
 	short cycle;
 	double value;
 

@@ -21,7 +21,7 @@ package peersim.util;
 import java.io.PrintStream;
 
 //XXX This implementation is very restricted, to be made more flexible
-// using hastables.
+// using hashtables.
 /**
 * A class that can collect frequency information on integer input.
 * Even though it is easy to get such statistics with other tools and scripts,
@@ -114,11 +114,37 @@ public int getFreq(int i) {
 	
 // ---------------------------------------------------------------------
 
-public void print( PrintStream out ) {
+/**
+* Prints current frequency information. Prints a separate line for
+* all values from 0 to the capacity of the internal representation using the
+* format
+* <pre>
+* value frequency
+* </pre>
+*/
+public void printAll( PrintStream out ) {
 	
 	for(int i=0; i<freq.length; ++i)
 	{
 		out.println(i+" "+freq[i]);
+	}
+}
+
+// ---------------------------------------------------------------------
+
+/**
+* Prints current frequency information. Prints a separate line for
+* all values that have a frequency different from zero using the 
+* format
+* <pre>
+* value frequency
+* </pre>
+*/
+public void print( PrintStream out ) {
+
+	for(int i=0; i<freq.length; ++i)
+	{
+		if(freq[i]!=0) out.println(i+" "+freq[i]);
 	}
 }
 
@@ -141,7 +167,8 @@ public String toString() {
 	String result="";
 	for(int i=0; i<freq.length; ++i)
 	{
-		result = result+freq[i]+" ";
+		if (freq[i] != 0)
+			result = result+" ("+i+","+freq[i]+")";
 	}
 	return result;
 }

@@ -6,24 +6,24 @@ simulation.shuffle
 overlay.size 50000
 overlay.maxsize 200000
  
-protocol.0 newscast.SimpleNewscast
+protocol.0 example.newscast.SimpleNewscast
 protocol.0.cache 20
 
-protocol.1 aggregation.AverageFunction
+protocol.1 example.aggregation.AverageFunction
 protocol.1.linkable 0
 
 init.0 peersim.init.WireRegularRandom
 init.0.protocol 0
 init.0.degree 20
  
-#init.1 aggregation.PeakDistributionInitializer
+#init.1 example.aggregation.PeakDistributionInitializer
 #init.1.value 1
-init.1 loadbalance.LinearDistributionInitializer
+init.1 example.loadbalance.LinearDistributionInitializer
 init.1.protocol 1
 init.1.max 100
 init.1.min 1
 
-observer.0 aggregation.AverageObserver
+observer.0 example.aggregation.AverageObserver
 observer.0.protocol 1
 
 dynamics.0 peersim.dynamics.GrowingNetwork

@@ -1,3 +1,12 @@
+GJ 11/11/2004
+- Refactored aggregation and load balancing example code: now they use 
+  distribution.SingleValueHolder class and peersim.core.SingleValue interface
+  instead of example.aggregation.AbstractFunction and 
+  example.aggregation.Aggregation interface.
+
+- example.aggregation.AbstractFunction class and example.aggregation.Aggregation 
+  interface removed to avoid code replication.
+
 JM 9/11/2004
 - removed Protocols, added peersim.config.FastConfig instead. The new feature
   is that FastConfig is automatic, it reads and stores "linkable" config lines

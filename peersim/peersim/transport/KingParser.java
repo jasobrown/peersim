@@ -93,7 +93,8 @@ public void modify()
 	try {
 		in = new BufferedReader(new FileReader(filename));
 	} catch (FileNotFoundException e) {
-		throw new IllegalParameterException(prefix+"."+PAR_FILE, filename + " does not exist");
+		throw new IllegalParameterException(
+			prefix+"."+PAR_FILE, filename + " does not exist");
 	}
 
 	// XXX If the file format is not correct, we will get quite obscure
@@ -102,27 +103,27 @@ public void modify()
 	String line = null;
 	// Skip initial lines
 	int size = 0;
-  try { 
-		while ((line = in.readLine()) != null && !line.startsWith("node"));
+	try { 
+		while((line=in.readLine()) != null && !line.startsWith("node"));
 		while (line != null && line.startsWith("node")) {
 			size++;
 			line = in.readLine();
 		}
-  } catch (IOException e) { }
-  E2ENetwork.reset(size, true);
-  System.out.println(size);
-  try {
-  do {
+	} catch (IOException e) { }
+	E2ENetwork.reset(size, true);
+	System.out.println(size);
+	try {
+	do {
 		//System.out.println(line);
-  	StringTokenizer tok = new StringTokenizer(line, ", ");
-  	int n1 = Integer.parseInt(tok.nextToken())-1;
-  	int n2 = Integer.parseInt(tok.nextToken())-1;
-  	int latency = (int) (Double.parseDouble(tok.nextToken()) * ratio);
-  	E2ENetwork.setLatency(n1, n2, latency);
-  	
-  	line = in.readLine();
-  } while (line != null);
-  } catch (IOException e) { }
+		StringTokenizer tok = new StringTokenizer(line, ", ");
+		int n1 = Integer.parseInt(tok.nextToken())-1;
+		int n2 = Integer.parseInt(tok.nextToken())-1;
+		int latency=(int)(Double.parseDouble(tok.nextToken()) * ratio);
+		E2ENetwork.setLatency(n1, n2, latency);
+		
+		line = in.readLine();
+	} while (line != null);
+	} catch (IOException e) { }
 }
 
 }

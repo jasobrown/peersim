@@ -65,10 +65,10 @@ public UniformRandomTransport(String prefix)
 {
 	min = Configuration.getInt(prefix + "." + PAR_MINDELAY);
 	int max = Configuration.getInt(prefix + "." + PAR_MAXDELAY);
-  if (max < min) 
-  	throw new IllegalParameterException(prefix+"."+PAR_MAXDELAY, 
-  			"The maximum latency cannot be smaller than the minimum latency");
-  range = max-min+1;
+	if (max < min) 
+	   throw new IllegalParameterException(prefix+"."+PAR_MAXDELAY, 
+	   "The maximum latency cannot be smaller than the minimum latency");
+	range = max-min+1;
 }
 
 //---------------------------------------------------------------------
@@ -86,7 +86,7 @@ public Object clone()
 public void send(Node src, Node dest, Object msg, int pid)
 {
 	int delay = min + CommonRandom.r.nextInt(range);
-  EventHandler.add(delay, msg, dest, pid);
+	EventHandler.add(delay, msg, dest, pid);
 }
 
 }

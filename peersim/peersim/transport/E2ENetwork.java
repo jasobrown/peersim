@@ -76,21 +76,22 @@ public static void reset(int size, boolean symm)
  * 
  * @param sender the index of the sender
  * @param receiver the index of the receiver
- * @return
+ * @return the latency associated to the specified (sender, receiver)
+ * pair.
  */
 public static int getLatency(int sender, int receiver) 
 {
 	if (sender==receiver)
 		return 0;
-  if (symm) {
-  	// Symmetric network
-  	if (sender < receiver) {
-  		int tmp = sender;
-  		sender = receiver;
-  		receiver = tmp;
-  	}
-  } 
-  return array[sender][receiver];
+	if (symm) {
+		// Symmetric network
+		if (sender < receiver) {
+			int tmp = sender;
+			sender = receiver;
+			receiver = tmp;
+		}
+	} 
+	return array[sender][receiver];
 }
 
 /**
@@ -103,14 +104,14 @@ public static int getLatency(int sender, int receiver)
  */
 public static void setLatency(int sender, int receiver, int latency) 
 {
-  if (symm) {
-  	// Symmetric network
-  	if (sender < receiver) {
-  		int tmp = sender;
-  		sender = receiver;
-  		receiver = tmp;
-  	}
-  } 
+	if (symm) {
+		// Symmetric network
+		if (sender < receiver) {
+			int tmp = sender;
+			sender = receiver;
+			receiver = tmp;
+		}
+	} 
  	array[sender][receiver] = latency;
 }
 

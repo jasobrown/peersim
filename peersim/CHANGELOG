@@ -1,3 +1,11 @@
+AM 19/01/2005
+- Fixed a bug in ClassFinder, that was preventing it to run on
+  Windows.
+- Added a mechanism for running a class that implements both
+  the CDProtocol and EDProtocol interface just as an EDProtocol.
+- Now the prototype node has an index of -1 (to avoid confusion
+  with node with index 0)
+
 MJ 09/01/2005
 - Fixed a bug in PeakDistribution: it did not initialize as many nodes
   as the number of peaks. Eg with one peak, one node is not initialized.

@@ -536,6 +536,7 @@ public static Object getInstance( String name ) {
 		if (e.getTargetException() instanceof RuntimeException) {
 			throw (RuntimeException) e.getTargetException();
 		} else {
+			e.printStackTrace();
 			throw new RuntimeException(""+e.getTargetException());
 		}
 	}

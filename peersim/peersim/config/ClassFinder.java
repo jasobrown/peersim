@@ -115,6 +115,7 @@ throws IOException
 {
   String classPath = System.getProperty( "java.class.path" );
   String separator = System.getProperty( "path.separator"  );
+  String filesep = System.getProperty( "file.separator");
   StringTokenizer path = new StringTokenizer( classPath, separator );
 
   while( path.hasMoreTokens() ) {
@@ -123,8 +124,8 @@ throws IOException
     File pathFile = new File( pathElement );
     
     if( pathFile.isDirectory() ) {
-    	if (!pathElement.endsWith(separator)) {
-    		pathElement = pathElement + separator;
+    	if (!pathElement.endsWith(filesep)) {
+    		pathElement = pathElement + filesep;
     		pathFile = new File( pathElement);
     	}
       findClassInPathDir( map, pathElement, pathFile );
@@ -199,7 +200,8 @@ private static void findClassInPathDir( Map map, String pathElement, File pathFi
  */
 private static String classname(String classFile)
 { 
-  return classFile.replaceAll( "/", "." ).substring( 0, classFile.length() - ".class".length() ); 
+  String filesep = System.getProperty( "file.separator");
+  return classFile.replaceAll( filesep, "." ).substring( 0, classFile.length() - ".class".length() ); 
 }
 
 /** 

@@ -32,8 +32,14 @@ public class CommonState {
 // =================================================================
 
 /**
-* Current time in the simulation. It's public because eevrything would have
-* read and write rights anyway.
+* Current time within the current cycle, for cycle based
+* simulations.
+* Note that {@link #time} is the cycle id in this case.
+*/
+private static int ctime = 0;
+
+/**
+* Current time in the simulation.
 */
 private static int time = 0;
 
@@ -82,10 +88,15 @@ public static int getT() { return time; }
 
 // -----------------------------------------------------------------
 
+/**
+* Sets current time.
+* In cycle based simulations also resets cycle time to 0.
+*/
 public static void setT( int t ) {
 	
 	_time = new Integer(t);
 	time = t;
+	ctime = 0;
 }
 
 // -----------------------------------------------------------------
@@ -131,6 +142,19 @@ public static Node getNode() { return node; }
 //-----------------------------------------------------------------
 
 public static void setNode( Node n ) { node = n; }
+
+//-----------------------------------------------------------------
+
+/**
+* Returns the current time within the current cycle, for cycle based
+* simulations.
+* Note that the time returned by {@link #getT} is the cycle id in this case.
+*/
+public static int getCycleT() { return ctime; }
+
+// -----------------------------------------------------------------
+
+public static void setCycleT( int t ) { ctime = t; }
 
 }
 

@@ -1,3 +1,12 @@
+Added peersim.cdsim.DaemonProtocol as a generic entry point for all
+kinds of hacks, to avoid complicating the simulator. It can be used
+to run observers and modifiers several times within one cycle.
+
+Added cycle time to peersim.core.CommonState and modified
+peersim.cdsim.Simulator to handle this feature. It records the number
+of nodes already visited in a given cycle (makes sense only for cycle based
+simulation).
+
 Added peersim.example.hot package : classes to model a preferential
 attachment internet like topology
 

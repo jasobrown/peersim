@@ -30,7 +30,7 @@ public class CommonState
 //======================= constants ===============================
 //=================================================================
 
-	public static final int PRE_DYNAMICS = 0;
+public static final int PRE_DYNAMICS = 0;
 
 public static final int PRE_CYCLE = 1;
 
@@ -40,18 +40,24 @@ public static final int POST_LAST_CYCLE = 2;
 // =================================================================
 
 /**
- * Current time within the current cycle, for cycle based simulations. Note that
- * {@link #cycle} is the cycle id in this case.
+ * Current time within the current cycle, for cycle based simulations.
+ * Note that {@link #cycle} gives the cycle id to which this value is relative.
  */
 private static int ctime = 0;
 
 /**
- * Current cycle in the simulation.
+ * Current cycle in the simulation. It makes sense only in the case of a
+ * cycle based simulator, that is, cycle based simulators will maintain this
+ * value, others will not. It still makes sense to keep it separate from
+ * {@link #time} because it is an int, while time is a long.
  */
 private static int cycle = 0;
 
 /**
- * Current time in event-based simulations
+ * Current time. Note that this value is simulator independent, all simulation
+ * models have a notion related to time. For example, in the cycle based model,
+ * the cycle id gives time, while in even driven simulations all events have
+ * a timestamp.
  */
 private static long time = 0;
 
@@ -112,19 +118,23 @@ public static int getT()
 //-----------------------------------------------------------------
 
 /**
- * Sets current time. Resets also cycle time to 0.
+ * Sets current cycle. Used by the cycle based simulators. Resets also cycle
+ * time to 0. It also calls
+ * {@link #setTime} with the given parameter, to make sure {@link #getTime}
+ * is indeed independent of the simulation model.
  */
 public static void setCycle(int t)
 {
 	_cycle = new Integer(t);
 	cycle = t;
 	ctime = 0;
+	setTime(t);
 }
 
 //-----------------------------------------------------------------
 
 /**
- * Returns current cycle as an Integer object
+ * Returns current cycle as an Integer object.
  */
 public static Integer getCycleObj()
 {
@@ -134,11 +144,12 @@ public static Integer getCycleObj()
 //-----------------------------------------------------------------
 
 /**
- * In event-driven simulations, returns the current time (a long-value).
+ * Returns current time. In event-driven simulations, returns the current
+ * time (a long-value).
  * In cycle-driven simulations, returns the current cycle (a long that
- * can be safely be cast into an integer). Initializers, observers, and
+ * can safely be cast into an integer). Initializers, observers, and
  * dynamics should always call this method instead of {@link getCycle()};
- * in this way, they are compatible with boht cycle-driven and event-driven
+ * in this way, they are compatible with both cycle-driven and event-driven
  * simulations.
  */
 public static long getTime()

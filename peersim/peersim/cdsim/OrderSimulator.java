@@ -178,7 +178,6 @@ public static void nextExperiment()
 	// Initializers are run at 
 	// cycle 0 (cycle-driven) / time 0 (event-driven)
 	CommonState.setCycle(0);
-	CommonState.setTime(0);
 	CommonState.setPhase(CommonState.PRE_DYNAMICS);
 	runInitializers();
 	
@@ -261,7 +260,6 @@ public static void nextExperiment()
 		// the concept of cycle; so both the cycle and the time are set
 		// to the equal value.
 		CommonState.setCycle(i);
-		CommonState.setTime(i);
 
 		// Shuffling pre-cycle
 		if( shuffle )

@@ -2,6 +2,7 @@ MJ 27/12/2004
 - Changed print in IncrementalFreq to print only those lines that have
   non-zero frequency. Thanks to Spyros Voulgaris for pointing out the
   problem.
+- Some minor refactoring and docs enhancement.
 
 GJ 19/12/2004
 - Fixed a Scamp cast bug in order to compile on JDK 1.5 . 

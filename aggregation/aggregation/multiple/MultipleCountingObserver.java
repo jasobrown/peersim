@@ -110,7 +110,7 @@ public MultipleCountingObserver(String name)
 	this.name = name;
 	partial = Configuration.contains(name+"."+PAR_PARTIAL);
   accuracy = Configuration.getDouble(name+"."+PAR_ACCURACY,-1);
-  pid = Configuration.getInt(name+"."+PAR_PROTID);
+  pid = Configuration.getPid(name+"."+PAR_PROTID);
   epoch = Configuration.getInt(name+"."+PAR_STEP, Integer.MAX_VALUE);
 }
 
@@ -136,30 +136,15 @@ public boolean analyze()
 		MultipleAggregation protocol = (MultipleAggregation) node.getProtocol(pid);
 
 		if (!protocol.isNew()) {
-			double values[] = new double[protocol.size()];
-			for (int j=0; j < values.length; j++) {
-				values[j] = protocol.getValue(j);	
-			}
-			java.util.Arrays.sort(values);
-			
-			// Compute statistics
-			int k=0;
-			for (k=0; k < values.length && values[k] == 0; k++);
-
 			double sum = 0;
-			int count = values.length-k;
-			if (count >= 6) {
-				int start = k+count/3;
-				int stop = k+count*2/3;
-				for (int j=start; j < stop; j++) 
-					sum += values[j];
-				stats.add(count == 0 ? 0 : sum/(stop-start));
-			} else {
-				for (int j=k; j < values.length; j++) 
-					sum += values[j];
-				stats.add(count == 0 ? 0 : sum/count);
+			int count = 0;
+			for (int j=0; j < protocol.size(); j++) {
+				//if (protocol.getValue(j) > 0) {
+					sum += protocol.getValue(j);
+					count++;
+				// }
 			}
-			
+			stats.add(sum/count);
 		}
 
 	}

@@ -105,7 +105,7 @@ public AverageObserver(String name)
 	this.name = name;
 	accuracy = Configuration.getDouble(name+"."+PAR_ACCURACY,-1);
 	partial = Configuration.contains(name+"."+PAR_PARTIAL);
-	pid = Configuration.getInt(name+"."+PAR_PROTID);
+	pid = Configuration.getPid(name+"."+PAR_PROTID);
 	epoch = Configuration.getInt(name+"."+PAR_STEP, Integer.MAX_VALUE);
 }
 
@@ -129,14 +129,15 @@ public boolean analyze()
 	/* Compute max, min, average */
 	for (int i=0; i < len; i++) {
 		Node node = Network.get(i);
-		Aggregation protocol = (Aggregation) node.getProtocol(pid);
-
-		try {
-			stats.add(protocol.getValue());
-		} catch (Exception e) {
-			/* 
-			 * We do nothing; the node should not be counted in the
-			 */ 
+		if (node.isUp()) {
+			Aggregation protocol = (Aggregation) node.getProtocol(pid);
+			try {
+				stats.add(protocol.getValue());
+			} catch (Exception e) {
+				/* 
+				 * We do nothing; the node should not be counted in the
+				 */ 
+			}
 		}
 	}
 	double var = stats.getVar();

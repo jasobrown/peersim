@@ -109,7 +109,7 @@ public ProofBlacklist(String prefix, Object obj)
 {
 	/* Store info about the linkable value */
 	int pid = ((Integer) obj).intValue();
-	int link = Configuration.getInt(prefix+"."+PAR_CONN);
+	int link = Configuration.getPid(prefix+"."+PAR_CONN);
 	Protocols.setLink(pid, link);
 
 	/* Read parameters */

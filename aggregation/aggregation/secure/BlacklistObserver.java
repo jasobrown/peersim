@@ -88,8 +88,8 @@ private final int blacklistID;
 public BlacklistObserver(String name)
 {
 	this.name = name;
-	protocolID = Configuration.getInt(name+"."+PAR_PID);
-	blacklistID = Configuration.getInt(name+"."+PAR_BLID);
+	protocolID = Configuration.getPid(name+"."+PAR_PID);
+	blacklistID = Configuration.getPid(name+"."+PAR_BLID);
 }
 
 

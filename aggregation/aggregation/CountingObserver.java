@@ -104,7 +104,7 @@ public CountingObserver(String name)
 	this.name = name;
 	partial = Configuration.contains(name+"."+PAR_PARTIAL);
   accuracy = Configuration.getDouble(name+"."+PAR_ACCURACY,-1);
-  pid = Configuration.getInt(name+"."+PAR_PROTID);
+  pid = Configuration.getPid(name+"."+PAR_PROTID);
   epoch = Configuration.getInt(name+"."+PAR_STEP, Integer.MAX_VALUE);
 }
 

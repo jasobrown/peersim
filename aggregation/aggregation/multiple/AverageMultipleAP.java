@@ -130,7 +130,7 @@ public AverageMultipleAP(String prefix, Object obj)
 {
 	// One-time configuration
 	int pid = ((Integer) obj).intValue();
-	int link = Configuration.getInt(prefix + "." + PAR_CONN);
+	int link = Configuration.getPid(prefix + "." + PAR_CONN);
 	Protocols.setLink(pid, POS_LINKABLE, link);
 	symProb = Configuration.getDouble(prefix + "." + PAR_SYM_FAILUREPROB, 0.0);
 	asymProb = Configuration.getDouble(prefix + "." + PAR_ASYM_FAILUREPROB, 0.0);

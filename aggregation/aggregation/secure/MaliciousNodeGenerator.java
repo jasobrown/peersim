@@ -82,13 +82,19 @@ private final String name;
 public MaliciousNodeGenerator(String name)
 {
 	this.name = name;
-	protocolID = Configuration.getInt(name + "." + PAR_PROTID);
+	protocolID = Configuration.getPid(name + "." + PAR_PROTID);
 	malicious = Configuration.getInt(name + "." + PAR_SIZE);
 }
 
 //--------------------------------------------------------------------------
 // Methods
 //--------------------------------------------------------------------------
+
+// Comment inherited from interface
+public void initialize()
+{
+	modify();
+}
 
 // Comment inherited from interface
 public void modify()

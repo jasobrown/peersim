@@ -97,7 +97,7 @@ public CentralizedBlacklist(String name)
 {
 	this.name = name;
 	threshold = Configuration.getDouble(name + "." + PAR_THRESHOLD, 2);
-	protocolID = Configuration.getInt(name+"."+PAR_PROTID);
+	protocolID = Configuration.getPid(name+"."+PAR_PROTID);
 }
 
 //--------------------------------------------------------------------------

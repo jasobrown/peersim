@@ -18,6 +18,8 @@
 
 package aggregation;
 
+import peersim.core.*;
+
 /**
  * This interface has to be implemented by protocol objects
  * implementing an aggregation function. It enables the
@@ -31,18 +33,8 @@ package aggregation;
  * @version $Revision$
  */
 public interface Aggregation
+extends SingleValue
 {
 
-/**
- * Get the value to be aggregated. The method can throw an exception
- * to notify the invoker that the value is not available; e.g., because
- * the node is down, or it is not partecipating in the protocol.
- */
-public double getValue();
-
-/**
- * Set the value to be aggregated.
- */
-public void setValue(double value);
 
 }

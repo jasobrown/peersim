@@ -91,7 +91,7 @@ public MaliciousSecureAverageAP(String prefix, Object obj)
 {
 	super(prefix, obj);
 	int pid = ((Integer) obj).intValue();
-	int hid = Configuration.getInt(prefix+"."+PAR_HID);
+	int hid = Configuration.getPid(prefix+"."+PAR_HID);
 	Protocols.setLink(pid, POS_HISTORY, hid);
 	exchanges = Configuration.getInt(prefix+"."+PAR_EXCHANGES, 1);
 	fixed = (float) Configuration.getDouble(prefix+"."+PAR_FIXED, 0);

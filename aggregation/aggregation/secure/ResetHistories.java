@@ -62,7 +62,7 @@ private final int pid;
  */
 public ResetHistories(String prefix)
 {
-	pid = Configuration.getInt(prefix+"."+PAR_PROTID);
+	pid = Configuration.getPid(prefix+"."+PAR_PROTID);
 }
 
 

@@ -70,9 +70,9 @@ public SecureAverageAP(String prefix, Object obj)
 {
 	super(prefix, obj);
 	int pid = ((Integer) obj).intValue();
-	int blacklistID = Configuration.getInt(prefix+"."+PAR_BLID);
+	int blacklistID = Configuration.getPid(prefix+"."+PAR_BLID);
 	Protocols.setLink(pid, POS_BLACKLIST, blacklistID);
-	int historyID = Configuration.getInt(prefix+"."+PAR_HID);
+	int historyID = Configuration.getPid(prefix+"."+PAR_HID);
 	Protocols.setLink(pid, POS_HISTORY, historyID);
 }
 

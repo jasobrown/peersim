@@ -223,6 +223,19 @@ protected static void nextRound(int cycle) {
  */
 protected static void nextExperiment() 
 {
+	// Reading parameter
+	cycles = Configuration.getInt(PAR_CYCLES);
+	shuffle = Configuration.contains(PAR_SHUFFLE);
+	getpair_rand = Configuration.contains(PAR_GETPAIR);
+
+	// initialization
+	System.err.println("Simulator: resetting");
+	Network.reset();
+	System.err.println("Simulator: running initializers");
+	CommonState.setT(0); // needed here
+	CommonState.setPhase(CommonState.PRE_DYNAMICS);
+	runInitializers();
+			
 	// Load observer, dynamics, protocol schedules
 	loadObservers();
 	loadDynamics();
@@ -302,19 +315,6 @@ public static void main(String[] pars) throws Exception {
 			System.err.println("Simulator: starting experiment "+k);
 			System.out.println("\n\n");
 	
-			// Reading parameter
-			cycles = Configuration.getInt(PAR_CYCLES);
-			shuffle = Configuration.contains(PAR_SHUFFLE);
-			getpair_rand = Configuration.contains(PAR_GETPAIR);
-
-			// initialization
-			System.err.println("Simulator: resetting");
-			Network.reset();
-			System.err.println("Simulator: running initializers");
-			CommonState.setT(0); // needed here
-			CommonState.setPhase(CommonState.PRE_DYNAMICS);
-			runInitializers();
-			
 			nextExperiment();
 		}
 	

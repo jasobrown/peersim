@@ -166,10 +166,22 @@ protected static void nextRound(int cycle, int pid) {
  */
 protected static void nextExperiment() 
 {
+	// Reading parameter
+	cycles = Configuration.getInt(PAR_CYCLES);
+	shuffle = Configuration.contains(PAR_SHUFFLE);
+	getpair_rand = Configuration.contains(PAR_GETPAIR);
 	protocolshuffle = Configuration.contains(PAR_PSHUFFLE);
 	String order = Configuration.getString(PAR_ORDER, null);
 	if( order == null ) throw new IllegalParameterException(PAR_ORDER,
 		"You need to define parameter \"order\" for OrderSimulator");
+
+	// initialization
+	System.err.println("OrderSimulator: resetting");
+	Network.reset();
+	System.err.println("OrderSimulator: running initializers");
+	CommonState.setT(0); // needed here
+	CommonState.setPhase(CommonState.PRE_DYNAMICS);
+	runInitializers();
 	
 	String[] obsNames = loadObservers();
 	String[] dynNames = loadDynamics();
@@ -242,7 +254,7 @@ protected static void nextExperiment()
 		}		
 	}
 
-	System.err.println("Simulator: starting simulation");
+	System.err.println("OrderSimulator: starting simulation");
 	boolean stop = false;
 	for(int i=0; i<cycles && !stop; ++i) {
 
@@ -270,7 +282,7 @@ protected static void nextExperiment()
 			  	break;
 			}
 		}
-		System.err.println("Simulator: cycle "+i+" done");
+		System.err.println("OrderSimulator: cycle "+i+" done");
 	}
 
 	CommonState.setPhase(CommonState.POST_LAST_CYCLE);

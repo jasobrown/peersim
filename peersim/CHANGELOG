@@ -1,3 +1,6 @@
+GJ 19/12/2004
+- Fixed a Scamp cast bug in order to compile on JDK 1.5 . 
+
 MJ 16/12/2004
 - Fixed docs bug in FastConfig, thanks to Spyros Voulgaris, and added
   hasLinkable.

@@ -554,7 +554,7 @@ public static String test(int protocolID) {
 			for(int j=1; j<currsc.degree(); ++j)
 			{
 				if( ((Integer)currsc.outViewDates.get(j-1)
-				  ).compareTo(
+				  ).compareTo((Object)
 				  currsc.outViewDates.get(j)) > 0 )
 				{
 					corruptDates++;
@@ -570,7 +570,7 @@ public static String test(int protocolID) {
 			for(int j=1; j<currsc.inView.size(); ++j)
 			{
 				if( ((Integer)currsc.inViewDates.get(j-1)
-				  ).compareTo(
+				  ).compareTo((Object)
 				  currsc.inViewDates.get(j)) > 0 )
 				{
 					corruptInDates++;

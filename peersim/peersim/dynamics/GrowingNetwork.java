@@ -33,13 +33,14 @@ public class GrowingNetwork implements Dynamics {
 
 
 /** 
-* Config parameter which gives prefix of node initializers.
+* Config parameter which gives prefix of node initializers. Node initializers
+* then are given in the form of eg init.1, init.AAA, stb.
 */
 public static final String PAR_INIT = "init";
 
 /** 
 * The number of nodes to add when nodes are scheduled for addition. This
-* can be negative which result in deletion of that many nodes.
+* can be negative which results in the deletion of that many nodes.
 * It can also be non-integer if {@link #PAR_PERC} is set.
 */
 public static final String PAR_ADD = "add";

@@ -1,3 +1,6 @@
+Fixed bug in peersim.util.WeightedRandPerm which accepted
+non-positive weights.
+
 Added peersim.reports.SingleValueObserver
 
 Added new modifier classes, which can set numeric parameters of

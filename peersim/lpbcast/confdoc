@@ -55,7 +55,7 @@ init.0.protocol 0
 # This defines dynamism, by adding new nodes.
 dynamics.0 peersim.dynamics.GrowingNetwork
 dynamics.0.add 100
-dynamics.0.ineach 1
+dynamics.0.step 1
 dynamics.0.until 10
 # this is the class that initializes the newly added nodes. In this case,
 # each new node will get a single random contact node.
@@ -69,7 +69,7 @@ dynamics.0.init.0.degree 1
 # action
 dynamics.1 lpbcast.Unsubscribe
 dynamics.1.add -100
-dynamics.1.ineach 1
+dynamics.1.step 1
 dynamics.1.from 1
 dynamics.1.until 1
 dynamics.1.protocol 0

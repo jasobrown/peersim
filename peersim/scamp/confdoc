@@ -51,7 +51,7 @@ init.0.protocol 0
 # will apply the SCAMP subscription protocol.
 dynamics.0 peersim.dynamics.GrowingNetwork
 dynamics.0.add 500
-dynamics.0.ineach 1
+dynamics.0.step 1
 dynamics.0.until 10
 dynamics.0.init.0 scamp.Subscribe
 dynamics.0.init.0.protocol 0
@@ -63,7 +63,7 @@ dynamics.0.init.0.protocol 0
 # down nodes.
 dynamics.1 scamp.Unsubscribe
 dynamics.1.add -100
-dynamics.1.ineach 1
+dynamics.1.step 1
 dynamics.1.from 10
 dynamics.1.protocol 0
 

@@ -19,4 +19,5 @@ init.0.protocol 0
 # the numbers printed are min, max, number of nodes, avg, std.
 observer.0 peersim.reports.DegreeStats
 observer.0.protocol 0
+observer.0.FINAL
 

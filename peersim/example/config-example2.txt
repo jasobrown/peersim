@@ -12,12 +12,17 @@ protocol.0.cache 20
 protocol.1 example.aggregation.AverageFunction
 protocol.1.linkable 0
 
-init.0 peersim.init.WireRegularRandom
+init.0 peersim.dynamics.WireRegularRandom
 init.0.protocol 0
 init.0.degree 20
- 
+
+# UNCOMMENT THE FOLLOWING LINES TO GET A PEAK DISTRIBUTION
 #init.1 example.aggregation.PeakDistributionInitializer
-#init.1.value 1
+#init.1.value 10000
+#init.1.at 0
+#init.1.protocol 1
+
+# UNCOMMENT THE FOLLOWING LINES TO GET A LINEAR DISTRIBUTION
 init.1 example.loadbalance.LinearDistributionInitializer
 init.1.protocol 1
 init.1.max 100

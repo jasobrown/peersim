@@ -18,10 +18,9 @@
 		
 package peersim.vector;
 
-import peersim.core.*;
-import peersim.reports.Observer;
 import peersim.config.Configuration;
-import peersim.util.IncrementalStats;
+import peersim.core.Network;
+import peersim.reports.Observer;
 
 /**
 * Observes the cosine angle between two vectors. The number which is output is

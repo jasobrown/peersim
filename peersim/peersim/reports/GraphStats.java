@@ -18,10 +18,9 @@
 		
 package peersim.reports;
 
-import peersim.core.*;
 import peersim.config.Configuration;
+import peersim.graph.GraphAlgorithms;
 import peersim.util.IncrementalStats;
-import peersim.graph.*;
 
 /**
 * Prints reports on the graph like average clustering and average path length,

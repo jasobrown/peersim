@@ -18,12 +18,10 @@
 		
 package peersim.reports;
 
-import peersim.core.*;
-import peersim.config.Configuration;
-import peersim.graph.GraphAlgorithms;
-import peersim.util.IncrementalStats;
-import java.util.Map;
 import java.util.Iterator;
+import java.util.Map;
+import peersim.config.Configuration;
+import peersim.util.IncrementalStats;
 
 /**
  */

@@ -18,11 +18,10 @@
 		
 package peersim.reports;
 
-import peersim.core.*;
 import peersim.config.Configuration;
+import peersim.core.Network;
 import peersim.util.IncrementalStats;
 import peersim.util.RandPermutation;
-import peersim.graph.*;
 
 /**
 * Observer to analyse the ball expansion, it the number of nodes that

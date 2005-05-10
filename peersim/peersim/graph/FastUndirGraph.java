@@ -26,8 +26,6 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
-import peersim.core.CommonState;
 
 /**
 * Speeds up {@link ConstUndirGraph#isEdge} by storing the links in a matrix.

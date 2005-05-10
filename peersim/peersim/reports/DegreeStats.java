@@ -18,11 +18,14 @@
 		
 package peersim.reports;
 
-import peersim.core.*;
 import peersim.config.Configuration;
-import peersim.util.*;
-import peersim.graph.*;
 import peersim.config.IllegalParameterException;
+import peersim.core.Network;
+import peersim.core.Node;
+import peersim.core.OverlayGraph;
+import peersim.util.IncrementalFreq;
+import peersim.util.IncrementalStats;
+import peersim.util.RandPermutation;
 
 /**
  */

@@ -1,3 +1,7 @@
+GJ 10/05/05
+- Fixed Scamp compilation bug (with JDK 5.0).
+- Other classes minor compilation warnings (unnecessary includes).
+
 MJ 31/03/05
 - Fixed a bug in DegreeStats related to the observation of dead links.
 

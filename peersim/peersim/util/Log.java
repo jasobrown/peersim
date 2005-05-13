@@ -19,6 +19,8 @@
 package peersim.util;
 
 import java.io.*;
+import peersim.config.*;
+import peersim.core.*;
 
 /**
  * 
@@ -28,6 +30,10 @@ import java.io.*;
  */
 public class Log
 {
+	
+	private static final String PAR_TIME = "log.time";
+	
+	private static boolean logtime = Configuration.contains(PAR_TIME);
 
   private static String prefix = "";
 
@@ -45,7 +51,10 @@ public class Log
 
   public static void println(String observerId, String string)
   {
-  	stream.println(observerId + " " + prefix + string);
+  	if (logtime) 
+  		stream.println(observerId + " " + prefix + " T " + CommonState.getTime() + string);
+  	else
+  		stream.println(observerId + " " + prefix + string);
   }
 
 }

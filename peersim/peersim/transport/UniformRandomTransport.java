@@ -89,4 +89,11 @@ public void send(Node src, Node dest, Object msg, int pid)
 	EDSimulator.add(delay, msg, dest, pid);
 }
 
+//Comment inherited from interface
+public int getLatency(Node src, Node dest)
+{
+	return min + CommonRandom.r.nextInt(range);
+}
+
+
 }

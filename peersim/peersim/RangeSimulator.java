@@ -81,7 +81,7 @@ public static void main(String[] args)
 	}
 	// Read property file and set up output files, if needed
 	System.err.println("Simulator: loading configuration");
-	ConfigProperties properties = null;
+	Properties properties = null;
 	if (args[0].equals("-d")) {
 		// The simulator is used to automatically select a configuration
 		// file contained in the specified directory and that has not been
@@ -97,7 +97,7 @@ public static void main(String[] args)
 	} else {
 		// The simulator is use to execute a single file, with the possibility
 		// to define properties on the command line.
-		properties = new ConfigProperties(args);
+		properties = new ExtendedConfigProperties(args);
 		Configuration.setConfig(properties);
 	}
 	// Executes experiments; report short messages about exceptions that are
@@ -125,7 +125,7 @@ public static void main(String[] args)
  * @param resultdir
  *          the directory where result files are written
  */
-private static ConfigProperties selectConfigFile(File configdir, File resultdir)
+private static Properties selectConfigFile(File configdir, File resultdir)
 {
 	// Verify configuration directory
 	if (!configdir.isDirectory()) {
@@ -139,7 +139,7 @@ private static ConfigProperties selectConfigFile(File configdir, File resultdir)
 	// Search file not executed yet in config dir
 	File[] files = configdir.listFiles();
 	Arrays.sort(files);
-	ConfigProperties properties = null;
+	Properties properties = null;
 	for (int i = 0; i < files.length && properties == null; i++) {
 		String name = files[i].getName();
 		if (name.endsWith(CONFIG_EXTENSIONS)) {
@@ -166,12 +166,12 @@ private static ConfigProperties selectConfigFile(File configdir, File resultdir)
  *          the result directory
  * @return true if a file has been found, false otherwise
  */
-private static ConfigProperties checkFile(File config, File resultdir)
+private static Properties checkFile(File config, File resultdir)
 {
-	ConfigProperties properties;
+	Properties properties;
 	// Read config files; skip the file if not readable for any reason.
 	try {
-		properties = new ConfigProperties(config.getAbsolutePath());
+		properties = new ExtendedConfigProperties(config.getAbsolutePath());
 		Configuration.setConfig(properties);
 	} catch (IOException e) {
 		System.err.println("Warning: File " + config + " cannot be open");
@@ -199,7 +199,7 @@ private static ConfigProperties checkFile(File config, File resultdir)
 		// been executed yet.
 		// Obtains values denoting concurrent experiments
 		String[] pars = new String[ranges.length];
-		double[][] values = new double[ranges.length][];
+		String[][] values = new String[ranges.length][];
 		parseRanges(ranges, pars, values, PAR_CONCURRENT);
 		// Search through experiments
 		int[] idx = new int[values.length]; // Initialized to 0
@@ -254,7 +254,7 @@ private static ConfigProperties checkFile(File config, File resultdir)
  * @param name
  *          the name of the property describing ranges
  */
-private static void parseRanges(String[] ranges, String pars[], double[][] values, String name)
+private static void parseRanges(String[] ranges, String pars[], String[][] values, String name)
 {
 	for (int i = 0; i < ranges.length; i++) {
 		String[] array = Configuration.getString(ranges[i]).split(";");
@@ -273,7 +273,7 @@ private static void parseRanges(String[] ranges, String pars[], double[][] value
  * The index array is treated as a vector of digits; the first is managed
  * managed as a vector of digits.
  */
-private static void nextValues(int[] idx, double[][] values)
+private static void nextValues(int[] idx, String[][] values)
 {
 	idx[idx.length - 1]++;
 	for (int j = idx.length - 1; j > 0; j--) {
@@ -286,22 +286,22 @@ private static void nextValues(int[] idx, double[][] values)
 
 //--------------------------------------------------------------------
 
-public static void doExperiments(ConfigProperties properties)
+public static void doExperiments(Properties properties)
 {
 	// Parsing simulation parameters
 	// Parse range parameters
 	String[] pars;
-	double[][] values;
+	String[][] values;
 	String[] ranges = Configuration.getNames(PAR_RANGE);
 	if (Configuration.contains(PAR_EXPS) || ranges.length == 0) {
 		// If there is an explicit experiment or there are no ranges
 		pars = new String[ranges.length + 1];
-		values = new double[ranges.length + 1][];
+		values = new String[ranges.length + 1][];
 		pars[ranges.length] = "EXP";
 		values[ranges.length] = StringListParser.parseList("1:" + Configuration.getInt(PAR_EXPS, 1));
 	} else {
 		pars = new String[ranges.length];
-		values = new double[ranges.length][];
+		values = new String[ranges.length][];
 	}
 	parseRanges(ranges, pars, values, PAR_RANGE);
 	// Execute with different values

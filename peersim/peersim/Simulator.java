@@ -105,7 +105,7 @@ public static void main(String[] args)
 	long time = System.currentTimeMillis();	
 	
 	System.err.println("Simulator: loading configuration");
-	Configuration.setConfig( new ConfigProperties(args) );
+	Configuration.setConfig( new ExtendedConfigProperties(args) );
 
 	int exps = Configuration.getInt(PAR_EXPS,1);
 

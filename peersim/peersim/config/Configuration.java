@@ -35,7 +35,7 @@ import java.util.*;
 * entries are pre-processed a bit to enhance performance:
 * protocol names are associated to numeric protocol identifiers
 * through method {@link #getPid}.
-* <h2>Expressions</h2>
+* <h3>Expressions</h3>
   You can use expressions in place of numeric values at all places.
   This is implemented using <a href="http://www.singularsys.com/jep/">JEP</a>.
   You can write expression using the syntax that you can
@@ -57,17 +57,18 @@ import java.util.*;
   </pre>
   that results in A=7, B=3, C=4, D=1, E=2, F=2
 
-  <p>Expressions are parsed recursively. Note that no optimization are
-  done, so expression F may be evaluated three times here (due to the
-  fact that appears twice in C and once in B). But since this should 
-  be done only in the initialization phase, this is not a real problem.
+  <p>Expressions are parsed recursively. Note that no optimization is
+  done, so expression F is evaluated three times here (due to the
+  fact that appears twice in C and once in B). But since properties
+  are read just once at initialization, this is not a performance
+  problem.
 
   <p>Finally, recursive definitions are not allowed (and without
-  function definitions, they do not mean anything). Since it is
-  difficult to discover complex recursive chains, I've decided
-  to use a simple trick: if the depth of recursion is greater
+  function definitions, they make no sense). Since it is
+  difficult to discover complex recursive chains, a simple trick
+  is used: if the depth of recursion is greater
   than a given threshold (configurable, currently 100), an error
-  message is printed. This avoid to fill the stack, that results
+  message is printed. This avoids to fill the stack, that results
   in an anonymous OutOfMemoryError. So, if you write
   <pre>
   overlay.size SIZE
@@ -76,7 +77,8 @@ import java.util.*;
   you get an error message:
   Parameter "overlay.size": Probable recursive definition -
   exceeded maximum depth 100
-  <h2>Ordering</h2>
+  
+  <h3>Ordering</h3>
   It is possible to assign arbitrary names to multiple instances of a given
   entity, like eg an observer or protocol. For example you can write
 
@@ -117,6 +119,87 @@ import java.util.*;
   case.
   <em>Important!</em> If include is
   defined then ordering is ignored. That is, include is stronger than order.
+
+  <h3>Debug</h3>
+  
+  It is possible to obtain debug information about the configuration
+  properties by activating special configuration properties. 
+  <p>
+  If property debug.config is defined,
+  each config property and the associated value are printed. Properties
+  that are not present in the config file but have default values are
+  postfixed with the string "(DEFAULT").
+  <p>
+  If property debug.config is defined and it is equal to "context",
+  information about the configuration method invoked, and where
+  this method is invoked, is also printed.
+  <p>
+  If property debug.config is defined and it is equal to "full",
+  all the properties are printed, even if they are not read.
+  <p>
+  Each line printed by this debug feature is prefixed by the
+  string "DEBUG".
+
+  <h3>Use of brackets</h3>
+  
+  It is possible to use brackets to simplify the writing of the 
+  configuration properties. When a bracket is present, it must
+  be the only non-space element of a line. The last property defined 
+  before the opening bracket define the prefix that is added to all the 
+  properties defined included between brackets.
+  In other words, a construct like this:
+  <pre>
+  observer.degree GraphObserver 
+  {
+    protocol newscast
+    undir
+    graphobserver.fast
+  }
+  </pre>
+  is equivalent to the definition of these four properties:
+  <pre>
+  observer.degree GraphObserver 
+  observer.degree.protocol newscast
+  observer.degree.undir
+  observer.degree.graphobserver.fast
+  </pre>
+  
+  Nested brackets are possible. The rule of the last property before 
+  the opening bracket applies also to the inside brackets, with
+  the prefix being the complete property definition (so, including
+  the prefix observed before). Example:
+  <pre>
+	dynamics.1 peersim.dynamics.DynamicNetwork
+	{
+	  add CRASH
+	  substitute
+	  init.0 peersim.dynamics.WireRegularRandom 
+	  {
+	    degree DEGREE
+	    protocol 0
+	  }
+	}
+  </pre>
+  defines the following properties:
+  <pre>
+	dynamics.1 peersim.dynamics.DynamicNetwork
+	dynamics.1.add CRASH
+	dynamics.1.substitute
+	dynamics.1.init.0 peersim.dynamics.WireRegularRandom 
+	dynamics.1.init.0.degree DEGREE
+	dynamics.1.init.0.protocol 0
+  </pre>
+  
+  <p>
+  Know limitations: 
+  The parsing mechanism is very simple; no complex error messages
+  are provided. In case of missing closing brackets, the simulator
+  will stop reporting the number of missing brackets. Additional
+  closing brackets (i.e., missing opening brackets) produce an
+  error messages reporting the line where the closing bracket
+  is present. Misplaced brackets (included in lines that
+  contains other characters) are ignored, thus may produce
+  the previous error messages.
 *
 */
 public class Configuration {
@@ -125,6 +208,37 @@ public class Configuration {
 // =================== static fields =================================
 // ===================================================================
 
+	
+/** Symbolic constant for no debug */
+private static final int DEBUG_NO   = 0;
+
+/** Symbolic constant for regular debug */
+private static final int DEBUG_REG  = 1;
+
+/** Symbolic constant for extended debug */
+private static final int DEBUG_CONTEXT = 2;
+	
+/**
+ * The parameter name to configure the debug level for the configuration
+ * mechanism. If defined, a line is printed for each configuration
+ * parameter read. If defined and equal to {@link #PAR_EXTENDED}, additional 
+ * debug information is printed.
+ */
+private static final String PAR_DEBUG = "debug.config"; 
+
+/**
+ * If parameter {@link #PAR_DEBUG} is equal to this string, 
+ * additional context information for debug is printed.
+ */
+private static final String PAR_EXTENDED = "context";
+
+/**
+ * If parameter {@link #PAR_DEBUG} is equal to this string, 
+ * all the configuration items are printed at the beginning,
+ * not just when they are called.
+ */
+private static final String PAR_FULL = "full";
+	
 /**
  * The parameter name to configure a maximum depth different from
  * default. Normally you don't want to set this. The default is 100.
@@ -181,6 +295,9 @@ private static Map protocols;
  */
 private static int maxdepth = 100;
 
+/** Debug level */
+private static int debugLevel = DEBUG_NO;
+
 // =================== static public methods =========================
 // ===================================================================
 
@@ -204,6 +321,28 @@ public static Properties setConfig( Properties p ) {
 		protocols.put(  prots[i].substring(PAR_PROT.length()+1),
 				new Integer(i));
 	}
+
+	String debug = config.getProperty(PAR_DEBUG);
+	if (PAR_EXTENDED.equals(debug))
+	  debugLevel = DEBUG_CONTEXT;
+	else if (PAR_FULL.equals(debug)) {
+		Map map = new TreeMap();
+		Enumeration e = p.propertyNames();
+		while (e.hasMoreElements()) {
+			String name = (String) e.nextElement();
+			String value = p.getProperty(name);
+			map.put(name, value);
+		}
+		Iterator i = map.keySet().iterator();
+		while (i.hasNext()) {
+			String name = (String) i.next();
+			System.err.println("DEBUG " + name +
+					("".equals(map.get(name)) ? "" : " = " + map.get(name))  
+					); 
+		}
+	}
+	else if (debug != null)
+		debugLevel = DEBUG_REG;
 	
 	return prev;
 }
@@ -216,7 +355,9 @@ public static Properties setConfig( Properties p ) {
 */
 public static boolean contains(String name) {
 	
-	return config.containsKey(name);
+	boolean ret = config.containsKey(name); 
+	debug(name, "" +ret);
+	return ret;
 }
 
 // -------------------------------------------------------------------
@@ -234,6 +375,7 @@ public static boolean getBoolean(String name, boolean def) {
 	}
 	catch( Exception e )
 	{
+		System.err.println(def + " (Default value)");
 		return def;
 	}
 }
@@ -256,8 +398,11 @@ public static boolean getBoolean(String name) {
 	if( config.getProperty(name).matches("\\p{Blank}*") )
 		throw new MissingParameterException(name,
 		"Blank value is not accepted when parsing Boolean.");
+
+	boolean ret = (new Boolean(config.getProperty(name))).booleanValue(); 
+	debug(name, "" +ret);
 	
-	return (new Boolean(config.getProperty(name))).booleanValue();
+	return ret;
 }
 
 // -------------------------------------------------------------------
@@ -275,6 +420,7 @@ public static int getInt( String name, int def ) {
 	}
 	catch( Exception e )
 	{
+		debug(name, ""+def+" (DEFAULT)");
 		return def;
 	}
 }
@@ -288,7 +434,9 @@ public static int getInt( String name, int def ) {
 */
 public static int getInt( String name ) 
 {
-	return (int) Math.round(getVal(name, name, 0));
+	int ret = (int) Math.round(getVal(name, name, 0));
+	debug(name, "" +ret);
+	return ret;
 }
 
 // -------------------------------------------------------------------
@@ -306,6 +454,7 @@ public static long getLong( String name, long def ) {
 	}
 	catch( Exception e )
 	{
+		debug(name, ""+def+" (DEFAULT)");
 		return def;
 	}
 }
@@ -319,7 +468,9 @@ public static long getLong( String name, long def ) {
 */
 public static long getLong( String name ) 
 {
-	return Math.round(getVal(name, name, 0));
+	long ret = Math.round(getVal(name, name, 0)); 
+	debug(name, "" +ret);
+	return ret;
 }
 
 
@@ -338,6 +489,7 @@ public static double getDouble( String name, double def ) {
 	}
 	catch( Exception e )
 	{
+		debug(name, ""+def+" (DEFAULT)");
 		return def;
 	}
 }
@@ -351,7 +503,9 @@ public static double getDouble( String name, double def ) {
 */
 public static double getDouble( String name ) 
 {
-	return getVal(name, name, 0);
+	double ret = getVal(name, name, 0); 
+	debug(name, "" +ret);
+	return ret;
 }
 
 //-------------------------------------------------------------------
@@ -427,6 +581,7 @@ public static String getString( String name, String def ) {
 	}
 	catch( Exception e )
 	{
+		debug(name, "" +def + " (DEFAULT)");
 		return def;
 	}
 }
@@ -441,6 +596,7 @@ public static String getString( String property ) {
 
 	String result = config.getProperty(property);
 	if( result == null ) throw new MissingParameterException(property);
+	debug(property, "" +result);
 	
 	return result;
 }
@@ -556,6 +712,7 @@ public static Object getInstance( String name ) {
 
 	String classname = config.getProperty(name);
 	if (classname == null) throw new MissingParameterException(name);
+	debug(name, classname);
 
 	Class c = getClass(name, classname);		
 		
@@ -606,6 +763,7 @@ public static Object getInstance( String name, Object obj ) {
 
 	String classname = config.getProperty(name);
 	if (classname == null) throw new MissingParameterException(name);
+	debug(name, classname);
 	
 	Class c = getClass(name, classname);		
 
@@ -777,6 +935,58 @@ private static String[] order(String[] names, String type)
 	return ret;
 }
 
+//-------------------------------------------------------------------
+
+/**
+ * Print debug information for configuration. The amount of 
+ * information depends on the debug level DEBUG.
+ * 0 = nothing
+ * 1 = just the config name
+ * 2 = config name plus methodd calling
+ * 
+ * @param name
+ */
+private static void debug(String name, String result)
+{
+	if (debugLevel == DEBUG_NO)
+		return;
+	StringBuffer buffer = new StringBuffer();
+	buffer.append("DEBUG ");
+	buffer.append(name);
+	buffer.append(" = ");
+	buffer.append(result);
+
+	// Additional info
+	if (debugLevel == DEBUG_CONTEXT) {
+		
+	  buffer.append("\n  at ");
+		// Obtain the stack trace
+		StackTraceElement[] stack = null;
+		try {
+			throw new Exception();
+		} catch (Exception e) {
+			stack = e.getStackTrace();
+		}
+		
+		// Search the element that invoked Configuration
+		// It's the first whose class is different from Configuration
+		int pos;
+		for (pos=0; pos < stack.length; pos++) {
+			if (!stack[pos].getClassName().equals(Configuration.class.getName()))
+				break;
+		}
+
+		buffer.append(stack[pos].getClassName());
+		buffer.append(":");
+		buffer.append(stack[pos].getLineNumber());
+		buffer.append(", method ");
+		buffer.append(stack[pos-1].getMethodName());
+		buffer.append("()");
+	}
+	
+	
+	System.err.println(buffer);
+}
 
 
 }

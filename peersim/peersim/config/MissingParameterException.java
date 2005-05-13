@@ -34,14 +34,24 @@ extends RuntimeException
 
 	public MissingParameterException(String name, String motivation)
 	{
-		super("Parameter \"" + name + "\" not found. " + motivation);
+		super("Parameter \"" + name + "\" not found " + motivation);
 	}
 
 	public String getMessage() {
+		
+		StackTraceElement[] stack = getStackTrace();
+		
+		// Search the element that invoked Configuration
+		// It's the first whose class is different from Configuration
+		int pos;
+		for (pos=0; pos < stack.length; pos++) {
+			if (!stack[pos].getClassName().equals(Configuration.class.getName()))
+				break;
+		}
 
 		return super.getMessage()+"\nAt "+
-			getStackTrace()[1].getClassName()+"."+
-			getStackTrace()[1].getMethodName()+":"+
-			getStackTrace()[1].getLineNumber();
+			getStackTrace()[pos].getClassName()+"."+
+			getStackTrace()[pos].getMethodName()+":"+
+			getStackTrace()[pos].getLineNumber();
 	}
 }

@@ -44,4 +44,15 @@ public interface Transport extends Protocol
  */
 public void send(Node src, Node dest, Object msg, int pid);
 
+
+/**
+ * Return a latency estimate from node <code>src</code> to protocol
+ * <code>pid</code> of node <code>dst</code>. 
+ * 
+ * @param src sender node
+ * @param dest destination node
+ */
+public int getLatency(Node src, Node dest);
+
+
 }

@@ -42,7 +42,7 @@ public class E2ETransport implements Transport, RouterInfo
  * String name of the parameter used to configure the 
  * latency delay for local connections. Defaults to 0.
  */
-public static final String PAR_LOCAL = "local-latency";
+public static final String PAR_LOCAL = "local";
 	
 //---------------------------------------------------------------------
 //Static fields
@@ -93,12 +93,22 @@ public Object clone() throws CloneNotSupportedException
 public void send(Node src, Node dest, Object msg, int pid)
 {
 	/* Assuming that the sender corresponds to the source node */
-	E2ETransport sender = this;
+	E2ETransport sender = (E2ETransport) src.getProtocol(tid);
 	E2ETransport receiver = (E2ETransport) dest.getProtocol(tid);
 	int latency =
 	   E2ENetwork.getLatency(sender.router, receiver.router) + local*2;
 	EDSimulator.add(latency, msg, dest, pid);
 }
+
+//Comment inherited from interface
+public int getLatency(Node src, Node dest)
+{
+	/* Assuming that the sender corresponds to the source node */
+	E2ETransport sender = (E2ETransport) src.getProtocol(tid);
+	E2ETransport receiver = (E2ETransport) dest.getProtocol(tid);
+	return E2ENetwork.getLatency(sender.router, receiver.router) + local*2;
+}
+
 
 //---------------------------------------------------------------------
 //Methods inherited by RouterInfo

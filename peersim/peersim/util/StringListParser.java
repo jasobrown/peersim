@@ -30,24 +30,17 @@ public class StringListParser
 {
  	
  	
- 	public static double[] parseList(String s)
+ 	public static String[] parseList(String s)
  	{
-		Set list = new TreeSet();
+ 		ArrayList list = new ArrayList();
  		String[] tokens = s.split(",");
  		for (int i=0; i < tokens.length; i++) {
 			parseItem(list, tokens[i]);
  		}
- 		double[] ret = new double[list.size()];
- 		Iterator it = list.iterator();
- 		int i=0;
- 		while (it.hasNext()) {
- 			ret[i] = ((Double) it.next()).doubleValue();
- 			i++;
- 		} 
- 		return ret;
+ 		return (String[]) list.toArray(new String[list.size()]);
  	}
  	
- 	private static void parseItem(Set list, String item)
+ 	private static void parseItem(List list, String item)
  	{
  		String[] array = item.split(":");
  		if (array.length == 1) {
@@ -60,12 +53,12 @@ public class StringListParser
  		}
  	}
  	
- 	private static void parseSingleItem(Set list, String item)
+ 	private static void parseSingleItem(List list, String item)
 	{
-		list.add(new Double(item));
+		list.add(item);
 	}
 	
-	private static void parseRangeItem(Set list, String start, String stop)
+	private static void parseRangeItem(List list, String start, String stop)
 	{
 		double vstart;
 		double vstop;
@@ -95,16 +88,16 @@ public class StringListParser
 		}
 		if (sum) {
 			for (double i=vstart; i <= vstop; i += vinc)
-			  list.add(new Double(i));
+			  list.add(""+i);
 		} else {
 			for (double i=vstart; i <= vstop; i *= vinc)
-				list.add(new Double(i));
+				list.add(""+i);
 		}
 	}
  			
 	public static void main(String[] args)
 	{
-		double[] ret = parseList(args[0]);
+		String[] ret = parseList(args[0]);
 		for (int i=0; i < ret.length; i++)
 			System.out.print(ret[i]+ " ");
 		System.out.println("");

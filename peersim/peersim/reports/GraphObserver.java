@@ -40,13 +40,13 @@ public abstract class GraphObserver implements Observer {
 public static final String PAR_PROT = "protocol";
 
 /** 
-* If defines, the undirected version of the graph will be analized.
+* If defined, the undirected version of the graph will be analized.
 * Not defined by default;
 */
 public static final String PAR_UNDIR = "undir";
 
 /** 
-* If defines, the undirected version of the graph will be stored using much
+* If defined, the undirected version of the graph will be stored using much
 * more memory but observers will be in general a few times faster.
 * As a consequence, it will not work with large graphs. Not defined by default. 
 * It is a static property, that is, it affects all graph observers that are

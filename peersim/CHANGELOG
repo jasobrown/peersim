@@ -1,3 +1,44 @@
+AM 13/05/05
+- modified the configuration parsing mechanism with a very simple extension
+  for brackets.
+  Writing something like:
+  
+  observer.degree GraphObserver 
+  {
+    protocol newscast
+    undir
+    graphobserver.fast
+  }
+  defines four properties:
+  
+  observer.degree GraphObserver 
+  observer.degree.protocol newscast
+  observer.degree.undir
+  observer.degree.graphobserver.fast
+  
+  See documentation for additional details (and limits).
+- added a debug.config feature to the config mechanism. Three possibilities:
+  debug.config -> only properties read during initializion, prints name=value
+  debug.config=contex -> as debug.config, but with additional information
+  debug.config=full -> all the properties, prints name=value
+- solved a bug in the config exceptions (MissingParameter and IllegalParameter);
+  the mechanism showing the line where the configuration method is invoked
+  was producing uncorrect lines sometimes.
+- DynamicNetwork: added support for turning down processes (instead of
+  crashing)
+- peersim.util.Log: added an optional parameter that can be used to
+  to print the time in logged line
+- RangeSimulator: ranges were trasnformed from configuration strings 
+  to doubles, stored as doubles, then transformed back to strings.
+  Now ranges are stored as strings, so it possible to use string
+  ranges.
+- transport package: now transports can be used not only to send
+  messages, but also to obtain an estimation of latency. The idea
+  is to provide a light-weight way to exploit the latency model
+  of transports in cycle-based protocols.
+- added the possibility to run dynamics at the end of simulation
+  (with the FINAL time specification)
+
 GJ 10/05/05
 - Fixed Scamp compilation bug (with JDK 5.0).
 - Other classes minor compilation warnings (unnecessary includes).

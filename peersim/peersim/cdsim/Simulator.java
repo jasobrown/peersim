@@ -275,6 +275,12 @@ public static void nextExperiment()  {
 
 	CommonState.setPhase(CommonState.POST_LAST_CYCLE);
 
+	// dynamics executed after the simulation
+	for(int j=0; j<dynamics.length; ++j)
+	{
+		if( dynSchedules[j].fin() ) dynamics[j].modify();
+	}
+
 	// analysis after the simulation
 	for(int j=0; j<observers.length; ++j)
 	{

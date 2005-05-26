@@ -590,6 +590,7 @@ public static String getString( String name, String def ) {
 
 /**
 * Reads the configuration item associated to the specified property.
+* Removes trailing whitespace characters.
 * @param property Name of configuration property
 */
 public static String getString( String property ) {
@@ -598,7 +599,7 @@ public static String getString( String property ) {
 	if( result == null ) throw new MissingParameterException(property);
 	debug(property, "" +result);
 	
-	return result;
+	return result.trim();
 }
 
 //-------------------------------------------------------------------

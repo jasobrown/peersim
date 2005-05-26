@@ -1,3 +1,7 @@
+MJ 26/05/05
+- getString now removes trailing spaces from string value parameters
+  in the configuration
+
 AM 13/05/05
 - modified the configuration parsing mechanism with a very simple extension
   for brackets.

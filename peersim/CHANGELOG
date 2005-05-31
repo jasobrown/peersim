@@ -1,6 +1,11 @@
 MJ 31/05/05
 - Removed unused argument from IncrementalFreq.getN(), and changed some
   of the fields in IncrementalFreq from private to protected
+- CHANGED BEHAVIOUR OF WireRegualrRandom. It was not realy regular all the time
+  because neighbors were sampled with replacement, and no parallel edges were
+  added. Now it is realy regular. This has only a negligible effect on most
+  of the scenarios peersim was used in so far, but at least this is finally
+  fixed.
 
 MJ 26/05/05
 - getString now removes trailing spaces from string value parameters

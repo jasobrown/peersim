@@ -86,8 +86,12 @@ public static Graph wireWS( Graph g, int k, double p, Random r ) {
 // -------------------------------------------------------------------
 
 /**
-* Random graph. Generates randomly k edges out of each node. The neighbors
-* (edge targets) are chosen with replacement. No loop edge is added.
+* Random graph. Generates randomly k directed edges out of each node.
+* The neighbors
+* (edge targets) are chosen randomly without replacement from the nodes of the
+* graph other than the source node (ie no loop edge is added).
+* If k is larger than N-1 (where N is the number of nodes) then k is set to
+* be N-1 and a complete graph is returned.
 * @param g the graph to be wired
 * @param k samples to be drawn for each node
 * @param r source of randomness
@@ -97,13 +101,24 @@ public static Graph wireRegularRandom( Graph g, int k, Random r ) {
 
 	int n = g.size();
 	if( n < 2 ) return g;
+	if( n <= k ) k=n-1;
+	int[] nodes = new int[n];
+	for(int i=0; i<nodes.length; ++i) nodes[i]=i;
 	for(int i=0; i<n; ++i)
-	for(int j=0; j<k; ++j)
 	{
-		// draw from nodes other than i
-		int newedge = r.nextInt(n-1);
-		if( newedge >= i ) newedge++;
-		g.setEdge(i,newedge);
+		int j=0;
+		while(j<k)
+		{
+			int newedge = j+r.nextInt(n-j);
+			int tmp = nodes[j];
+			nodes[j] = nodes[newedge];
+			nodes[newedge] = tmp;
+			if( nodes[j] != i )
+			{
+				g.setEdge(i,nodes[j]);
+				j++;
+			}
+		}
 	}
 	return g;
 }
@@ -188,13 +203,16 @@ public static Graph wireScaleFreeBA( Graph g, int k, Random r ) {
 
 public static void main(String[] pars) {
 	
-	Graph g = new BitMatrixGraph(1000);
+	int n = Integer.parseInt(pars[0]);
+	int k = Integer.parseInt(pars[1]);
+	Graph g = new BitMatrixGraph(n);
 	/*
 	wireWS(g,20,.1,new Random());
 	GraphIO.writeChaco(new UndirectedGraph(g),System.out);
 	*/
-	wireScaleFreeBA(g,3,new Random());
-	GraphIO.writeNeighborList(new UndirectedGraph(g),System.out);
+	//wireScaleFreeBA(g,3,new Random());
+	wireRegularRandom(g,k,new Random());
+	GraphIO.writeNeighborList(g,System.out);
 }
 
 }

@@ -37,16 +37,16 @@ public class IncrementalFreq {
 // =====================================================================
 
 
-private int n;
+protected int n;
 
 /** freq[i] holds the frequency of i. primitive implementation, to be changed */
-private int[] freq = null; 
+protected int[] freq = null; 
 
 /**
 * The capacity, if larger than 0. Added values larger than or equal to
 * this one will be ignored.
 */
-private final int N;
+protected final int N;
 
 
 // ====================== initialization ==============================
@@ -101,7 +101,7 @@ public void add( int i ) {
 // --------------------------------------------------------------------
 
 /** Returns number of processed data items.  */
-public int getN(int i) { return n; }
+public int getN() { return n; }
 
 // --------------------------------------------------------------------
 

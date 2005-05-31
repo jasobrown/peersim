@@ -1,3 +1,7 @@
+MJ 31/05/05
+- Removed unused argument from IncrementalFreq.getN(), and changed some
+  of the fields in IncrementalFreq from private to protected
+
 MJ 26/05/05
 - getString now removes trailing spaces from string value parameters
   in the configuration

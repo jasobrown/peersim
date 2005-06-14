@@ -128,7 +128,7 @@ public int getFreq(int i) {
  */
 public void remove(IncrementalFreq other, boolean strict) {
 
-	// check is other is subset
+	// check is other has non-zero elements in non-overlapping part
 	if(strict && other.freq.length>freq.length)
 	{
 		for(int i=other.freq.length-1; i>=freq.length; --i)

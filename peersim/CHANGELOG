@@ -1,3 +1,8 @@
+AM 14/06/2005
+VERSION 0.4 RELEASED
+------------------------------------------------------------------
+------------------------------------------------------------------
+
 AM 14/06/05
 - Modified the configuration mechanism in order to perform computations
   with BigInteger instead of doubles converted to long. To do so, this

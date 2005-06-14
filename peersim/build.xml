@@ -10,7 +10,8 @@
 		
 	<!-- Path for compilation -->
 	<path id="compile.path">
-		<pathelement location="jep-2.24.jar" />
+		<pathelement location="jep-2.3.0.jar" />
+		<pathelement location="djep-1.0.0.jar" />
 	</path>
 
 	<target name="compile">

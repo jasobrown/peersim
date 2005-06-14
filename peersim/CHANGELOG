@@ -1,3 +1,6 @@
+MJ 14/06/05
+- Added some methods to IncrementalFreq (submitted by Spyros Voulgaris)
+
 MJ 31/05/05
 - Removed unused argument from IncrementalFreq.getN(), and changed some
   of the fields in IncrementalFreq from private to protected

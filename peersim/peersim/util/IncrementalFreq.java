@@ -7,7 +7,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
@@ -30,7 +30,7 @@ import java.io.PrintStream;
 * right now it can handle only unsigned input. It simply ignores negative
 * numbers.
 */
-public class IncrementalFreq {
+public class IncrementalFreq implements Cloneable {
 
 
 // ===================== fields ========================================
@@ -100,7 +100,7 @@ public void add( int i ) {
 
 // --------------------------------------------------------------------
 
-/** Returns number of processed data items.  */
+/** Returns number of processed data items.*/
 public int getN() { return n; }
 
 // --------------------------------------------------------------------
@@ -111,7 +111,44 @@ public int getFreq(int i) {
 	if( i>=0 && i<freq.length ) return freq[i];
 	else return 0;
 }
+
+// --------------------------------------------------------------------
 	
+
+/**
+ * Performs an element-by-element vector substraction of the
+ * frequency vectors. If <code>strict</code> is true, it
+ * throws an IllegalArgumentException if <code>this</code> is
+ * not strictly larger than <code>other</code> (element by element)
+ * (Note that both frequency vectors are positive.)
+ * Otherwise just sets those elements in <code>this</code> to zero
+ * that are smaller than those of <code>other</code>.
+ * @param other The instance of IncrementalFreq to subtract
+ * @param strict See above explanation
+ */
+public void remove(IncrementalFreq other, boolean strict) {
+
+	// check is other is subset
+	if(strict && other.freq.length>freq.length)
+	{
+		for(int i=other.freq.length-1; i>=freq.length; --i)
+		{
+			if (other.freq[i]!=0)
+				throw new IllegalArgumentException();
+		}
+	}
+	
+	int minLength = Math.min(other.freq.length, freq.length);
+	for (int i=minLength-1; i>=0; i--)
+	{
+		if (strict && freq[i] < other.freq[i])
+			throw new IllegalArgumentException();
+		int remove = Math.min(other.freq[i], freq[i]);
+		n -= remove;
+		freq[i] -= remove;
+	}
+}
+
 // ---------------------------------------------------------------------
 
 /**
@@ -171,6 +208,53 @@ public String toString() {
 			result = result+" ("+i+","+freq[i]+")";
 	}
 	return result;
+}
+
+// ---------------------------------------------------------------------
+
+/** An alternative method to convert the object to String */
+public String toArithmeticExpression() {
+
+	String result="";
+	for (int i=freq.length-1; i>=0; i--)
+	{
+		if (freq[i] != 0)
+			result = result+freq[i]+"*"+i+"+";
+	}
+	
+	if (result.equals(""))
+		result = "(empty)";
+	else
+		result = result.substring(0, result.length()-1);
+	return result;
+}
+
+// ---------------------------------------------------------------------
+
+public Object clone() throws CloneNotSupportedException {
+
+	IncrementalFreq result = (IncrementalFreq)super.clone();
+	if( freq != null ) result.freq = (int[])freq.clone();
+	return result;
+}
+
+// ---------------------------------------------------------------------
+
+/**
+* Tests equality between two IncrementalFreq instances.
+*/
+public boolean equals(Object obj) {
+
+	IncrementalFreq other = (IncrementalFreq)obj;
+
+	if (this.freq.length != other.freq.length)
+		return false;
+
+	for (int i=freq.length-1; i>=0; i--)
+		if (this.freq[i] != other.freq[i])
+			return false;
+
+	return true;
 }
 
 // ---------------------------------------------------------------------

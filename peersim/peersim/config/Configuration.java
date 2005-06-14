@@ -19,7 +19,9 @@
 package peersim.config;
 
 import java.lang.reflect.*;
+import java.math.*;
 import java.util.*;
+import org.lsmp.djep.groupJep.*;
 
 /**
 * Fully static class to store configuration information.
@@ -34,7 +36,7 @@ import java.util.*;
 * there is an exception, the entries that start with "protocol". These
 * entries are pre-processed a bit to enhance performance:
 * protocol names are associated to numeric protocol identifiers
-* through method {@link #getPid}.
+* through method {@link #getPid(String)}.
 * <h3>Expressions</h3>
   You can use expressions in place of numeric values at all places.
   This is implemented using <a href="http://www.singularsys.com/jep/">JEP</a>.
@@ -204,6 +206,14 @@ import java.util.*;
 */
 public class Configuration {
 
+//=================== constants =================================
+//===================================================================
+
+/* Constants used when reading integer (int, long) values */
+private static BigInteger maxlong = new BigInteger(""+ Long.MAX_VALUE);
+private static BigInteger minlong = new BigInteger(""+ Long.MIN_VALUE);
+private static BigInteger maxint = new BigInteger(""+ Integer.MAX_VALUE);
+private static BigInteger minint = new BigInteger(""+ Integer.MIN_VALUE);
 
 // =================== static fields =================================
 // ===================================================================
@@ -270,7 +280,7 @@ public static final String PAR_INCLUDE = "include";
 /**
  * The parameter name prefix to specify the set of protocol entries that are
  * used
- * to calculate the protocol identifiers returned by {@link #getPid}.
+ * to calculate the protocol identifiers returned by {@link #getPid(String)}.
  */
 public static final String PAR_PROT = "protocol"; 
 
@@ -393,8 +403,10 @@ public static boolean getBoolean(String name, boolean def) {
 */
 public static boolean getBoolean(String name) {
 
-	if( config.getProperty(name) == null )
-		throw new MissingParameterException(name);
+	if( config.getProperty(name) == null ) {
+		throw new MissingParameterException(name, "\nPossible uncorrect property: " +
+				getSimilarProperty(name));
+	}
 	if( config.getProperty(name).matches("\\p{Blank}*") )
 		throw new MissingParameterException(name,
 		"Blank value is not accepted when parsing Boolean.");
@@ -434,9 +446,9 @@ public static int getInt( String name, int def ) {
 */
 public static int getInt( String name ) 
 {
-	int ret = (int) Math.round(getVal(name, name, 0));
+	Number ret = (Number) getValInteger(name, name, 0);
 	debug(name, "" +ret);
-	return ret;
+	return ret.intValue();
 }
 
 // -------------------------------------------------------------------
@@ -466,13 +478,12 @@ public static long getLong( String name, long def ) {
 * MissingParameterException.
 * @param name Name of configuration property
 */
-public static long getLong( String name ) 
+public static long getLong( String name )
 {
-	long ret = Math.round(getVal(name, name, 0)); 
+	Number ret = (Number) getValInteger(name, name, 0);
 	debug(name, "" +ret);
-	return ret;
+	return ret.longValue();
 }
-
 
 // -------------------------------------------------------------------
 
@@ -525,12 +536,14 @@ public static double getVal(String initial, String property, int depth)
 		"Probable recursive definition - exceeded maximum depth " + 
 		maxdepth);
 	}
-	
+
 	String s = config.getProperty(property);
-	if (s == null || s.equals(""))
+	if (s == null || s.equals("")) {
 		throw new MissingParameterException(property, 
-				" when evaluating property " + initial);
-	
+				" when evaluating property " + initial + "\nPossible uncorrect property: " +
+				getSimilarProperty(property));
+	}
+
 	org.nfunk.jep.JEP jep = new org.nfunk.jep.JEP();
 	jep.setAllowUndeclared(true);
 	
@@ -542,6 +555,46 @@ public static double getVal(String initial, String property, int depth)
 	}
 	
 	return jep.getValue();
+}
+
+//-------------------------------------------------------------------
+
+/**
+ * Read numeric property values, parsing expression if necessary.
+ * 
+ * @param initial the property name that started this expression evaluation
+ * @param property the current property name to be evaluated
+ * @param depth the depth reached so far
+ * @return the evaluation of the expression associated to property  
+ */
+public static Object getValInteger(String initial, String property, int depth)
+{
+	if (depth > maxdepth) {
+		throw new IllegalParameterException(initial, 
+		"Probable recursive definition - exceeded maximum depth " + 
+		maxdepth);
+	}
+
+	String s = config.getProperty(property);
+	if (s == null || s.equals("")) {
+		throw new MissingParameterException(property, 
+				" when evaluating property " + initial + "\nPossible uncorrect property: " +
+				getSimilarProperty(property));
+	}
+
+	GroupJep jep = new GroupJep(new Integers());
+	jep.setAllowUndeclared(true);
+	
+	jep.parseExpression(s);
+	String[] symbols = getSymbols(jep);
+	for (int i=0; i < symbols.length; i++) {
+		Object d = getValInteger(initial, symbols[i], depth+1);
+		jep.addVariable(symbols[i], d);
+	}
+	Object ret = jep.getValueAsObject();
+	if (jep.hasError()) 
+		System.err.println(jep.getErrorInfo());
+	return ret;
 }
 
 //-------------------------------------------------------------------
@@ -596,7 +649,10 @@ public static String getString( String name, String def ) {
 public static String getString( String property ) {
 
 	String result = config.getProperty(property);
-	if( result == null ) throw new MissingParameterException(property);
+	if( result == null ) 
+		throw new MissingParameterException(property, 
+				"\nPossible uncorrect property: " +
+				getSimilarProperty(property));
 	debug(property, "" +result);
 	
 	return result.trim();
@@ -605,7 +661,7 @@ public static String getString( String property ) {
 //-------------------------------------------------------------------
 
 /**
- * Reads the given string property from the ocnfiguration and returns the
+ * Reads the given string property from the configuration and returns the
  * associated numeric 
  * protocol identifier. The value of the property should be the name of a
  * protocol, which is an arbitrary string, and which gets mapped to a
@@ -625,6 +681,33 @@ public static int getPid( String property ) {
 //-------------------------------------------------------------------
 
 /**
+ * Reads the given string property from the configuration and returns the
+ * associated numeric 
+ * protocol identifier. The value of the property should be the name of a
+ * protocol, which is an arbitrary string, and which gets mapped to a
+ * number, a protocol id, according to some sorting defined over the
+ * protocol names. By default the sorting is alphabetical.
+ * If the property is not defined, defaults to the specified protocol
+ * identifier.
+ *  
+ * @param property the property name
+ * @param pid the default protocol identifier
+ * @return the numeric protocol identifier associated to the protocol
+ *   name
+ */
+public static int getPid( String property, int pid ) {
+	
+	try {
+		String protname = getString(property);
+		return lookupPid(protname);
+	} catch (MissingParameterException e) {
+		return pid;
+	}
+}
+
+//-------------------------------------------------------------------
+
+/**
  * Reads the given string property and returns the associated numeric 
  * protocol identifier. The parameter should be the name of a
  * protocol, which is an arbitrary string, and which gets mapped to a
@@ -639,7 +722,10 @@ public static int lookupPid( String protname ) {
 	
 	Integer ret = (Integer) protocols.get(protname); 
 	if (ret == null) {
-		throw new MissingParameterException(PAR_PROT+"."+protname);
+		throw new MissingParameterException(PAR_PROT+"."+protname, 
+				"\nPossible uncorrect property: " +
+				getSimilarProperty(PAR_PROT+"."+protname));
+
 	}
 	return ret.intValue();
 }
@@ -712,7 +798,10 @@ private static Class getClass(String property, String classname)
 public static Object getInstance( String name ) {
 
 	String classname = config.getProperty(name);
-	if (classname == null) throw new MissingParameterException(name);
+	if (classname == null) 
+		throw new MissingParameterException(name, 
+				"\nPossible uncorrect property: " +
+				getSimilarProperty(name));
 	debug(name, classname);
 
 	Class c = getClass(name, classname);		
@@ -763,7 +852,10 @@ public static Object getInstance( String name, Object obj ) {
 // constructor and not using the default (string) constructor
 
 	String classname = config.getProperty(name);
-	if (classname == null) throw new MissingParameterException(name);
+	if (classname == null) 
+		throw new MissingParameterException(name, 
+				"\nPossible uncorrect property: " +
+				getSimilarProperty(name));
 	debug(name, classname);
 	
 	Class c = getClass(name, classname);		
@@ -989,6 +1081,91 @@ private static void debug(String name, String result)
 	System.err.println(buffer);
 }
 
+//-------------------------------------------------------------------
+
+/** 
+ * @return an array of adjacent letter pairs contained in the input string
+ * http://www.catalysoft.com/articles/StrikeAMatch.html 
+ */
+private static String[] letterPairs(String str)
+{
+	int numPairs = str.length() - 1;
+	String[] pairs = new String[numPairs];
+	for (int i = 0; i < numPairs; i++) {
+		pairs[i] = str.substring(i, i + 2);
+	}
+	return pairs;
+}
+
+//-------------------------------------------------------------------
+
+/** 
+ * @return an ArrayList of 2-character Strings. 
+ * http://www.catalysoft.com/articles/StrikeAMatch.html
+ */
+private static ArrayList wordLetterPairs(String str)
+{
+	ArrayList allPairs = new ArrayList();
+	// Tokenize the string and put the tokens/words into an array
+	String[] words = str.split("\\s");
+	// For each word
+	for (int w = 0; w < words.length; w++) {
+		// Find the pairs of characters
+		String[] pairsInWord = letterPairs(words[w]);
+		for (int p = 0; p < pairsInWord.length; p++) {
+			allPairs.add(pairsInWord[p]);
+		}
+	}
+	return allPairs;
+}
+
+//-------------------------------------------------------------------
+
+/** 
+ * @return lexical similarity value in the range [0,1] 
+ * http://www.catalysoft.com/articles/StrikeAMatch.html
+ */
+private static double compareStrings(String str1, String str2)
+{
+	ArrayList pairs1 = wordLetterPairs(str1.toUpperCase());
+	ArrayList pairs2 = wordLetterPairs(str2.toUpperCase());
+	int intersection = 0;
+	int union = pairs1.size() + pairs2.size();
+	for (int i = 0; i < pairs1.size(); i++) {
+		Object pair1 = pairs1.get(i);
+		for (int j = 0; j < pairs2.size(); j++) {
+			Object pair2 = pairs2.get(j);
+			if (pair1.equals(pair2)) {
+				intersection++;
+				pairs2.remove(j);
+				break;
+			}
+		}
+	}
+	return (2.0 * intersection) / union;
+}
+
+//-------------------------------------------------------------------
+
+/** 
+ * Among the defined properties, returns the one more
+ * similar to String property
+ */
+private static String getSimilarProperty(String property)
+{
+	String bestProperty = null;
+	double bestValue = 0.0;
+	Enumeration e = config.keys();
+	while (e.hasMoreElements()) {
+		String key = (String) e.nextElement();
+		double compare = compareStrings(key, property);
+		if (compare > bestValue) {
+			bestValue = compare;
+		  bestProperty = key;
+		}
+	}
+	return bestProperty;
+}
 
 }
 

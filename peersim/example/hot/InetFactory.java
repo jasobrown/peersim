@@ -8,12 +8,11 @@ package example.hot;
 
 import example.hot.InetNodeProtocol;
 import peersim.graph.*;
-import peersim.core.Node;
-import java.util.Random;
-import java.util.ArrayList;
+import peersim.core.*;
+import java.util.*;
 
 /** This class is an extention to the peersim standard graph factory 
- * @see peersim.graph.GraphFactory . It arranges the graph edges according
+ * {@link peersim.graph.GraphFactory}. It arranges the graph edges according
  * to a preferential attachment approach called "HOT" model.
  *
  * @author  Gian Paolo Jesi

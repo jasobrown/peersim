@@ -291,10 +291,15 @@ public static void nextExperiment()
 	// analysis after the simulation
 	for(int j=0; j<size; ++j)
 	{
-		if (types[j] == OBS || types[j] == DYN) {
+		if (types[j] == OBS) {
 			int l = index[j];
 			if( obsSchedules[l].fin() ) 
 				observers[l].analyze();
+		}
+		if (types[j] == DYN) {
+			int l = index[j];
+			if( dynSchedules[l].fin() ) 
+				dynamics[l].modify();
 		}
 	}
 }

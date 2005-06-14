@@ -127,7 +127,7 @@ protected void add(int n) {
 * Removes n nodes from the network. Extending classes can implement
 * any algorithm to do that. Based on the PAR_DOWN parameter, the
 * default algorithm removes either set their status to down, or
-* remove them simply by calling {@link Network#remove}. This is equivalent
+* remove them simply by calling {@link Network#remove()}. This is equivalent
 * to permanent failure without any cleanup.
 * @param n the number of nodes to remove
 */

@@ -30,7 +30,6 @@ public interface IndexIterator {
 	
 	/**
 	* Returns next index.
-	* @throws NoSuchElementException if there is no next element
 	*/
 	public int next();
 

@@ -42,12 +42,6 @@ public class UniformRouterAssignment implements Dynamics
  */
 private static final String PAR_PROTOCOL = "protocol"; 
 	
-/** 
- * Parameter name used to configure the number of routers. 
- */
-private static final String PAR_ROUTERS = "routers"; 
-
-
 //---------------------------------------------------------------------
 //Methods
 //---------------------------------------------------------------------
@@ -55,9 +49,6 @@ private static final String PAR_ROUTERS = "routers";
 /** Protocol identifier */
 private int pid;	
 	
-/** Number of routers */
-private int nrouters;
-
 
 //---------------------------------------------------------------------
 //Initialization
@@ -69,7 +60,6 @@ private int nrouters;
 public UniformRouterAssignment(String prefix)
 {
 	pid = Configuration.getPid(prefix+"."+PAR_PROTOCOL);
-	nrouters = Configuration.getInt(prefix+"." + PAR_ROUTERS);
 }
 
 //---------------------------------------------------------------------
@@ -80,6 +70,7 @@ public UniformRouterAssignment(String prefix)
 public void modify()
 {
 	int nsize = Network.size();
+	int nrouters = E2ENetwork.getSize();
 	for (int i=0; i < nsize; i++) {
 		Node node = Network.get(i);
 		RouterInfo t = (RouterInfo) node.getProtocol(pid);

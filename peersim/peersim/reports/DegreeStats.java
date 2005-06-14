@@ -65,7 +65,7 @@ public static final String PAR_METHOD = "method";
 * "live": links pointing to live nodes,
 * "dead": links pointing to nodes that are unavailable and
 * "all": both dead and live links summed.
-* "all" and "dead" require parameter {@link #PAR_DIR} to be set.
+* "all" and "dead" require parameter {@link #PAR_UNDIR} to be set.
 * Default is "live". 
 */
 public static final String PAR_TYPE = "linktype";
@@ -155,6 +155,9 @@ private int nextDegree() {
 
 // ---------------------------------------------------------------------
 
+/**
+ * {@inheritDoc}
+ */
 public boolean analyze() {
 	
 	updateGraph();

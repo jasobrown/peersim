@@ -1,3 +1,17 @@
+AM 14/06/05
+- Modified the configuration mechanism in order to perform computations
+  with BigInteger instead of doubles converted to long. To do so, this
+  version compiles only with jep2.3.0 and djep1.0.0.
+- Added an experimental configuration mechanism that tries to give
+  suggestions when properties are not found. just an attempt, can
+  be removed.
+- Corrected a bug in peersim.cdsim.OrderSimulator, in order to enable
+  to run dynamics with the FINAL specification.
+- Simplified the protocol creation mechanism in GeneralNode; in this
+  way, protocols that have been already created can be referenced by
+  other protocols in their constructors.
+- corrected some documentation
+
 MJ 14/06/05
 - Added some methods to IncrementalFreq (submitted by Spyros Voulgaris)
 

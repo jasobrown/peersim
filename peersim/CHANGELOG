@@ -1,3 +1,6 @@
+MJ 15/06/05
+- fixed a performance bug in GraphObserver
+
 AM 14/06/2005
 VERSION 0.4 RELEASED
 ------------------------------------------------------------------

@@ -66,13 +66,13 @@ protected final GraphAlgorithms ga = new GraphAlgorithms();
 
 protected Graph g;
 
-private long time = -1234;
-
-private int phase = -1234;
-
-private int ctime = -1234;
-
 // ---------------------------------------------------------------------
+
+private static long time = -1234;
+
+private static int phase = -1234;
+
+private static int ctime = -1234;
 
 private static Graph dirg;
 
@@ -102,15 +102,15 @@ protected GraphObserver(String name) {
 
 protected void updateGraph() {
 	
-	if( CommonState.getTime() != time ||
-	    CommonState.getCycleT() != ctime ||
-	    CommonState.getPhase() != phase )
+	if( CommonState.getTime() != GraphObserver.time ||
+	    CommonState.getCycleT() != GraphObserver.ctime ||
+	    CommonState.getPhase() != GraphObserver.phase )
 	{
 		// we need to update the graphs
 		
-		time = CommonState.getTime();
-		ctime = CommonState.getCycleT();
-		phase = CommonState.getPhase();
+		GraphObserver.time = CommonState.getTime();
+		GraphObserver.ctime = CommonState.getCycleT();
+		GraphObserver.phase = CommonState.getPhase();
 
 		GraphObserver.dirg = new OverlayGraph(protocolID);
 		if( GraphObserver.needUndir )

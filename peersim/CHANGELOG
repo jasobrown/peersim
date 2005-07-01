@@ -1,3 +1,7 @@
+MJ 01/07/05
+- fixed a (very infrequent) numeric bug in IncrementalStats
+  (variance could be negative due to rounding errors)
+
 MJ 15/06/05
 - fixed a performance bug in GraphObserver
 

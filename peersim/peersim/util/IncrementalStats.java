@@ -142,10 +142,18 @@ public double getAverage() { return sum/n; }
 
 // --------------------------------------------------------------------
 
-/** the empirical variance of the data items */
+/** The empirical variance of the data items. Guaranteed to be larger or
+equal to 0.0. If due to rounding errors the value would be negative,
+it returns 0.0.*/
 public double getVar() {
 
-	return (((double)n) / (n-1)) * (sqrsum/n - getAverage()*getAverage());
+	double var=
+		(((double)n) / (n-1)) * (sqrsum/n - getAverage()*getAverage());
+	return (var>=0.0?var:0.0);
+	// XXX note that we have very little possibility to increase numeric
+	// stability if this class is "gready", ie, if it has no memory
+	// In a more precise implementation we could delay the calculation of
+	// statistics and store the data in some intelligent structure
 }
 
 // --------------------------------------------------------------------

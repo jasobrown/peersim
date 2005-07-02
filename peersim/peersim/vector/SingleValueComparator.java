@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -33,21 +33,23 @@ import java.util.*;
 public class SingleValueComparator implements Comparator 
 {
 
-	/** Protocol to be be compared */
-  private int pid;
-  
-  /**
-   * Builds a new comparators that compares the single values maintained
-   * by protocol identified by <code>pid</pid>.
-   */
-  public SingleValueComparator(int pid) { this.pid = pid; }
-	
-	// Comment inherited from interface
-	public int compare(Object o1, Object o2)
-	{
-		SingleValue s1 = (SingleValue) ((Node) o1).getProtocol(pid);
-		SingleValue s2 = (SingleValue) ((Node) o2).getProtocol(pid);
-		return (int) (s1.getValue() - s2.getValue());
-	}
+/** Protocol to be be compared */
+private int pid;
+
+/**
+ * Builds a new comparators that compares the double values maintained
+ * by protocol identified by <code>pid</pid>.
+ */
+public SingleValueComparator(int pid) { this.pid = pid; }
+
+/**
+ * @inheritDoc
+ */
+public int compare(Object o1, Object o2)
+{
+	SingleValue s1 = (SingleValue) ((Node) o1).getProtocol(pid);
+	SingleValue s2 = (SingleValue) ((Node) o2).getProtocol(pid);
+	return (int) (s1.getValue() - s2.getValue());
+}
 	
 }

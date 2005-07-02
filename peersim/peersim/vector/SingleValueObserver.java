@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -18,9 +18,9 @@
 		
 package peersim.vector;
 
-import peersim.core.*;
 import peersim.config.*;
-import peersim.util.IncrementalStats;
+import peersim.core.*;
+import peersim.util.*;
 
 /**
 * Print statistics over the network assuming the nodes implement
@@ -32,26 +32,29 @@ import peersim.util.IncrementalStats;
 public class SingleValueObserver implements peersim.reports.Observer {
 
 
-////////////////////////////////////////////////////////////////////////////
-// Constants
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
+//Parameters
+//--------------------------------------------------------------------------
 
 /** 
- *  String name of the parameter used to determine the accuracy
+ *  The parameter used to determine the accuracy
  *  for standard deviation before stopping the simulation. If not 
  *  defined, a negative value is used which makes sure the observer 
- *  does not stop the simulation
+ *  does not stop the simulation.
+ *  @config
  */
-public static final String PAR_ACCURACY = "accuracy";
+private static final String PAR_ACCURACY = "accuracy";
 
 /** 
- *  String name of the parameter used to select the protocol to operate on
+ *  The protocol to be observed.
+ *  @config
  */
-public static final String PAR_PROT = "protocol";
+private static final String PAR_PROT = "protocol";
 
-////////////////////////////////////////////////////////////////////////////
+
+//--------------------------------------------------------------------------
 // Fields
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 
 /** The name of this observer in the configuration */
 private final String name;
@@ -62,9 +65,10 @@ private final double accuracy;
 /** Protocol identifier */
 private final int pid;
 
-////////////////////////////////////////////////////////////////////////////
+
+//--------------------------------------------------------------------------
 // Constructor
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 
 /**
  *  Creates a new observer using clear()
@@ -76,11 +80,14 @@ public SingleValueObserver(String name)
 	pid = Configuration.getPid(name + "." + PAR_PROT);
 }
 
-////////////////////////////////////////////////////////////////////////////
-// Methods
-////////////////////////////////////////////////////////////////////////////
 
-// Comment inherited from interface
+//--------------------------------------------------------------------------
+// Methods
+//--------------------------------------------------------------------------
+
+/**
+ * @inheritDoc
+ */
 public boolean analyze()
 {
 	IncrementalStats stats = new IncrementalStats();
@@ -88,16 +95,17 @@ public boolean analyze()
 	/* Compute max, min, average */
 	for (int i = 0; i < Network.size(); i++)
 	{
-		// XXX take care of a getValue() interface
 		SingleValue v = (SingleValue)Network.get(i).getProtocol(pid);
 		stats.add( v.getValue() );
 	}
 
 	/* Printing statistics */
-	System.out.println(name+": "+stats);
+	Log.println(name, stats.toString());
 
 	/* Terminate if accuracy target is reached */
 	return (stats.getStD()<=accuracy && CommonState.getTime()>0);
 }
+
+//--------------------------------------------------------------------------
 
 }

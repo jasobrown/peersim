@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -15,99 +15,173 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-		
+
 package peersim.vector;
 
 import peersim.core.*;
 import peersim.reports.Observer;
+import peersim.config.*;
 import peersim.config.Configuration;
 import java.io.*;
+import java.lang.reflect.*;
 
 /**
-* Normalizes the values..
-*/
-public class ValueDumper implements Observer {
+ * Dump the content of one or more protocol vectors in a file. Each line
+ * represent a single node, with values from different protocols separated 
+ * by spaces. Values are dumped to a file whose name is obtained from a
+ * configurable prefix, a number specifying the current simulation time,
+ * and the extension ".vec".
+ * <p>
+ * This observer class can observe any protocol field containing a 
+ * primitive value, provided that the field is associated with a getter method 
+ * that reads it.
+ * Getter methods are characterized as follows:
+ * <ul>
+ * <li> their return type is not void; </li>
+ * <li> their argument list is empty.
+ * </ul>
+ * <p>
+ * The methods to be used are specified through parameter {@value #PAR_METHODS}.
+ * For backward compatibility, if no method is specified, the method
+ * {@link SingleValue#getValue()} is used. In this way, classes
+ * implementing the {@link SingleValue} interface can be initialized using the
+ * old configuration syntax.
+ * <p>
+ * Please refer to package {@link peersim.vector} for a detailed description of 
+ * the concept of protocol vector and the role of getters and setters. 
+ */
+public class ValueDumper implements Observer
+{
 
-/** 
-* String name of the parameter that defines the protocol to initialize.
-*/
-public static final String PAR_PROT = "protocol";
+// --------------------------------------------------------------------------
+// Parameter names
+// --------------------------------------------------------------------------
+/**
+ * The protocol to be initialized.
+ * @config
+ */
+private static final String PAR_PROT = "protocol";
 
 /**
-* This is the base name of the file where the graph is saved. The
-* full name will be baseName+cycleid+".vec".
-*/
-public static final String PAR_BASENAME = "outf";
+ * This is the base name of the file where the values are saved. The full name
+ * will be baseName+cycleid+".vec".
+ */
+private static final String PAR_BASENAME = "outf";
 
-private final String name;
+/**
+ * The getter method(s) used to get values from the protocol instances.
+ * Multiple methods can be specified, separated with spaces.
+ * Defauls to "getValue" (for backward compatibility with previous 
+ * implementation of this class, that were based on the 
+ * {@link SingleValue} interface.
+ * Refer to the {@linkplain peersim.vector vector package description} for more 
+ * information about getters and setters.
+ * @config
+ */
+private static final String PAR_METHODS = "methods";
+
+// --------------------------------------------------------------------------
+// Fields
+// --------------------------------------------------------------------------
+
+/** Prefix name of this observer */
+private final String prefix;
 
 /** Protocol identifier */
-private final int protocolID;
+private final int pid;
 
+/** Base name of the file to be written */
 private final String baseName;
 
+/** Methods name */
+private final String[] methodNames;
 
-//--------------------------------------------------------------------------
+/** Methods */
+private final Method[] methods;
 
+// --------------------------------------------------------------------------
+// Constructor
+// --------------------------------------------------------------------------
+
+/**
+ * @param prefix
+ *          the configuration prefix for this class
+ */
 public ValueDumper(String prefix)
 {
-	name = prefix;
-	protocolID = Configuration.getPid(prefix+"."+PAR_PROT);
-	baseName = Configuration.getString(name+"."+PAR_BASENAME,null);
+	this.prefix = prefix;
+	pid = Configuration.getPid(prefix + "." + PAR_PROT);
+	baseName = Configuration.getString(prefix + "." + PAR_BASENAME, null);
+	String value = Configuration
+			.getString(prefix + "." + PAR_METHODS, "getValue");
+	methodNames = value.split("\\s");
+	// Search the methods
+	Class clazz = Network.prototype.getProtocol(pid).getClass();
+	methods = new Method[methodNames.length];
+	for (int i = 0; i < methodNames.length; i++) {
+		try {
+			methods[i] = Reflection.getMethodGet(clazz, methodNames[i]);
+		} catch (NoSuchMethodException e) {
+			throw new IllegalParameterException(prefix + "." + PAR_METHODS, e
+					.getMessage());
+		}
+	}
 }
 
-//--------------------------------------------------------------------------
+// --------------------------------------------------------------------------
+// Methods
+// --------------------------------------------------------------------------
 
-private static String format(long l, long max) {
-	
+private static String format(long l, long max)
+{
 	String ss = String.valueOf(max);
 	String sc = String.valueOf(l);
 	StringBuffer sb = new StringBuffer(ss);
-	for(int i=0; i<ss.length()-sc.length(); ++i) sb.setCharAt(i,'0');
-	sb.replace(ss.length()-sc.length(),ss.length(),sc);
+	for (int i = 0; i < ss.length() - sc.length(); ++i)
+		sb.setCharAt(i, '0');
+	sb.replace(ss.length() - sc.length(), ss.length(), sc);
 	return sb.toString();
 }
 
 // ---------------------------------------------------------------------
 
-public boolean analyze() {
-try {	
-	System.out.print(name+": ");
-	
-	// initialize output streams
-	FileOutputStream fos = null;
-	PrintStream pstr = System.out;
-	if( baseName != null )
-	{
-		final String filename = baseName+
-			ValueDumper.format(CommonState.getTime(),10000)+"-"+
-			ValueDumper.format(
-				CommonState.getCycleT(),Network.size())
-			+".vec";
-		fos = new FileOutputStream(filename);
-		System.out.println(filename);
-		pstr = new PrintStream(fos);
-	}
-	else	System.out.println();
-	
-	for(int i=0; i<Network.size(); ++i)
-	{
-		SingleValue sv =
-			(SingleValue)Network.get(i).getProtocol(protocolID);
-		pstr.println(sv.getValue());
-	}
-
-	return false;
-	
-}
-catch( IOException e )
+/**
+ * @inheritDoc
+ */
+public boolean analyze()
 {
-	System.err.println(name+": Unable to write to file: "+e);
-	return true;
+	try {
+		System.out.print(prefix + ": ");
+		// initialize output streams
+		PrintStream pstr = System.out;
+		if (baseName != null) {
+			final String filename = baseName
+					+ ValueDumper.format(CommonState.getTime(), 10000) + "-"
+					+ ValueDumper.format(CommonState.getCycleT(), Network.size())
+					+ ".vec";
+			System.out.println(filename);
+			pstr = new PrintStream(new FileOutputStream(filename));
+		} else
+			System.out.println();
+		try {
+			for (int i = 0; i < Network.size(); ++i) {
+				for (int j = 0; j < methods.length; j++)
+					pstr.print(methods[j].invoke(Network.get(i).getProtocol(pid)) + " ");
+				pstr.println();
+			}
+		} catch (InvocationTargetException e) {
+			e.getTargetException().printStackTrace();
+			System.exit(1);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return false;
+	} catch (IOException e) {
+		System.err.println(prefix + ": Unable to write to file: " + e);
+		return true;
+	}
 }
-}
+
+// ---------------------------------------------------------------------
 
 }
-
-
-

@@ -25,6 +25,25 @@ doc:
 		example.aggregation \
 		example.hot 
 
+docnew:
+	rm -rf doc/*
+	javadoc -docletpath peersim-doclet.jar -doclet doclets.standard.Standard -classpath .:jep-2.3.0.jar:djep-1.0.0.jar -d doc \
+		peersim \
+		peersim.edsim \
+		peersim.transport \
+		peersim.core \
+		peersim.cdsim \
+		peersim.config \
+		peersim.graph \
+		peersim.util \
+		peersim.reports \
+		peersim.dynamics \
+		peersim.vector \
+		example.loadbalance \
+		example.newscast \
+		example.aggregation \
+		example.hot 
+
 release: all doc
 	rm -fr peersim-$(VER)
 	mkdir peersim-$(VER)

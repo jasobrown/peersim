@@ -1,0 +1,34 @@
+<html><body>
+This package contains dynamics and observers capable to generically
+modify and analyze vectors of protocol instances.
+<p>
+The idea is the following: all the protocol instances contained
+by nodes in the network define a <i>protocol vector</i>. This
+package handles protocol vectors as a whole: for example, by
+observing one of its fields and reporting aggregation statistics
+over them (like average, variance, etc.).
+<p>
+Originally, this package was designed to interact with protocols
+implementing the {@link peersim.vector.SingleValue} interface, containing a
+getter and a setter method for interacting with a double value.
+The current implementation is backward-compatible with this
+design, meaning that it works with {@link peersim.vector.SingleValue} as
+default, but it has also been extended in order to initialize
+and observe generic fields and generic primitive types.
+<p>
+Thanks to Java reflection, it is now possible to specify 
+getter/setter methods that read/modify a generic field
+in the protocol vector.
+<p>
+Getter methods are characterized as follows:
+<ul>
+<li> their return type is not void; </li>
+<li> their argument list is empty.
+</ul>
+<p>
+Setter methods are characterized as follows:
+<ul>
+<li> their return type is void; </li>
+<li> their argument list is composed by exactly one parameter.
+</ul>
+</body></html>

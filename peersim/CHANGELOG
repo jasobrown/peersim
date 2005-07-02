@@ -1,3 +1,10 @@
+AM 02/07/05
+- Modified the vector package in order to make it generic. Now
+  dynamics and observers can initialize any protocol field,
+  with SingleValue used as default. Note: uses Jdk1.5, not
+  really needed, but makes the code easier to write 
+  (autoboxing + varargs in reflective invoke)
+
 MJ 01/07/05
 - fixed a (very infrequent) numeric bug in IncrementalStats
   (variance could be negative due to rounding errors)

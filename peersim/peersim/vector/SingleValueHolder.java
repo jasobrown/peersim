@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -45,6 +45,7 @@ protected double value;
 
 /**
  * Builds a new (not initialized) value holder.
+ * @param prefix the configuration prefix for this class
  */
 public SingleValueHolder(String prefix)
 {
@@ -64,7 +65,9 @@ public Object clone() throws CloneNotSupportedException
 //methods
 //--------------------------------------------------------------------------
 
-// Comment inherited from interface
+/**
+ * @inheritDoc
+ */
 public double getValue()
 {
 	return value;
@@ -72,7 +75,9 @@ public double getValue()
 
 //--------------------------------------------------------------------------
 
-// Comment inherited from interface
+/**
+ * @inheritDoc
+ */
 public void setValue(double value)
 {
 	this.value = value;

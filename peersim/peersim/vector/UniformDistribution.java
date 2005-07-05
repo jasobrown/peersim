@@ -123,14 +123,14 @@ public UniformDistribution(String prefix)
 	// Search the method
 	Class clazz = Network.prototype.getProtocol(pid).getClass();
 	try {
-		method = Reflection.getMethodSet(clazz, methodName);
+		method = GetterSetterFinder.getSetterMethod(clazz, methodName);
 	} catch (NoSuchMethodException e) {
 		throw new IllegalParameterException(prefix + "." + PAR_METHOD, 
 				e.getMessage());
 	}
 	
 	// Obtain the type of the field
-	type = Reflection.getTypeSet(method);
+	type = GetterSetterFinder.getSetterType(method);
 	
 	// Read parameters based on type
 	if (type.equals(int.class)) {

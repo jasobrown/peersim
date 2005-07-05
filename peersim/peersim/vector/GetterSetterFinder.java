@@ -41,13 +41,15 @@ import java.util.*;
  * @author Alberto Montresor
  * @version $Revision$
  */
-class Reflection
+class GetterSetterFinder
 {
 
 //--------------------------------------------------------------------------
 
 /**
- * Search a getter method in the specified class.
+ * Search a getter method in the specified class. It succeeds only of there
+ * is exactly one method with the given name that is a getter method (has
+ * no parameters and has a non-void return parameter.
  * 
  * @param clazz
  *          the class where to find get/set method
@@ -55,7 +57,7 @@ class Reflection
  *          the method to be searched
  * @return the requested method
  */
-public static Method getMethodGet(Class clazz, String methodName)
+public static Method getGetterMethod(Class clazz, String methodName)
 		throws NoSuchMethodException
 {
 	// Search methods
@@ -67,25 +69,27 @@ public static Method getMethodGet(Class clazz, String methodName)
 		}
 	}
 	if (list.size() == 0) {
-		throw new NoSuchMethodException("No setter method for method " + methodName
-				+ " in class " + clazz.getName());
+		throw new NoSuchMethodException("No getter method for method "
+		+ methodName + " in class " + clazz.getName());
 	} else if (list.size() > 1) {
-		throw new NoSuchMethodException("Multiple setter for method " + methodName
-				+ " in class " + clazz.getName());
+		throw new NoSuchMethodException("Multiple getter for method "
+		+ methodName + " in class " + clazz.getName());
 	}
 	// Found a single method with the right name; check if
 	// it is a gettter.
 	Method method = list.get(0);
 	Class[] pars = method.getParameterTypes();
 	if (pars.length > 0) {
-		throw new NoSuchMethodException(method.getName() + "  of class "
-				+ clazz.getName()
-				+ "is not a valid getter method; its argument list is not empty");
+		throw new NoSuchMethodException(method.getName() + " of class "
+		+ clazz.getName()
+		+ " is not a valid getter method: "+
+		"its argument list is not empty");
 	}
 	Class ret = method.getReturnType();
 	if (ret.equals(void.class)) {
-		throw new NoSuchMethodException(method.getName() + "  of class "
-				+ clazz.getName() + "is not a valid getter method: void " +
+		throw new NoSuchMethodException(method.getName() + " of class "
+				+ clazz.getName() +
+				" is not a valid getter method: void " +
 				"return type");
 	}
 	return method;
@@ -95,14 +99,16 @@ public static Method getMethodGet(Class clazz, String methodName)
 
 /**
  * Search a setter method in the specified class.
- * 
+ * It succeeds only of there
+ * is exactly one method with the given name that is a setter method (has
+ * one parameters and has a void return parameter.
  * @param clazz
  *          the class where to find get/set method
  * @param methodName
  *          the method to be searched
  * @return the requested method
  */
-public static Method getMethodSet(Class clazz, String methodName)
+public static Method getSetterMethod(Class clazz, String methodName)
 		throws NoSuchMethodException
 {
 	// Search methods
@@ -114,35 +120,35 @@ public static Method getMethodSet(Class clazz, String methodName)
 		}
 	}
 	if (list.size() == 0) {
-		throw new NoSuchMethodException("No setter method for method " + methodName
-				+ " in class " + clazz.getName());
+		throw new NoSuchMethodException("No setter method for method "
+		+ methodName + " in class " + clazz.getName());
 	} else if (list.size() > 1) {
-		throw new NoSuchMethodException("Multiple setter for method " + methodName
-				+ " in class " + clazz.getName());
+		throw new NoSuchMethodException("Multiple setter for method "
+		+ methodName + " in class " + clazz.getName());
 	}
 	// Found a single method with the right name; check if
 	// it is a setter.
 	Method method = list.get(0);
 	Class[] pars = method.getParameterTypes();
 	if (pars.length > 1) {
-		throw new NoSuchMethodException(method.getName() + "  of class "
-				+ clazz.getName()
-				+ "is not a valid setter method; it takes more than one argument");
+		throw new NoSuchMethodException(method.getName() + " of class "
+		+ clazz.getName()
+		+ " is not a valid setter method: "+
+		"it takes more than one argument");
 	}
 	if (pars.length == 0) {
 		throw new NoSuchMethodException(method.getName() + "  of class "
-				+ clazz.getName()
-				+ "is not a valid setter method; it takes no arguments");
+		+ clazz.getName()
+		+ " is not a valid setter method; it takes no arguments");
 	}
 	Class ret = method.getReturnType();
 	if (!ret.equals(void.class)) {
 		throw new NoSuchMethodException(method.getName() + "  of class "
-				+ clazz.getName() + "is not a valid setter method; it returns a value");
+		+ clazz.getName() +
+		" is not a valid setter method; it returns a value");
 	}
 	return method;
 }
-
-//--------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------
 
@@ -150,7 +156,7 @@ public static Method getMethodSet(Class clazz, String methodName)
 /**
  * Returns the field type for the specified getter.
  */
-public static Class getTypeGet(Method m)
+public static Class getGetterType(Method m)
 {
 	return m.getReturnType();
 }
@@ -160,7 +166,7 @@ public static Class getTypeGet(Method m)
 /**
  * Returns the field type for the specified setter.
  */
-public static Class getTypeSet(Method m)
+public static Class getSetterType(Method m)
 {
 	Class[] pars = m.getParameterTypes();
 	return pars[0];

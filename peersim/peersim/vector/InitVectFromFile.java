@@ -29,7 +29,7 @@ import java.util.StringTokenizer;
  * Initializes a protocol vector from data read from a file. The file has to
  * contain one value per line. Lines starting with # or lines that contain only
  * whitespace are ignored. The file can contain more values than necessary but
- * enough values must be present. *
+ * enough values must be present.
  * <p>
  * This dynamics class can initialize any protocol field containing a 
  * primitive value, provided that the field is associated with a setter method 
@@ -110,17 +110,17 @@ public InitVectFromFile(String prefix)
 	// Read configuration parameter
 	pid = Configuration.getPid(prefix + "." + PAR_PROT);
 	file = Configuration.getString(prefix + "." + PAR_FILE);
-	methodName = Configuration.getString(prefix + "." + PAR_METHOD, "getValue");
+	methodName = Configuration.getString(prefix+"."+PAR_METHOD,"getValue");
 	// Search the method
 	Class clazz = Network.prototype.getProtocol(pid).getClass();
 	try {
-		method = Reflection.getMethodSet(clazz, methodName);
+		method = GetterSetterFinder.getSetterMethod(clazz, methodName);
 	} catch (NoSuchMethodException e) {
-		throw new IllegalParameterException(prefix + "." + PAR_METHOD, e
-				.getMessage());
+		throw new IllegalParameterException(prefix + "." +
+		PAR_METHOD, e.getMessage());
 	}
 	// Obtain the type of the field
-	type = Reflection.getTypeSet(method);
+	type = GetterSetterFinder.getSetterType(method);
 }
 
 // --------------------------------------------------------------------------
@@ -164,8 +164,9 @@ public void modify()
 		throw new RuntimeException(e);
 	}
 	if (i < Network.size())
-		throw new RuntimeException("Too few values in file '" + file + "', only "
-				+ i + ", needed " + Network.size() + ".");
+		throw new RuntimeException(
+		"Too few values in file '" + file + "' (only "
+		+ i + "); we need " + Network.size() + ".");
 }
 
 // --------------------------------------------------------------------------

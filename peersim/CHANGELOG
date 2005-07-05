@@ -1,3 +1,6 @@
+MJ 05/07/05
+- Slight refactoring of new vector package (more to come)
+
 AM 02/07/05
 - Modified the vector package in order to make it generic. Now
   dynamics and observers can initialize any protocol field,

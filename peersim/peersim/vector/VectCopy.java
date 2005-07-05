@@ -132,13 +132,13 @@ public VectCopy(String prefix)
 	Class sclass = Network.prototype.getProtocol(spid).getClass();
 	Class dclass = Network.prototype.getProtocol(dpid).getClass();
 	try {
-		sm = Reflection.getMethodGet(sclass, smethod);
+		sm = GetterSetterFinder.getGetterMethod(sclass, smethod);
 	} catch (NoSuchMethodException e) {
 		throw new IllegalParameterException(prefix + "." + PAR_GETTER, e
 				.getMessage());
 	}
 	try {
-		dm = Reflection.getMethodSet(dclass, dmethod);
+		dm = GetterSetterFinder.getSetterMethod(dclass, dmethod);
 	} catch (NoSuchMethodException e) {
 		throw new IllegalParameterException(prefix + "." + PAR_SETTER, e
 				.getMessage());

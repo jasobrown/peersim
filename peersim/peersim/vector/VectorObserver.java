@@ -108,7 +108,7 @@ public VectorObserver(String prefix)
 	methods = new Method[methodNames.length];
 	for (int i=0; i < methodNames.length; i++) {
 		try {
-			methods[i] = Reflection.getMethodGet(clazz, methodNames[i]);
+			methods[i] = GetterSetterFinder.getGetterMethod(clazz, methodNames[i]);
 		} catch (NoSuchMethodException e) {
 			throw new IllegalParameterException(prefix + "." + PAR_METHODS, 
 					e.getMessage());

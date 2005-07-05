@@ -133,13 +133,13 @@ public Normalizer(String prefix)
 	// Search methods
 	Class clazz = Network.prototype.getProtocol(pid).getClass();
 	try {
-		sm = Reflection.getMethodGet(clazz, smethod);
+		sm = GetterSetterFinder.getGetterMethod(clazz, smethod);
 	} catch (NoSuchMethodException e) {
 		throw new IllegalParameterException(prefix + "." + PAR_GETTER, e
 				.getMessage());
 	}
 	try {
-		dm = Reflection.getMethodSet(clazz, dmethod);
+		dm = GetterSetterFinder.getSetterMethod(clazz, dmethod);
 	} catch (NoSuchMethodException e) {
 		throw new IllegalParameterException(prefix + "." + PAR_SETTER, e
 				.getMessage());

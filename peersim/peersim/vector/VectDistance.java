@@ -137,13 +137,13 @@ public VectDistance(String prefix)
 	Class class1 = Network.prototype.getProtocol(pid1).getClass();
 	Class class2 = Network.prototype.getProtocol(pid2).getClass();
 	try {
-		method1 = Reflection.getMethodGet(class1, methodName1);
+		method1 = GetterSetterFinder.getGetterMethod(class1, methodName1);
 	} catch (NoSuchMethodException e) {
 		throw new IllegalParameterException(prefix + "." + PAR_METHOD1, 
 				e.getMessage());
 	}
 	try {
-		method2 = Reflection.getMethodGet(class1, methodName2);
+		method2 = GetterSetterFinder.getGetterMethod(class1, methodName2);
 	} catch (NoSuchMethodException e) {
 		throw new IllegalParameterException(prefix + "." + PAR_METHOD1, 
 				e.getMessage());

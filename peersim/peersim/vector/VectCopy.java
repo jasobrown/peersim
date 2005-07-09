@@ -42,7 +42,7 @@ import peersim.dynamics.*;
  * Please refer to package {@link peersim.vector} for a detailed description of 
  * the concept of protocol vector and the role of getters and setters. 
  */
-public class VectCopy implements Dynamics, NodeInitializer
+public class VectCopy extends VectDynamics implements  NodeInitializer
 {
 
 //--------------------------------------------------------------------------
@@ -50,17 +50,12 @@ public class VectCopy implements Dynamics, NodeInitializer
 //--------------------------------------------------------------------------
 
 /**
- * The identifier of the protocol to be modified. 
- * @config
- */
-public static final String PAR_PROT = "protocol";
-
-/**
  * The identifier of the protocol to be copied. The protocol given in 
- * parameter {@value #PAR_PROT} will initialized based on this value.
+ * parameter {@value #PAR_PROT} will initialized copying values from this
+ * protocol.
  * @config
  */
-public static final String PAR_CLONE = "copy";
+public static final String PAR_SOURCE = "source";
 
 /**
  * The getter method used to obtain the protocol values. 
@@ -73,32 +68,15 @@ public static final String PAR_CLONE = "copy";
  */
 public static final String PAR_GETTER = "getter";
 
-/**
- * The setter method used to set values in the protocol instances.  
- * Defauls to "setValue" (for backward compatibility with previous 
- * implementation of this class, that were based on the 
- * {@link SingleValue} interface.
- * Refer to the {@linkplain peersim.vector vector package description} for more 
- * information about getters and setters.
- * @config
- */
-public static final String PAR_SETTER = "setter";
-
 // --------------------------------------------------------------------------
 // Variables
 // --------------------------------------------------------------------------
 
-/** Source protocol id */
-private int spid;
-
 /** Destination protocol id */
-private int dpid;
+private final int gpid;
 
 /** Getter method to be invoked on the source protocol */
-private Method sm;
-
-/** Setter method to be invoked on the destination protocol */
-private Method dm;
+private final Method getter;
 
 //--------------------------------------------------------------------------
 //Initialization
@@ -110,27 +88,17 @@ private Method dm;
  */
 public VectCopy(String prefix)
 {
-	// Read parameters
-	spid = Configuration.getPid(prefix + "." + PAR_CLONE);
-	dpid = Configuration.getPid(prefix + "." + PAR_PROT);
-	String smethod = Configuration.getString(prefix + "." + PAR_GETTER,
+	super(prefix);
+	
+	gpid = Configuration.getPid(prefix + "." + PAR_SOURCE);
+	String gmethod = Configuration.getString(prefix + "." + PAR_GETTER,
 		"getValue");
-	String dmethod = Configuration.getString(prefix + "." + PAR_SETTER,
-		"setValue");
-	// Search methods
-	Class sclass = Network.prototype.getProtocol(spid).getClass();
-	Class dclass = Network.prototype.getProtocol(dpid).getClass();
+	Class gclass = Network.prototype.getProtocol(gpid).getClass();
 	try {
-		sm = GetterSetterFinder.getGetterMethod(sclass, smethod);
+		getter = GetterSetterFinder.getGetterMethod(gclass, gmethod);
 	} catch (NoSuchMethodException e) {
-		throw new IllegalParameterException(prefix + "." + PAR_GETTER, e
-				.getMessage());
-	}
-	try {
-		dm = GetterSetterFinder.getSetterMethod(dclass, dmethod);
-	} catch (NoSuchMethodException e) {
-		throw new IllegalParameterException(prefix + "." + PAR_SETTER, e
-				.getMessage());
+		throw new IllegalParameterException(prefix + "." + PAR_GETTER,
+			e.getMessage());
 	}
 }
 
@@ -141,22 +109,23 @@ public VectCopy(String prefix)
 /**
  * @inheritDoc
  */
-public void modify()
-{
+public void modify() {
+try {
+
 	int size = Network.size();
-	try {
-		for (int i = 0; i < size; i++) {
-			Object sobj = Network.get(i).getProtocol(spid);
-			Object dobj = Network.get(i).getProtocol(dpid);
-			Object ret = sm.invoke(sobj);
-			dm.invoke(dobj, ret);
-		}
-	} catch (InvocationTargetException e) {
-		e.getTargetException().printStackTrace();
-		System.exit(1);
-	} catch (Exception e) {
-		throw new RuntimeException(e);
+	for (int i = 0; i < size; i++) {
+		Object obj = Network.get(i).getProtocol(gpid);
+		Number ret = (Number)getter.invoke(obj);
+		if(type==int.class || type==long.class) set(i,ret.longValue());
+		else set(i,ret.doubleValue());
 	}
+}
+catch(Exception e)
+{
+	e.printStackTrace();
+	System.exit(1);
+}
+
 }
 
 //--------------------------------------------------------------------------
@@ -164,22 +133,19 @@ public void modify()
 /**
  * @inheritDoc
  */
-public void initialize(Node n)
+public void initialize(Node n) {
+try {
+
+	Object obj = n.getProtocol(gpid);
+	Number ret = (Number)getter.invoke(obj);
+	if(type==int.class || type==long.class) set(n,ret.longValue());
+	else set(n,ret.doubleValue());
+}
+catch(Exception e)
 {
-	try {
-		Object sobj = n.getProtocol(spid);
-		Object dobj = n.getProtocol(dpid);
-		Object ret = sm.invoke(sobj);
-		dm.invoke(dobj, ret);
-	} catch (InvocationTargetException e) {
-		// Should never happen
-		e.printStackTrace();
-		System.exit(1);
-	} catch (IllegalAccessException e) {
-		// Should never happen
-		e.printStackTrace();
-		System.exit(1);
-	}
+	e.printStackTrace();
+	System.exit(1);
+}
 }
 
 //--------------------------------------------------------------------------

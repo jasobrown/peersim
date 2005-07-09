@@ -64,7 +64,7 @@ public static final String PAR_PROT = "protocol";
  * information about getters and setters.
  * @config
  */
-public static final String PAR_METHODS = "methods";
+public static final String PAR_METHODS = "getter";
 
 //--------------------------------------------------------------------------
 //Fields
@@ -94,18 +94,24 @@ public VectorObserver(String prefix)
 {
 	this.prefix = prefix;
 	pid = Configuration.getPid(prefix + "." + PAR_PROT);
-	String value = Configuration.getString(prefix + "." + PAR_METHODS);
+	String value = Configuration.getString(prefix + "." + PAR_METHODS,
+		"getValue");
 	methodNames = value.split("\\s");
 	
 	// Search the methods
 	Class clazz = Network.prototype.getProtocol(pid).getClass();
 	methods = new Method[methodNames.length];
-	for (int i=0; i < methodNames.length; i++) {
-		try {
-			methods[i] = GetterSetterFinder.getGetterMethod(clazz, methodNames[i]);
-		} catch (NoSuchMethodException e) {
-			throw new IllegalParameterException(prefix + "." + PAR_METHODS, 
-					e.getMessage());
+	for (int i=0; i < methodNames.length; i++)
+	{
+		try
+		{
+			methods[i] = GetterSetterFinder.getGetterMethod(
+			clazz, methodNames[i]);
+		}
+		catch (NoSuchMethodException e)
+		{
+			throw new IllegalParameterException(prefix + "." +
+			PAR_METHODS, e.getMessage());
 		}
 	}
 }
@@ -142,9 +148,8 @@ public boolean analyze()
 		buffer.append(stats);
 		buffer.append(" ");
 	}
-  Log.println(prefix, buffer.toString());	
+	Log.println(prefix, buffer.toString());	
 
-	/* Terminate if accuracy target is reached */
 	return false;
 }
 

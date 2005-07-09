@@ -72,7 +72,7 @@ public static final String PAR_BASENAME = "outf";
  * information about getters and setters.
  * @config
  */
-public static final String PAR_METHODS = "methods";
+public static final String PAR_METHODS = "getter";
 
 // --------------------------------------------------------------------------
 // Fields
@@ -112,12 +112,17 @@ public ValueDumper(String prefix)
 	// Search the methods
 	Class clazz = Network.prototype.getProtocol(pid).getClass();
 	methods = new Method[methodNames.length];
-	for (int i = 0; i < methodNames.length; i++) {
-		try {
-			methods[i] = GetterSetterFinder.getGetterMethod(clazz, methodNames[i]);
-		} catch (NoSuchMethodException e) {
-			throw new IllegalParameterException(prefix + "." + PAR_METHODS, e
-					.getMessage());
+	for (int i = 0; i < methodNames.length; i++)
+	{
+		try 
+		{
+			methods[i] = GetterSetterFinder.getGetterMethod(
+			clazz,methodNames[i]);
+		}
+		catch (NoSuchMethodException e)
+		{
+			throw new IllegalParameterException(prefix + "." +
+				PAR_METHODS, e.getMessage());
 		}
 	}
 }
@@ -142,38 +147,46 @@ private static String format(long l, long max)
 /**
  * @inheritDoc
  */
-public boolean analyze()
+public boolean analyze() {
+try
 {
-	try {
-		System.out.print(prefix + ": ");
-		// initialize output streams
-		PrintStream pstr = System.out;
-		if (baseName != null) {
-			final String filename = baseName
-					+ ValueDumper.format(CommonState.getTime(), 10000) + "-"
-					+ ValueDumper.format(CommonState.getCycleT(), Network.size())
-					+ ".vec";
-			System.out.println(filename);
-			pstr = new PrintStream(new FileOutputStream(filename));
-		} else
-			System.out.println();
-		try {
-			for (int i = 0; i < Network.size(); ++i) {
-				for (int j = 0; j < methods.length; j++)
-					pstr.print(methods[j].invoke(Network.get(i).getProtocol(pid)) + " ");
-				pstr.println();
-			}
-		} catch (InvocationTargetException e) {
-			e.getTargetException().printStackTrace();
-			System.exit(1);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-		return false;
-	} catch (IOException e) {
-		System.err.println(prefix + ": Unable to write to file: " + e);
-		return true;
+	System.out.print(prefix + ": ");
+	// initialize output streams
+	PrintStream pstr = System.out;
+	if (baseName != null)
+	{
+		final String filename = baseName
+		+ ValueDumper.format(CommonState.getTime(), 10000) + "-"
+		+ ValueDumper.format(CommonState.getCycleT(), Network.size())
+		+ ".vec";
+		System.out.println(filename);
+		pstr = new PrintStream(new FileOutputStream(filename));
 	}
+	else	System.out.println();
+	for (int i = 0; i < Network.size(); ++i)
+	{
+		for (int j = 0; j < methods.length; j++)
+			pstr.print(methods[j].invoke(
+			Network.get(i).getProtocol(pid)) + " ");
+		pstr.println();
+	}
+}
+catch (InvocationTargetException e)
+{
+	e.getTargetException().printStackTrace();
+	System.exit(1);
+}
+catch (IOException e)
+{
+	System.err.println(prefix + ": Unable to write to file: " + e);
+	return true;
+}
+catch (Exception e)
+{
+	throw new RuntimeException(e);
+}
+
+	return false;
 }
 
 // ---------------------------------------------------------------------

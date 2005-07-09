@@ -28,6 +28,7 @@ import peersim.util.*;
 /**
  * Observes the cosine angle between two vectors. The number which is output is
  * the inner product divided by the product of the length of the vectors.
+ * All values are converted to double before processing.
  * <p>
  * This observer class can observe any protocol field containing a 
  * primitive value, provided that the field is associated with a getter method 
@@ -70,7 +71,7 @@ public static final String PAR_PROT2 = "protocol2";
  * information about getters and setters.
  * @config
  */
-public static final String PAR_METHOD1 = "method1";
+public static final String PAR_METHOD1 = "getter1";
 
 /**
  * The getter method used to obtain the values of the second protocol. 
@@ -81,7 +82,7 @@ public static final String PAR_METHOD1 = "method1";
  * information about getters and setters.
  * @config
  */
-public static final String PAR_METHOD2 = "method2";
+public static final String PAR_METHOD2 = "getter2";
 
 // --------------------------------------------------------------------------
 // Fields
@@ -117,22 +118,22 @@ public VectAngle(String prefix)
 	name = prefix;
 	pid1 = Configuration.getPid(prefix + "." + PAR_PROT1);
 	pid2 = Configuration.getPid(prefix + "." + PAR_PROT2);
-	methodName1 = Configuration.getString(prefix + "." + PAR_METHOD1, "getValue");
-	methodName2 = Configuration.getString(prefix + "." + PAR_METHOD2, "getValue");
+	methodName1=Configuration.getString(prefix+"."+PAR_METHOD1,"getValue");
+	methodName2=Configuration.getString(prefix+"."+PAR_METHOD2,"getValue");
 	// Search the methods
 	Class class1 = Network.prototype.getProtocol(pid1).getClass();
 	Class class2 = Network.prototype.getProtocol(pid2).getClass();
 	try {
-		method1 = GetterSetterFinder.getGetterMethod(class1, methodName1);
+		method1=GetterSetterFinder.getGetterMethod(class1,methodName1);
 	} catch (NoSuchMethodException e) {
-		throw new IllegalParameterException(prefix + "." + PAR_METHOD1, e
-				.getMessage());
+		throw new IllegalParameterException(prefix+"." + PAR_METHOD1,
+			e.getMessage());
 	}
 	try {
-		method2 = GetterSetterFinder.getGetterMethod(class1, methodName2);
+		method2=GetterSetterFinder.getGetterMethod(class1,methodName2);
 	} catch (NoSuchMethodException e) {
-		throw new IllegalParameterException(prefix + "." + PAR_METHOD1, e
-				.getMessage());
+		throw new IllegalParameterException(prefix + "." + PAR_METHOD1,
+			e.getMessage());
 	}
 }
 
@@ -147,8 +148,8 @@ public boolean analyze()
 		for (int i = 0; i < Network.size(); ++i) {
 			Object obj1 = Network.get(i).getProtocol(pid1);
 			Object obj2 = Network.get(i).getProtocol(pid2);
-			double v1 = ((Number) method1.invoke(obj1)).doubleValue();
-			double v2 = ((Number) method2.invoke(obj2)).doubleValue();
+			double v1=((Number) method1.invoke(obj1)).doubleValue();
+			double v2=((Number) method2.invoke(obj2)).doubleValue();
 			sqrsum1 += v1 * v1;
 			sqrsum2 += v2 * v2;
 			prod += v2 * v1;

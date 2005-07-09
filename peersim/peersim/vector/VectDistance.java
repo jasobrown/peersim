@@ -20,34 +20,35 @@ package peersim.vector;
 
 import java.lang.reflect.*;
 import peersim.config.*;
-import peersim.core.*;
-import peersim.reports.*;
+import peersim.config.Configuration;
+import peersim.core.Network;
+import peersim.reports.Observer;
 import peersim.util.*;
 
 /**
- * Observes difference between two vectors. It computes the distance vector
- * abs(x-y), and reports statistics on this vector such as average, minimum and
- * maximum (according to the string format of {@link IncrementalStats}).
+ * Observes the cosine angle between two vectors. The number which is output is
+ * the inner product divided by the product of the length of the vectors.
+ * All values are converted to double before processing.
  * <p>
  * This observer class can observe any protocol field containing a 
  * primitive value, provided that the field is associated with a getter method 
  * that reads it.
  * The methods to be used are specified through parameter {@value #PAR_METHOD1}
  * and {@value #PAR_METHOD2}.
- * For backward compatibility, if no method is specified, the method
- * {@link SingleValue#getValue()} is used. In this way, classes
- * implementing the {@link SingleValue} interface can be initialized using the
- * old configuration syntax.
+ * For backward compatibility, if no method is specified, the
+ * method {@link SingleValue#getValue()} is used. In this way, 
+ * classes implementing the {@link SingleValue} interface can be
+ * observed using the old configuration syntax.
  * <p>
  * Please refer to package {@link peersim.vector} for a detailed description of 
- * the concept of protocol vector and the role of getters and setters. 
+ * this mechanism. 
  */
 public class VectDistance implements Observer
 {
 
-//--------------------------------------------------------------------------
-//Parameters
-//--------------------------------------------------------------------------
+// --------------------------------------------------------------------------
+// Parameters
+// --------------------------------------------------------------------------
 
 /**
  * The first protocol to be observed.
@@ -70,7 +71,7 @@ public static final String PAR_PROT2 = "protocol2";
  * information about getters and setters.
  * @config
  */
-public static final String PAR_METHOD1 = "method1";
+public static final String PAR_METHOD1 = "getter1";
 
 /**
  * The getter method used to obtain the values of the second protocol. 
@@ -81,12 +82,11 @@ public static final String PAR_METHOD1 = "method1";
  * information about getters and setters.
  * @config
  */
-public static final String PAR_METHOD2 = "method2";
+public static final String PAR_METHOD2 = "getter2";
 
-
-//--------------------------------------------------------------------------
-//Fields 
-//--------------------------------------------------------------------------
+// --------------------------------------------------------------------------
+// Fields
+// --------------------------------------------------------------------------
 
 /** The prefix for this observer*/
 private final String name;
@@ -110,47 +110,37 @@ private final Method method1;
 private final Method method2;
 
 // --------------------------------------------------------------------------
-//Initialization
-//--------------------------------------------------------------------------
+// Initialization
+// --------------------------------------------------------------------------
 
-/**
- * Reads parameters and search for getter/setter methods
- */
 public VectDistance(String prefix)
 {
 	name = prefix;
 	pid1 = Configuration.getPid(prefix + "." + PAR_PROT1);
 	pid2 = Configuration.getPid(prefix + "." + PAR_PROT2);
-
-	methodName1 = Configuration.getString(prefix + "." + PAR_METHOD1, 
-	"getValue");
-	methodName2 = Configuration.getString(prefix + "." + PAR_METHOD2, 
-	"getValue");
-	
+	methodName1=Configuration.getString(prefix+"."+PAR_METHOD1,"getValue");
+	methodName2=Configuration.getString(prefix+"."+PAR_METHOD2,"getValue");
 	// Search the methods
 	Class class1 = Network.prototype.getProtocol(pid1).getClass();
 	Class class2 = Network.prototype.getProtocol(pid2).getClass();
 	try {
-		method1 = GetterSetterFinder.getGetterMethod(class1, methodName1);
+		method1=GetterSetterFinder.getGetterMethod(class1,methodName1);
 	} catch (NoSuchMethodException e) {
-		throw new IllegalParameterException(prefix + "." + PAR_METHOD1, 
-				e.getMessage());
+		throw new IllegalParameterException(prefix+"." + PAR_METHOD1,
+			e.getMessage());
 	}
 	try {
-		method2 = GetterSetterFinder.getGetterMethod(class1, methodName2);
+		method2=GetterSetterFinder.getGetterMethod(class1,methodName2);
 	} catch (NoSuchMethodException e) {
-		throw new IllegalParameterException(prefix + "." + PAR_METHOD1, 
-				e.getMessage());
+		throw new IllegalParameterException(prefix + "." + PAR_METHOD1,
+			e.getMessage());
 	}
 }
 
-//--------------------------------------------------------------------------
-//Methods
-//--------------------------------------------------------------------------
+// --------------------------------------------------------------------------
+// Methods
+// --------------------------------------------------------------------------
 
-/**
- * @inheritDoc
- */
 public boolean analyze()
 {
 	IncrementalStats is = new IncrementalStats();
@@ -158,8 +148,8 @@ public boolean analyze()
 		for (int i = 0; i < Network.size(); ++i) {
 			Object obj1 = Network.get(i).getProtocol(pid1);
 			Object obj2 = Network.get(i).getProtocol(pid2);
-			double v1 = ((Number) method1.invoke(obj1)).doubleValue();
-			double v2 = ((Number) method2.invoke(obj2)).doubleValue();
+			double v1=((Number) method1.invoke(obj1)).doubleValue();
+			double v2=((Number) method2.invoke(obj2)).doubleValue();
 			is.add(Math.abs(v1-v2));
 		}
 	} catch (InvocationTargetException e) {
@@ -170,6 +160,7 @@ public boolean analyze()
 	}
 	Log.println(name, is.toString());
 	return false;
+
 }
 
 //--------------------------------------------------------------------------

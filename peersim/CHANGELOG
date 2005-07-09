@@ -1,7 +1,7 @@
 MJ 09/07/05
 - Major refactoring of the vector package, drastically simplifying the
   code. Not backwards compatible (changed config par names). Also,
-  LinearDistribution no longer implements NodeInitializer. Not finished yet...
+  LinearDistribution no longer implements NodeInitializer.
   
 MJ 05/07/05
 - Slight refactoring of new vector package (more to come)

@@ -43,13 +43,13 @@ public class SingleValueObserver implements peersim.reports.Observer {
  *  does not stop the simulation.
  *  @config
  */
-private static final String PAR_ACCURACY = "accuracy";
+public static final String PAR_ACCURACY = "accuracy";
 
 /** 
  *  The protocol to be observed.
  *  @config
  */
-private static final String PAR_PROT = "protocol";
+public static final String PAR_PROT = "protocol";
 
 
 //--------------------------------------------------------------------------

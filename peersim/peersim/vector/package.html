@@ -15,22 +15,24 @@ The current implementation is backward-compatible with this
 design, meaning that it works with {@link peersim.vector.SingleValue} as
 default, but it has also been extended in order to initialize
 and observe generic fields and generic primitive types.
+In this general case, the getter and setter methods that read and write
+this field have to be explicitly given in the configuration.
 <p>
-Thanks to Java reflection, it is now possible to specify 
-getter/setter methods that read/modify a generic field
-in the protocol vector.
-<p>
-Getter methods are characterized as follows:
+Getter methods must have a signature as follows:
 <ul>
 <li> their return type is a primitive numeric type
-(int, long, float or double); </li>
-<li> their argument list is empty.
+(int, long, float or double) </li>
+<li> their argument list is empty
 </ul>
 <p>
 Setter methods are characterized as follows:
 <ul>
-<li> their return type is void; </li>
+<li> their return type is void </li>
 <li> they have exactly one argument of a primitive numeric type (int, long,
-float, double).
+float or double)
 </ul>
+<p>
+Although there are other numberic types such as byte and short, they are
+not supported. They can be represented as an int in a protocol.
 </body></html>
+

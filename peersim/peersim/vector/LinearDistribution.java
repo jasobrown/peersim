@@ -30,12 +30,6 @@ import peersim.dynamics.*;
  * This dynamics class can initialize any protocol field containing a 
  * primitive value, provided that the field is associated with a setter method 
  * that modifies it.
- * Setter methods are characterized as follows:
- * <ul>
- * <li> their return type is void; </li>
- * <li> their argument list is composed by exactly one parameter.
- * </ul>
- * <p>
  * The method to be used is specified through parameter {@value #PAR_METHOD}.
  * For backward compatibility, if no method is specified, the method
  * {@link SingleValue#setValue(double)} is used. In this way, classes
@@ -45,7 +39,7 @@ import peersim.dynamics.*;
  * Please refer to package {@link peersim.vector} for a detailed description of 
  * the concept of protocol vector and the role of getters and setters. 
  */
-public class LinearDistribution implements Dynamics, NodeInitializer
+public class LinearDistribution extends VectDynamics
 {
 
 //--------------------------------------------------------------------------
@@ -56,30 +50,13 @@ public class LinearDistribution implements Dynamics, NodeInitializer
  * The upper bound of the uniform random variable.
  * @config
  */
-private static final String PAR_MAX = "max";
+public static final String PAR_MAX = "max";
 
 /**
  * The lower bound of the uniform random variable. Defaults to -max.
  * @config
  */
-private static final String PAR_MIN = "min";
-
-/**
- * The protocol to be initialized.
- * @config
- */
-private static final String PAR_PROTOCOL = "protocol";
-
-/**
- * The setter method used to set values in the protocol instances.  
- * Defauls to "setValue" (for backward compatibility with previous 
- * implementation of this class, that were based on the 
- * {@link SingleValue} interface.
- * Refer to the {@linkplain peersim.vector vector package description} for more 
- * information about getters and setters.
- * @config
- */
-private static final String PAR_METHOD = "method";
+public static final String PAR_MIN = "min";
 
 // --------------------------------------------------------------------------
 // Fields
@@ -91,20 +68,8 @@ private final Number min;
 /** Maximum value */
 private final Number max;
 
-/** Protocol identifier */
-private final int pid;
-
-/** Last value assigned to a node */
-private Number last;
-
-/** Setter method name */
-private final String methodName;
-
-/** Setter method */
-private final Method method;
-
-/** Field type */
-private Class type;
+/** step value */
+private final double step;
 
 // --------------------------------------------------------------------------
 // Initialization
@@ -115,43 +80,20 @@ private Class type;
  */
 public LinearDistribution(String prefix)
 {
-	pid = Configuration.getPid(prefix + "." + PAR_PROTOCOL);
-	// The default value is selected for backward compatibility
-	methodName = Configuration.getString(prefix + "." + PAR_METHOD, "setValue");
-	
-	// Search the method
-	Class clazz = Network.prototype.getProtocol(pid).getClass();
-	try {
-		method = GetterSetterFinder.getSetterMethod(clazz, methodName);
-	} catch (NoSuchMethodException e) {
-		throw new IllegalParameterException(prefix + "." + PAR_METHOD, 
-				e.getMessage());
-	}
-	
-	// Obtain the type of the field
-	type = GetterSetterFinder.getSetterType(method);
+	super(prefix);
 	
 	// Read parameters based on type
-	if (type.equals(int.class)) {
-		max = new Integer(Configuration.getInt(prefix + "." + PAR_MAX));
-		min = new Integer(Configuration.getInt(prefix + "." + PAR_MIN, 
-				-max.intValue()));
-	} else if (type.equals(long.class)) {
+	if (type==long.class || type==int.class) {
 		max = new Long(Configuration.getLong(prefix + "." + PAR_MAX));
 		min = new Long(Configuration.getLong(prefix + "." + PAR_MIN, 
 				-max.longValue()));
-	} else if (type.equals(float.class)) {
-		max = new Float(Configuration.getDouble(prefix + "." + PAR_MAX));
-		min = new Float(Configuration.getDouble(prefix + "." + PAR_MIN, 
-				-max.floatValue()));
-	} else if (type.equals(double.class)) {
-		max = new Double(Configuration.getDouble(prefix + "." + PAR_MAX));
-		min = new Double(Configuration.getDouble(prefix + "." + PAR_MIN, 
+		step= (max.longValue()-min.longValue())/
+			((double)(Network.size()-1));
+	} else { // we know it's double or float
+		max = new Double(Configuration.getDouble(prefix+"."+PAR_MAX));
+		min = new Double(Configuration.getDouble(prefix+"."+PAR_MIN, 
 				-max.doubleValue()));
-	} else {
-		throw new IllegalParameterException(prefix + "." + PAR_METHOD, 
-				method.getName() + " of class " + clazz.getName() 
-				+ "is not a supported setter");
+		step= (max.doubleValue()-min.doubleValue())/(Network.size()-1);
 	}
 }
 
@@ -162,106 +104,26 @@ public LinearDistribution(String prefix)
 /**
  * @inheritDoc
  */
-public void modify()
-{
-	try {
-		if (type.equals(int.class)) {
-			int start = min.intValue();
-			int step = (max.intValue()-start)/(Network.size()-1);
-			int lastval = 0;
-			for(int i=0; i<Network.size(); ++i) {
-				lastval = i*step+start;
-				method.invoke(Network.get(i).getProtocol(pid), lastval);
-			}
-			last = new Integer(lastval);
-		} else if (type.equals(long.class)) {
-			long start = min.longValue();
-			long step = (max.longValue()-start)/(Network.size()-1);
-			long lastval = 0;
-			for(int i=0; i<Network.size(); ++i) {
-				lastval = i*step+start;
-				method.invoke(Network.get(i).getProtocol(pid), lastval);
-			}
-			last = new Long(lastval);
-		} else if (type.equals(float.class)) {
-			float start = min.floatValue();
-			float step = (max.floatValue()-start)/(Network.size()-1);
-			float lastval = 0;
-			for(int i=0; i<Network.size(); ++i) {
-				lastval = i*step+start;
-				method.invoke(Network.get(i).getProtocol(pid), lastval);
-			}
-			last = new Float(lastval);
-		} else if (type.equals(double.class)) {
-			double start = min.doubleValue();
-			double step = (max.doubleValue()-start)/(Network.size()-1);
-			double lastval = 0;
-			for(int i=0; i<Network.size(); ++i) {
-				lastval = i*step+start;
-				method.invoke(Network.get(i).getProtocol(pid), lastval);
-			}
-			last = new Double(lastval);
+public void modify() {
+	
+	if (type==int.class || type==long.class)
+	{
+		for(int i=0; i<Network.size(); ++i)
+		{
+			// we avoid the entire expression being cast to double
+			set(i,Math.round(i*step)+min.longValue());
 		}
-	} catch (InvocationTargetException e) {
-		e.getTargetException().printStackTrace();
-		System.exit(1);
-	} catch (Exception e) {
-		throw new RuntimeException(e);
+	}
+	else
+	{
+		for(int i=0; i<Network.size(); ++i)
+		{
+			set(i,i*step+min.doubleValue());
+		}
 	}
 }
 
-// --------------------------------------------------------------------------
-
-/**
- * @inheritDoc
- */
-public void initialize(Node n)
-{
-	try {
-		if (type.equals(int.class)) {
-			int lastval = (max.intValue()-min.intValue())/(Network.size()-1);
-			if (lastval > max.intValue())
-				lastval = min.intValue();
-			last = new Integer(lastval);
-			method.invoke(n.getProtocol(pid), last);
-		} else if (type.equals(long.class)) {
-			long lastval = (max.longValue()-min.longValue())/(Network.size()-1);
-			if (lastval > max.longValue())
-				lastval = min.longValue();
-			last = new Long(lastval);
-			method.invoke(n.getProtocol(pid), last);
-		} else if (type.equals(float.class)) {
-			float lastval = (max.floatValue()-min.floatValue())/(Network.size()-1);
-			if (lastval > max.floatValue())
-				lastval = min.floatValue();
-			last = new Float(lastval);
-			method.invoke(n.getProtocol(pid), last);
-		} else if (type.equals(double.class)) {
-			double lastval = (max.doubleValue()-min.doubleValue())/(Network.size()-1);
-			if (lastval > max.doubleValue())
-				lastval = min.doubleValue();
-			last = new Double(lastval);
-			method.invoke(n.getProtocol(pid), last);
-		}
-	} catch (InvocationTargetException e) {
-		// Should never happen
-		e.printStackTrace();
-		System.exit(1);
-	} catch (IllegalAccessException e) {
-		// Should never happen
-		e.printStackTrace();
-		System.exit(1);
-	}
-}
-
-// --------------------------------------------------------------------------
 
 }
-
-
-
-
-
-
 
 

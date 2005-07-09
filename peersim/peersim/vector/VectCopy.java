@@ -31,19 +31,6 @@ import peersim.dynamics.*;
  * protocol to any primitive field in the destination protocol,
  * provided that the former field is associated with a getter method,
  * while the latter is associated with a setter method.
- * <p>
- * Getter methods are characterized as follows:
- * <ul>
- * <li> their return type is not void; </li>
- * <li> their argument list is empty.
- * </ul>
- * <p>
- * Setter methods are characterized as follows:
- * <ul>
- * <li> their return type is void; </li>
- * <li> their argument list is composed by exactly one parameter.
- * </ul>
- * <p>
  * The methods to be used are specified through parameters 
  * {@value #PAR_GETTER} and {@value #PAR_SETTER}.
  * For backward compatibility, if no methods are specified, the method
@@ -66,14 +53,14 @@ public class VectCopy implements Dynamics, NodeInitializer
  * The identifier of the protocol to be modified. 
  * @config
  */
-private static final String PAR_PROT = "protocol";
+public static final String PAR_PROT = "protocol";
 
 /**
  * The identifier of the protocol to be copied. The protocol given in 
  * parameter {@value #PAR_PROT} will initialized based on this value.
  * @config
  */
-private static final String PAR_CLONE = "copy";
+public static final String PAR_CLONE = "copy";
 
 /**
  * The getter method used to obtain the protocol values. 
@@ -84,7 +71,7 @@ private static final String PAR_CLONE = "copy";
  * information about getters and setters.
  * @config
  */
-private static final String PAR_GETTER = "getter";
+public static final String PAR_GETTER = "getter";
 
 /**
  * The setter method used to set values in the protocol instances.  
@@ -95,7 +82,7 @@ private static final String PAR_GETTER = "getter";
  * information about getters and setters.
  * @config
  */
-private static final String PAR_SETTER = "setter";
+public static final String PAR_SETTER = "setter";
 
 // --------------------------------------------------------------------------
 // Variables
@@ -126,8 +113,10 @@ public VectCopy(String prefix)
 	// Read parameters
 	spid = Configuration.getPid(prefix + "." + PAR_CLONE);
 	dpid = Configuration.getPid(prefix + "." + PAR_PROT);
-	String smethod = Configuration.getString(prefix + "." + PAR_GETTER, "value");
-	String dmethod = Configuration.getString(prefix + "." + PAR_SETTER, "value");
+	String smethod = Configuration.getString(prefix + "." + PAR_GETTER,
+		"getValue");
+	String dmethod = Configuration.getString(prefix + "." + PAR_SETTER,
+		"setValue");
 	// Search methods
 	Class sclass = Network.prototype.getProtocol(spid).getClass();
 	Class dclass = Network.prototype.getProtocol(dpid).getClass();

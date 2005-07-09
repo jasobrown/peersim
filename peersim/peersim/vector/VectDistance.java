@@ -32,12 +32,6 @@ import peersim.util.*;
  * This observer class can observe any protocol field containing a 
  * primitive value, provided that the field is associated with a getter method 
  * that reads it.
- * Getter methods are characterized as follows:
- * <ul>
- * <li> their return type is not void; </li>
- * <li> their argument list is empty.
- * </ul>
- * <p>
  * The methods to be used are specified through parameter {@value #PAR_METHOD1}
  * and {@value #PAR_METHOD2}.
  * For backward compatibility, if no method is specified, the method
@@ -59,13 +53,13 @@ public class VectDistance implements Observer
  * The first protocol to be observed.
  * @config
  */
-private static final String PAR_PROT1 = "protocol1";
+public static final String PAR_PROT1 = "protocol1";
 
 /**
  * The second protocol to be observed.
  * @config
  */
-private static final String PAR_PROT2 = "protocol2";
+public static final String PAR_PROT2 = "protocol2";
 
 /**
  * The getter method used to obtain the values of the first protocol. 
@@ -76,7 +70,7 @@ private static final String PAR_PROT2 = "protocol2";
  * information about getters and setters.
  * @config
  */
-private static final String PAR_METHOD1 = "method1";
+public static final String PAR_METHOD1 = "method1";
 
 /**
  * The getter method used to obtain the values of the second protocol. 
@@ -87,7 +81,7 @@ private static final String PAR_METHOD1 = "method1";
  * information about getters and setters.
  * @config
  */
-private static final String PAR_METHOD2 = "method2";
+public static final String PAR_METHOD2 = "method2";
 
 
 //--------------------------------------------------------------------------

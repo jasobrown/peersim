@@ -35,12 +35,6 @@ import java.lang.reflect.*;
  * This observer class can observe any protocol field containing a 
  * primitive value, provided that the field is associated with a getter method 
  * that reads it.
- * Getter methods are characterized as follows:
- * <ul>
- * <li> their return type is not void; </li>
- * <li> their argument list is empty.
- * </ul>
- * <p>
  * The methods to be used are specified through parameter {@value #PAR_METHODS}.
  * For backward compatibility, if no method is specified, the method
  * {@link SingleValue#getValue()} is used. In this way, classes
@@ -60,13 +54,13 @@ public class ValueDumper implements Observer
  * The protocol to be initialized.
  * @config
  */
-private static final String PAR_PROT = "protocol";
+public static final String PAR_PROT = "protocol";
 
 /**
  * This is the base name of the file where the values are saved. The full name
  * will be baseName+cycleid+".vec".
  */
-private static final String PAR_BASENAME = "outf";
+public static final String PAR_BASENAME = "outf";
 
 /**
  * The getter method(s) used to get values from the protocol instances.
@@ -78,7 +72,7 @@ private static final String PAR_BASENAME = "outf";
  * information about getters and setters.
  * @config
  */
-private static final String PAR_METHODS = "methods";
+public static final String PAR_METHODS = "methods";
 
 // --------------------------------------------------------------------------
 // Fields

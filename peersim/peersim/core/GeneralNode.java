@@ -28,7 +28,7 @@ import java.util.*;
 * failure states and store a list of protocols.
 * It is the protocols that do the interesting job.
 */
-public class GeneralNode implements Node, Fallible, Cloneable {
+public class GeneralNode implements Node {
 
 
 // ================= fields ========================================

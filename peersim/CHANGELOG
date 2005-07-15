@@ -23,6 +23,9 @@ MJ 15/07/05
   - Moved all cycle-driven related stuff to the cdsim package. In particular,
     CommonState was split, and some parts became CDState. The Scheduler is
     now model independent.
+  - The supported platform now is JDK 1.5, we no longer guarantee that peersim
+    runs/compiles under 1.4. Now it "almost" compiles under 1.4, but it might
+    change in the future.
   More to come...
 
 MJ 09/07/05

@@ -67,7 +67,7 @@ public void nextCycle( Node node, int pid)
 	if (linkable.degree() > 0)
 	{
 		Node peer =
-			linkable.getNeighbor(CommonRandom.r.nextInt(linkable.degree()));
+			linkable.getNeighbor(CommonState.r.nextInt(linkable.degree()));
 
 		// XXX quick and dirty handling of failure
 		if (peer.getFailState() != Fallible.OK)

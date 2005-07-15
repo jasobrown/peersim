@@ -111,7 +111,7 @@ protected Node selectNeighbor(Node node, int pid)
 	Node rnode = null;
 	if (linkable.degree() > 0) 
 		return linkable.getNeighbor(
-				CommonRandom.r.nextInt(linkable.degree()));
+				CommonState.r.nextInt(linkable.degree()));
 	else
 		return null;
 }

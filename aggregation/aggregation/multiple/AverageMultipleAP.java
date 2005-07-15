@@ -139,7 +139,7 @@ public AverageMultipleAP(String prefix)
 	p = new ProtocolData();
 	p.symProb = Configuration.getDouble(prefix + "." + PAR_SYM_FAILUREPROB, 0.0);
 	p.asymProb = Configuration.getDouble(prefix + "." + PAR_ASYM_FAILUREPROB, 0.0);
-	p.lid = FastConfig.getLinkable(CommonState.getPid());
+	p.lid = FastConfig.getLinkable(CDState.getPid());
 	
 	// Instance fields
 	values = new double[Configuration.getInt(prefix + "." + PAR_VALUES)];
@@ -210,8 +210,8 @@ protected boolean canDeliverRequest(Node node)
 {
 	if (node.getFailState() != Fallible.OK)
 		return false;
-	if ((p.symProb > 0 && CommonRandom.r.nextDouble() < p.symProb) ||
-			(p.asymProb > 0 && CommonRandom.r.nextDouble() < p.asymProb))
+	if ((p.symProb > 0 && CDState.r.nextDouble() < p.symProb) ||
+			(p.asymProb > 0 && CDState.r.nextDouble() < p.asymProb))
 		return false;
 	return true;
 }
@@ -226,7 +226,7 @@ protected boolean canDeliverResponse(Node node)
 {
 	if (node.getFailState() != Fallible.OK)
 		return false;
-	if (p.asymProb > 0 && CommonRandom.r.nextDouble() < p.asymProb)
+	if (p.asymProb > 0 && CDState.r.nextDouble() < p.asymProb)
 		return false;
 	return true;
 }
@@ -236,11 +236,11 @@ protected boolean canDeliverResponse(Node node)
 // Comment inherited from interface
 public void nextCycle(Node node, int pid)
 {
-	if (CommonState.getCycle() != last+1) {
+	if (CDState.getCycle() != last+1) {
 		// We just woke up
 		isNew = true;
 	}
-	last = CommonState.getCycle();
+	last = CDState.getCycle();
 		
 	/* Nodes that have been created during the current epoch do not
 	 * partecipate in the aggregation protocol
@@ -288,7 +288,7 @@ public void deliverRequest(Node initiator, Node receiver, double rvalue, int ind
 	values[index] = (lvalue + rvalue)/2;
 	if (canDeliverResponse(initiator)) {
 		AverageMultipleAP rsrc = 
-			(AverageMultipleAP) initiator.getProtocol(CommonState.getPid());
+			(AverageMultipleAP) initiator.getProtocol(CDState.getPid());
 		rsrc.deliverResponse(initiator, receiver, lvalue, index);
 	}
 }
@@ -324,7 +324,7 @@ protected Node selectNeighbor(Node node, int pid)
 	Linkable linkable = (Linkable) node.getProtocol(p.lid);
 	Node rnode = null;
 	if (linkable.degree() > 0) 
-		return linkable.getNeighbor(CommonRandom.r.nextInt(linkable.degree()));
+		return linkable.getNeighbor(CDState.r.nextInt(linkable.degree()));
 	else
 		return null;
 }

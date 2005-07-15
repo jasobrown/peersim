@@ -43,7 +43,7 @@ import java.util.StringTokenizer;
  * Please refer to package {@link peersim.vector} for a detailed description of 
  * the concept of protocol vector and the role of getters and setters. 
  */
-public class InitVectFromFile extends VectDynamics
+public class InitVectFromFile extends VectControl
 {
 
 // --------------------------------------------------------------------------
@@ -87,7 +87,7 @@ public InitVectFromFile(String prefix)
  * file can contain more values than necessary but enough values must be
  * present.
  */
-public void modify() {
+public boolean execute() {
 
 	int i = 0;
 
@@ -113,6 +113,8 @@ catch(Exception e) { throw new RuntimeException(e); }
 		throw new RuntimeException(
 		"Too few values in file '" + file + "' (only "
 		+ i + "); we need " + Network.size() + ".");
+	
+	return false;
 }
 
 // --------------------------------------------------------------------------

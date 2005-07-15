@@ -28,7 +28,7 @@ import peersim.config.Configuration;
 * connections are removed, they are only added. So it can be used in
 * combination with other initializers.
 */
-public class WireStar implements Dynamics, NodeInitializer {
+public class WireStar implements Control, NodeInitializer {
 
 
 // ========================= fields =================================
@@ -76,9 +76,9 @@ public WireStar(String prefix) {
 
 
 /** calls {@link GraphFactory#wireStar} if size is larger than 0.*/
-public void modify() {
+public boolean execute() {
 	
-	if( Network.size() == 0 ) return;
+	if( Network.size() == 0 ) return false;
 	
 	GraphFactory.wireStar(new OverlayGraph(pid));
 	
@@ -91,6 +91,8 @@ public void modify() {
 			link.pack();
 		}
 	}
+	
+	return false;
 }
 
 // -------------------------------------------------------------------

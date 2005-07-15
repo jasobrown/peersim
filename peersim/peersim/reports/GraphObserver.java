@@ -21,6 +21,7 @@ package peersim.reports;
 import peersim.core.*;
 import peersim.config.Configuration;
 import peersim.graph.*;
+import peersim.cdsim.CDState;
 
 /**
 * Class that provides functionality for observer dealing with graphs.
@@ -28,7 +29,7 @@ import peersim.graph.*;
 * it is updated only when the simulation has advanced already, and provides
 * some common parameters.
 */
-public abstract class GraphObserver implements Observer {
+public abstract class GraphObserver implements Control {
 
 
 // ===================== fields =======================================
@@ -103,13 +104,13 @@ protected GraphObserver(String name) {
 protected void updateGraph() {
 	
 	if( CommonState.getTime() != GraphObserver.time ||
-	    CommonState.getCycleT() != GraphObserver.ctime ||
+	    CDState.getCycleT() != GraphObserver.ctime ||
 	    CommonState.getPhase() != GraphObserver.phase )
 	{
 		// we need to update the graphs
 		
 		GraphObserver.time = CommonState.getTime();
-		GraphObserver.ctime = CommonState.getCycleT();
+		GraphObserver.ctime = CDState.getCycleT();
 		GraphObserver.phase = CommonState.getPhase();
 
 		GraphObserver.dirg = new OverlayGraph(protocolID);

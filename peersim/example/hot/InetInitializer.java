@@ -6,24 +6,25 @@
 
 package example.hot;
 
-import peersim.config.Configuration;
-import peersim.util.CommonRandom;
-import peersim.core.OverlayGraph;
-import peersim.util.IncrementalStats;
 import java.util.Iterator;
-import peersim.core.Node;
 import java.io.*;
+import peersim.config.Configuration;
+import peersim.core.OverlayGraph;
+import peersim.core.Node;
+import peersim.core.Control;
+import peersim.core.CommonState;
+import peersim.util.IncrementalStats;
 
 /** This intialization class collects the simulation parameters from the
  * config file and invocates the suited factory. It collects in-degree 
  * statistics and node coordinates and writes them to file; thus there is
- * no real need of an Observer class.
+ * no real need of an Control class.
  * At the end of the initialization a specialized class (@see RobustnessEvaluator)
  * performs some topology robustness measurements.
  *
  * @author  Gian Paolo Jesi
  */
-public class InetInitializer implements peersim.dynamics.Dynamics {
+public class InetInitializer implements Control {
     /**
      * String name of the parameter that defines the protocol to initialize.
      * Parameter read will has the full name
@@ -85,9 +86,9 @@ public class InetInitializer implements peersim.dynamics.Dynamics {
     }
     
     /** Initialize the graph according to the config file parameters */
-    public void initialize() {
+    public boolean execute() {
         OverlayGraph ogr = new OverlayGraph(pid);
-        InetFactory.InetTree(ogr, CommonRandom.r, pid, maxcoord, d, alfa );
+        InetFactory.InetTree(ogr, CommonState.r, pid, maxcoord, d, alfa );
         graphToFile(ogr);
         dgDistribToFile(ogr);
         
@@ -112,6 +113,7 @@ public class InetInitializer implements peersim.dynamics.Dynamics {
             System.out.println(e);
         }
         
+        return false;
     }
     
     /** Prints out statistics about the indegree distribution.
@@ -188,12 +190,7 @@ public class InetInitializer implements peersim.dynamics.Dynamics {
         }
         
     }
-    
-    // inherits comments from the superclass
-    public void modify() {
-        this.initialize();
-    }
-    
+
 }
 
 

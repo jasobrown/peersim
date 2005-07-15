@@ -20,7 +20,6 @@ package example.aggregation;
 
 import peersim.core.*;
 import peersim.reports.*;
-import peersim.util.Log;
 import peersim.config.*;
 import peersim.vector.SingleValue;
 
@@ -33,7 +32,7 @@ import peersim.vector.SingleValue;
  * @author Alberto Montresor
  * @version $Revision$
  */
-public class AverageObserver implements Observer
+public class AverageObserver implements Control
 {
 
 	////////////////////////////////////////////////////////////////////////////
@@ -88,7 +87,7 @@ public class AverageObserver implements Observer
 	////////////////////////////////////////////////////////////////////////////
 
 	// Comment inherited from interface
-	public boolean analyze()
+	public boolean execute()
 	{
 		long time = peersim.core.CommonState.getTime();
 		

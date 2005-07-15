@@ -74,7 +74,7 @@ public GraphStats(String name) {
 // =====================================================================
 
 
-public boolean analyze() {
+public boolean execute() {
 	
 	System.out.print(name+": ");
 	

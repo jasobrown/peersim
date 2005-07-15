@@ -20,9 +20,7 @@ package peersim.vector;
 
 import java.lang.reflect.*;
 import peersim.core.*;
-import peersim.dynamics.Dynamics;
 import peersim.config.*;
-import peersim.config.Configuration;
 
 /**
  * Normalizes the values of a protocol vector. 
@@ -43,7 +41,7 @@ import peersim.config.Configuration;
  * Please refer to package {@link peersim.vector} for a detailed description of 
  * the concept of protocol vector and the role of getters and setters. 
  */
-public class Normalizer extends VectDynamics
+public class Normalizer extends VectControl
 {
 
 // --------------------------------------------------------------------------
@@ -122,7 +120,7 @@ public Normalizer(String prefix)
  * Makes the sum of the absolute values (L1 norm) equal to the value given in
  * the configuration parameter {@value #PAR_L1}.
  */
-public void modify() {
+public boolean execute() {
 try {
 	double sum = 0.0;
 	for (int i = 0; i < Network.size(); ++i)
@@ -148,6 +146,8 @@ try {
 } catch (Exception e) {
 	throw new RuntimeException(e);
 }
+
+	return false;
 }
 
 //--------------------------------------------------------------------------

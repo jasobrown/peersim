@@ -21,14 +21,13 @@ package peersim.dynamics;
 import peersim.graph.*;
 import peersim.core.*;
 import peersim.config.Configuration;
-import peersim.util.CommonRandom;
 
 /**
 * Takes a {@link Linkable} protocol and adds random connections. Note that no
 * connections are removed, they are only added. So it can be used in
 * combination with other initializers.
 */
-public class WireRegularRandom implements Dynamics, NodeInitializer {
+public class WireRegularRandom implements Control, NodeInitializer {
 
 
 // ========================= fields =================================
@@ -92,12 +91,12 @@ public WireRegularRandom(String prefix) {
 
 
 /** calls {@link GraphFactory#wireRegularRandom}.*/
-public void modify() {
+public boolean execute() {
 	
 	GraphFactory.wireRegularRandom(
 		new OverlayGraph(pid,!undirected), 
 		degree,
-		CommonRandom.r );
+		CommonState.r );
 		
 	if (pack) {
 		int size = Network.size();
@@ -106,6 +105,8 @@ public void modify() {
 			link.pack();
 		}
 	}
+	
+	return false;
 }
 
 // -------------------------------------------------------------------
@@ -122,7 +123,7 @@ public void initialize(Node n) {
 	{
 		((Linkable)n.getProtocol(pid)).addNeighbor(
 		    Network.get(
-			CommonRandom.r.nextInt(Network.size())));
+			CommonState.r.nextInt(Network.size())));
 	}
 	
 	if (pack) {

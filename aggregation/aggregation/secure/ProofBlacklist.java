@@ -189,7 +189,7 @@ public void nextCycle(Node node, int pid)
 	}
 	int toremove = count - maxforwarded;
 	for (int i=0; i < toremove; i++) {
-		int k = CommonRandom.r.nextInt(count);
+		int k = CommonState.r.nextInt(count);
 		forward[k] = forward[count-1];
 		count--;
 	}
@@ -197,7 +197,7 @@ public void nextCycle(Node node, int pid)
 	for (int i=0; i < count; i++) {
 		Integer t = (Integer) map.get(forward[i]);
 		map.put(forward[i], ttls[t.intValue()-1]);
-		int rindex = CommonRandom.r.nextInt(linkable.degree());
+		int rindex = CommonState.r.nextInt(linkable.degree());
 		Node rnode = linkable.getNeighbor(rindex);
 		ProofBlacklist rblacklist = 
 			(ProofBlacklist) rnode.getProtocol(blid);

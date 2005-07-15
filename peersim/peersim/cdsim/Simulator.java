@@ -21,8 +21,6 @@ package peersim.cdsim;
 import java.util.*;
 import peersim.config.*;
 import peersim.core.*;
-import peersim.dynamics.*;
-import peersim.reports.Observer;
 import peersim.util.*;
 
 /**
@@ -60,16 +58,9 @@ public static final String PAR_GETPAIR = "simulation.getpair";
 public static final String PAR_INIT = "init";
 
 /**
- * This is the prefix for network dynamism managers. These have to be of
- * type {@link Dynamics}.
+ * This is the prefix for controls.
  */
-public static final String PAR_DYN = "dynamics";
-
-/**
- * This is the prefix for observers. These have to be of type
- * {@link Observer}.
- */
-public static final String PAR_OBS = "observer";
+public static final String PAR_CTRL = "control";
 
 
 // --------------------------------------------------------------------
@@ -81,17 +72,11 @@ protected static boolean shuffle;
 
 protected static boolean getpair_rand;
 
-/** holds the observers of this simulation */
-protected static Observer[] observers=null;
-
 /** holds the modifiers of this simulation */
-protected static Dynamics[] dynamics=null;
+protected static Control[] controls=null;
 
-/** Holds the observer schedulers of this simulation */
-protected static Scheduler[] obsSchedules = null;
-
-/** Holds the dynamics schedulers of this simulation */
-protected static Scheduler[] dynSchedules = null;
+/** Holds the control schedulers of this simulation */
+protected static Scheduler[] ctrlSchedules = null;
 
 /** Holds the protocol schedulers of this simulation */
 protected static Scheduler[] protSchedules = null;
@@ -112,41 +97,24 @@ protected static void runInitializers() {
 	{
 		System.err.println(
 		"- Running initializer " +names[i]+ ": " + inits[i].getClass());
-		((Dynamics)inits[i]).modify();
+		((Control)inits[i]).execute();
 	}
 }
 
 // --------------------------------------------------------------------
 
-protected static String[] loadObservers() {
+protected static String[] loadControls() {
 
-	// load observers
-	String[] names = Configuration.getNames(PAR_OBS);
-	observers = new Observer[names.length];
-	obsSchedules = new Scheduler[names.length];
+	// load controls
+	String[] names = Configuration.getNames(PAR_CTRL);
+	controls = new Control[names.length];
+	ctrlSchedules = new Scheduler[names.length];
 	for(int i=0; i<names.length; ++i)
 	{
-		observers[i]=(Observer)Configuration.getInstance(names[i]);
-		obsSchedules[i] = new Scheduler(names[i]);
+		controls[i]=(Control)Configuration.getInstance(names[i]);
+		ctrlSchedules[i] = new Scheduler(names[i]);
 	}
-	System.err.println("Simulator: loaded observers "+Arrays.asList(names));
-	return names;
-}
-
-//---------------------------------------------------------------------
-
-protected static String[] loadDynamics() {
-
-	// load dynamism managers
-	String[] names = Configuration.getNames(PAR_DYN);
-	dynamics = new Dynamics[names.length];
-	dynSchedules = new Scheduler[names.length];
-	for(int i=0; i<names.length; ++i)
-	{
-		dynamics[i]=(Dynamics)Configuration.getInstance(names[i]);
-		dynSchedules[i] = new Scheduler(names[i]);
-	}
-	System.err.println("Simulator: loaded dynamics "+Arrays.asList(names));
+	System.err.println("Simulator: loaded controls "+Arrays.asList(names));
 	return names;
 }
 
@@ -180,13 +148,13 @@ protected static void nextRound(int cycle) {
 		Node node = null;
 		if( getpair_rand )
 			node = Network.get(
-			   CommonRandom.r.nextInt(Network.size()));
+			   CDState.r.nextInt(Network.size()));
 		else
 			node = Network.get(j);
 		if( !node.isUp() ) continue; 
 		int len = node.protocolSize();
-		CommonState.setNode(node);
-		CommonState.setCycleT(j);
+		CDState.setNode(node);
+		CDState.setCycleT(j);
 		// XXX maybe should use different shuffle for each protocol?
 		// (instead of running all on one node at the same time?)
 		for(int k=0; k<len; ++k)
@@ -196,7 +164,7 @@ protected static void nextRound(int cycle) {
 			if (!protSchedules[k].active(cycle))
 				continue;
 				
-			CommonState.setPid(k);
+			CDState.setPid(k);
 			Protocol protocol = node.getProtocol(k);
 			if( protocol instanceof CDProtocol )
 			{
@@ -225,46 +193,24 @@ public static void nextExperiment()  {
 	System.err.println("Simulator: running initializers");
 	// Initializers are run at 
 	// cycle 0 (cycle-driven) / time 0 (event-driven)
-	CommonState.setCycle(0);
-	CommonState.setPhase(CommonState.PRE_DYNAMICS);
+	CDState.setCycle(0);
 	runInitializers();
 			
-	// Load observer, dynamics, protocol schedules
-	loadObservers();
-	loadDynamics();
+	loadControls();
 	loadProtocolSchedules();
 	
 	// main cycle
 	System.err.println("Simulator: starting simulation");
 	for(int i=0; i<cycles; ++i)
 	{
-		CommonState.setCycle(i);
-		CommonState.setPhase(CommonState.PRE_DYNAMICS);
+		CDState.setCycle(i);
 
 		// analizer pre_dynamics
 		boolean stop = false;
-		for(int j=0; j<observers.length; ++j)
+		for(int j=0; j<controls.length; ++j)
 		{
-			if( obsSchedules[j].active(i) &&
-			    !obsSchedules[j].preCycle() )
-				stop = stop || observers[j].analyze();
-		}
-		if( stop ) break;
-
-		// dynamism
-		for(int j=0; j<dynamics.length; ++j)
-		{
-			if( dynSchedules[j].active(i) ) dynamics[j].modify();
-		}
-
-		CommonState.setPhase(CommonState.PRE_CYCLE);
-
-		// analizer pre_cycle
-		for(int j=0; j<observers.length; ++j)
-		{
-			if( obsSchedules[j].active(i) &&
-			    obsSchedules[j].preCycle() )
-				stop = stop || observers[j].analyze();
+			if( ctrlSchedules[j].active(i) )
+				stop = stop || controls[j].execute();
 		}
 		if( stop ) break;
 
@@ -273,18 +219,12 @@ public static void nextExperiment()  {
 		System.err.println("Simulator: cycle "+i+" done");
 	}
 
-	CommonState.setPhase(CommonState.POST_LAST_CYCLE);
-
-	// dynamics executed after the simulation
-	for(int j=0; j<dynamics.length; ++j)
-	{
-		if( dynSchedules[j].fin() ) dynamics[j].modify();
-	}
+	CDState.setPhase(CDState.POST_SIMULATION);
 
 	// analysis after the simulation
-	for(int j=0; j<observers.length; ++j)
+	for(int j=0; j<controls.length; ++j)
 	{
-		if( obsSchedules[j].fin() ) observers[j].analyze();
+		if( ctrlSchedules[j].fin() ) controls[j].execute();
 	}
 }
 

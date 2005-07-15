@@ -20,7 +20,6 @@
 package lpbcast;
 
 import peersim.config.Configuration;
-import peersim.util.CommonRandom;
 import peersim.core.*;
 import peersim.dynamics.GrowingNetwork;
 
@@ -78,7 +77,7 @@ protected void remove( int n ) {
 	{
 		Network.swap(
 			Network.size()-1,
-			CommonRandom.r.nextInt(Network.size()) );
+			CommonState.r.nextInt(Network.size()) );
 		SimpleLpbcast.unsubscribe(
 			Network.get(Network.size()-1),
 			protocolID );

@@ -55,7 +55,7 @@ public ConnectivityObserver(String name) {
 // =====================================================================
 
 
-public boolean analyze() {
+public boolean execute() {
 	
 	updateGraph();
 	

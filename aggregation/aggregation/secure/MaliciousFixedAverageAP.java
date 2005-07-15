@@ -91,7 +91,7 @@ public void nextCycle(Node node, int pid)
 {
 	for (int i=0; i < exchanges; i++) {
 		/* Select the neighbor and verify that communication is possible */
-		int k = CommonRandom.r.nextInt(Network.size());
+		int k = CommonState.r.nextInt(Network.size());
 		Node receiver = Network.get(k);
 		if (canDeliverRequest(receiver)) { 
 			/* Send request */

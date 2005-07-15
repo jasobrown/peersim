@@ -23,7 +23,7 @@ import peersim.graph.GraphAlgorithms;
 import peersim.util.IncrementalStats;
 
 /**
-* Observer to analyse the ball expansion, it the number of nodes that
+* Control to analyse the ball expansion, it the number of nodes that
 * are accessable from a given node in at most 1, 2, etc steps.
 * It works only after the simulation.
 */
@@ -57,7 +57,7 @@ public Clustering(String name) {
 // =====================================================================
 
 
-public boolean analyze() {
+public boolean execute() {
 
 	IncrementalStats stats = new IncrementalStats();
 	

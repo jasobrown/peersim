@@ -20,8 +20,6 @@ package aggregation.secure;
 
 import peersim.config.*;
 import peersim.core.*;
-import peersim.dynamics.*;
-import peersim.util.*;
 
 /**
  * This dynamics objects is used to transform nodes that behaves correctly 
@@ -32,7 +30,7 @@ import peersim.util.*;
  * @version $Revision$
  */
 public class MaliciousNodeGenerator 
-implements Dynamics
+implements Control
 {
 
 //--------------------------------------------------------------------------
@@ -93,11 +91,11 @@ public MaliciousNodeGenerator(String name)
 // Comment inherited from interface
 public void initialize()
 {
-	modify();
+	execute();
 }
 
 // Comment inherited from interface
-public void modify()
+public boolean execute()
 {
 	/* Create a prototype */
 	Protocol prototype = (Protocol) Configuration.getInstance(
@@ -115,7 +113,7 @@ public void modify()
 		for (int i=0; i < malicious; i++) {
 			boolean stop = false;
 			do {
-				int k = CommonRandom.r.nextInt(Network.size());
+				int k = CommonState.r.nextInt(Network.size());
 				ModifiableNode node = (ModifiableNode) Network.get(k);
 				Protocol prot = node.getProtocol(protocolID);
 				if (!(prot instanceof MaliciousProtocol)) {
@@ -130,6 +128,8 @@ public void modify()
 		// throws it explicitly (but why would it?)
 		throw new Error(""+e);
 	}
+
+	return false;
 }
 
 //--------------------------------------------------------------------------

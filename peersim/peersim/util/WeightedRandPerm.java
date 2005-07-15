@@ -19,6 +19,7 @@
 package peersim.util;
 
 import java.util.NoSuchElementException;
+import java.util.Random;
 
 /**
 * This class provides a random permutation of indexes. Useful for random
@@ -42,6 +43,15 @@ private int len = 0;
 private int pointer = 0;
 
 private double sum = 0.0;
+
+private final Random r;
+
+
+// ======================= initialization ============================
+// ===================================================================
+
+
+public WeightedRandPerm( Random r ) { this.r=r; }
 
 
 // ======================= public methods ============================
@@ -107,7 +117,7 @@ public int next() {
 	
 	if( pointer < 1 ) throw new NoSuchElementException();
 	
-	double d = sum*CommonRandom.r.nextDouble();
+	double d = sum*r.nextDouble();
 	int i = pointer;
 	double tmp = weights[i-1];
 	while( tmp < d && i>1 ) tmp += weights[--i-1];
@@ -136,7 +146,7 @@ public boolean hasNext() { return pointer > 0; }
 /** to test the class */
 public static void main( String pars[] ) throws Exception {
 	
-	WeightedRandPerm rp = new WeightedRandPerm();
+	WeightedRandPerm rp = new WeightedRandPerm(new Random());
 
 	int k = Integer.parseInt(pars[0]);
 	double w[] = new double[k];

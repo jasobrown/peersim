@@ -19,7 +19,6 @@
 package peersim.core;
 
 import peersim.config.Configuration;
-import peersim.util.CommonRandom;
 
 /**
 * This class forms the basic framework of all simulations.
@@ -254,7 +253,7 @@ public static void swap(int i, int j) {
 */
 public static void shuffle() {
 	
-	for(int i=len; i>1; i--) swap(i-1, CommonRandom.r.nextInt(i));
+	for(int i=len; i>1; i--) swap(i-1, CommonState.r.nextInt(i));
 }
 
 // ------------------------------------------------------------------

@@ -40,7 +40,7 @@ import peersim.util.*;
  * Please refer to package {@link peersim.vector} for a detailed description of 
  * the concept of protocol vector and the role of getters and setters. 
  */
-public class UniformDistribution extends VectDynamics implements NodeInitializer
+public class UniformDistribution extends VectControl implements NodeInitializer
 {
 
 //--------------------------------------------------------------------------
@@ -102,14 +102,14 @@ public UniformDistribution(String prefix)
 /**
  * @inheritDoc
  */
-public void modify() {
+public boolean execute() {
 
 	if( type==long.class || type==int.class)
 	{
 		long d = max.longValue() - min.longValue();
 		for (int i = 0; i < Network.size(); ++i)
 		{
-			set(i,CommonRandom.nextLong(d) + min.longValue());
+			set(i,CommonState.r.nextLong(d) + min.longValue());
 		}
 	}
 	else
@@ -117,9 +117,11 @@ public void modify() {
 		double d = max.doubleValue() - min.doubleValue();
 		for (int i = 0; i < Network.size(); ++i)
 		{
-			set(i,CommonRandom.r.nextDouble()*d);
+			set(i,CommonState.r.nextDouble()*d);
 		}
 	}
+
+	return false;
 }
 
 // --------------------------------------------------------------------------
@@ -132,12 +134,12 @@ public void initialize(Node n) {
 	if( type==long.class || type==int.class)
 	{
 		long d = max.longValue() - min.longValue();
-		set(n,CommonRandom.nextLong(d) + min.longValue());
+		set(n,CommonState.r.nextLong(d) + min.longValue());
 	}
 	else
 	{
 		double d = max.doubleValue() - min.doubleValue();
-		set(n,CommonRandom.r.nextDouble()*d);
+		set(n,CommonState.r.nextDouble()*d);
 	}
 }
 

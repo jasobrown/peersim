@@ -24,6 +24,7 @@ import peersim.cdsim.*;
 import peersim.config.*;
 import peersim.edsim.*;
 import peersim.util.*;
+import peersim.core.Log;
 
 /**
  * This is the executable class for performing a cycle driven simulation. The
@@ -332,9 +333,6 @@ public static void doExperiments(Properties properties)
 		// XXX could be done through reflection, but
 		// this is easier to read.
 		switch(simid) {
-			case CDORDSIM:
-				OrderSimulator.nextExperiment();
-				break;
 			case CDSIM:
 			     	peersim.cdsim.Simulator.nextExperiment();
 				break;

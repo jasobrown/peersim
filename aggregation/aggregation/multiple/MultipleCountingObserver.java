@@ -22,6 +22,7 @@ import peersim.core.*;
 import peersim.reports.*;
 import peersim.util.*;
 import peersim.config.*;
+import peersim.cdsim.CDState;
 
 /**
  * Print statistics for a collection of concurrent aggregation computations.
@@ -37,7 +38,7 @@ import peersim.config.*;
  * @author Alberto Montresor
  * @version $Revision$
  */
-public class MultipleCountingObserver  implements Observer
+public class MultipleCountingObserver  implements Control
 {
 
 //--------------------------------------------------------------------------
@@ -118,9 +119,18 @@ public MultipleCountingObserver(String name)
 //--------------------------------------------------------------------------
 
 // Comment inherited from interface
-public boolean analyze()
+public boolean execute()
 {
-	int time = peersim.core.CommonState.getCycle();
+	int time = CDState.getCycle();
+	
+        if (time < 0 )
+        {
+                // XXX make this class conform to all simulation models
+                // panic: the wrong simulation model
+                System.err.println("To use MultipleCoutningObserver, "+
+                "you need to run a cycle drive simulation.");
+                System.exit(1);
+        }
 	
 	/* Initialization */
 	final int len = Network.size();

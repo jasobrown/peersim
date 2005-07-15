@@ -155,7 +155,6 @@ import org.lsmp.djep.groupJep.*;
   {
     protocol newscast
     undir
-    graphobserver.fast
   }
   </pre>
   is equivalent to the definition of these four properties:
@@ -163,7 +162,6 @@ import org.lsmp.djep.groupJep.*;
   observer.degree GraphObserver 
   observer.degree.protocol newscast
   observer.degree.undir
-  observer.degree.graphobserver.fast
   </pre>
   
   Nested brackets are possible. The rule of the last property before 

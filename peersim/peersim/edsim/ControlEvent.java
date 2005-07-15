@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -16,12 +16,10 @@
  *
  */
 
-package peersim.transport;
+package peersim.edsim;
 
-import peersim.config.*;
-import peersim.core.*;
-import peersim.dynamics.*;
-import peersim.util.*;
+import peersim.core.Control;
+import peersim.core.Scheduler;
 
 
 /**
@@ -30,55 +28,60 @@ import peersim.util.*;
  * @author Alberto Montresor
  * @version $Revision$
  */
-public class UniformRouterAssignment implements Control
+class ControlEvent
 {
 
 //---------------------------------------------------------------------
-//Parameters
+//Fields
 //---------------------------------------------------------------------
 
 /** 
- * Parameter name used to configure the protocol that should be initialized 
+ * The reference to the dynamics to be executed; null if this cycle event
+ * refers to an observer.
  */
-private static final String PAR_PROTOCOL = "protocol"; 
-	
-//---------------------------------------------------------------------
-//Methods
-//---------------------------------------------------------------------
+private Control control;
 
-/** Protocol identifier */
-private int pid;	
-	
+/** Order index used to maintain order between cycle-based events */
+private int order;
+
 
 //---------------------------------------------------------------------
 //Initialization
 //---------------------------------------------------------------------
 
-/**
- * Reads parameters.
+/** 
+ * Scheduler object to obtain the next schedule time of this event 
  */
-public UniformRouterAssignment(String prefix)
+private Scheduler scheduler;
+
+/**
+ * Creates a cycle event for a control object. It also schedules the object
+ * for the first execution adding it to the priority queue of the event driven
+ * simulation.
+ */
+ControlEvent(Control control, Scheduler scheduler, int order)
 {
-	pid = Configuration.getPid(prefix+"."+PAR_PROTOCOL);
+	this.control = control;
+	this.order = order;
+	EDSimulator.addControlEvent(scheduler.getNext(), order, this);
 }
 
 //---------------------------------------------------------------------
 //Methods
 //---------------------------------------------------------------------
 
-// Comment inherited from interface
-public boolean execute()
-{
-	int nsize = Network.size();
-	int nrouters = E2ENetwork.getSize();
-	for (int i=0; i < nsize; i++) {
-		Node node = Network.get(i);
-		RouterInfo t = (RouterInfo) node.getProtocol(pid);
-		int r = CommonState.r.nextInt(nrouters);
-		t.setRouter(r);
-	}
+/**
+* Executes the control object, and schedules the object for the next execution
+* adding it to the priority queue of the event driven simulation.
+*/
+public boolean execute() {
 
-	return false;
+	boolean ret = control.execute();
+	long next = scheduler.getNext();
+	if( next >=0 ) EDSimulator.addControlEvent(next, order, this);
+	return ret;
 }
 
 }
+
+

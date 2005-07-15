@@ -178,8 +178,8 @@ protected boolean canDeliverRequest(Node node)
 {
 	if (node.getFailState() == Fallible.DEAD)
 	  return false;
-	if ((p.symProb > 0 && CommonRandom.r.nextDouble() < p.symProb) ||
-	    (p.asymProb > 0 && CommonRandom.r.nextDouble() < p.asymProb))
+	if ((p.symProb > 0 && CommonState.r.nextDouble() < p.symProb) ||
+	    (p.asymProb > 0 && CommonState.r.nextDouble() < p.asymProb))
 	  return false;  	
 	return true;
 }
@@ -194,7 +194,7 @@ protected boolean canDeliverResponse(Node node)
 {
 	if (node.getFailState() == Fallible.DEAD)
 		return false;
-	if (p.asymProb > 0 && CommonRandom.r.nextDouble() < p.asymProb)
+	if (p.asymProb > 0 && CommonState.r.nextDouble() < p.asymProb)
 		return false;  	
 	return true;
 }

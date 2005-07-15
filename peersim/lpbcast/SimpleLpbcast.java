@@ -168,7 +168,7 @@ protected boolean addUnSub(Node node, Integer tstamp) {
 	
 	if( unSubs.size() >= SimpleLpbcast.unSubsSize )
 	{
-		final int pos = CommonRandom.r.nextInt(unSubs.size()+1);
+		final int pos = CDState.r.nextInt(unSubs.size()+1);
 		if( pos < unSubs.size() )
 		{
 			unSubs.set(pos,node);
@@ -233,7 +233,7 @@ public static void unsubscribe( Node n, int protocolID ) {
 		
 		// this implements the effect of adding n to unSubs
 		peer.remove(n);
-		peer.addUnSub(n,CommonState.getCycleObj());
+		peer.addUnSub(n,CDState.getCycleObj());
 	}
 	
 	if( i < F )
@@ -281,7 +281,7 @@ public boolean addNeighbor(Node node) {
 	if( subs.contains(node) ) ret = false;
 	else if( subs.size() >= SimpleLpbcast.subsSize )
 	{
-		final int pos = CommonRandom.r.nextInt(subs.size()+1);
+		final int pos = CDState.r.nextInt(subs.size()+1);
 		if( pos < subs.size() )
 		{
 			subs.set(pos,node);
@@ -295,7 +295,7 @@ public boolean addNeighbor(Node node) {
 	{
 		if( view.size() >= SimpleLpbcast.l )
 		{
-			final int pos = CommonRandom.r.nextInt(view.size()+1);
+			final int pos = CDState.r.nextInt(view.size()+1);
 			if( pos < view.size() )
 			{
 				view.set(pos,node);
@@ -344,7 +344,7 @@ public void nextCycle( Node thisNode, int protocolID ) {
 		while( i<unSubsDates.size() )
 		{
 			int tstamp = ((Integer)unSubsDates.get(i)).intValue();
-			if(CommonState.getCycle()-tstamp>SimpleLpbcast.unSubsTout)
+			if(CDState.getCycle()-tstamp>SimpleLpbcast.unSubsTout)
 			{
 				unSubs.remove(i);
 				unSubsDates.remove(i);
@@ -460,7 +460,7 @@ public Object next() {
 	Node peer = null;
 	while( i < l.size() )
 	{
-		pos = CommonRandom.r.nextInt(l.size()-i);
+		pos = CDState.r.nextInt(l.size()-i);
 		peer = (Node)l.get(i+pos);
 		l.set(i+pos,l.get(i));
 		l.set(i,peer);

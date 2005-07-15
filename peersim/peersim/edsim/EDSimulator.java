@@ -22,23 +22,10 @@ import java.util.*;
 import peersim.cdsim.*;
 import peersim.config.*;
 import peersim.core.*;
-import peersim.dynamics.*;
-import peersim.reports.Observer;
-import peersim.util.*;
 
 
 /**
- * Event-driven simulator. The simulator is able to run both event-driven
- * protocols {@link EDProtocol} and cycle-driven protocols {@link CDProtocol}.
- * To execute any of the cycle-based classes (observers, dynamics, and
- * protocols), the <code>step</code> parameter of the {@link Scheduler} 
- * associated to the class must be specified, to define the length of 
- * cycles. 
- * 
- * 
- *
- * @author Alberto Montresor
- * @version $Revision$
+ * Event-driven simulator.
  */
 public class EDSimulator
 {
@@ -61,13 +48,6 @@ public static final String PAR_ENDTIME = "simulation.endtime";
  */
 public static final String PAR_LOGTIME = "simulation.logtime";	
 
-/**
- * If this parameter is present, the order of visiting each node for
- * cycle-based protocols is shuffled
- * at each cycle. The default is no shuffle.
- */
-public static final String PAR_SHUFFLE = "simulation.shuffle";
-
 /** 
  * String name of the configuration parameter that specifies how many
  * bits are used to order events that occurs at the same time. Defaults
@@ -78,36 +58,15 @@ public static final String PAR_SHUFFLE = "simulation.shuffle";
 public static final String PAR_RBITS = "simulation.timebits";
 
 /**
- * This is the prefix for initializers. These have to be of type
- * {@link Dynamics}.
+ * This is the prefix for initializers.
  */
 public static final String PAR_INIT = "init";
 
 /**
- * This is the prefix for network dynamism managers. These have to be of
- * type {@link Dynamics}.
+ * This is the prefix for network dynamism managers.
  */
-public static final String PAR_DYN = "dynamics";
+public static final String PAR_CTRL = "control";
 
-/**
- * This is the prefix for observers. These have to be of type
- * {@link Observer}.
- */
-public static final String PAR_OBS = "observer";
-
-/**
- * Some protocols may implement both the CDProtocol and EDProtocol
- * interfaces, for convenience. To avoid them being scheduled
- * both as cycle-driven protocols and event-driven protocols,
- * there are two possibilities:
- * <ul>
- * <li>To run them just as a CDProtocol, do not schedule any
- *   event-driven event. </li>
- * <li>To run them just as a EDProtocol, include this parameter
- *   in the protocol description </li>
- * <ul>
- */
-public static final String PAR_ED = "ed";
 
 //---------------------------------------------------------------------
 //Fields
@@ -119,29 +78,14 @@ protected static long endtime;
 /** Log time */
 protected static long logtime;
 
-/** If true, when executing a cycle-based protocols nodes are shuffled */
-private static boolean shuffle;
-
 /** Number of bits used for random */
 private static int rbits;
 
-/** holds the observers of this simulation */
-protected static Observer[] observers=null;
-
 /** holds the modifiers of this simulation */
-protected static Dynamics[] dynamics=null;
+protected static Control[] controls=null;
 
-/** Holds the observer schedulers of this simulation */
-protected static Scheduler[] obsSchedules = null;
-
-/** Holds the dynamics schedulers of this simulation */
-protected static Scheduler[] dynSchedules = null;
-
-/** Holds the pids of the CDProtocols to be executed in this simulation */
-protected static int[] cdprotocols = null;
-
-/** Holds the protocol schedulers of this simulation */
-protected static Scheduler[] protSchedules = null;
+/** Holds the control schedulers of this simulation */
+protected static Scheduler[] ctrlSchedules = null;
 
 /** Ordered list of events (heap) */
 protected static Heap heap = new Heap();
@@ -164,48 +108,31 @@ protected static void runInitializers() {
 	{
 		System.err.println(
 		"- Running initializer " +names[i]+ ": " + inits[i].getClass());
-		((Dynamics)inits[i]).modify();
+		((Control)inits[i]).execute();
 	}
 }
 
 // --------------------------------------------------------------------
 
-protected static String[] loadObservers()
+protected static String[] loadControls()
 {
-	// load observers
-	String[] names = Configuration.getNames(PAR_OBS);
-	observers = new Observer[names.length];
-	obsSchedules = new Scheduler[names.length];
+	// load controls
+	String[] names = Configuration.getNames(PAR_CTRL);
+	controls = new Control[names.length];
+	ctrlSchedules = new Scheduler[names.length];
 	for(int i=0; i<names.length; ++i)
 	{
-		observers[i]=(Observer)Configuration.getInstance(names[i]);
-		obsSchedules[i] = new Scheduler(names[i], false);
+		controls[i]=(Control)Configuration.getInstance(names[i]);
+		ctrlSchedules[i] = new Scheduler(names[i], false);
 	}
-	System.err.println("EDSimulator: loaded observers "+
+	System.err.println("EDSimulator: loaded controls "+
 		Arrays.asList(names));
 	return names;
 }
 
 //---------------------------------------------------------------------
 
-protected static String[] loadDynamics()
-{
-	// load dynamism managers
-	String[] names = Configuration.getNames(PAR_DYN);
-	dynamics = new Dynamics[names.length];
-	dynSchedules = new Scheduler[names.length];
-	for(int i=0; i<names.length; ++i)
-	{
-		dynamics[i]=(Dynamics)Configuration.getInstance(names[i]);
-		dynSchedules[i] = new Scheduler(names[i], false);
-	}
-	System.err.println("EDSimulator: loaded dynamics "+
-		Arrays.asList(names));
-	return names;
-}
-
-//---------------------------------------------------------------------
-
+/*
 protected static void loadCDProtocols()
 {
 	// CDProtocol instances are searched in Network.prototype, which
@@ -217,8 +144,7 @@ protected static void loadCDProtocols()
 	int[] pids = new int[size];
 	int count = 0;
 	for (int i=0; i < size; i++) {
-		boolean ed = Configuration.contains(names[i] + "." + PAR_ED);
-		if (!ed && node.getProtocol(i) instanceof CDProtocol) {
+		if (node.getProtocol(i) instanceof CDProtocol) {
 			pids[count++] = i;
 		}
 	}
@@ -235,6 +161,8 @@ protected static void loadCDProtocols()
 		protSchedules[i] = new Scheduler(names[pids[i]], false);
 	}
 }
+*/
+//---------------------------------------------------------------------
 
 /**
  * Adds a new event to be scheduled, specifying the number of time units
@@ -248,7 +176,7 @@ protected static void loadCDProtocols()
  * @param event 
  *   The object associated to this event
  */
-static void addCycleEvent(long time, int order, Object event)
+static void addControlEvent(long time, int order, Object event)
 {
 	time = (time << rbits) | order;
 	heap.add(time, event, null, (byte) 0);
@@ -274,8 +202,8 @@ private static boolean executeNext()
 	int pid = ev.pid;
 	if (ev.node == null) {
 		// Cycle-based event; handled through a special method
-		CycleEvent cycle = (CycleEvent) ev.event;
-		return cycle.execute(shuffle);
+		ControlEvent cycle = (ControlEvent) ev.event;
+		return cycle.execute();
 	} else if (ev.node == Network.prototype) {
 		// Do nothing; the prototype may schedule itself 
 		return false;
@@ -307,67 +235,32 @@ public static void nextExperiment()
 	// Reading parameter
 	rbits = Configuration.getInt(PAR_RBITS, 8);	
 	if (rbits < 8 && rbits >= 64) {
-		throw new IllegalParameterException(PAR_RBITS, "This parameter" +
-				"should be equal or large then 8 or smaller than 64");
+		throw new IllegalParameterException(PAR_RBITS, "This parameter"
+		+" should be >= 8 or <= 64");
 	}
 	endtime = Configuration.getLong(PAR_ENDTIME);
 	logtime = Configuration.getLong(PAR_LOGTIME, Long.MAX_VALUE);
-	shuffle = Configuration.contains(PAR_SHUFFLE);
 
 	// initialization
 	System.err.println("EDSimulator: resetting");
 	Network.reset();
 	System.err.println("EDSimulator: running initializers");
 	CommonState.setTime(0); // needed here
-	CommonState.setPhase(CommonState.PRE_DYNAMICS);
 	runInitializers();
-			
-	// Load observer, dynamics, protocol schedules
-	loadObservers();
-	loadDynamics();
-	loadCDProtocols();
+	loadControls();
 
 	int[] times;
 	int order = 0;
 	
-	// Schedule observers execution
-	for (int i=0; i < observers.length; i++) {
-		if (!obsSchedules[i].preCycle()) {
-			CycleEvent event = new CycleEvent(observers[i], obsSchedules[i], order++, CommonState.PRE_DYNAMICS);
-			if (order > ((1 << rbits)-1))
-				throw new 
-				IllegalArgumentException("Too many cycle-based entities");
-		}
-	}
-
-	// Schedule dynamics execution
-	for (int i=0; i < dynamics.length; i++) {
-		CycleEvent event = 
-			new CycleEvent(dynamics[i], dynSchedules[i], order++);
+	// Schedule controls execution
+	for (int i=0; i < controls.length; i++) {
+		ControlEvent event = new ControlEvent(
+			controls[i], ctrlSchedules[i], order++);
 		if (order > ((1 << rbits)-1))
-			throw new 
-			IllegalArgumentException("Too many cycle-based entities");
+			throw new IllegalArgumentException(
+			"Too many control objects");
 	}
 
-	for (int i=0; i < observers.length; i++) {
-		if (obsSchedules[i].preCycle()) {
-			CycleEvent event = 
-				new CycleEvent(observers[i], obsSchedules[i], order++, 
-						CommonState.PRE_CYCLE);
-			if (order > ((1 << rbits)-1))
-				throw new 
-				IllegalArgumentException("Too many cycle-based entities");
-		}
-	}
-
-	// Schedule protocol execution
-	for (int i=0; i < cdprotocols.length; i++) {
-		CycleEvent event = new CycleEvent(i, protSchedules[i], order++);
-		if (order > ((1 << rbits)-1))
-			throw new 
-			IllegalArgumentException("Too many cycle-based entities");
-	}
-	
 	// Perform the actual simulation; executeNext() will tell when to
 	// stop.
 	boolean exit = false;
@@ -376,10 +269,10 @@ public static void nextExperiment()
 	}
 
 	// analysis after the simulation
-	CommonState.setPhase(CommonState.POST_LAST_CYCLE);
-	for(int j=0; j<observers.length; ++j)
+	CommonState.setPhase(CommonState.POST_SIMULATION);
+	for(int j=0; j<controls.length; ++j)
 	{
-		if( obsSchedules[j].fin() ) observers[j].analyze();
+		if( ctrlSchedules[j].fin() ) controls[j].execute();
 	}
 }
 
@@ -407,7 +300,7 @@ public static void add(long delay, Object event, Node node, int pid)
 				"This version does not support more than " 
 				+ Byte.MAX_VALUE + " protocols");
 	long time = ((CommonState.getTime()+delay) << rbits) | 
-		CommonRandom.r.nextInt(1 << rbits);
+		CommonState.r.nextInt(1 << rbits);
 	heap.add(time, event, node, (byte) pid);
 }
 

@@ -28,7 +28,7 @@ import peersim.config.Configuration;
 * connections are removed, they are only added. So it can be used in
 * combination with other initializers.
 */
-public class WireRingLattice implements Dynamics {
+public class WireRingLattice implements Control {
 
 
 // ========================= fields =================================
@@ -82,7 +82,7 @@ public WireRingLattice(String prefix) {
 
 
 /** calls {@link GraphFactory#wireRingLattice}.*/
-public void modify() {
+public boolean execute() {
 	
 	GraphFactory.wireRingLattice( new OverlayGraph(pid), k );
 	
@@ -93,6 +93,8 @@ public void modify() {
 			link.pack();
 		}
 	}
+
+	return false;
 }
 
 

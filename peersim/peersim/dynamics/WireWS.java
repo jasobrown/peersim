@@ -21,7 +21,6 @@ package peersim.dynamics;
 import peersim.graph.*;
 import peersim.core.*;
 import peersim.config.Configuration;
-import peersim.util.CommonRandom;
 
 /**
 * Takes a {@link Linkable} protocol and adds random connections. Note that no
@@ -29,7 +28,7 @@ import peersim.util.CommonRandom;
 * combination with other initializers.
 */
 public class WireWS 
-implements Dynamics
+implements Control
 {
 
 
@@ -98,9 +97,9 @@ public WireWS(String prefix) {
 
 
 /** calls {@link GraphFactory#wireRegularRandom}.*/
-public void modify()  {
+public boolean execute()  {
 
-	GraphFactory.wireWS(new OverlayGraph(pid),degree,beta,CommonRandom.r);
+	GraphFactory.wireWS(new OverlayGraph(pid),degree,beta,CommonState.r);
 	
 	if (pack) {
 		int size = Network.size();
@@ -109,6 +108,8 @@ public void modify()  {
 			link.pack();
 		}
 	}
+
+	return false;
 }
 
 }

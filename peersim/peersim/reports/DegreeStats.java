@@ -20,6 +20,7 @@ package peersim.reports;
 
 import peersim.config.Configuration;
 import peersim.config.IllegalParameterException;
+import peersim.core.CommonState;
 import peersim.core.Network;
 import peersim.core.Node;
 import peersim.core.OverlayGraph;
@@ -80,7 +81,7 @@ private final String method;
 
 private final String type;
 
-private final RandPermutation rp = new RandPermutation();
+private final RandPermutation rp = new RandPermutation(CommonState.r);
 
 private int nextnode = 0;
 
@@ -158,7 +159,7 @@ private int nextDegree() {
 /**
  * {@inheritDoc}
  */
-public boolean analyze() {
+public boolean execute() {
 	
 	updateGraph();
 	if(!trace) rp.reset(g.size());

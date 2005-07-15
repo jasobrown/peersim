@@ -269,7 +269,7 @@ private void put(int index, long time, Object event, Node node, byte pid) {
 private void doubleCapacity() {
 	int oldsize = events.length;
 	int newsize = oldsize*2;
-	System.out.println(newsize);
+	//System.out.println(newsize);
 	Object[] te = new Object[newsize];
 	System.arraycopy(events, 0, te, 0, oldsize);
 	events = te;
@@ -288,10 +288,11 @@ private void doubleCapacity() {
 // Testing
 //--------------------------------------------------------------------------
 
-public static void main(String[] argc) {
+public static void main(String[] args) {
 	Random random = new Random();
 	Heap heap = new Heap();
 	int rep = 1000000;
+	if( args.length > 0 ) rep = Integer.parseInt(args[0]);
 	int[] values1 = new int[rep];
 	long[] values2 = new long[rep];
 	for (int i = 0; i < rep; i++) {

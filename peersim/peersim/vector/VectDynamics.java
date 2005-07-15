@@ -40,7 +40,7 @@ import java.lang.reflect.*;
  * Please refer to package {@link peersim.vector} for a detailed description of 
  * the concept of protocol vector and the role of getters and setters. 
  */
-abstract class VectDynamics implements Dynamics
+abstract class VectControl implements Control
 {
 
 // --------------------------------------------------------------------------
@@ -88,7 +88,7 @@ protected final Class type;
  * @param prefix
  *          the configuration prefix for this class
  */
-public VectDynamics(String prefix)
+public VectControl(String prefix)
 {
 	// Read configuration parameter
 	pid = Configuration.getPid(prefix + "." + PAR_PROT);

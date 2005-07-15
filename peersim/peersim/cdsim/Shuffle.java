@@ -16,7 +16,7 @@
  *
  */
 		
-package peersim.dynamics;
+package peersim.cdsim;
 
 import peersim.core.*;
 
@@ -25,7 +25,7 @@ import peersim.core.*;
 * shuffle parameter of the simulator. Only more flexible,
 * can be scheduled arbitrarily, etc.
 */
-public class Shuffle implements Dynamics {
+public class Shuffle implements Control {
 
 
 // ========================= fields =================================
@@ -45,9 +45,10 @@ public Shuffle(String prefix) {}
 /**
 * Calls {@link Network#shuffle()}.
 */
-public final void modify() {
+public final boolean execute() {
 
 	Network.shuffle();
+	return false;
 }
 
 

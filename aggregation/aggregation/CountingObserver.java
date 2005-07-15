@@ -21,7 +21,6 @@ package aggregation;
 import peersim.core.*;
 import peersim.vector.*;
 import peersim.reports.*;
-import peersim.util.Log;
 import peersim.config.*;
 import peersim.util.*;
 
@@ -34,7 +33,7 @@ import peersim.util.*;
  * @author Alberto Montresor
  * @version $Revision$
  */
-public class CountingObserver  implements Observer
+public class CountingObserver  implements Control
 {
 
 //--------------------------------------------------------------------------
@@ -115,7 +114,7 @@ public CountingObserver(String name)
 //--------------------------------------------------------------------------
 
 // Comment inherited from interface
-public boolean analyze()
+public boolean execute()
 {
 	long time = peersim.core.CommonState.getTime();
 	if ((time % epoch) == 0) {

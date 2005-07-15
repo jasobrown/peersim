@@ -20,13 +20,11 @@ package example.loadbalance;
 
 import peersim.core.*;
 import peersim.reports.*;
-import peersim.util.Log;
 import peersim.util.IncrementalStats;
-import peersim.util.CommonRandom;
 import peersim.config.*;
 import peersim.vector.SingleValue;
 
-public class LBObserver implements Observer {
+public class LBObserver implements Control {
     // Constant fields:
     /**
      *  String name of the parameter used to determine the accuracy
@@ -79,13 +77,13 @@ public class LBObserver implements Observer {
         pid = Configuration.getPid(name + "." + PAR_PROT);
         show_values = Configuration.getInt(name + "." + PAR_SHOW_VALUES, 0);
         stats = new IncrementalStats();
-        target_node = CommonRandom.r.nextInt(len);
+        target_node = CommonState.r.nextInt(len);
     }
     
-    // Implementation of the Observer Interface:
+    // Implementation of the Control Interface:
     
     //Returns always true!
-    public boolean analyze() {
+    public boolean execute() {
         //	final int len = Network.size();
         double sum = 0.0;
         double sqrsum = 0.0;

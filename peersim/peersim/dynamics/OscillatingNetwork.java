@@ -19,13 +19,12 @@
 package peersim.dynamics;
 
 import peersim.config.Configuration;
-import peersim.util.CommonRandom;
 import peersim.core.*;
 
 /**
 * A network dynamics manager which can grow networks.
 */
-public class OscillatingNetwork implements Dynamics
+public class OscillatingNetwork implements Control
 {
 
 	////////////////////////////////////////////////////////////////////////////
@@ -160,14 +159,14 @@ public class OscillatingNetwork implements Dynamics
 		{
 			Network.swap(
 				Network.size() - 1,
-				CommonRandom.r.nextInt(Network.size()));
+				CommonState.r.nextInt(Network.size()));
 			Network.remove();
 		}
 	}
 
 	// ------------------------------------------------------------------
 
-	public void modify()
+	public boolean execute()
 	{
 		long time = CommonState.getTime();
 		int oscillation = (maxsize - minsize) / 2;
@@ -178,6 +177,8 @@ public class OscillatingNetwork implements Dynamics
 			remove(-diff);
 		else
 			add(diff);
+		
+		return false;
 	}
 
 }

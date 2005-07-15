@@ -182,13 +182,13 @@ public Node[] checkRandomNode(Node rnode, int hid)
 	slen = (snodes[spos] == null ? spos : snodes.length);
 	if (slen == 0)
 		return null;
-	int k = CommonRandom.r.nextInt(slen);
+	int k = CommonState.r.nextInt(slen);
 	Node random1 = snodes[k];
 	HistoryUndirected history1 = (HistoryUndirected) random1.getProtocol(hid);
 	slen = (history1.snodes[history1.spos] == null ? history1.spos : history1.snodes.length);
   if (slen == 0)
     return null;
-	k = CommonRandom.r.nextInt(slen);
+	k = CommonState.r.nextInt(slen);
 	Node random2 = history1.snodes[k];
 	HistoryUndirected history2 = (HistoryUndirected) random2.getProtocol(hid);
     

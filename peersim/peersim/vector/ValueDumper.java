@@ -19,9 +19,8 @@
 package peersim.vector;
 
 import peersim.core.*;
-import peersim.reports.Observer;
 import peersim.config.*;
-import peersim.config.Configuration;
+import peersim.cdsim.CDState;
 import java.io.*;
 import java.lang.reflect.*;
 
@@ -44,7 +43,7 @@ import java.lang.reflect.*;
  * Please refer to package {@link peersim.vector} for a detailed description of 
  * the concept of protocol vector and the role of getters and setters. 
  */
-public class ValueDumper implements Observer
+public class ValueDumper implements Control
 {
 
 // --------------------------------------------------------------------------
@@ -147,7 +146,7 @@ private static String format(long l, long max)
 /**
  * @inheritDoc
  */
-public boolean analyze() {
+public boolean execute() {
 try
 {
 	System.out.print(prefix + ": ");
@@ -155,10 +154,12 @@ try
 	PrintStream pstr = System.out;
 	if (baseName != null)
 	{
-		final String filename = baseName
-		+ ValueDumper.format(CommonState.getTime(), 10000) + "-"
-		+ ValueDumper.format(CommonState.getCycleT(), Network.size())
-		+ ".vec";
+		String filename = baseName
+		+ ValueDumper.format(CommonState.getTime(), 10000);
+		if( CDState.getCycleT() >= 0 )
+			filename = filename + "-"
+			+ValueDumper.format(CDState.getCycleT(),Network.size());
+		filename = filename + ".vec";
 		System.out.println(filename);
 		pstr = new PrintStream(new FileOutputStream(filename));
 	}

@@ -42,7 +42,7 @@ import peersim.dynamics.*;
  * Please refer to package {@link peersim.vector} for a detailed description of 
  * the concept of protocol vector and the role of getters and setters. 
  */
-public class VectCopy extends VectDynamics implements  NodeInitializer
+public class VectCopy extends VectControl implements  NodeInitializer
 {
 
 //--------------------------------------------------------------------------
@@ -109,7 +109,7 @@ public VectCopy(String prefix)
 /**
  * @inheritDoc
  */
-public void modify() {
+public boolean execute() {
 try {
 
 	int size = Network.size();
@@ -126,6 +126,7 @@ catch(Exception e)
 	System.exit(1);
 }
 
+	return false;
 }
 
 //--------------------------------------------------------------------------

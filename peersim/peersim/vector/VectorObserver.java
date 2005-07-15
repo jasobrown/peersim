@@ -41,7 +41,7 @@ import peersim.util.*;
  * Please refer to package {@link peersim.vector} for a detailed description of 
  * the concept of protocol vector and the role of getters and setters. 
  */
-public class VectorObserver implements peersim.reports.Observer 
+public class VectorObserver implements Control 
 {
 
 //--------------------------------------------------------------------------
@@ -123,7 +123,7 @@ public VectorObserver(String prefix)
 /**
  * @inheritDoc
  */
-public boolean analyze()
+public boolean execute()
 {
 	StringBuilder buffer = new StringBuilder();
 	IncrementalStats stats = new IncrementalStats();

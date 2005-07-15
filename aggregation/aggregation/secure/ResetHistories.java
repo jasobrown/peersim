@@ -23,14 +23,14 @@ import peersim.config.*;
 import peersim.dynamics.*;
 
 /**
- * This {@link Dynamics} object is used to periodically reset the history
+ * This {@link Control} object is used to periodically reset the history
  * of all nodes in the system.
  *
  * @author Alberto Montresor
  * @version $Revision$
  */
 public class ResetHistories
-implements Dynamics
+implements Control
 {
 
 //--------------------------------------------------------------------------
@@ -71,7 +71,7 @@ public ResetHistories(String prefix)
 //--------------------------------------------------------------------------
 
 // Comment inherited from interface
-public void modify() 
+public boolean execute() 
 {
 	for(int i=0; i<Network.size(); ++i)
 	{
@@ -79,6 +79,8 @@ public void modify()
 			Network.get(i).getProtocol(pid);
 		history.reset();
 	}
+	
+	return false;
 }
 
 //--------------------------------------------------------------------------

@@ -39,7 +39,7 @@ import peersim.dynamics.*;
  * Please refer to package {@link peersim.vector} for a detailed description of 
  * the concept of protocol vector and the role of getters and setters. 
  */
-public class LinearDistribution extends VectDynamics
+public class LinearDistribution extends VectControl
 {
 
 //--------------------------------------------------------------------------
@@ -104,7 +104,7 @@ public LinearDistribution(String prefix)
 /**
  * @inheritDoc
  */
-public void modify() {
+public boolean execute() {
 	
 	if (type==int.class || type==long.class)
 	{
@@ -121,6 +121,8 @@ public void modify() {
 			set(i,i*step+min.doubleValue());
 		}
 	}
+
+	return false;
 }
 
 

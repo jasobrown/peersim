@@ -22,6 +22,7 @@ import aggregation.general.*;
 import peersim.core.*;
 import peersim.util.*;
 import peersim.config.*;
+import peersim.cdsim.CDState;
 
 /**
  * This class represents a malicious implementation of the secure 
@@ -106,7 +107,7 @@ public MaliciousSecureAverageAP(String prefix)
 {
 	super(prefix);
 	p = new ProtocolData();
-	p.pid = CommonState.getPid();
+	p.pid = CDState.getPid();
 	p.hid = Configuration.getPid(prefix+"."+PAR_HID);
 	p.exchanges = Configuration.getInt(prefix+"."+PAR_EXCHANGES, 1);
 	p.fixed = (double) Configuration.getDouble(prefix+"."+PAR_FIXED, 0);
@@ -136,7 +137,7 @@ public void nextCycle(Node node, int pid)
 		 */
 		History history = 
 			(History) node.getProtocol(p.hid);
-		history.addInitiated(receiver, value, CommonState.getCycle());
+		history.addInitiated(receiver, value, CDState.getCycle());
 
 		if (canDeliverRequest(receiver)) {
 			/* Send request */
@@ -154,7 +155,7 @@ public void deliverRequest(Node initiator, Node receiver, double rvalue)
 {
 	/* Update history */
 	History history = (History) receiver.getProtocol(p.hid);
-	history.addReceived(initiator, rvalue, CommonState.getCycle());
+	history.addReceived(initiator, rvalue, CDState.getCycle());
 
 	/* Update the value */ // XXX Is this actually needed?
 	double lvalue = this.value;
@@ -186,7 +187,7 @@ private Node selectNeighbor(Node node, int pid)
 	Node receiver;
 	boolean found = false;
 	do {
-		int k = CommonRandom.r.nextInt(Network.size());
+		int k = CDState.r.nextInt(Network.size());
 		receiver = Network.get(k);
 	} while (receiver.getProtocol(pid) instanceof MaliciousProtocol);
 	return receiver;

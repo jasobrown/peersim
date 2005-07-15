@@ -37,7 +37,7 @@ import peersim.config.Configuration;
 * it does not trigger an error. Lines starting with a "#" character and
 * empty lines are ignored.
 */
-public class WireFromFile implements Dynamics {
+public class WireFromFile implements Control {
 
 
 // ========================= fields =================================
@@ -92,7 +92,7 @@ public WireFromFile(String prefix) {
 // ===================================================================
 
 
-public void modify() {
+public boolean execute() {
 try
 {
 	FileReader fr = new FileReader(file);
@@ -139,6 +139,7 @@ catch( Exception e )
 		}
 	}
 
+	return false;
 }
 
 }

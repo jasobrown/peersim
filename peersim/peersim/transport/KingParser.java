@@ -21,8 +21,7 @@ package peersim.transport;
 import java.io.*;
 import java.util.*;
 import peersim.config.*;
-import peersim.dynamics.*;
-
+import peersim.core.Control;
 
 /**
  * Reads a kind data set, inserting the latency information in a 
@@ -32,7 +31,7 @@ import peersim.dynamics.*;
  * @version $Revision$
  */
 public class KingParser
-implements Dynamics
+implements Control
 {
 
 //---------------------------------------------------------------------
@@ -87,7 +86,7 @@ public KingParser(String prefix)
 //---------------------------------------------------------------------
 
 // Comment inherited from interface
-public void modify()
+public boolean execute()
 {
 	BufferedReader in = null;
 	try {
@@ -124,6 +123,8 @@ public void modify()
 		line = in.readLine();
 	} while (line != null);
 	} catch (IOException e) { }
+
+	return false;
 }
 
 }

@@ -29,7 +29,7 @@ import peersim.util.*;
 * deviation reduction, average/maximum/minimum of averages,
 * and actual size.
 */
-public class SingleValueObserver implements peersim.reports.Observer {
+public class SingleValueObserver implements Control {
 
 
 //--------------------------------------------------------------------------
@@ -88,7 +88,7 @@ public SingleValueObserver(String name)
 /**
  * @inheritDoc
  */
-public boolean analyze()
+public boolean execute()
 {
 	IncrementalStats stats = new IncrementalStats();
 	

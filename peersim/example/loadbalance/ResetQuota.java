@@ -20,12 +20,11 @@ package example.loadbalance;
 
 import peersim.config.*;
 import peersim.core.*;
-import peersim.dynamics.Dynamics;
 
 /** This class restores the quota value at each node in the topology in order
 *   to make the next cycle feasible. 
 */
-public class ResetQuota implements Dynamics {
+public class ResetQuota implements Control {
 
 ////////////////////////////////////////////////////////////////////////////
 // Constants
@@ -65,11 +64,13 @@ public ResetQuota(String prefix)
 
 
 // Comment inherited from interface
-public void modify() {
+public boolean execute() {
 	for(int i=0; i<Network.size(); ++i)
 	{
 		((BasicBalance)Network.get(i).getProtocol(protocolID)).resetQuota();
 	}
+
+	return false;
 }
 
 }

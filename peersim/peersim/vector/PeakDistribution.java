@@ -39,7 +39,7 @@ import peersim.core.*;
  * Please refer to package {@link peersim.vector} for a detailed description of 
  * the concept of protocol vector and the role of getters and setters. 
  */
-public class PeakDistribution extends VectDynamics
+public class PeakDistribution extends VectControl
 {
 
 // --------------------------------------------------------------------------
@@ -101,7 +101,7 @@ public PeakDistribution(String prefix)
 /**
  * @inheritDoc
  */
-public void modify()
+public boolean execute()
 {
 	int pn = (peaks < 1 ? (int) (peaks*Network.size()) : (int) peaks);
 	
@@ -117,6 +117,8 @@ public void modify()
 		for (int i=0; i < pn; i++) set(i, v);
 		for (int i=pn; i < Network.size(); i++) set(i,0);
 	}
+
+	return false;
 }
 
 // --------------------------------------------------------------------------

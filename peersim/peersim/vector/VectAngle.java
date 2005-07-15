@@ -20,10 +20,9 @@ package peersim.vector;
 
 import java.lang.reflect.*;
 import peersim.config.*;
-import peersim.config.Configuration;
 import peersim.core.Network;
-import peersim.reports.Observer;
-import peersim.util.*;
+import peersim.core.Control;
+import peersim.core.Log;
 
 /**
  * Observes the cosine angle between two vectors. The number which is output is
@@ -43,7 +42,7 @@ import peersim.util.*;
  * Please refer to package {@link peersim.vector} for a detailed description of 
  * this mechanism. 
  */
-public class VectAngle implements Observer
+public class VectAngle implements Control
 {
 
 // --------------------------------------------------------------------------
@@ -141,7 +140,7 @@ public VectAngle(String prefix)
 // Methods
 // --------------------------------------------------------------------------
 
-public boolean analyze()
+public boolean execute()
 {
 	double sqrsum1 = 0, sqrsum2 = 0, prod = 0;
 	try {

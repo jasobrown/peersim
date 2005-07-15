@@ -18,11 +18,18 @@
 
 package peersim.core;
 
+import  peersim.util.ExtendedRandom;
+import  peersim.config.Configuration;
+
 /**
  * This is the common state of the simulation all objects see. It's purpose is
  * simplification of parameter structures and increasing efficiency by putting
  * state information here instead of passing parameters. Fully static class, a
  * singleton.
+ *<p>
+ * The set methods should not be used by applications, they are for system
+ * components. Ideally, they should not be visible, but due to the lack of
+ * flexibility in java access rights, we are forced to make them visible.
  */
 public class CommonState
 {
@@ -30,28 +37,10 @@ public class CommonState
 //======================= constants ===============================
 //=================================================================
 
-public static final int PRE_DYNAMICS = 0;
-
-public static final int PRE_CYCLE = 1;
-
-public static final int POST_LAST_CYCLE = 2;
+public static final int POST_SIMULATION = 1;
 
 // ======================= fields ==================================
 // =================================================================
-
-/**
- * Current time within the current cycle, for cycle based simulations.
- * Note that {@link #cycle} gives the cycle id to which this value is relative.
- */
-private static int ctime = 0;
-
-/**
- * Current cycle in the simulation. It makes sense only in the case of a
- * cycle based simulator, that is, cycle based simulators will maintain this
- * value, others will not. It still makes sense to keep it separate from
- * {@link #time} because it is an int, while time is a long.
- */
-private static int cycle = 0;
 
 /**
  * Current time. Note that this value is simulator independent, all simulation
@@ -60,12 +49,6 @@ private static int cycle = 0;
  * a timestamp.
  */
 private static long time = 0;
-
-/**
- * Working variable to provide for an object version of cycle. This is useful to
- * save memory because all objects can use the same object.
- */
-private static Integer _cycle = new Integer(0);
 
 /**
  * Information about where exactly the simulation is.
@@ -82,66 +65,44 @@ private static int pid;
  */
 private static Node node;
 
+/**
+* This source of randomness should be used by all components.
+* This field is public because it doesn't matter if it changes
+* during an experiment (although it shouldn't) until no other sources of
+* randomness are used within the system. Besides, we can save the cost
+* of calling a wrapper method, which is important becuase this is needed
+* very often.
+*/
+public static ExtendedRandom r = null;
+
+
 // ======================== initialization =========================
 // =================================================================
 
+
 /**
- */
+* Configuration parameter used to initialize the random seed.
+* If it is not specified the current time is used.
+*/
+public static String PAR_SEED = "random.seed";
+
+
+/**
+* Initializes the field {@link r} according to the configuration.
+* Assumes that the configuration is already
+* loaded.
+*/
 static {
+	
+	long seed =
+		Configuration.getLong(PAR_SEED,System.currentTimeMillis());
+	r = new ExtendedRandom(seed);
 }
+
 
 // ======================= methods =================================
 // =================================================================
 
-/**
- * In cycle-driven simulations, returns the current cycle. In
- * event-driven simulations, returns -1.
- */
-public static int getCycle()
-{
-	return cycle;
-}
-
-// -----------------------------------------------------------------
-
-/**
- * Returns the current cycle. This method is deprecated; method
- * {@link #getCycle()} should be used instead.
- * 
- * @deprecated
- */
-public static int getT()
-{
-	return cycle;
-}
-
-//-----------------------------------------------------------------
-
-/**
- * Sets current cycle. Used by the cycle based simulators. Resets also cycle
- * time to 0. It also calls
- * {@link #setTime} with the given parameter, to make sure {@link #getTime}
- * is indeed independent of the simulation model.
- */
-public static void setCycle(int t)
-{
-	_cycle = new Integer(t);
-	cycle = t;
-	ctime = 0;
-	setTime(t);
-}
-
-//-----------------------------------------------------------------
-
-/**
- * Returns current cycle as an Integer object.
- */
-public static Integer getCycleObj()
-{
-	return _cycle;
-}
-
-//-----------------------------------------------------------------
 
 /**
  * Returns current time. In event-driven simulations, returns the current
@@ -173,9 +134,6 @@ public static void setTime(long t)
  * Returns the phase within a time step. Currently the following phases are
  * understood.
  * <ul>
- * <li>{@link #PRE_DYNAMICS}Nothing has been done in the current cycle</li>
- * <li>{@link #PRE_CYCLE}The dynamism managers have been run but the cycle has
- * not started yet</li>
  * <li>{@link #POST_LAST_CYCLE}the simulation is completed</li>
  * </ul>
  */
@@ -193,7 +151,10 @@ public static void setPhase(int p)
 
 // -----------------------------------------------------------------
 
-/** Returns the current protocol identifier */
+/**
+* Returns the current protocol identifier. In other words, control is
+* held by the indicated protocol on node {@link #getNode}.
+*/
 public static int getPid()
 {
 	return pid;
@@ -201,7 +162,7 @@ public static int getPid()
 
 //-----------------------------------------------------------------
 
-/** Sets the current protocol identifier */
+/** Sets the current protocol identifier.*/
 public static void setPid(int p)
 {
 	pid = p;
@@ -226,22 +187,6 @@ public static void setNode(Node n)
 	node = n;
 }
 
-//-----------------------------------------------------------------
-
-/**
- * Returns the current time within the current cycle, for cycle based
- * simulations. Note that the time returned by {@link #getCycle}is the cycle id
- * in this case.
- */
-public static int getCycleT()
-{
-	return ctime;
 }
 
-// -----------------------------------------------------------------
 
-public static void setCycleT(int t)
-{
-	ctime = t;
-}
-}

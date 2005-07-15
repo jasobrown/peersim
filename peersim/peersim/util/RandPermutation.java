@@ -19,6 +19,7 @@
 package peersim.util;
 
 import java.util.NoSuchElementException;
+import java.util.Random;
 
 /**
 * This class provides a random permutation of indexes. Useful for random
@@ -37,6 +38,15 @@ private int len = 0;
 
 private int pointer = 0;
 
+private final Random r;
+
+
+// ======================= initialization ============================
+// ===================================================================
+
+
+public RandPermutation( Random r ) { this.r=r; }
+
 
 // ======================= public methods ============================
 // ===================================================================
@@ -53,7 +63,7 @@ public void setPermutation(int k) {
 	
 	for(int i=len; i>1; i--)
 	{
-		int j = CommonRandom.r.nextInt(i);
+		int j = r.nextInt(i);
 		int a = buffer[j];
 		buffer[j] = buffer[i-1];
 		buffer[i-1] = a;
@@ -100,7 +110,7 @@ public int next() {
 	
 	if( pointer < 1 ) throw new NoSuchElementException();
 	
-	int j = CommonRandom.r.nextInt(pointer);
+	int j = r.nextInt(pointer);
 	int a = buffer[j];
 	buffer[j] = buffer[pointer-1];
 	buffer[pointer-1] = a;
@@ -120,7 +130,7 @@ public boolean hasNext() { return pointer > 0; }
 /** to test the class */
 public static void main( String pars[] ) throws Exception {
 	
-	RandPermutation rp = new RandPermutation();
+	RandPermutation rp = new RandPermutation(new Random());
 
 	int k;
 	

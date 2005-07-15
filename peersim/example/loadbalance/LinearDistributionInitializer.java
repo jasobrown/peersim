@@ -20,10 +20,9 @@ package example.loadbalance;
 
 import peersim.config.*;
 import peersim.core.*;
-import peersim.dynamics.Dynamics;
 import peersim.vector.SingleValue;
 
-public class LinearDistributionInitializer  implements Dynamics {
+public class LinearDistributionInitializer  implements Control {
 
 ////////////////////////////////////////////////////////////////////////////
 // Constants
@@ -71,7 +70,7 @@ public LinearDistributionInitializer(String prefix)
 
 
 // Comment inherited from interface
-public void modify() {
+public boolean execute() {
 	double step = (max-min)/(Network.size()-1);
 	double sum = 0.0;
 	double tmp;
@@ -82,6 +81,7 @@ public void modify() {
 		((SingleValue)Network.get(i).getProtocol(protocolID)
 			).setValue(tmp);
 	}
+	return false;
 }
 
 }

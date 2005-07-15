@@ -22,6 +22,7 @@ import aggregation.general.*;
 import peersim.core.*;
 import peersim.util.*;
 import peersim.config.*;
+import peersim.cdsim.CDState;
 
 /**
  * This class implements an aggregation protocol that performs average
@@ -85,7 +86,7 @@ public SecureAverageAP(String prefix)
 {
 	super(prefix);
   sad = new SecureAverageData();
-  sad.pid  = CommonState.getPid();
+  sad.pid  = CDState.getPid();
   sad.blid = Configuration.getPid(prefix+"."+PAR_BLID);
   sad.hid  = Configuration.getPid(prefix+"."+PAR_HID);
 }
@@ -121,7 +122,7 @@ public void nextCycle(Node node, int pid)
 	 * sure whether the message will be delivered 
 	 */
 	History history = (History) node.getProtocol(sad.hid);
-	history.addInitiated(receiver, value, CommonState.getCycle());
+	history.addInitiated(receiver, value, CDState.getCycle());
 
 	if (canDeliverRequest(receiver)) {
 		/* Send request */
@@ -144,7 +145,7 @@ public void deliverRequest(Node initiator, Node receiver, double rvalue)
 
 	/* Update history */
 	History hreceiver = (History) receiver.getProtocol(sad.hid);
-	hreceiver.addReceived(initiator, rvalue, CommonState.getCycle());
+	hreceiver.addReceived(initiator, rvalue, CDState.getCycle());
 
 	/* Check whether the node is contained in the protocol */
 	Blacklist bl = (Blacklist) receiver.getProtocol(sad.blid);
@@ -157,7 +158,7 @@ public void deliverRequest(Node initiator, Node receiver, double rvalue)
 	 * so the actual history check is not performed. Otherwise, we
 	 * perform the check.
 	 */
-	if (!(initiator.getProtocol(CommonState.getPid()) 
+	if (!(initiator.getProtocol(CDState.getPid()) 
 	   instanceof MaliciousProtocol)) {
 		/* 
 		 * Check the history.
@@ -213,7 +214,7 @@ private static Node[] array = null;
  */
 protected Node selectNeighbor(Node node, Blacklist blacklist)
 {
-	int lid = FastConfig.getLinkable(CommonState.getPid());
+	int lid = FastConfig.getLinkable(CDState.getPid());
 	Linkable linkable = (Linkable) node.getProtocol(lid);
 	if (array == null || array.length < linkable.degree()) {
 		array = new Node[linkable.degree()];
@@ -225,7 +226,7 @@ protected Node selectNeighbor(Node node, Blacklist blacklist)
 		  array[index++] = ni;
 	}
 	if (index > 0) 
-		return array[CommonRandom.r.nextInt(index)];
+		return array[CDState.r.nextInt(index)];
 	else
 	  return null;
 }

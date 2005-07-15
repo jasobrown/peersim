@@ -180,7 +180,7 @@ public Node[] checkRandomNode(Node rnode, int hid)
 	int slen = (snodes[spos] == null ? spos : snodes.length);
 	if (slen == 0)
 		return null;
-	int k = CommonRandom.r.nextInt(slen);
+	int k = CommonState.r.nextInt(slen);
 	Node randomNode = snodes[k];
 	HistoryDirected history = (HistoryDirected) randomNode.getProtocol(hid);
 	int dlen = (history.dnodes[history.dpos] == null) ? 

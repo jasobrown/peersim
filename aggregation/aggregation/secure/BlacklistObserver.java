@@ -21,7 +21,6 @@ package aggregation.secure;
 import peersim.core.*;
 import peersim.util.*;
 import peersim.config.*;
-import peersim.reports.Observer;
 import java.util.*;
 
 /**
@@ -32,7 +31,7 @@ import java.util.*;
  * @version $Revision$
  */
 public class BlacklistObserver
-implements Observer
+implements Control
 {
 
 //--------------------------------------------------------------------------
@@ -99,7 +98,7 @@ public BlacklistObserver(String name)
 //--------------------------------------------------------------------------
 
 // Comment inherited from interface
-public boolean analyze()
+public boolean execute()
 {
 	/* Check size of nsuspects */
 	int size = Network.size();

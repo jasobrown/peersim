@@ -20,7 +20,6 @@ package aggregation.multiple;
 
 import peersim.config.*;
 import peersim.core.*;
-import peersim.dynamics.Dynamics;
 
 /**
  * Initializes the values to be aggregated using a multi-peak distribution.
@@ -29,7 +28,7 @@ import peersim.dynamics.Dynamics;
  * multiple concurrent instances of aggregation.
  */
 public class MultiplePeakDistribution 
-implements Dynamics 
+implements Control 
 {
 
 //--------------------------------------------------------------------------
@@ -94,30 +93,32 @@ public MultiplePeakDistribution(String prefix)
 //--------------------------------------------------------------------------
 
 // Comment inherited from interface
-public void modify() 
+public boolean execute() 
 {
 	/* Obtain the number of concurrent instances of aggregation */
-  int nvalues = ((MultipleValues) Network.get(0).getProtocol(pid)
+  	int nvalues = ((MultipleValues) Network.get(0).getProtocol(pid)
 	  ).size();
 
 
 	/* Set the values */
 	for (int j=0; j<nvalues; j++) {
-		int pn = (peaks < 1 ? (int) (peaks*Network.size()) : (int) peaks);
+		int pn=(peaks < 1 ? (int) (peaks*Network.size()) : (int) peaks);
 		/* Compute the number of peaks and values at peaks */
 		double vl = value/pn;
 		for (int i=0; i < Network.size(); i++) {
 			if (pn > 0 && Network.get(i).isUp()) {
-				((MultipleValues) Network.get(i).getProtocol(pid)
+				((MultipleValues)Network.get(i).getProtocol(pid)
 				).setValue(j, vl);
 				pn--;
 			} else {
-				((MultipleValues) Network.get(i).getProtocol(pid)
+				((MultipleValues)Network.get(i).getProtocol(pid)
 				).setValue(j, 0.0);
 			}
 		}
 		Network.shuffle();
 	}
+	
+	return false;
 }
 
 //--------------------------------------------------------------------------

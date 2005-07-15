@@ -23,7 +23,7 @@ import peersim.reports.*;
 import peersim.config.*;
 import peersim.util.IncrementalStats;
 
-public class QuotaObserver implements Observer {
+public class QuotaObserver implements Control {
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -66,7 +66,7 @@ public QuotaObserver(String name)
 ////////////////////////////////////////////////////////////////////////////
 
 // Comment inherited from interface
-public boolean analyze()
+public boolean execute()
 {
 	
 	

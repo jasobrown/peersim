@@ -24,19 +24,18 @@ import peersim.config.Configuration;
 // much more flexibly using a simlpe syntax for time ranges.
 /**
 * A binary function over the time points. That is,
-* for each time point (cycle in the simulation) returns a boolean
-* value.
-*
-* <p>The concept of time is understood as follows. Time point 0 refers to
-* the time before cycle 0. In general, time point i refers to the time
-* before cycle i. The special time index FINAL refers to the time
-* after the last cycle. Note that the index of the last cycle is not known
-* in advance, because the simulation can stop at any time, based on other
-* components.
+* for each time point returns a boolean value.
+* 
+* The concept of time depends on the simulation model. Current time
+* has to be set by the simulation engine, irrespective of the model,
+* and can be read using {@link CommonState.getTime()}. This schedular
+* is interpreted over those time points.
 *
 * <p>In this simple implementation the valid times will be
 * <tt>from, from+step, from+2*step, etc,</tt>
-* where the last element is strictly less than <tt>until</tt>. If FINAL is
+* where the last element is strictly less than <tt>until</tt>.
+* Alternatively, if <tt>at</tt> is defined, then the schedule will be a single
+* time point. If FINAL is
 * defined, it is also added to the set of active time points.
 */
 public class Scheduler {
@@ -75,26 +74,16 @@ public static final String PAR_UNTIL = "until";
 */
 public static final String PAR_FINAL = "FINAL";
 
-/**
-* This is currently used for observers only, it is ignored for all other
-* components.
-* If defined the component will be run right before the cycle begins,
-* after the dynamism managers have been run, and not before the dynamism
-* managers. It is not defined by default.
-*/
-public static final String PAR_PRECYCLE = "precycle";
+protected final long step;
 
-protected final int step;
+protected final long from;
 
-protected final int from;
-
-protected final int until;
+protected final long until;
 
 protected final boolean fin;
 
-protected final boolean precycle;
-
-protected int current;
+/** The next scheduled time point.*/
+protected long next;
 
 // ==================== initialization ==============================
 // ==================================================================
@@ -109,7 +98,7 @@ public Scheduler(String prefix) {
 
 public Scheduler(String prefix, boolean useDefault)
 {
-	int at = Configuration.getInt(prefix+"."+PAR_AT,-1);
+	long at = Configuration.getInt(prefix+"."+PAR_AT,-1);
 	if( at < 0 )
 	{
 		if (useDefault) 
@@ -126,9 +115,8 @@ public Scheduler(String prefix, boolean useDefault)
 		until = at+1;
 		step = 1;
 	}
-	current = from;
+	next = from;
 	fin = Configuration.contains(prefix+"."+PAR_FINAL);
-	precycle = Configuration.contains(prefix+"."+PAR_PRECYCLE);
 }
 
 
@@ -136,33 +124,35 @@ public Scheduler(String prefix, boolean useDefault)
 // ===================================================================
 
 
-public boolean active(int cycle) {
+public boolean active(long time) {
 	
-	if( cycle < from || cycle >= until ) return false;
-	return (cycle - from)%step == 0; 
+	if( time < from || time >= until ) return false;
+	return (time - from)%step == 0; 
 }
 
 // -------------------------------------------------------------------
 
 public boolean active() {
 	
-	return active( CommonState.getCycle() );
+	return active( CommonState.getTime() );
 }
 
 // -------------------------------------------------------------------
 
 public boolean fin() { return fin; }
 
-// -------------------------------------------------------------------
-
-public boolean preCycle() { return precycle; }
-
 //-------------------------------------------------------------------
 
+/**
+* Returns the next time point. If the returned value is negative, there are
+* no more time points. As a side effect, it also updates the next time point,
+* so repreated calls to this method return the scheduled times.
+*/
 public long getNext()
 {
-	long ret = current;
-	current += step;
+	long ret = next;
+	next += step;
+	if( next >= until ) next = -1;
 	return ret;
 }
 

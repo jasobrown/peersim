@@ -20,7 +20,6 @@ package example.aggregation;
 
 import peersim.config.*;
 import peersim.core.*;
-import peersim.dynamics.Dynamics;
 import peersim.vector.SingleValue;
 
 /**
@@ -29,7 +28,7 @@ import peersim.vector.SingleValue;
  * @author Alberto Montresor
  * @version $Revision$
  */
-public class PeakDistributionInitializer implements Dynamics
+public class PeakDistributionInitializer implements Control
 {
 
 	////////////////////////////////////////////////////////////////////////////
@@ -89,7 +88,7 @@ public class PeakDistributionInitializer implements Dynamics
 	////////////////////////////////////////////////////////////////////////////
 
 	// Comment inherited from interface
-	public void modify()
+	public boolean execute()
 	{
             System.err.println("Restarting: " + Network.size());
             for (int i = 0; i < Network.size(); i++) {
@@ -98,6 +97,9 @@ public class PeakDistributionInitializer implements Dynamics
             }
             SingleValue prot = (SingleValue) Network.get(0).getProtocol(pid);
             prot.setValue(value);
+	
+	    return false;
         }
+
 
 }

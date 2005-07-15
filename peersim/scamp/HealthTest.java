@@ -19,11 +19,11 @@
 package scamp;
 
 import peersim.config.Configuration;
-import peersim.reports.Observer;
+import peersim.core.Control;
 
 /**
  */
-public class HealthTest implements Observer {
+public class HealthTest implements Control {
 
 
 // ===================== fields =======================================
@@ -55,7 +55,7 @@ public HealthTest(String name) {
 // =====================================================================
 
 
-public boolean analyze() {
+public boolean execute() {
 	
 	System.out.println(name+": "+Scamp.test(protocolID));
 

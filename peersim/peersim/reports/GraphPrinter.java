@@ -72,7 +72,7 @@ public GraphPrinter(String name) {
 // =====================================================================
 
 
-public boolean analyze() {
+public boolean execute() {
 try {	
 	updateGraph();
 	

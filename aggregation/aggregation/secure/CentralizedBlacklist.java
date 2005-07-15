@@ -21,7 +21,6 @@ package aggregation.secure;
 import peersim.core.*;
 import peersim.util.*;
 import peersim.config.*;
-import peersim.reports.Observer;
 import java.util.*;
 
 /**
@@ -41,7 +40,7 @@ import java.util.*;
  * @version $Revision$
  */
 public class CentralizedBlacklist
-implements Observer, Blacklist, Protocol
+implements Control, Blacklist, Protocol
 {
 
 //--------------------------------------------------------------------------
@@ -167,7 +166,7 @@ public Iterator iterator()
 //--------------------------------------------------------------------------
 
 // Comment inherited from interface
-public boolean analyze()
+public boolean execute()
 {
 	int correct = 0;
 	int falsePositives = 0;

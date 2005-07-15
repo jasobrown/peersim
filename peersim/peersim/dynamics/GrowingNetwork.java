@@ -19,13 +19,12 @@
 package peersim.dynamics;
 
 import peersim.config.Configuration;
-import peersim.util.CommonRandom;
 import peersim.core.*;
 
 /**
 * A network dynamics manager which can grow networks.
 */
-public class GrowingNetwork implements Dynamics {
+public class GrowingNetwork implements Control {
 
 
 // ========================= fields =================================
@@ -128,7 +127,7 @@ protected void remove( int n ) {
 	{
 		Network.swap(
 			Network.size()-1,
-			CommonRandom.r.nextInt(Network.size()) );
+			CommonState.r.nextInt(Network.size()) );
 		Network.remove();
 	}
 }
@@ -163,11 +162,11 @@ public GrowingNetwork(String prefix) {
 * Calls {@link #add} or {@link #remove} with the parameters defined by
 * the configuration.
 */
-public final void modify() {
+public final boolean execute() {
 
 	if( add == 0 ||
 	    (maxsize <= Network.size() && add>0) || 
-	    (minsize >= Network.size() && add<0) ) return;
+	    (minsize >= Network.size() && add<0) ) return false;
 	
 	int toadd = (int)add;
 	
@@ -185,6 +184,8 @@ public final void modify() {
 		toadd = Math.min(maxsize-Network.size(),toadd);
 		add(toadd);
 	}
+
+	return false;
 }
 
 

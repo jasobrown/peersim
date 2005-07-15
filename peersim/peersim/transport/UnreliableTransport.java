@@ -96,7 +96,7 @@ public Object clone()
 // Comment inherited from interface
 public void send(Node src, Node dest, Object msg, int pid)
 {
-	if (CommonRandom.r.nextFloat() >= loss) {
+	if (CommonState.r.nextFloat() >= loss) {
 		// Message is not lost
 		Transport t = (Transport) src.getProtocol(pid);
 		t.send(src, dest, msg, pid);

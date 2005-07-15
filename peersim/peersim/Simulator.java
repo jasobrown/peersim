@@ -20,7 +20,6 @@ package peersim;
 
 import peersim.config.*;
 import peersim.core.*;
-import peersim.cdsim.OrderSimulator;
 import peersim.edsim.EDSimulator;
 
 
@@ -35,9 +34,6 @@ import peersim.edsim.EDSimulator;
 * <code>simulation.cycles</code> and does not contain the property
 * <code>simulation.order</code> then this standard cycle based simulator is
 * invoked.
-* <li>{@link OrderSimulator}: if the configuration contains the property
-* <code>simulation.order</code> then this cycle based simulator is
-* invoked, which uses a different style of configuration.
 * <li>{@link EDSimulator}: if the configuration contains the property
 * <code>simulation.endtime</code> then this standard event based simulator is
 * invoked.
@@ -53,9 +49,6 @@ public class Simulator {
 /** {@link peersim.cdsim.Simulator} */
 protected static final int CDSIM = 0;
 
-/** {@link OrderSimulator} */
-protected static final int CDORDSIM = 1;
-
 /** {@link EDSimulator} */
 protected static final int EDSIM = 2;
 
@@ -64,7 +57,6 @@ protected static final int UNKNOWN = -1;
 /** the class names of simulators used */
 protected static final String[] simName = {
 	"peersim.cdsim.Simulator",
-	"peersim.cdsim.OrderSimulator",
 	"peersim.edsim.EDSimulator",
 };
 
@@ -82,11 +74,7 @@ public static final String PAR_EXPS = "simulation.experiments";
 */
 protected static int getSimID() {
 	
-	if( Configuration.getString(OrderSimulator.PAR_ORDER,null) != null )
-	{
-		return CDORDSIM;
-	}
-	else if( Configuration.getInt(peersim.cdsim.Simulator.PAR_CYCLES,-132)
+	if( Configuration.getInt(peersim.cdsim.Simulator.PAR_CYCLES,-132)
 								!= -132 )
 	{
 		return CDSIM;
@@ -129,9 +117,6 @@ public static void main(String[] args)
 			// this is easier to read.
 			switch(SIMID)
 			{
-			case CDORDSIM:
-				OrderSimulator.nextExperiment();
-				break;
 			case CDSIM:
 				peersim.cdsim.Simulator.nextExperiment();
 				break;

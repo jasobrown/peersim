@@ -21,14 +21,13 @@ package scamp;
 import peersim.dynamics.*;
 import peersim.core.*;
 import peersim.config.Configuration;
-import peersim.util.CommonRandom;
 
 /**
 * Adds nodes according to the SCAMP protocol. No 
 * connections are removed, they are only added. So it can be used in
 * combination with other initializers.
 */
-public class Subscribe implements Dynamics, NodeInitializer {
+public class Subscribe implements Control, NodeInitializer {
 
 
 // ========================= fields =================================
@@ -77,7 +76,7 @@ private Node getContact(int size) {
 			cont = Network.get(0);
 		return cont;
 	}
-	else return Network.get(CommonRandom.r.nextInt(size));
+	else return Network.get(CommonState.r.nextInt(size));
 }
 
 
@@ -100,7 +99,7 @@ public Subscribe(String prefix) {
 * adds connections according to the SCAMP protocol. Builds network
 * adding nodes 0,1,... one by one according to the SCAMP protocol.
 */
-public void modify() {
+public boolean execute() {
 
 	Node contact = null;
 	
@@ -114,6 +113,8 @@ public void modify() {
 
 		Scamp.subscribe( contact, Network.get(i), protocolID );
 	}
+
+	return false;
 }
 
 // -------------------------------------------------------------------

@@ -1,3 +1,30 @@
+MJ 15/07/05
+- some strong refactoring of the entire stuff.
+  THIS UPDATE WILL MOST LIKELY BRAKE YOUR APPLICATIONS
+  it is a first step towards a new release which will not be fully backwards
+  compatible, and will go through a major cleanup and reorganization, something
+  we should have done a long time ago...
+  Some changes that have been made:
+  - Make sure packages util, graph and config compile without the other
+    packages: they are fully independent units now. This involved moving some
+    stuff: most notably, CommonRandom's gone, look for "r" in CommonState.
+    "Log" was moved to core too. Some classes in util have a new Random
+    argument as a result.
+  - Removed difference between Observer and Dynamics: it was not enforcable
+    anyway and introduced bloat in the code, and some config issues.
+    Now there is only "Control", which might or might not change the network
+    being simulated. As a result, code is simpler, config is very flexible
+    without the need for scheduling tricks to determine the order of
+    execution: just use alphabetial roder or the "include" trick in the
+    config file ("include.control"). In your config files replace both
+    "observer" and "dynamics" with "control".
+  - Removed the possibility to simulate cycle driven protocols in the event
+    driven engine. Will re-introduce it soon in a different form.
+  - Moved all cycle-driven related stuff to the cdsim package. In particular,
+    CommonState was split, and some parts became CDState. The Scheduler is
+    now model independent.
+  More to come...
+
 MJ 09/07/05
 - Major refactoring of the vector package, drastically simplifying the
   code. Not backwards compatible (changed config par names). Also,

@@ -105,7 +105,7 @@ protected Node getPeer() {
 	
 	final int d = _degree();
 	if( d == 0 ) return null;
-	int index = CommonRandom.r.nextInt(d);
+	int index = CDState.r.nextInt(d);
 	Node result = cache[index];
 	
 	if( result.isUp() ) return result;
@@ -142,7 +142,7 @@ protected void merge( Node thisNode, SimpleNewscast peer,
 	int i1 = 0; /* Index first cache */
 	int i2 = 0; /* Index second cache */
 	boolean first;
-	boolean lastTieWinner = CommonRandom.r.nextBoolean();
+	boolean lastTieWinner = CDState.r.nextBoolean();
 	int i = 1; // Index new cache. first element set in the end 
 	// SimpleNewscast.tn[0] is always null. it's never written anywhere
 	final int d1 = _degree();
@@ -225,7 +225,7 @@ protected void merge( Node thisNode, SimpleNewscast peer,
 		}
 	}
 //if(testNode==null)testNode=peerNode;
-//if(peerNode==testNode) System.out.println(CommonState.getTime());
+//if(peerNode==testNode) System.out.println(CDState.getTime());
 }
 //private static Node testNode=null;
 
@@ -290,7 +290,7 @@ public boolean addNeighbor(Node node) {
 	
 	if (i < cache.length)
 	{
-		if( i > 0 && tstamps[i-1]<CommonState.getCycle())
+		if( i > 0 && tstamps[i-1]<CDState.getCycle())
 		{
 			// we need to insert to the first position
 			for(int j=cache.length-2; j>=0; --j)
@@ -301,7 +301,7 @@ public boolean addNeighbor(Node node) {
 			i = 0;
 		}
 		cache[i] = node;
-		tstamps[i] = CommonState.getCycle();
+		tstamps[i] = CDState.getCycle();
 		return true;
 	}
 	else	throw new IndexOutOfBoundsException();
@@ -341,7 +341,7 @@ public void nextCycle( Node n, int protocolID )
 	}
 
 	SimpleNewscast peer=(SimpleNewscast)(peerNode.getProtocol(protocolID));
-	merge( n, peer, peerNode, CommonState.getCycle() );
+	merge( n, peer, peerNode, CDState.getCycle() );
 	
 	// set new cache in this and peer
 	System.arraycopy(SimpleNewscast.tn,0,cache,0,cache.length);
@@ -350,7 +350,7 @@ public void nextCycle( Node n, int protocolID )
 	System.arraycopy(SimpleNewscast.ts,0,peer.tstamps,0,tstamps.length);
 	
 	// set first element
-	tstamps[0] = peer.tstamps[0] = CommonState.getCycle();
+	tstamps[0] = peer.tstamps[0] = CDState.getCycle();
 	cache[0] = peerNode;
 	peer.cache[0] = n;
 }

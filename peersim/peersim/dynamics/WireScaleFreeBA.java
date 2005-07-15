@@ -20,7 +20,6 @@ package peersim.dynamics;
 
 import peersim.config.*;
 import peersim.core.*;
-import peersim.util.*;
 import peersim.graph.*;
 
 /**
@@ -34,7 +33,7 @@ http://arxiv.org/pdf/cond-mat/0408391</a>. In both cases, the number of the
 * added. The first added node is connected to all of the initial nodes,
 * and after that the BA model is used normally.
 */
-public class WireScaleFreeBA implements Dynamics {
+public class WireScaleFreeBA implements Control {
 
 
 // ================ constants ============================================
@@ -104,12 +103,12 @@ public WireScaleFreeBA(String prefix)
 
 
 /** calls {@link GraphFactory#wireScaleFreeBA}.*/
-public void modify() {
+public boolean execute() {
 	
 	GraphFactory.wireScaleFreeBA(
 		new OverlayGraph(pid,!undirected), 
 		degree,
-		CommonRandom.r );
+		CommonState.r );
 		
 	if (pack) {
 		int size = Network.size();
@@ -118,6 +117,8 @@ public void modify() {
 			link.pack();
 		}
 	}
+
+	return false;
 }
 
 }

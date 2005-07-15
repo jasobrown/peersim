@@ -22,9 +22,8 @@ import java.io.*;
 import java.util.*;
 import peersim.config.*;
 import peersim.core.*;
-import peersim.dynamics.*;
 import peersim.util.*;
-
+import peersim.cdsim.CDState;
 
 /**
  * This class reads a trace with the following format: <br>
@@ -40,7 +39,7 @@ import peersim.util.*;
  * @author Alberto Montresor
  * @version $Revision$
  */
-public class AvailabilityTraceDynamics implements Dynamics
+public class AvailabilityTraceDynamics implements Control
 {
 
 //---------------------------------------------------------------------
@@ -158,7 +157,7 @@ public AvailabilityTraceDynamics(String prefix)
 			for (int j=0; j < size; j++) 
 				selection[j] = j;
 		}
-		int r = CommonRandom.r.nextInt(size);
+		int r = CommonState.r.nextInt(size);
 		indexes[i] = selection[r];
 		selection[r] = selection[--size];
 	}
@@ -188,14 +187,22 @@ public AvailabilityTraceDynamics(String prefix)
 static int size = 0;
 
 // Comment inherited from interface
-public void modify()
+public boolean execute()
 {
-	int cycle = CommonState.getCycle();
+	int cycle = CDState.getCycle();
 	if (cycle == 0) {
 		for (int i=0; i < Network.size(); i++) {
 			Network.get(i).setFailState(Fallible.DOWN);
 		}
 		size = 0;
+	}
+	if (cycle < 0 )
+	{
+		// XXX make this class conform to all simulation models
+		// panic: the wrong simulation model
+		System.err.println("To use AvailibilityTraceDynamics, "+
+		"you need to run a cycle drive simulation.");
+		System.exit(1);
 	}
 	int down = 0;
 	int up = 0;
@@ -214,11 +221,13 @@ public void modify()
 	}
 	size += up - down;
 	System.out.println("TraceDynamics" + 
-			" TIME " + CommonState.getCycle() +
-			" EPOCH " + CommonState.getCycle()/30 +
+			" TIME " + CDState.getCycle() +
+			" EPOCH " + CDState.getCycle()/30 +
 			" SIZE " + size +
 			" DOWN " + down + 
 			" UP " + up); 
+
+	return false;
 }
 
 }

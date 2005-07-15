@@ -16,11 +16,10 @@
  *
  */
 
-package peersim.util;
+package peersim.core;
 
 import java.io.*;
 import peersim.config.*;
-import peersim.core.*;
 
 /**
  * 
@@ -31,30 +30,32 @@ import peersim.core.*;
 public class Log
 {
 	
-	private static final String PAR_TIME = "log.time";
-	
-	private static boolean logtime = Configuration.contains(PAR_TIME);
+private static final String PAR_TIME = "log.time";
 
-  private static String prefix = "";
+private static boolean logtime = Configuration.contains(PAR_TIME);
 
-  private static PrintStream stream = System.out;
+private static String prefix = "";
+
+private static PrintStream stream = System.out;
   
-  public static void setStream(PrintStream newStream)
-  {
+public static void setStream(PrintStream newStream)
+{
   	stream = newStream;
-  }
+}
 
-  public static void setPrefix(String newPrefix)
-  {
-  	prefix = newPrefix+" ";
-  }
+public static void setPrefix(String newPrefix)
+{
+	prefix = newPrefix+" ";
+}
 
-  public static void println(String observerId, String string)
-  {
-  	if (logtime) 
-  		stream.println(observerId + " " + prefix + " T " + CommonState.getTime() + string);
+public static void println(String observerId, String string)
+{
+	if (logtime) 
+		stream.println(observerId + " " + prefix +
+		" T " + CommonState.getTime() + string);
   	else
   		stream.println(observerId + " " + prefix + string);
-  }
+}
 
 }
+

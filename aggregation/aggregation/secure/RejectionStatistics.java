@@ -18,8 +18,8 @@
 
 package aggregation.secure;
 
-import peersim.reports.*;
-import peersim.util.*;
+import peersim.core.Control;
+import peersim.core.Log;
 
 /**
  * This class is used to collect statistics with respect to the actual
@@ -29,7 +29,7 @@ import peersim.util.*;
  * @version $Revision$
  */
 public class RejectionStatistics
-implements Observer
+implements Control
 {
 
 //--------------------------------------------------------------------------
@@ -89,7 +89,7 @@ public static void incIncorrect()
 //--------------------------------------------------------------------------
 
 // Comment inherited from interface
-public boolean analyze()
+public boolean execute()
 {
 	Log.println(name, correct + " " + incorrect);
 	return false;

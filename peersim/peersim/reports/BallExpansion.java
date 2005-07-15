@@ -20,11 +20,12 @@ package peersim.reports;
 
 import peersim.config.Configuration;
 import peersim.core.Network;
+import peersim.core.CommonState;
 import peersim.util.IncrementalStats;
 import peersim.util.RandPermutation;
 
 /**
-* Observer to analyse the ball expansion, it the number of nodes that
+* Control to analyse the ball expansion, it the number of nodes that
 * are accessable from a given node in at most 1, 2, etc steps.
 * It works only after the simulation.
 */
@@ -64,7 +65,7 @@ private final boolean stats;
 /** working variable */
 private final int[] b;
 
-private final RandPermutation rp = new RandPermutation();
+private final RandPermutation rp = new RandPermutation(CommonState.r);
 
 
 // ===================== initialization ================================
@@ -85,7 +86,7 @@ public BallExpansion(String name) {
 // =====================================================================
 
 
-public boolean analyze() {
+public boolean execute() {
 	
 	updateGraph();
 	

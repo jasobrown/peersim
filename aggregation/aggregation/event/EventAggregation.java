@@ -91,7 +91,7 @@ private void initSchedule()
 	// Set up first event. We assume that clocks are synchronized in a
 	// 1-second range
 	Node node = CommonState.getNode();
-	int delay = CommonRandom.r.nextInt(5000);
+	int delay = CommonState.r.nextInt(5000);
 	Message msg = new Message(true, node, this, cycle, 0);
 	EDSimulator.add(delay, msg, node, CommonState.getPid());
 }
@@ -116,7 +116,7 @@ public void processEvent(Node node, int pid, Object event)
 			System.out.print(link.degree()+" ");
 			return;
 		}
-		int r = CommonRandom.r.nextInt(link.degree());
+		int r = CommonState.r.nextInt(link.degree());
 		remote = link.getNeighbor(r);
 		Transport trans = (Transport) node.getProtocol(tid);
 		

@@ -36,7 +36,7 @@ import peersim.cdsim.CDProtocol;
 * Note that reimplementing this class allows for arbitrary scheduling,
 * including adaptively changing or irregular cycle lengths, etc.
 */
-public class NextCycleEvent {
+public class NextCycleEvent implements Cloneable {
 
 // ============================== fields ==============================
 // ====================================================================
@@ -46,7 +46,7 @@ public class NextCycleEvent {
 * the next cycle. Its type is (or extends) {@link NextCycleEvent}.
 * Defaults to {@link NextCycleEvent}.
 */
-public static final String PAR_NEXTCYCLE = "nextcycle";
+public static final String PAR_NEXTC = "nextcycle";
 
 
 // =============================== initialization ======================
@@ -54,23 +54,50 @@ public static final String PAR_NEXTCYCLE = "nextcycle";
 
 
 /**
- * Creates a next cycle event for a protocol. It also schedules the protocol
- * for the first execution adding it to the priority queue of the event driven
- * simulation. The time of the first execution is detemined by
- * {@link #firstDelay}.
- */
-NextCycleEvent(Node node, int pid, Scheduler sch) {
+* Reads configuration to initialize the object. Extending classes should
+* have a constructor with the same signature, often as simple as
+* <pre>super(n)</pre>.
+* This specific implementation does nothing.
+*/
+public NextCycleEvent(String n) {}
 
+// --------------------------------------------------------------------
+
+/**
+* Returns a clone of the object. Overriding this method is necessary and
+* typically is as simple as <pre>return super.clone()</pre>. In general,
+* always use <pre>super.clone()</pre> to obtain the object to be returned
+* on which you can perform optional deep cloning operations (arrays, etc).
+*/
+protected Object clone() throws CloneNotSupportedException {
 	
-	long time = CommonState.getTime();
-	long firsttime = firstTime(sch);
-	if( firsttime > time ) EDSimulator.add(firsttime-time, this, node, pid);
+	return super.clone();
 }
 
 
 // ========================== methods ==================================
 // =====================================================================
 
+
+/**
+ * Schedules the protocol
+ * for the first execution adding it to the priority queue of the event driven
+ * simulation. The time of the first execution is detemined by
+ * {@link #firstTime}. This mehtod creates a clone of the object and puts
+ * that clone into the queue. Also, it calls the {@link #firstTime} of the
+ * clone and not this object.
+ */
+public final void scheduleFirstEvent(Node node, int pid, Scheduler sch) {
+
+	NextCycleEvent nce=null;
+	try { nce = (NextCycleEvent)this.clone(); }
+	catch(CloneNotSupportedException e) {} //cannot possibly happen
+	long time = CommonState.getTime();
+	long firsttime = nce.firstTime(sch);
+	if( firsttime > time ) EDSimulator.add(firsttime-time, nce, node, pid);
+}
+
+// --------------------------------------------------------------------
 
 /**
 * Executes the nextCycle method of the protocol, and schedules the next call

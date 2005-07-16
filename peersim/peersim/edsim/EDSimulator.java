@@ -160,18 +160,26 @@ protected static void scheduleCDProtocols()
 			// with no default values to avoid "overscheduling"
 			// due to lack of step option.
 			cdpSchedules[i] = new Scheduler(names[i], false);
+			NextCycleEvent nce = null;
+			String nceprop = names[i]+"."+NextCycleEvent.PAR_NEXTC;
+			if( Configuration.contains(nceprop) )
+			{
+				nce = (NextCycleEvent)
+					Configuration.getInstance(nceprop);
+			}
+			else
+			{
+				nce = new NextCycleEvent((String)null);
+			}
 			
 			for( int j=0; j<Network.size(); ++j )
 			{
-				// adds itself to the queue
-				new NextCycleEvent(
+				// adds a clone of itself to the queue
+				nce.scheduleFirstEvent(
 					Network.get(j),i,cdpSchedules[i]);
 			}
 		}
 	}
-	
-	// schedule protocols for execution by creating the initial
-	// events for all nodes
 }
 
 //---------------------------------------------------------------------

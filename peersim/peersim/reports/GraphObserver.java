@@ -104,13 +104,13 @@ protected GraphObserver(String name) {
 protected void updateGraph() {
 	
 	if( CommonState.getTime() != GraphObserver.time ||
-	    CDState.getCycleT() != GraphObserver.ctime ||
+	    (CDState.isCD() && (CDState.getCycleT() != GraphObserver.ctime)) ||
 	    CommonState.getPhase() != GraphObserver.phase )
 	{
 		// we need to update the graphs
 		
 		GraphObserver.time = CommonState.getTime();
-		GraphObserver.ctime = CDState.getCycleT();
+		if( CDState.isCD() ) GraphObserver.ctime = CDState.getCycleT();
 		GraphObserver.phase = CommonState.getPhase();
 
 		GraphObserver.dirg = new OverlayGraph(protocolID);

@@ -74,13 +74,13 @@ public static final String PAR_UNTIL = "until";
 */
 public static final String PAR_FINAL = "FINAL";
 
-protected final long step;
+public final long step;
 
-protected final long from;
+public final long from;
 
-protected final long until;
+public final long until;
 
-protected final boolean fin;
+public final boolean fin;
 
 /** The next scheduled time point.*/
 protected long next;

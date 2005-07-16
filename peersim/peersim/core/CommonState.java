@@ -45,8 +45,8 @@ public static final int POST_SIMULATION = 1;
 /**
  * Current time. Note that this value is simulator independent, all simulation
  * models have a notion related to time. For example, in the cycle based model,
- * the cycle id gives time, while in even driven simulations all events have
- * a timestamp.
+ * the cycle id gives time, while in even driven simulations there is a more
+ * realistic notion of time.
  */
 private static long time = 0;
 
@@ -108,10 +108,7 @@ static {
  * Returns current time. In event-driven simulations, returns the current
  * time (a long-value).
  * In cycle-driven simulations, returns the current cycle (a long that
- * can safely be cast into an integer). Initializers, observers, and
- * dynamics should always call this method instead of {@link #getCycle()};
- * in this way, they are compatible with both cycle-driven and event-driven
- * simulations.
+ * can safely be cast into an integer).
  */
 public static long getTime()
 {
@@ -134,7 +131,7 @@ public static void setTime(long t)
  * Returns the phase within a time step. Currently the following phases are
  * understood.
  * <ul>
- * <li>{@link #POST_LAST_CYCLE}the simulation is completed</li>
+ * <li>{@link #POST_SIMULATION} the simulation is completed</li>
  * </ul>
  */
 public static int getPhase()

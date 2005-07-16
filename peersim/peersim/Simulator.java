@@ -50,7 +50,7 @@ public class Simulator {
 protected static final int CDSIM = 0;
 
 /** {@link EDSimulator} */
-protected static final int EDSIM = 2;
+protected static final int EDSIM = 1;
 
 protected static final int UNKNOWN = -1;
 

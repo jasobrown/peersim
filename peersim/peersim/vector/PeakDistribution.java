@@ -115,7 +115,7 @@ public boolean execute()
 	{
 		double v = value.doubleValue()/pn;
 		for (int i=0; i < pn; i++) set(i, v);
-		for (int i=pn; i < Network.size(); i++) set(i,0);
+		for (int i=pn; i < Network.size(); i++) set(i,0.0);
 	}
 
 	return false;

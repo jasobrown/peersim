@@ -156,7 +156,7 @@ try
 	{
 		String filename = baseName
 		+ ValueDumper.format(CommonState.getTime(), 10000);
-		if( CDState.getCycleT() >= 0 )
+		if( CDState.isCD() )
 			filename = filename + "-"
 			+ValueDumper.format(CDState.getCycleT(),Network.size());
 		filename = filename + ".vec";

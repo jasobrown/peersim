@@ -102,10 +102,14 @@ public static void reset() {
 	
 	// creating prototype node
 	Node tmp = null;
-	if (!Configuration.contains(PAR_NODE)) {
-		System.err.println("Network: no node defined, using GeneralNode");
+	if (!Configuration.contains(PAR_NODE))
+	{
+		System.err.println(
+		"Network: no node defined, using GeneralNode");
 		tmp = new GeneralNode("");
-	} else {
+	}
+	else
+	{
 		tmp = (Node) Configuration.getInstance(PAR_NODE);
 	}
 	prototype = tmp;
@@ -260,16 +264,21 @@ public static void shuffle() {
 
 public static void test() {
 	
-	System.err.println("len="+len);
-	System.err.println("node.length="+node.length);
+	System.err.println("number of nodes = "+len);
+	System.err.println("capacity (max number of nodes) = "+node.length);
 	for(int i=0; i<len; ++i)
 	{
 		System.err.println("node["+i+"]");
 		System.err.println(node[i].toString());
 	}
-
-	peersim.graph.GraphIO.writeUCINET_DL(new OverlayGraph(0),System.err);
 	
+	if(prototype==null) return;
+	for(int i=0; i<prototype.protocolSize(); ++i)
+	{
+		if( prototype.getProtocol(i) instanceof Linkable )
+			peersim.graph.GraphIO.writeUCINET_DL(
+			new OverlayGraph(i),System.err);
+	}
 }
 
 }

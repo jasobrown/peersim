@@ -63,10 +63,22 @@ private static Integer _cycle = new Integer(0);
 // ======================== initialization =========================
 // =================================================================
 
+
 static {}
+
 
 // ======================= methods =================================
 // =================================================================
+
+
+/**
+* Returns true if and only if there is a cycle driven simultion going on.
+* If it returns false, then the methods of this class throw a runtime
+* exception, since no cycle information is available.
+*/
+public static boolean isCD() { return cycle >= 0; }
+
+//-----------------------------------------------------------------
 
 /**
  * In cycle-driven simulations, returns the current cycle. Otherwise
@@ -75,7 +87,9 @@ static {}
  */
 public static int getCycle()
 {
-	return cycle;
+	if( cycle >= 0 ) return cycle;
+	else throw new RuntimeException("Cycle driven state accessed when "+
+		"no cycle state information is available.");
 }
 
 //-----------------------------------------------------------------
@@ -101,7 +115,9 @@ public static void setCycle(int t)
  */
 public static Integer getCycleObj()
 {
-	return _cycle;
+	if( _cycle != null ) return _cycle;
+	else throw new RuntimeException("Cycle driven state accessed when "+
+		"no cycle state information is available.");
 }
 
 //-----------------------------------------------------------------
@@ -115,7 +131,9 @@ public static Integer getCycleObj()
  */
 public static int getCycleT()
 {
-	return ctime;
+	if( ctime >= 0 ) return ctime;
+	else throw new RuntimeException("Cycle driven state accessed when "+
+		"no cycle state information is available.");
 }
 
 // -----------------------------------------------------------------

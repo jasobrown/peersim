@@ -127,8 +127,12 @@ public void add(long time, Object event, Node node, byte pid)
  * the Event class is used. This means that data contained in the
  * returned event are overwritten when a new invocation of this
  * method is performed.
+ * @return first event or null if size is zero
  */
 public Event removeFirst() {
+	
+	if(size==0) return null;
+
 	ev.time = times[0];
 	ev.event = events[0];
 	ev.node = nodes[0];
@@ -166,6 +170,8 @@ public class Event
 	long time;
 	Node node;
 	byte pid;
+	public String toString() {
+		return event+" to node "+node+"prot "+pid+"at "+time; }
 }
 
 //--------------------------------------------------------------------------

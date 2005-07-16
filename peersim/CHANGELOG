@@ -1,3 +1,12 @@
+MJ 16/07/05
+- added support for wrapping cycle driven protocol implementations into
+  an event driven simulation. All calls to nextCycle are managed by a separate
+  event and the "step" parameter of the scheduler for the protocol serves
+  as the cycle length. It can be different for all protocols, and the
+  way the consequtive cycles are scheduled can be changed by extending
+  NextCycleEvent.
+  More to come...
+
 MJ 15/07/05
 - some strong refactoring of the entire stuff.
   THIS UPDATE WILL MOST LIKELY BRAKE YOUR APPLICATIONS

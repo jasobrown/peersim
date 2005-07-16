@@ -87,6 +87,9 @@ protected static Control[] controls=null;
 /** Holds the control schedulers of this simulation */
 protected static Scheduler[] ctrlSchedules = null;
 
+/** Holds the control schedulers of this simulation */
+protected static Scheduler[] cdpSchedules = null;
+
 /** Ordered list of events (heap) */
 protected static Heap heap = new Heap();
 
@@ -114,7 +117,7 @@ protected static void runInitializers() {
 
 // --------------------------------------------------------------------
 
-protected static String[] loadControls()
+protected static void scheduleControls()
 {
 	// load controls
 	String[] names = Configuration.getNames(PAR_CTRL);
@@ -127,13 +130,21 @@ protected static String[] loadControls()
 	}
 	System.err.println("EDSimulator: loaded controls "+
 		Arrays.asList(names));
-	return names;
+
+	// Schedule controls execution
+	int order = 0;
+	for (int i=0; i < controls.length; i++) {
+		ControlEvent event = new ControlEvent(
+			controls[i], ctrlSchedules[i], order++);
+		if (order > ((1 << rbits)-1))
+			throw new IllegalArgumentException(
+			"Too many control objects");
+	}
 }
 
 //---------------------------------------------------------------------
 
-/*
-protected static void loadCDProtocols()
+protected static void scheduleCDProtocols()
 {
 	// CDProtocol instances are searched in Network.prototype, which
 	// contains the prototype node for the network (even if the network
@@ -141,43 +152,46 @@ protected static void loadCDProtocols()
 	String[] names = Configuration.getNames(Node.PAR_PROT);
 	Node node = Network.prototype;
 	int size = node.protocolSize();
-	int[] pids = new int[size];
-	int count = 0;
-	for (int i=0; i < size; i++) {
-		if (node.getProtocol(i) instanceof CDProtocol) {
-			pids[count++] = i;
+	cdpSchedules = new Scheduler[size];
+	for (int i=0; i < size; i++)
+	{
+		if (node.getProtocol(i) instanceof CDProtocol)
+		{
+			// with no default values to avoid "overscheduling"
+			// due to lack of step option.
+			cdpSchedules[i] = new Scheduler(names[i], false);
+			
+			for( int j=0; j<Network.size(); ++j )
+			{
+				// adds itself to the queue
+				new NextCycleEvent(
+					Network.get(j),i,cdpSchedules[i]);
+			}
 		}
 	}
 	
-	// Copy the array in one with correct length
-	cdprotocols = new int[count];
-	System.arraycopy(pids, 0, cdprotocols, 0, count);
-		
-	// load protocol schedulers (only for CDProtocols, with no default
-	// values to avoid "overscheduling" due to lack of step option.
-	protSchedules = new Scheduler[count];
-	for(int i=0; i<count; ++i)
-	{
-		protSchedules[i] = new Scheduler(names[pids[i]], false);
-	}
+	// schedule protocols for execution by creating the initial
+	// events for all nodes
 }
-*/
+
 //---------------------------------------------------------------------
 
 /**
  * Adds a new event to be scheduled, specifying the number of time units
- * of delay, plust
+ * of delay, and the exeution order parameter.
  * 
  * @param time 
  *   The actual time at which the next event should be scheduled.
  * @param order
- *   The index used to specify the order in which cycle-based events
- *   should be executed, if they happen to be at the same time.
+ *   The index used to specify the order in which control events
+ *   should be executed, if they happen to be at the same time, which is
+ *   typically the case.
  * @param event 
  *   The object associated to this event
  */
 static void addControlEvent(long time, int order, Object event)
 {
+	if (time > endtime) return;
 	time = (time << rbits) | order;
 	heap.add(time, event, null, (byte) 0);
 }
@@ -188,39 +202,58 @@ static void addControlEvent(long time, int order, Object event)
  * Execute and remove the next event from the ordered event list.
  * @return true if the execution should be stopped.
  */
-private static boolean executeNext()
-{
+private static boolean executeNext() {
+
 	Heap.Event ev = heap.removeFirst();
+	if( ev == null )
+	{
+		System.err.println("EDSimulator: queue is empty, quitting");
+		return true;
+	}
+	
 	long time = ev.time >> rbits;
-	if (time >= nextlog) {
+	if (time >= nextlog)
+	{
 		System.err.println("Current time: " + time);
 		nextlog = nextlog+logtime;
 	}
 	if (time > endtime)
+	{
+		System.err.println("EDSimulator: reached end time, quitting");
 		return true;
+	}
+	
 	CommonState.setTime(time);
 	int pid = ev.pid;
-	if (ev.node == null) {
-		// Cycle-based event; handled through a special method
-		ControlEvent cycle = (ControlEvent) ev.event;
-		return cycle.execute();
-	} else if (ev.node == Network.prototype) {
-		// Do nothing; the prototype may schedule itself 
-		return false;
-	} else {
-		// Check if the node is up; if not, skip this event.
-		if (!ev.node.isUp()) 
-			return false;
+	if (ev.node == null)
+	{
+		// control event; handled through a special method
+		ControlEvent ctrl = (ControlEvent) ev.event;
+		return ctrl.execute();
+	}
+	else if (ev.node != Network.prototype && ev.node.isUp() )
+	{
 		CommonState.setPid(pid);
-		try {
+		CommonState.setNode(ev.node);
+		if( ev.event instanceof NextCycleEvent )
+		{
+			NextCycleEvent nce = (NextCycleEvent) ev.event;
+			nce.execute(cdpSchedules[pid]);
+		}
+		else
+		{try
+		{
 			EDProtocol prot = (EDProtocol) ev.node.getProtocol(pid);
 			prot.processEvent(ev.node, pid, ev.event);
-		} catch (ClassCastException e) {
+		}
+		catch (ClassCastException e)
+		{
 			throw new IllegalArgumentException("Protocol " + pid + 
 					" does not implement EDProtocol");
-		}
-		return false;
+		}}
 	}
+	
+	return false;
 }
 
 //---------------------------------------------------------------------
@@ -247,19 +280,8 @@ public static void nextExperiment()
 	System.err.println("EDSimulator: running initializers");
 	CommonState.setTime(0); // needed here
 	runInitializers();
-	loadControls();
-
-	int[] times;
-	int order = 0;
-	
-	// Schedule controls execution
-	for (int i=0; i < controls.length; i++) {
-		ControlEvent event = new ControlEvent(
-			controls[i], ctrlSchedules[i], order++);
-		if (order > ((1 << rbits)-1))
-			throw new IllegalArgumentException(
-			"Too many control objects");
-	}
+	scheduleControls();
+	scheduleCDProtocols();
 
 	// Perform the actual simulation; executeNext() will tell when to
 	// stop.
@@ -289,7 +311,7 @@ public static void nextExperiment()
  *   The object associated to this event
  * @param node 
  *   The node associated to the event. A value of null corresponds to a 
- *   cycle-based event and will handled opportunely    
+ *   control event and will be handled appropriately.  
  * @param pid 
  *   The identifier of the protocol to which the event will be delivered
  */
@@ -299,8 +321,10 @@ public static void add(long delay, Object event, Node node, int pid)
 		throw new IllegalArgumentException(
 				"This version does not support more than " 
 				+ Byte.MAX_VALUE + " protocols");
-	long time = ((CommonState.getTime()+delay) << rbits) | 
-		CommonState.r.nextInt(1 << rbits);
+	
+	long time = CommonState.getTime()+delay;
+	if (time > endtime) return;
+	time = (time << rbits) | CommonState.r.nextInt(1 << rbits);
 	heap.add(time, event, node, (byte) pid);
 }
 

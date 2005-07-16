@@ -61,7 +61,10 @@ public static final String PAR_NEXTCYCLE = "nextcycle";
  */
 NextCycleEvent(Node node, int pid, Scheduler sch) {
 
-	EDSimulator.add(firstDelay(sch), this, node, pid);
+	
+	long time = CommonState.getTime();
+	long firsttime = firstTime(sch);
+	if( firsttime > time ) EDSimulator.add(firsttime-time, this, node, pid);
 }
 
 
@@ -79,7 +82,11 @@ public final void execute(Scheduler sch) {
 	Node node = CommonState.getNode();
 	CDProtocol cdp = (CDProtocol)node.getProtocol(pid);
 	cdp.nextCycle(node,pid);
-	EDSimulator.add(nextDelay(sch), this, node, pid);
+	
+	long delay = nextDelay(sch);
+	if( CommonState.getTime()+delay < sch.until )
+		EDSimulator.add(delay, this, node, pid);
+
 }
 
 // --------------------------------------------------------------------
@@ -87,6 +94,7 @@ public final void execute(Scheduler sch) {
 /**
 * Schedules the object for the next execution
 * adding it to the priority queue of the event driven simulation.
+* The impementation
 */
 protected long nextDelay(Scheduler sch) {
 	
@@ -96,14 +104,26 @@ protected long nextDelay(Scheduler sch) {
 // --------------------------------------------------------------------
 
 /**
-* Schedules the object for the next execution
-* adding it to the priority queue of the event driven simulation.
-* This implementation returns a randomly selected point from the cycle
+* Returns the first time this even is executed.
+* This implementation returns a randomly selected point within the cycle
 * length, which is given by {@link Scheduler#step}.
+* It also makes sure that the value is within the sceduled execution
+* interval. In other words, it returns a random point from the interval
+* that beginds with <pre>max(currentTime,from)</pre>, inclusive, and
+* ends with <pre>min(max(currentTime,from)+step,until)</pre>, exclusive.
+* @param sch is the schedule that contains the values from, until and step.
+* @return the selected time point or -1, if there is no feasible one
 */
-protected long firstDelay(Scheduler sch) {
+protected long firstTime(Scheduler sch) {
 	
-	return CommonState.r.nextLong(sch.step);
+	long from = Math.max(CommonState.getTime(),sch.from);
+	if( sch.until > from )
+	{
+		long delaybound = Math.min(sch.step,sch.until-from);
+		return from+CommonState.r.nextLong(delaybound);
+	}
+	else
+		return -1;
 }
 
 }

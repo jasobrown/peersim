@@ -207,7 +207,8 @@ private static boolean executeNext() {
 	Heap.Event ev = heap.removeFirst();
 	if( ev == null )
 	{
-		System.err.println("EDSimulator: queue is empty, quitting");
+		System.err.println("EDSimulator: queue is empty, quitting"+
+		" at time "+CommonState.getTime());
 		return true;
 	}
 	
@@ -215,11 +216,13 @@ private static boolean executeNext() {
 	if (time >= nextlog)
 	{
 		System.err.println("Current time: " + time);
-		nextlog = nextlog+logtime;
+		do { nextlog+=logtime; }
+		while(time >= nextlog);
 	}
 	if (time > endtime)
 	{
-		System.err.println("EDSimulator: reached end time, quitting");
+		System.err.println("EDSimulator: reached end time, quitting,"+
+		" leaving "+heap.size()+" unprocessed events in the queue");
 		return true;
 	}
 	

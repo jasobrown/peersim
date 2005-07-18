@@ -1,3 +1,11 @@
+MJ 17/07/05
+- Cleaned up the time issue and introduced CommonState.getIntTime for
+  protocols that need timestamps but want to avoid longs (for performance
+  resons). CDState.getCycle and CDState.getCycleT are used only when
+  absolutely necessary. A good practice is to use CommonState methods
+  only, to allow compatibility with the evend driven engine.
+  More to come...
+
 MJ 16/07/05
 - added support for wrapping cycle driven protocol implementations into
   an event driven simulation. All calls to nextCycle are managed by a separate

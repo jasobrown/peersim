@@ -117,7 +117,7 @@ public class LBObserver implements Control {
         
         temp_avg = (int)(sum/len);
         Log.println(name,
-        CommonState.getTime() + " " + // cycle identifier
+        CommonState.getTime() + " " + // current time (cycle)
         stats.getAverage() +" " +
         stats.getMax() +" "+
         stats.getMin() +" "+

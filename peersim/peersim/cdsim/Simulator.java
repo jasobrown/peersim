@@ -184,6 +184,7 @@ public static void nextExperiment()  {
 
 	// Reading parameter
 	cycles = Configuration.getInt(PAR_CYCLES);
+	CDState.setEndTime(cycles);
 	shuffle = Configuration.contains(PAR_SHUFFLE);
 	getpair_rand = Configuration.contains(PAR_GETPAIR);
 

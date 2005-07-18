@@ -53,12 +53,6 @@ private static int ctime = -1;
  */
 private static int cycle = -1;
 
-/**
- * Working variable to provide for an object version of cycle. This is useful to
- * save memory because all objects can use the same object.
- */
-private static Integer _cycle = new Integer(0);
-
 
 // ======================== initialization =========================
 // =================================================================
@@ -102,7 +96,6 @@ public static int getCycle()
  */
 public static void setCycle(int t)
 {
-	_cycle = new Integer(t);
 	cycle = t;
 	ctime = 0;
 	setTime(t);
@@ -115,7 +108,7 @@ public static void setCycle(int t)
  */
 public static Integer getCycleObj()
 {
-	if( _cycle != null ) return _cycle;
+	if( cycle >= 0 ) return Integer.valueOf(cycle);
 	else throw new RuntimeException("Cycle driven state accessed when "+
 		"no cycle state information is available.");
 }

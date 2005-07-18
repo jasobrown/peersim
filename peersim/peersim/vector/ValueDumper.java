@@ -20,7 +20,7 @@ package peersim.vector;
 
 import peersim.core.*;
 import peersim.config.*;
-import peersim.cdsim.CDState;
+import peersim.util.FileNameGenerator;
 import java.io.*;
 import java.lang.reflect.*;
 
@@ -86,6 +86,8 @@ private final int pid;
 /** Base name of the file to be written */
 private final String baseName;
 
+private final FileNameGenerator fng;
+
 /** Methods name */
 private final String[] methodNames;
 
@@ -105,8 +107,11 @@ public ValueDumper(String prefix)
 	this.prefix = prefix;
 	pid = Configuration.getPid(prefix + "." + PAR_PROT);
 	baseName = Configuration.getString(prefix + "." + PAR_BASENAME, null);
-	String value = Configuration
-			.getString(prefix + "." + PAR_METHODS, "getValue");
+	if(baseName!=null) fng = new FileNameGenerator(baseName,".vec");
+	else fng = null;
+	
+	String value = Configuration.getString(
+		prefix + "." + PAR_METHODS, "getValue");
 	methodNames = value.split("\\s");
 	// Search the methods
 	Class clazz = Network.prototype.getProtocol(pid).getClass();
@@ -130,19 +135,6 @@ public ValueDumper(String prefix)
 // Methods
 // --------------------------------------------------------------------------
 
-private static String format(long l, long max)
-{
-	String ss = String.valueOf(max);
-	String sc = String.valueOf(l);
-	StringBuffer sb = new StringBuffer(ss);
-	for (int i = 0; i < ss.length() - sc.length(); ++i)
-		sb.setCharAt(i, '0');
-	sb.replace(ss.length() - sc.length(), ss.length(), sc);
-	return sb.toString();
-}
-
-// ---------------------------------------------------------------------
-
 /**
  * @inheritDoc
  */
@@ -154,13 +146,8 @@ try
 	PrintStream pstr = System.out;
 	if (baseName != null)
 	{
-		String filename = baseName
-		+ ValueDumper.format(CommonState.getTime(), 10000);
-		if( CDState.isCD() )
-			filename = filename + "-"
-			+ValueDumper.format(CDState.getCycleT(),Network.size());
-		filename = filename + ".vec";
-		System.out.println(filename);
+		String filename = fng.nextCounterName();
+		System.out.println("writing "+filename);
 		pstr = new PrintStream(new FileOutputStream(filename));
 	}
 	else	System.out.println();

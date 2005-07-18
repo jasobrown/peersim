@@ -28,7 +28,7 @@ import peersim.config.Configuration;
 * 
 * The concept of time depends on the simulation model. Current time
 * has to be set by the simulation engine, irrespective of the model,
-* and can be read using {@link CommonState.getTime()}. This schedular
+* and can be read using {@link CommonState#getTime()}. This schedular
 * is interpreted over those time points.
 *
 * <p>In this simple implementation the valid times will be

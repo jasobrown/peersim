@@ -18,9 +18,9 @@
 		
 package peersim.reports;
 
-import peersim.core.*;
 import peersim.config.Configuration;
-import peersim.graph.*;
+import peersim.graph.GraphIO;
+import peersim.util.FileNameGenerator;
 import java.io.PrintStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -53,6 +53,8 @@ public static final String PAR_FORMAT = "format";
 
 private final String baseName;
 
+private final FileNameGenerator fng;
+
 private final String format;
 
 
@@ -65,6 +67,8 @@ public GraphPrinter(String name) {
 	super(name);
 	baseName = Configuration.getString(name+"."+PAR_BASENAME,null);
 	format = Configuration.getString(name+"."+PAR_FORMAT,"neighborlist");
+	if(baseName!=null) fng = new FileNameGenerator(baseName,".graph");
+	else fng = null;
 }
 
 
@@ -83,10 +87,9 @@ try {
 	PrintStream pstr = System.out;
 	if( baseName != null )
 	{
-		fos = new FileOutputStream(
-			baseName+CommonState.getTime()+".graph");
-		System.out.println("writing to file "+
-			baseName+CommonState.getTime()+".graph");
+		String fname = fng.nextCounterName();
+		fos = new FileOutputStream(fname);
+		System.out.println("writing to file "+fname);
 		pstr = new PrintStream(fos);
 	}
 	else	System.out.println();

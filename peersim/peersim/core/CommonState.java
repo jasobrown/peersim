@@ -51,6 +51,16 @@ public static final int POST_SIMULATION = 1;
 private static long time = 0;
 
 /**
+ * The maxival value {@link #time} can ever take.
+ */
+private static long endtime = -1;
+
+/**
+ * The maxival value {@link #time} can ever take.
+ */
+private static int toshift = -1;
+
+/**
  * Information about where exactly the simulation is.
  */
 private static int phase = 0;
@@ -118,11 +128,57 @@ public static long getTime()
 //-----------------------------------------------------------------
 
 /**
+ * Returns current time in integer format. The purpose is to enhance the
+ * performance of protocols (ints are smaller and faster) when absolute
+ * precision is not required. It assumes that endtime has been set via
+ * {@link #setEndTime} by the simulation engine. It uses the endtime for
+ * the optimal mapping to get the maximal precision.
+ * In particular, in the cycle
+ * based model, time is the same as cycle which can be safely cast into
+ * integer, so no precision is lost.
+ */
+public static int getIntTime()
+{
+	return (int)(time>>toshift);
+}
+
+//-----------------------------------------------------------------
+
+/**
  * Sets the current time. 
  */
 public static void setTime(long t)
 {
 	time = t;
+}
+
+//-----------------------------------------------------------------
+
+/**
+ * Returns endtime.
+ * It is the maximal value {@link #getTime} ever returns. If it's negative, it
+ * means the endtime is not known.
+ */
+public static long getEndTime()
+{
+	return endtime;
+}
+
+//-----------------------------------------------------------------
+
+/**
+ * Sets the endtime. 
+ */
+public static void setEndTime(long t)
+{
+	if( endtime >= 0 )
+		throw new RuntimeException("You can set endtime only once");
+	if( t < 0 )
+		throw new RuntimeException("No negative values are allowed");
+		
+	endtime = t;
+	toshift = 32-Long.numberOfLeadingZeros(t);
+	if( toshift<0 ) toshift = 0;
 }
 
 //-----------------------------------------------------------------
@@ -182,6 +238,15 @@ public static Node getNode()
 public static void setNode(Node n)
 {
 	node = n;
+}
+
+//-----------------------------------------------------------------
+
+public static void main(String pars[]) {
+	
+	setEndTime(Long.parseLong(pars[0]));
+	setTime(Long.parseLong(pars[1]));
+	System.err.println(getTime()+" "+getIntTime());
 }
 
 }

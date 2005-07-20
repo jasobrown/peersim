@@ -64,13 +64,6 @@ public double nextExponential(double mean) {
 
 // -------------------------------------------------------------------------
 
-public double nextPower(double base, double a) {
-	
-	return base / Math.pow(nextDouble(), a) - base;
-}
-
-// -------------------------------------------------------------------------
-
 /**
 * Implements nextLong(long) the same way nexInt(int) is implemented in Random.
 * @param n the bound on the random number to be returned. Must be positive.

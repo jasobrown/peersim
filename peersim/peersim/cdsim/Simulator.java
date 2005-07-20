@@ -37,58 +37,53 @@ public class Simulator {
 
 /** 
  * Parameter representing the maximum number of cycles to be performed 
+ * @config
  */
 public static final String PAR_CYCLES = "simulation.cycles";
 
 /**
- * If this parameter is present, the order of visiting each node is shuffled
- * at each cycle. The default is no shuffle.
- */
-public static final String PAR_SHUFFLE = "simulation.shuffle";
-
-/**
-* The type of the getPair function. Defaults to "seq".
+* This option is only for experts. It switches off the main cycle that
+* calles the cycle driven protocols. When you switch this off, you need to
+* control the execution of the protocols by configuring controls that
+* do the job. It's there for people who want maximal flexibility for their
+* hacks.
+ * @config
 */
-public static final String PAR_GETPAIR = "simulation.getpair";
+private static final String PAR_NOMAIN = "simulation.nodefaultcycle";
 
 /**
  * This is the prefix for initializers. These have to be of type
  * {@link Dynamics}.
+ * @config
  */
-public static final String PAR_INIT = "init";
+private static final String PAR_INIT = "init";
 
 /**
  * This is the prefix for controls.
+ * @config
  */
-public static final String PAR_CTRL = "control";
+private static final String PAR_CTRL = "control";
 
 
 // --------------------------------------------------------------------
 
 /** The maximum number of cycles to be performed */
-protected static int cycles;
-
-protected static boolean shuffle;
-
-protected static boolean getpair_rand;
+private static int cycles;
 
 /** holds the modifiers of this simulation */
-protected static Control[] controls=null;
+private static Control[] controls=null;
 
 /** Holds the control schedulers of this simulation */
-protected static Scheduler[] ctrlSchedules = null;
-
-/** Holds the protocol schedulers of this simulation */
-protected static Scheduler[] protSchedules = null;
+private static Scheduler[] ctrlSchedules = null;
 
 
-// =============== protected methods ===================================
+// =============== private methods =====================================
 // =====================================================================
 
 /**
  * Load and run initializers.
  */
-protected static void runInitializers() {
+private static void runInitializers() {
 	
 	Object[] inits = Configuration.getInstanceArray(PAR_INIT);
 	String names[] = Configuration.getNames(PAR_INIT);
@@ -103,12 +98,23 @@ protected static void runInitializers() {
 
 // --------------------------------------------------------------------
 
-protected static String[] loadControls() {
+private static String[] loadControls() {
 
-	// load controls
+	boolean nomaincycle = Configuration.contains(PAR_NOMAIN);
 	String[] names = Configuration.getNames(PAR_CTRL);
-	controls = new Control[names.length];
-	ctrlSchedules = new Scheduler[names.length];
+	if(nomaincycle)
+	{
+		controls = new Control[names.length];
+		ctrlSchedules = new Scheduler[names.length];
+	}
+	else
+	{
+		controls = new Control[names.length+1];
+		ctrlSchedules = new Scheduler[names.length+1];
+		// calling with a prefix that cannot exist
+		controls[names.length]=new FullNextCycle(" ");
+		ctrlSchedules[names.length] = new Scheduler(" ");
+	}
 	for(int i=0; i<names.length; ++i)
 	{
 		controls[i]=(Control)Configuration.getInstance(names[i]);
@@ -120,93 +126,29 @@ protected static String[] loadControls() {
 
 //---------------------------------------------------------------------
 
-protected static void loadProtocolSchedules() {
-
-	// load protocol schedulers
-	String[] names = Configuration.getNames(Node.PAR_PROT);
-	protSchedules = new Scheduler[names.length];
-	for(int i=0; i<names.length; ++i)
-	{
-		protSchedules[i] = new Scheduler(names[i]);
-	}
-}
-
-//---------------------------------------------------------------------
-
-/** 
- * Execute all the protocols. 
- */
-protected static void nextRound(int cycle) {
-
-	if( shuffle )
-	{
-		Network.shuffle();
-	}
-	
-	for(int j=0; j<Network.size(); ++j)
-	{
-		Node node = null;
-		if( getpair_rand )
-			node = Network.get(
-			   CDState.r.nextInt(Network.size()));
-		else
-			node = Network.get(j);
-		if( !node.isUp() ) continue; 
-		int len = node.protocolSize();
-		CDState.setNode(node);
-		CDState.setCycleT(j);
-		// XXX maybe should use different shuffle for each protocol?
-		// (instead of running all on one node at the same time?)
-		for(int k=0; k<len; ++k)
-		{
-			// Check if the protocol should be executed, given the
-			// associated scheduler.
-			if (!protSchedules[k].active(cycle))
-				continue;
-				
-			CDState.setPid(k);
-			Protocol protocol = node.getProtocol(k);
-			if( protocol instanceof CDProtocol )
-			{
-				((CDProtocol)protocol).nextCycle(node, k);
-				if( !node.isUp() ) break;
-			}
-		}
-	}
-}
-
-//---------------------------------------------------------------------
-
 /**
  * Runs an experiment
  */
-public static void nextExperiment()  {
+public static final void nextExperiment()  {
 
 	// Reading parameter
 	cycles = Configuration.getInt(PAR_CYCLES);
 	CDState.setEndTime(cycles);
-	shuffle = Configuration.contains(PAR_SHUFFLE);
-	getpair_rand = Configuration.contains(PAR_GETPAIR);
 
 	// initialization
+	CDState.setCycle(0);
 	System.err.println("Simulator: resetting");
 	Network.reset();
 	System.err.println("Simulator: running initializers");
-	// Initializers are run at 
-	// cycle 0 (cycle-driven) / time 0 (event-driven)
-	CDState.setCycle(0);
 	runInitializers();
-			
-	loadControls();
-	loadProtocolSchedules();
 	
 	// main cycle
+	loadControls();
 	System.err.println("Simulator: starting simulation");
 	for(int i=0; i<cycles; ++i)
 	{
 		CDState.setCycle(i);
 
-		// analizer pre_dynamics
 		boolean stop = false;
 		for(int j=0; j<controls.length; ++j)
 		{
@@ -214,9 +156,6 @@ public static void nextExperiment()  {
 				stop = stop || controls[j].execute();
 		}
 		if( stop ) break;
-
-		// do one cycle
-		nextRound(i);
 		System.err.println("Simulator: cycle "+i+" done");
 	}
 

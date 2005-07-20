@@ -1,3 +1,15 @@
+MJ 20/07/05
+- Refactored cdsim.Simulator so that it now only loads and executes
+  controls, and calling the protocols is done by a control too. By default
+  the old config files work. However, this modification makes it possible
+  to totaly freely order the controls and the execution of a cycle, and
+  (with the help of NextCycle) it is possible to run only a subset of the
+  protocols, some controls in between and then some other subset. These
+  features however will be used only for hacking...
+- Removed the "simulation.shuffle" parameter, shuffling can now be
+  added by the control cdsim.Shuffle. This way the time within the cycle and
+  the schedule of the shuffling is as flexible as for any other control.
+
 MJ 17/07/05
 - Cleaned up the time issue and introduced CommonState.getIntTime for
   protocols that need timestamps but want to avoid longs (for performance

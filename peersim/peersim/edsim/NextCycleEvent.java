@@ -121,7 +121,8 @@ public final void execute(Scheduler sch) {
 /**
 * Schedules the object for the next execution
 * adding it to the priority queue of the event driven simulation.
-* The impementation
+* This default impementation uses a constant delay equal to the step
+* parameter of the schedule of this event (as set in the config file).
 */
 protected long nextDelay(Scheduler sch) {
 	

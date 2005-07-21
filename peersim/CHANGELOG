@@ -1,3 +1,6 @@
+MJ 21/07/05
+- Added some implementations of NextCycleEvent
+
 MJ 20/07/05
 - Refactored cdsim.Simulator so that it now only loads and executes
   controls, and calling the protocols is done by a control too. By default

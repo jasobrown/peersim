@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -23,11 +23,10 @@ import peersim.core.*;
 import peersim.config.Configuration;
 
 /**
-* Takes a {@link Linkable} protocol and adds connection which for a star
-* topology. No 
-* connections are removed, they are only added. So it can be used in
-* combination with other initializers.
-*/
+ * Takes a {@link Linkable} protocol and adds connection which for a star
+ * topology. No connections are removed, they are only added. So it can be used
+ * in combination with other initializers.
+ */
 public class WireStar implements Control, NodeInitializer {
 
 
@@ -35,29 +34,32 @@ public class WireStar implements Control, NodeInitializer {
 // ==================================================================
 
 
-/** 
-*  String name of the parameter used to select the protocol to operate on
-*/
-public static final String PAR_PROT = "protocol";
-
 /**
- * If this parameter is defined, method pack() is invoked on the specified
- * protocol at the end of the wiring phase. Default to false.
+ * The protocol to operate on.
+ * @config
  */
-public static final String PAR_PACK = "pack";
+private static final String PAR_PROT = "protocol";
 
 /**
-* The protocol we want to wire
-*/
+ * If this config property is defined, method {@link Linkable#pack()} is 
+ * invoked on the specified protocol at the end of the wiring phase. 
+ * Default to false.
+ * @config
+ */
+private static final String PAR_PACK = "pack";
+
+/**
+ * The protocol we want to wire
+ */
 private final int pid;
 
 /** If true, method pack() is invoked on the initialized protocol */
 private final boolean pack;
 
 /**
-* Used as center in the {@link NodeInitializer} implementation.
-*/
-private Node center=null;
+ * Used as center in the {@link NodeInitializer} implementation.
+ */
+private Node center = null;
 
 
 // ==================== initialization ==============================
@@ -75,7 +77,7 @@ public WireStar(String prefix) {
 // ===================================================================
 
 
-/** calls {@link GraphFactory#wireStar} if size is larger than 0.*/
+/** Calls {@link GraphFactory#wireStar} if size is larger than 0.*/
 public boolean execute() {
 	
 	if( Network.size() == 0 ) return false;
@@ -98,12 +100,11 @@ public boolean execute() {
 // -------------------------------------------------------------------
 
 /**
-* Adds a link to a fixed node, the center. This fixed node remains the
-* same throughout consequitive calls to this method. If the center
-* fails in the meantime, a new one is chosen so care should be taken.
-* The center is the 0th index node at the time of the
-* first call to the function.
-*/
+ * Adds a link to a fixed node, the center. This fixed node remains the same
+ * throughout consequitive calls to this method. If the center fails in the
+ * meantime, a new one is chosen so care should be taken. The center is the 0th
+ * index node at the time of the first call to the function.
+ */
 public void initialize(Node n) {
 	
 	if( Network.size() == 0 ) return;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -15,28 +15,28 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-		
+
 package peersim.core;
 
 /**
-* This interface must be implemented by protocols that need to release some
-* references when the fail state of their host node is set to DEAD.
-* Recall that this fail state means that the node will never get back online.
-* However, other nodes and protocols might still have references to these
-* dead nodes and protocols, and this fact is not always a bug. So implementing
-* this interface allows for removing stuff that we know is no longer necessary.
-* Especially for linkable protocols in the presence of churn, this is
-* essential: they typically have to release their links to other nodes to
-* prevent the formation of trees of removed nodes with a live reference to
-* the root.
-*/
-public interface Cleanable {
+ * This interface must be implemented by protocols that need to release
+ * some references when the fail state of their host node is set to
+ * {@link Fallible#DEAD}. Recall that this fail state means that the node
+ * will never get back online. However, other nodes and protocols might
+ * still have references to these dead nodes and protocols, and this fact
+ * is not always a bug. So implementing this interface allows for removing
+ * stuff that we know is no longer necessary. Especially for linkable
+ * protocols in the presence of churn, this is essential: they typically
+ * have to release their links to other nodes to prevent the formation of
+ * trees of removed nodes with a live reference to the root.
+ */
+public interface Cleanable
+{
 
-	/**
-	* Performs cleanup when removed from the network.
-	* This is called by the host
-	* node when its fail state is set to DEAD.
-	*/
-	public void onKill();
+/**
+ * Performs cleanup when removed from the network. This is called by the
+ * host node when its fail state is set to {@link Fallible#DEAD}.
+ */
+public void onKill();
+
 }
-

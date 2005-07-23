@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -39,10 +39,10 @@ public class E2ETransport implements Transport, RouterInfo
 //---------------------------------------------------------------------
 
 /**
- * String name of the parameter used to configure the 
- * latency delay for local connections. Defaults to 0.
+ * The latency delay for local connections. Defaults to 0.
+ * @config
  */
-public static final String PAR_LOCAL = "local";
+private static final String PAR_LOCAL = "local";
 	
 //---------------------------------------------------------------------
 //Static fields
@@ -65,7 +65,6 @@ private int router = -1;
 //Initialization
 //---------------------------------------------------------------------
 
-
 /**
  * Reads configuration parameters. Actual initialization (i.e.,
  * router assignment) is delegated to initializers.
@@ -76,6 +75,8 @@ public E2ETransport(String prefix)
 	local = Configuration.getInt(prefix + "." + PAR_LOCAL, 0);
 }
 
+//---------------------------------------------------------------------
+
 /**
  * Clones the object. No actual initialization is performed.
  */
@@ -83,7 +84,6 @@ public Object clone() throws CloneNotSupportedException
 {
 	return super.clone();
 }
-
 
 //---------------------------------------------------------------------
 //Methods inherited by Transport
@@ -99,6 +99,8 @@ public void send(Node src, Node dest, Object msg, int pid)
 	   E2ENetwork.getLatency(sender.router, receiver.router) + local*2;
 	EDSimulator.add(latency, msg, dest, pid);
 }
+
+//---------------------------------------------------------------------
 
 //Comment inherited from interface
 public int getLatency(Node src, Node dest)
@@ -124,6 +126,8 @@ public void setRouter(int router)
 {
 	this.router = router;
 }
+
+//---------------------------------------------------------------------
 
 /**
  * @return the router associated to this transport protocol.

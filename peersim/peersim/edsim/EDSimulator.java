@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -35,37 +35,41 @@ public class EDSimulator
 //---------------------------------------------------------------------
 	
 /**
- * The string name of the configuration parameter that specifies
- * the ending time for simulation. No event after this value
+ * The ending time for simulation. No event after this value
  * will be executed.
+ * @config
  */
-public static final String PAR_ENDTIME = "simulation.endtime";	
+private static final String PAR_ENDTIME = "simulation.endtime";	
 
 /**
- * The string name of the configuration parameter that specifies
+ * This parameter specifies
  * how often the simulator should log the current time on the
  * console. Standard error is used for such logs.
+ * @config
  */
-public static final String PAR_LOGTIME = "simulation.logtime";	
+private static final String PAR_LOGTIME = "simulation.logtime";	
 
 /** 
- * String name of the configuration parameter that specifies how many
+ * This parameter specifies how many
  * bits are used to order events that occurs at the same time. Defaults
  * to 8. A value smaller than 8 causes an IllegalParameterException.
  * Higher values allow for a better discrimination, but may reduce
- * the granularity of time values. 
+ * the granularity of time values.
+ * @config 
  */	
-public static final String PAR_RBITS = "simulation.timebits";
+private static final String PAR_RBITS = "simulation.timebits";
 
 /**
  * This is the prefix for initializers.
+ * @config
  */
-public static final String PAR_INIT = "init";
+private static final String PAR_INIT = "init";
 
 /**
  * This is the prefix for network dynamism managers.
+ * @config
  */
-public static final String PAR_CTRL = "control";
+private static final String PAR_CTRL = "control";
 
 
 //---------------------------------------------------------------------
@@ -161,7 +165,7 @@ protected static void scheduleCDProtocols()
 			// due to lack of step option.
 			cdpSchedules[i] = new Scheduler(names[i], false);
 			NextCycleEvent nce = null;
-			String nceprop = names[i]+"."+NextCycleEvent.PAR_NEXTC;
+			String nceprop = names[i]+"."+NextCycleEvent.PAR_NEXTCYCLE;
 			if( Configuration.contains(nceprop) )
 			{
 				nce = (NextCycleEvent)
@@ -186,7 +190,7 @@ protected static void scheduleCDProtocols()
 
 /**
  * Adds a new event to be scheduled, specifying the number of time units
- * of delay, and the exeution order parameter.
+ * of delay, and the execution order parameter.
  * 
  * @param time 
  *   The actual time at which the next event should be scheduled.
@@ -202,6 +206,18 @@ static void addControlEvent(long time, int order, Object event)
 	if (time > endtime) return;
 	time = (time << rbits) | order;
 	heap.add(time, event, null, (byte) 0);
+}
+
+//---------------------------------------------------------------------
+
+/**
+ * This method is used to check whether the current configuration can
+ * be used for cycle-driven simulations. 
+ */
+public static final boolean isConfigurationEventDriven()
+{
+	return Configuration.getInt(PAR_ENDTIME,-132)
+			!= -132;
 }
 
 //---------------------------------------------------------------------

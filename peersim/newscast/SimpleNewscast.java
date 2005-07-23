@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -18,7 +18,6 @@
 		
 package newscast;
 
-import peersim.util.*;
 import peersim.core.*;
 import peersim.config.*;
 import peersim.cdsim.*;
@@ -33,10 +32,15 @@ public class SimpleNewscast implements CDProtocol, Linkable {
 // =============== static fields =======================================
 // =====================================================================
 
+/** 
+ * Config parameter name for the cache size 
+ * @config
+ */
+private static final String PAR_CACHE = "cache";
 
 // We are using static temporary arrays to avoid garbage collection
-// of them. these are used by all SimpleNewscast protocols included
-// in the protocol array so its size is the maximum of the cache sizes
+// of them. These are used by all SimpleNewscast protocols included
+// in the protocol array so their size is the maximum of the cache sizes
 
 /** Temp array for merging. Its size is the same as the cache size.  */
 protected static Node[] tn;
@@ -44,8 +48,6 @@ protected static Node[] tn;
 /** Temp array for merging.  Its size is the same as the cache size. */
 protected static int[] ts;
 
-/** config parameter name for the cache size */
-public static final String PAR_CACHE = "cache";
 
 
 // =================== fields ==========================================

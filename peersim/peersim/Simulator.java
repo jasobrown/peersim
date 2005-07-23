@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -63,8 +63,9 @@ protected static final String[] simName = {
 /**
  * Parameter representing the number of times the experiment is run.
  * Defaults to 1.
+ * @config
  */
-public static final String PAR_EXPS = "simulation.experiments";
+private static final String PAR_EXPS = "simulation.experiments";
 	
 // ========================== methods ===================================
 // ======================================================================
@@ -74,12 +75,11 @@ public static final String PAR_EXPS = "simulation.experiments";
 */
 protected static int getSimID() {
 	
-	if( Configuration.getInt(peersim.cdsim.Simulator.PAR_CYCLES,-132)
-								!= -132 )
+	if( peersim.cdsim.Simulator.isConfigurationCycleDriven())
 	{
 		return CDSIM;
 	}
-	else if( Configuration.getInt(EDSimulator.PAR_ENDTIME,-132) != -132 )
+	else if( EDSimulator.isConfigurationEventDriven() )
 	{	
 		return EDSIM;
 	}

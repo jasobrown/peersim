@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -15,21 +15,37 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
- 
+
 package peersim.core;
 
 import peersim.config.Configuration;
 
 /**
-* A protocol that does nothing. It is useful to model a static link-structure
-* (topology). The only function of this protocol is to serve as a source
-* of neighborhood information for other protocols.
-*/
-public class IdleProtocol implements Protocol, Linkable {
+ * A protocol that does nothing. It is useful to model a static link-structure
+ * (topology). The only function of this protocol is to serve as a source of
+ * neighborhood information for other protocols.
+ */
+public class IdleProtocol implements Protocol, Linkable
+{
 
-////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------
+// Parameters
+// --------------------------------------------------------------------------
+
+/**
+ * Default init capacity
+ */
+private static final int DEFAULT_INITIAL_CAPACITY = 10;
+
+/**
+ * Initial capacity. Defaults to {@value #DEFAULT_INITIAL_CAPACITY}.
+ * @config
+ */
+private static final String PAR_INITCAP = "capacity";
+
+// --------------------------------------------------------------------------
 // Fields
-////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------
 
 /** Neighbors */
 protected Node[] neighbors;
@@ -37,60 +53,60 @@ protected Node[] neighbors;
 /** Actual number of neighbors in the array */
 protected int len;
 
-public static final int DEFAULT_INITIAL_CAPACITY=10;
-
-public static final String PAR_INITCAP = "capacity";
-
-////////////////////////////////////////////////////////////////////////////
-// Constructor
-////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------
+// Initialization
+// --------------------------------------------------------------------------
 
 public IdleProtocol(String s)
-{  
-	neighbors =
-		new Node[Configuration.getInt(s+"."+PAR_INITCAP,
+{
+	neighbors = new Node[Configuration.getInt(s + "." + PAR_INITCAP,
 			DEFAULT_INITIAL_CAPACITY)];
 	len = 0;
 }
 
-public Object clone() throws CloneNotSupportedException {
+//--------------------------------------------------------------------------
 
-	IdleProtocol ip = (IdleProtocol)super.clone();
+public Object clone() throws CloneNotSupportedException
+{
+	IdleProtocol ip = (IdleProtocol) super.clone();
 	ip.neighbors = new Node[neighbors.length];
 	System.arraycopy(neighbors, 0, ip.neighbors, 0, len);
 	ip.len = len;
 	return ip;
 }
 
-////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------
 // Methods
-////////////////////////////////////////////////////////////////////////////
-
+// --------------------------------------------------------------------------
 
 public boolean contains(Node n)
 {
-	for (int i=0; i < len; i++) {
+	for (int i = 0; i < len; i++) {
 		if (neighbors[i] == n)
 			return true;
 	}
 	return false;
 }
 
+// --------------------------------------------------------------------------
+
 public boolean addNeighbor(Node n)
 {
-	for (int i=0; i < len; i++) {
+	for (int i = 0; i < len; i++) {
 		if (neighbors[i] == n)
 			return false;
 	}
 	if (len == neighbors.length) {
-		Node[] temp = new Node[3*neighbors.length/2];
-		System.arraycopy(neighbors,0,temp,0,neighbors.length);
+		Node[] temp = new Node[3 * neighbors.length / 2];
+		System.arraycopy(neighbors, 0, temp, 0, neighbors.length);
 		neighbors = temp;
 	}
 	neighbors[len] = n;
 	len++;
 	return true;
 }
+
+// --------------------------------------------------------------------------
 
 public Node getNeighbor(int i)
 {
@@ -100,30 +116,41 @@ public Node getNeighbor(int i)
 	return neighbors[i];
 }
 
+// --------------------------------------------------------------------------
+
 public int degree()
 {
 	return len;
 }
 
+// --------------------------------------------------------------------------
+
 public void pack()
 {
-	if( len == neighbors.length ) return;
+	if (len == neighbors.length)
+		return;
 	Node[] temp = new Node[len];
-	System.arraycopy(neighbors,0,temp,0,len);
+	System.arraycopy(neighbors, 0, temp, 0, len);
 	neighbors = temp;
-}  
+}
 
-public String toString() {
-	
+// --------------------------------------------------------------------------
+
+public String toString()
+{
 	StringBuffer buffer = new StringBuffer();
-	buffer.append("len="+len+" maxlen="+neighbors.length+" [");
-	for(int i=0; i<len; ++i)
-	{
-		buffer.append(neighbors[i].getIndex()+" ");
+	buffer.append("len=" + len + " maxlen=" + neighbors.length + " [");
+	for (int i = 0; i < len; ++i) {
+		buffer.append(neighbors[i].getIndex() + " ");
 	}
 	return buffer.append("]").toString();
 }
 
-public void onKill() { neighbors=null; }
+// --------------------------------------------------------------------------
+
+public void onKill()
+{
+	neighbors = null;
+}
 
 }

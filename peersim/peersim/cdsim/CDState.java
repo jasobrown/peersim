@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -23,7 +23,7 @@ import peersim.core.CommonState;
 
 /**
  * This is the common state of a cycle driven simulation that all objects see.
- * I contains additional information, specific to the cycle driven model,
+ * It contains additional information, specific to the cycle driven model,
  * in addition to the info in {@link peersim.core.CommonState}. It's purpose is
  * simplification of parameter structures and increasing efficiency by putting
  * state information here instead of passing parameters. Fully static class, a
@@ -76,7 +76,7 @@ public static boolean isCD() { return cycle >= 0; }
 
 /**
  * In cycle-driven simulations, returns the current cycle. Otherwise
- * returns -1. In cycle drive simulations {@link getTime()} returns the
+ * returns -1. In cycle drive simulations {@link #getTime()} returns the
  * same value.
  */
 public static int getCycle()
@@ -91,8 +91,8 @@ public static int getCycle()
 /**
  * Sets current cycle. Used by the cycle based simulators. Resets also cycle
  * time to 0. It also calls
- * {@link #setTime} with the given parameter, to make sure {@link #getTime}
- * is indeed independent of the simulation model.
+ * {@link #setTime(long)} with the given parameter, to make sure 
+ * {@link #getTime()} is indeed independent of the simulation model.
  */
 public static void setCycle(int t)
 {

@@ -18,9 +18,8 @@
 
 package peersim.edsim;
 
+import peersim.config.*;
 import peersim.core.*;
-import peersim.cdsim.CDProtocol;
-import peersim.config.Configuration;
 
 
 /**

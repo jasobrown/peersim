@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -24,52 +24,51 @@ import peersim.config.*;
 import peersim.core.Control;
 
 /**
- * Reads a kind data set, inserting the latency information in a 
- * E2ENetwork data structure.
- *
+ * Reads a kind data set, inserting the latency information in a E2ENetwork
+ * data structure.
+ * 
  * @author Alberto Montresor
  * @version $Revision$
  */
-public class KingParser
-implements Control
+public class KingParser implements Control
 {
 
-//---------------------------------------------------------------------
-//Parameters
-//---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+// Parameters
+// ---------------------------------------------------------------------
 
 /**
- *  Name of the parameter used to configure the file containing the
- *  King measurements.
+ * The file containing the King measurements.
+ * @config
  */
 private static final String PAR_FILE = "file";
-	
+
 /**
- * Name of the parameter used to configure the ratio between the
- * time units used in the configuration file and the time units
- * used in the Peersim simulator.
+ * The ratio between the time units used in the configuration file and the
+ * time units used in the Peersim simulator.
+ * @config
  */
 private static final String PAR_RATIO = "ratio";
 
-//---------------------------------------------------------------------
-//Fields
-//---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+// Fields
+// ---------------------------------------------------------------------
 
-/** Name of the file containing the King measurements. */  
+/** Name of the file containing the King measurements. */
 private String filename;
 
-/** 
- * Ratio between the time units used in the configuration file
- * and the time units used in the Peersim simulator. 
+/**
+ * Ratio between the time units used in the configuration file and the time
+ * units used in the Peersim simulator.
  */
 private double ratio;
 
-/** Prefix for reading parameters*/
+/** Prefix for reading parameters */
 private String prefix;
 
-//---------------------------------------------------------------------
-//Initialization
-//---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+// Initialization
+// ---------------------------------------------------------------------
 
 /**
  * Read the configuration parameters.
@@ -77,13 +76,13 @@ private String prefix;
 public KingParser(String prefix)
 {
 	this.prefix = prefix;
-	ratio = Configuration.getDouble(prefix+"."+PAR_RATIO, 1);
-	filename = Configuration.getString(prefix+"."+PAR_FILE);
+	ratio = Configuration.getDouble(prefix + "." + PAR_RATIO, 1);
+	filename = Configuration.getString(prefix + "." + PAR_FILE);
 }
 
-//---------------------------------------------------------------------
-//Methods
-//---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+// Methods
+// ---------------------------------------------------------------------
 
 // Comment inherited from interface
 public boolean execute()
@@ -92,37 +91,39 @@ public boolean execute()
 	try {
 		in = new BufferedReader(new FileReader(filename));
 	} catch (FileNotFoundException e) {
-		throw new IllegalParameterException(
-			prefix+"."+PAR_FILE, filename + " does not exist");
+		throw new IllegalParameterException(prefix + "." + PAR_FILE, filename
+				+ " does not exist");
 	}
 
 	// XXX If the file format is not correct, we will get quite obscure
 	// exceptions. To be improved.
-	
+
 	String line = null;
 	// Skip initial lines
 	int size = 0;
-	try { 
-		while((line=in.readLine()) != null && !line.startsWith("node"));
+	try {
+		while ((line = in.readLine()) != null && !line.startsWith("node"));
 		while (line != null && line.startsWith("node")) {
 			size++;
 			line = in.readLine();
 		}
-	} catch (IOException e) { }
+	} catch (IOException e) {
+	}
 	E2ENetwork.reset(size, true);
 	System.out.println(size);
 	try {
-	do {
-		//System.out.println(line);
-		StringTokenizer tok = new StringTokenizer(line, ", ");
-		int n1 = Integer.parseInt(tok.nextToken())-1;
-		int n2 = Integer.parseInt(tok.nextToken())-1;
-		int latency=(int)(Double.parseDouble(tok.nextToken()) * ratio);
-		E2ENetwork.setLatency(n1, n2, latency);
-		
-		line = in.readLine();
-	} while (line != null);
-	} catch (IOException e) { }
+		do {
+			// System.out.println(line);
+			StringTokenizer tok = new StringTokenizer(line, ", ");
+			int n1 = Integer.parseInt(tok.nextToken()) - 1;
+			int n2 = Integer.parseInt(tok.nextToken()) - 1;
+			int latency = (int) (Double.parseDouble(tok.nextToken()) * ratio);
+			E2ENetwork.setLatency(n1, n2, latency);
+
+			line = in.readLine();
+		} while (line != null);
+	} catch (IOException e) {
+	}
 
 	return false;
 }

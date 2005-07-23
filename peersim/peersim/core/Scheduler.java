@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -28,7 +28,7 @@ import peersim.config.Configuration;
 * 
 * The concept of time depends on the simulation model. Current time
 * has to be set by the simulation engine, irrespective of the model,
-* and can be read using {@link CommonState#getTime()}. This schedular
+* and can be read using {@link CommonState#getTime()}. This scheduler
 * is interpreted over those time points.
 *
 * <p>In this simple implementation the valid times will be
@@ -45,34 +45,39 @@ public class Scheduler {
 // ==================================================================
 
 
-/** 
+/**
 * Defaults to 1.
+* @config
 */
-public static final String PAR_STEP = "step";
+private static final String PAR_STEP = "step";
 
 /** 
 * Defaults to -1.
+* @config
 */
-public static final String PAR_AT = "at";
+private static final String PAR_AT = "at";
 
 
 /** 
 * Defaults to 0.
+* @config
 */
-public static final String PAR_FROM = "from";
+private static final String PAR_FROM = "from";
 
 /** 
 * Defaults to <tt>Integer.MAX_VALUE</tt>.
+* @config
 */
-public static final String PAR_UNTIL = "until";
+private static final String PAR_UNTIL = "until";
 
 /**
 * Defines if component is active after the last cycle has finished.
 * Note that the index of last cycle is not know in advance because other
 * components can stop the simulation at any time.
 * By default not set.
+* @config
 */
-public static final String PAR_FINAL = "FINAL";
+private static final String PAR_FINAL = "FINAL";
 
 public final long step;
 

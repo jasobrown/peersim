@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -35,15 +35,15 @@ public class Unsubscribe extends GrowingNetwork {
 // ==================================================================
 
 
-/** 
-* String name of the parameter used to select the protocol to operate on.
-* It has to be a scamp protocol.
-*/
-public static final String PAR_PROT = "protocol";
+/**
+ * The protocol to operate on. It has to be a scamp protocol.
+ * @config
+ */
+private static final String PAR_PROT = "protocol";
 
 /**
-* The protocol we want to wire
-*/
+ * The protocol we want to wire
+ */
 private final int protocolID;
 
 
@@ -64,12 +64,12 @@ public Unsubscribe( String prefix ) {
 // ===================== protected methods ==============================
 // ======================================================================
 
-
 /**
-* Removes n random nodes from the network. Before removal, the unsubscription
-* protocol is run.
-* @param n the number of nodes to remove
-*/
+ * Removes n random nodes from the network. Before removal, the unsubscription
+ * protocol is run.
+ * @param n
+ *          the number of nodes to remove
+ */
 protected void remove( int n ) {
 
 	for(int i=0; i<n; ++i)

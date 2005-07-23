@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -26,7 +26,9 @@ import java.util.*;
 * as specified in the documentation.
 */
 public class GraphFactory {
-protected GraphFactory() {}
+
+/** Disable instance construction */
+private GraphFactory() {}
 
 // ===================== public static methods ======================
 // ==================================================================

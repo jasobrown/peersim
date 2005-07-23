@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -45,26 +45,31 @@ public class WireFromFile implements Control {
 
 
 /** 
-*  String name of the parameter used to select the protocol to operate on.
+*  The protocol to operate on.
+*  @config
 */
-public static final String PAR_PROT = "protocol";
+private static final String PAR_PROT = "protocol";
 
 /** 
-*  String name of the parameter used to select the filename to load links from.
+*  The filename to load links from.
+*  @config
 */
-public static final String PAR_FILE = "file";
+private static final String PAR_FILE = "file";
 
 /**
- * If this parameter is defined, method pack() is invoked on the specified
- * protocol at the end of the wiring phase. Default to false.
+ * If this config property is defined, method {@link Linkable#pack()} is 
+ * invoked on the specified protocol at the end of the wiring phase. 
+ * Default to false.
+ * @config
  */
-public static final String PAR_PACK = "pack";
+private static final String PAR_PACK = "pack";
 
 /** 
 *  String name of the parameter to set if the graph should be undirected,
 * that is, for each link (i,j) a link (j,i) will also be added.
+* @config
 */
-public static final String PAR_UNDIR = "undirected";
+private static final String PAR_UNDIR = "undirected";
 
 private final int pid;
 
@@ -79,6 +84,11 @@ private final boolean undirected;
 // ==================================================================
 
 
+/**
+ * Standard constructor that reads the configuration parameters.
+ * Invoked by the simulation engine.
+ * @param prefix the configuration prefix for this class
+ */
 public WireFromFile(String prefix) {
 
 	pid = Configuration.getPid(prefix+"."+PAR_PROT);

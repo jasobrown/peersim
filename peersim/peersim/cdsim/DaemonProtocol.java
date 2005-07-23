@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -26,7 +26,7 @@ import peersim.core.Control;
 /**
 * A protocol that is not realy a protocol, but a trick to carry out all
 * kinds of tasks during the simulation. Many users will probably not need it,
-* but it is a nice way to eg run controls in any time, not only between cycles.
+* but it is a nice way to e.g. run controls at any time, not only between cycles.
 */
 public class DaemonProtocol implements CDProtocol {
 
@@ -37,16 +37,18 @@ public class DaemonProtocol implements CDProtocol {
 
 /**
 * This is the prefix for network dynamism managers.
+* @config
 */
-public static final String PAR_CTRL = "control";
+private static final String PAR_CTRL = "control";
 
 /**
 * The controls will be run according to this frequency.
 * It is interpreted within a cycle, in terms of cycle time
 * ({@link CDState#getCycleT}). The first cycletime is 0.
 * Defaults to 1.
+* @config
 */
-public static final String PAR_STEP = "cstep";
+private static final String PAR_STEP = "cstep";
 
 // --------------------------------------------------------------------
 

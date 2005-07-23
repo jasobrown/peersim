@@ -53,13 +53,13 @@ public class VectAngle implements Control
  * The first protocol to be observed.
  * @config
  */
-public static final String PAR_PROT1 = "protocol1";
+private static final String PAR_PROT1 = "protocol1";
 
 /**
  * The second protocol to be observed.
  * @config
  */
-public static final String PAR_PROT2 = "protocol2";
+private static final String PAR_PROT2 = "protocol2";
 
 /**
  * The getter method used to obtain the values of the first protocol. 
@@ -70,7 +70,7 @@ public static final String PAR_PROT2 = "protocol2";
  * information about getters and setters.
  * @config
  */
-public static final String PAR_METHOD1 = "getter1";
+private static final String PAR_METHOD1 = "getter1";
 
 /**
  * The getter method used to obtain the values of the second protocol. 
@@ -81,7 +81,7 @@ public static final String PAR_METHOD1 = "getter1";
  * information about getters and setters.
  * @config
  */
-public static final String PAR_METHOD2 = "getter2";
+private static final String PAR_METHOD2 = "getter2";
 
 // --------------------------------------------------------------------------
 // Fields
@@ -112,6 +112,11 @@ private final Method method2;
 // Initialization
 // --------------------------------------------------------------------------
 
+/**
+ * Standard constructor that reads the configuration parameters.
+ * Invoked by the simulation engine.
+ * @param prefix the configuration prefix for this class
+ */
 public VectAngle(String prefix)
 {
 	name = prefix;

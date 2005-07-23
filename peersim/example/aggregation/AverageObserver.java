@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -18,10 +18,9 @@
 
 package example.aggregation;
 
-import peersim.core.*;
-import peersim.reports.*;
 import peersim.config.*;
-import peersim.vector.SingleValue;
+import peersim.core.*;
+import peersim.vector.*;
 
 /**
  * Print statistics for an average aggregation computation.
@@ -40,17 +39,19 @@ public class AverageObserver implements Control
 	///////////////////////////////////////////////////////////////////////
 
 	/** 
-	 *  String name of the parameter used to determine the accuracy
+	 *  Config parameter that determines the accuracy
 	 *  for standard deviation before stopping the simulation. If not 
 	 *  defined, a negative value is used which makes sure the observer 
 	 *  does not stop the simulation
+	 *  @config
 	 */
-	public static final String PAR_ACCURACY = "accuracy";
+	private static final String PAR_ACCURACY = "accuracy";
 
 	/** 
-	 *  String name of the parameter used to select the protocol to operate on
+	 *  The protocol to operate on.
+	 *  @config
 	 */
-	public static final String PAR_PROT = "protocol";
+	private static final String PAR_PROT = "protocol";
 
 	///////////////////////////////////////////////////////////////////////
 	// Fields

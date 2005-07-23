@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -19,93 +19,80 @@
 package peersim.config;
 
 /**
-* Reads configuration for relations between protocols.
-* This class is not strictly
-* necessary because the protocols can read the configuration themselves too.
-* It contains nothing more than is contained in the configuratin, only
-* in a format that is much faster to read, so it can be used runtime.
-* Currently it processes only configuration
-* parameter "linkable".
-*
-* This class is a static singleton and is initialized only when first accessed.
-* During initialization it reads the configuration and initializes the links.
-*/
-public class FastConfig {
+ * Reads configuration for relations between protocols. This class is not
+ * strictly necessary because the protocols can read the configuration
+ * themselves too. It contains nothing more than is contained in the
+ * configuratin, only in a format that is much faster to read, so it can be used
+ * runtime. Currently it processes only configuration parameter "linkable".
+ * 
+ * This class is a static singleton and is initialized only when first accessed.
+ * During initialization it reads the configuration and initializes the links.
+ */
+public class FastConfig
+{
 
 // ======================= fields ===========================================
-//===========================================================================
+// ===========================================================================
 
 /**
-* Parameter name in configuration that attaches a linkable protocol to
-* a protocol.
-*/
-public static final String PAR_LINKABLE = "linkable";
+ * Parameter name in configuration that attaches a linkable protocol to a
+ * protocol.
+ * @config
+ */
+private static final String PAR_LINKABLE = "linkable";
 
 /**
-* This array stores the protocol id-s of the linkable protocols that
-* are linked form the protocol given by the array index.
-*/
+ * This array stores the protocol id-s of the linkable protocols that are linked
+ * form the protocol given by the array index.
+ */
 protected static final int[] links;
-
 
 // ======================= initialization ===================================
 // ==========================================================================
 
 /**
-* This static initialization block reads the configuration for information
-* that it understands. Currently it understands property "linkable" only.
-* When a protocol has a parameter "linkable", it stores this info in a
-* quickly accessible array so that protocols can use it to quickly access
-* this information.
-*/
+ * This static initialization block reads the configuration for information that
+ * it understands. Currently it understands property "linkable" only. When a
+ * protocol has a parameter "linkable", it stores this info in a quickly
+ * accessible array so that protocols can use it to quickly access this
+ * information.
+ */
 static {
-	
 	String[] names = Configuration.getNames(Configuration.PAR_PROT);
 	links = new int[names.length];
-	for(int i=0; i<links.length; ++i)
-	{
-		if( Configuration.contains(names[i]+"."+PAR_LINKABLE) )
-			links[i] =
-			Configuration.getPid(names[i]+"."+PAR_LINKABLE);
+	for (int i = 0; i < links.length; ++i) {
+		if (Configuration.contains(names[i] + "." + PAR_LINKABLE))
+			links[i] = Configuration.getPid(names[i] + "." + PAR_LINKABLE);
 		else
-			links[i]=-1;
+			links[i] = -1;
 	}
 }
 
-
 // ======================= methods ==========================================
 // ==========================================================================
-
-
 /**
-* Returns true if the given protocol has a linkable protocol associated with
-* it, otherwise false.
-*/
-public static boolean hasLinkable(int pid) {
-
+ * Returns true if the given protocol has a linkable protocol associated with
+ * it, otherwise false.
+ */
+public static boolean hasLinkable(int pid)
+{
 	return links[pid] >= 0;
 }
 
 // ---------------------------------------------------------------------
-
 /**
-* Returns the protocol id used by the protocol identified by pid.
-* Throws an IllegalParameterException if there is no linkable associated
-* with the given protocol: we assume here that his happens when the
-* configuration is incorrect.
-*/
-public static int getLinkable(int pid) {
-
-	if (links[pid] < 0)
-	{
-		String[] names=Configuration.getNames(Configuration.PAR_PROT);
-		throw new IllegalParameterException(names[pid],
-			"Protocol " + pid + " has no linkable parameter");
+ * Returns the protocol id used by the protocol identified by pid. Throws an
+ * IllegalParameterException if there is no linkable associated with the given
+ * protocol: we assume here that his happens when the configuration is
+ * incorrect.
+ */
+public static int getLinkable(int pid)
+{
+	if (links[pid] < 0) {
+		String[] names = Configuration.getNames(Configuration.PAR_PROT);
+		throw new IllegalParameterException(names[pid], "Protocol " + pid
+				+ " has no linkable parameter");
 	}
-
 	return links[pid];
 }
-
-
 }
-

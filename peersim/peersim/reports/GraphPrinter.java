@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -39,8 +39,9 @@ public class GraphPrinter extends GraphObserver {
 * full name will be baseName+cycleid.extension where extension depends
 * on the format used. If no basename is given, the graph is dumped on
 * the standard output.
+* @config
 */
-public static final String PAR_BASENAME = "outf";
+private static final String PAR_BASENAME = "outf";
 
 /**
 * The name for the format of the output. Defaults to "neighborlist",
@@ -48,8 +49,9 @@ public static final String PAR_BASENAME = "outf";
 * {@link peersim.dynamics.WireFromFile} can read this format.
 * Other supported formats are "chaco" to be used with Yehuda Koren's
 * Embedder, and "netmeter" to be used with Sergi Valverde's netmeter.
+* @config
 */
-public static final String PAR_FORMAT = "format";
+private static final String PAR_FORMAT = "format";
 
 private final String baseName;
 
@@ -62,6 +64,11 @@ private final String format;
 // =====================================================================
 
 
+/**
+ * Standard constructor that reads the configuration parameters.
+ * Invoked by the simulation engine.
+ * @param name the configuration prefix for this class
+ */
 public GraphPrinter(String name) {
 
 	super(name);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -22,15 +22,27 @@ import java.io.*;
 import peersim.config.*;
 
 /**
- * 
+ * This utility class must be used by observers to report their data.
  *
  * @author Alberto Montresor
  * @version $Revision$
  */
 public class Log
 {
-	
+
+//--------------------------------------------------------------------------
+//Parameters
+//--------------------------------------------------------------------------
+
+/**
+ * If defined, observers using Log prints also the current time.
+ * @config
+ */
 private static final String PAR_TIME = "log.time";
+
+//--------------------------------------------------------------------------
+//Fields
+//--------------------------------------------------------------------------
 
 private static boolean logtime = Configuration.contains(PAR_TIME);
 
@@ -38,6 +50,10 @@ private static String prefix = "";
 
 private static PrintStream stream = System.out;
   
+//--------------------------------------------------------------------------
+//Class methods
+//--------------------------------------------------------------------------
+
 public static void setStream(PrintStream newStream)
 {
   	stream = newStream;
@@ -52,7 +68,7 @@ public static void println(String observerId, String string)
 {
 	if (logtime) 
 		stream.println(observerId + " " + prefix +
-		" T " + CommonState.getTime() + string);
+		"TIME " + CommonState.getTime() + string);
   	else
   		stream.println(observerId + " " + prefix + string);
 }

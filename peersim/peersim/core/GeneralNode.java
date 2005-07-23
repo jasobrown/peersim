@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -22,7 +22,7 @@ import peersim.config.*;
 import java.util.*;
 
 /**
-* Class that represents one node with a nework address.
+* Class that represents one node with a network address.
 * An {@link Network} is made of a set of nodes.
 * The functionality of this class is thin: it must be able to represent
 * failure states and store a list of protocols.

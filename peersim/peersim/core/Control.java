@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -19,19 +19,18 @@
 package peersim.core;
 
 /**
-* Generic interface for classes that are responsible for observing or
-* modifying the ongoing simulation.
-* It is designed to allow
-* maximal flexibility therefore poses virtually no restrictions on the
-* implementation.
-*/
-public interface Control {
+ * Generic interface for classes that are responsible for observing or modifying
+ * the ongoing simulation. It is designed to allow maximal flexibility therefore
+ * poses virtually no restrictions on the implementation.
+ */
+public interface Control
+{
 
-        /**
-        * Performs arbitrary modifications or reports arbitrary information
-	* over the components.
-	* @return true if the simulation has to be stopped, false otherwise.
-        */
-        public boolean execute();
+/**
+ * Performs arbitrary modifications or reports arbitrary information over the
+ * components.
+ * @return true if the simulation has to be stopped, false otherwise.
+ */
+public boolean execute();
+
 }
-

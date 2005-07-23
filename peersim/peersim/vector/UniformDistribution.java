@@ -18,11 +18,9 @@
 
 package peersim.vector;
 
-import java.lang.reflect.*;
 import peersim.config.*;
 import peersim.core.*;
 import peersim.dynamics.*;
-import peersim.util.*;
 
 /**
  * Initializes the values drawing uniform random samples from the range
@@ -31,7 +29,8 @@ import peersim.util.*;
  * This dynamics class can initialize any protocol field containing a 
  * primitive value, provided that the field is associated with a setter method 
  * that modifies it.
- * The method to be used is specified through parameter {@value #PAR_METHOD}.
+ * The method to be used is specified through parameter 
+ * {@value peersim.vector.VectControl#PAR_METHOD}.
  * For backward compatibility, if no method is specified, the method
  * {@link SingleValue#setValue(double)} is used. In this way, classes
  * implementing the {@link SingleValue} interface can be initialized using the
@@ -51,14 +50,14 @@ public class UniformDistribution extends VectControl implements NodeInitializer
  * The upper bound of the uniform random variable.
  * @config
  */
-public static final String PAR_MAX = "max";
+private static final String PAR_MAX = "max";
 
 /**
  * The lower bound of the uniform
  * random variable. Defaults to -{@value #PAR_MAX}.
  * @config
  */
-public static final String PAR_MIN = "min";
+private static final String PAR_MIN = "min";
 
 // --------------------------------------------------------------------------
 // Fields

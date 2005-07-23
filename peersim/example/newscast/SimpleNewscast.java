@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -18,10 +18,9 @@
 		
 package example.newscast;
 
-import peersim.util.*;
-import peersim.core.*;
-import peersim.config.*;
 import peersim.cdsim.*;
+import peersim.config.*;
+import peersim.core.*;
 
 /**
  *  This class represents the information stored by a node in
@@ -44,8 +43,11 @@ protected static Node[] tn;
 /** Temp array for merging.  Its size is the same as the cache size. */
 protected static int[] ts;
 
-/** config parameter name for the cache size */
-public static final String PAR_CACHE = "cache";
+/** 
+ * Cache size.
+ * @config 
+ */
+private static final String PAR_CACHE = "cache";
 
 
 // =================== fields ==========================================

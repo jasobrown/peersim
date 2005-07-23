@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -21,7 +21,6 @@ package peersim.cdsim;
 import java.util.*;
 import peersim.config.*;
 import peersim.core.*;
-import peersim.util.*;
 
 /**
 * This is the executable class for performing a cycle driven simulation.
@@ -35,25 +34,24 @@ public class Simulator {
 // ============== fields ===============================================
 // =====================================================================
 
-/** 
- * Parameter representing the maximum number of cycles to be performed 
+/**
+ * Parameter representing the maximum number of cycles to be performed
  * @config
  */
-public static final String PAR_CYCLES = "simulation.cycles";
+private static final String PAR_CYCLES = "simulation.cycles";
 
 /**
-* This option is only for experts. It switches off the main cycle that
-* calles the cycle driven protocols. When you switch this off, you need to
-* control the execution of the protocols by configuring controls that
-* do the job. It's there for people who want maximal flexibility for their
-* hacks.
+ * This option is only for experts. It switches off the main cycle that calles
+ * the cycle driven protocols. When you switch this off, you need to control the
+ * execution of the protocols by configuring controls that do the job. It's
+ * there for people who want maximal flexibility for their hacks.
  * @config
-*/
+ */
 private static final String PAR_NOMAIN = "simulation.nodefaultcycle";
 
 /**
  * This is the prefix for initializers. These have to be of type
- * {@link Dynamics}.
+ * {@link Control}.
  * @config
  */
 private static final String PAR_INIT = "init";
@@ -122,6 +120,18 @@ private static String[] loadControls() {
 	}
 	System.err.println("Simulator: loaded controls "+Arrays.asList(names));
 	return names;
+}
+
+//---------------------------------------------------------------------
+
+/**
+ * This method is used to check whether the current configuration can
+ * be used for cycle-driven simulations. 
+ */
+public static final boolean isConfigurationCycleDriven()
+{
+	return Configuration.getInt(PAR_CYCLES,-132)
+			!= -132;
 }
 
 //---------------------------------------------------------------------

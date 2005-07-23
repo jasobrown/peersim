@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -45,21 +45,24 @@ public class Network {
 /**
 * This config property defines the node class to be used. If not
 * set, then {@link GeneralNode} will be used.
+* @config
 */
-public static final String PAR_NODE = "overlay.node";
+private static final String PAR_NODE = "overlay.node";
 
 /**
-* this config property defines the maximal size of the overlay network
+* This config property defines the maximal size of the overlay network
 * during the whole simulation. Allows for optimalization. If not set
-* then {@link #PAR_SIZE} will be used.
+* then {@value #PAR_SIZE} will be used.
+* @config
 */
-public static final String PAR_MAXSIZE = "overlay.maxSize";
+private static final String PAR_MAXSIZE = "overlay.maxSize";
 
 /**
-* this config property defines the initial size of the overlay network.
+* This config property defines the initial size of the overlay network.
 * This property is required.
+* @config
 */
-public static final String PAR_SIZE = "overlay.size";
+private static final String PAR_SIZE = "overlay.size";
 
 /**
 * The node array. This is not a private array which is not nice but
@@ -133,6 +136,8 @@ public static void reset() {
 	}
 }
 
+/** Disable instance construction */
+private Network() {}
 
 // =============== public methods ===================================
 // ==================================================================

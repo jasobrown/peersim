@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -18,7 +18,6 @@
 		
 package scamp;
 
-import peersim.util.*;
 import peersim.core.*;
 import peersim.config.*;
 import peersim.cdsim.*;
@@ -37,21 +36,25 @@ public class Scamp implements CDProtocol, Linkable {
 // ====================================================================
 
 
-/** config parameter name for parameter c. Defaults to 0.  */
-public static final String PAR_C = "c";
+/**
+ * Parameter "c" of Scamp . Defaults to 0.
+ * @config
+ */
+private static final String PAR_C = "c";
 
 /**
-* config parameter name for the TTL for indirection. If negative, there is
-* no indirection. Defaults to -1.
-*/
-public static final String PAR_INDIRTTL = "indirectionTTL";
+ * Time-to-live for indirection. Defaults to -1.
+ * @config
+ */
+private static final String PAR_INDIRTTL = "indirectionTTL";
 
 /**
-* config parameter name for the timeout for lease. If negative, there is
-* no lease mechanism. Defaults to -1.
-*/
-public static final String PAR_LEASE = "leaseTimeout";
+ * Lease timeout. If negative, there is no lease mechanism. Defaults to -1.
+ * @config
+ */
+private static final String PAR_LEASE = "leaseTimeout";
 
+/** c */
 private static int c;
 
 /** indirection TTL */

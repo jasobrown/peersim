@@ -43,13 +43,13 @@ public class SingleValueObserver implements Control {
  *  does not stop the simulation.
  *  @config
  */
-public static final String PAR_ACCURACY = "accuracy";
+private static final String PAR_ACCURACY = "accuracy";
 
-/** 
- *  The protocol to be observed.
- *  @config
+/**
+ * The protocol to operate on.
+ * @config
  */
-public static final String PAR_PROT = "protocol";
+private static final String PAR_PROT = "protocol";
 
 
 //--------------------------------------------------------------------------

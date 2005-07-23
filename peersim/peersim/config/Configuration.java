@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -69,8 +69,8 @@ import org.lsmp.djep.groupJep.*;
   function definitions, they make no sense). Since it is
   difficult to discover complex recursive chains, a simple trick
   is used: if the depth of recursion is greater
-  than a given threshold (configurable, currently 100), an error
-  message is printed. This avoids to fill the stack, that results
+  than a given threshold (configurable, currently {@value #DEFAULT_MAXDEPTH}, 
+  an error message is printed. This avoids to fill the stack, that results
   in an anonymous OutOfMemoryError. So, if you write
   <pre>
   overlay.size SIZE
@@ -78,7 +78,7 @@ import org.lsmp.djep.groupJep.*;
   </pre>
   you get an error message:
   Parameter "overlay.size": Probable recursive definition -
-  exceeded maximum depth 100
+  exceeded maximum depth {@value #DEFAULT_MAXDEPTH}
   
   <h3>Ordering</h3>
   It is possible to assign arbitrary names to multiple instances of a given
@@ -225,53 +225,64 @@ private static final int DEBUG_REG  = 1;
 
 /** Symbolic constant for extended debug */
 private static final int DEBUG_CONTEXT = 2;
-	
+
+/** Default max depth limit to avoid recursive definitions */
+private static final int DEFAULT_MAXDEPTH = 100;
+
 /**
- * The parameter name to configure the debug level for the configuration
+ * The debug level for the configuration
  * mechanism. If defined, a line is printed for each configuration
- * parameter read. If defined and equal to {@link #PAR_EXTENDED}, additional 
- * debug information is printed.
+ * parameter read. If defined and equal to {@value #DEBUG_EXTENDED} or
+ * {@value #DEBUG_EXTENDED}, additional
+ * context information for debug is printed. If defined and equal
+ * to {@value #DEBUG_FULL}, all the configuration items are printed at 
+ * the beginning, not just when they are called.
+ * @config
  */
 private static final String PAR_DEBUG = "debug.config"; 
 
 /**
- * If parameter {@link #PAR_DEBUG} is equal to this string, 
+ * If parameter {@value #PAR_DEBUG} is equal to this string, 
  * additional context information for debug is printed.
  */
-private static final String PAR_EXTENDED = "context";
+private static final String DEBUG_EXTENDED = "context";
 
 /**
- * If parameter {@link #PAR_DEBUG} is equal to this string, 
+ * If parameter {value #PAR_DEBUG} is equal to this string, 
  * all the configuration items are printed at the beginning,
  * not just when they are called.
  */
-private static final String PAR_FULL = "full";
+private static final String DEBUG_FULL = "full";
 	
 /**
- * The parameter name to configure a maximum depth different from
- * default. Normally you don't want to set this. The default is 100.
+ * The maximum depth for expressions. This is a simple mechanism to
+ * avoid unbounded recursion. The default is {@value #DEFAULT_MAXDEPTH}, 
+ * and you probably don't want to change it.
+ * @config
  */
 private static final String PAR_MAXDEPTH = "expressions.maxdepth"; 
 
 /**
- * The parameter name to configure ordering of the array as returned by
+ * The parameter to configure ordering of the array as returned by
  * {@link #getInstanceArray} and {@link #getNames}.
- * It is read by these methods. This is realy a prefix which is followed by
+ * It is read by these methods. This is really a prefix which is followed by
  * the type specifier. For example: "order.protocol" will define the
  * order of configuration entries that start with
  * "protocol", but it works for any prefix.
+ * @config
  */
-public static final String PAR_ORDER = "order"; 
+private static final String PAR_ORDER = "order"; 
 
 /**
- * The parameter name to configure ordering and exclusion of the array as
+ * The parameter to configure ordering and exclusion of the array as
  * returned by {@link #getInstanceArray} and {@link #getNames}.
  * It is read by these methods. This is realy a prefix which is followed by
  * the type specifier. For example: "include.protocol" will define the
  * set and order of configuration entries that start with
  * "protocol", but it works for any prefix.
+ * @config
  */
-public static final String PAR_INCLUDE = "include"; 
+private static final String PAR_INCLUDE = "include"; 
 
 // XXX it's ugly because it replicates the definition of PAR_PROT, but
 // this would be the only dependence on the rest of the core...
@@ -280,7 +291,7 @@ public static final String PAR_INCLUDE = "include";
  * used
  * to calculate the protocol identifiers returned by {@link #getPid(String)}.
  */
-public static final String PAR_PROT = "protocol"; 
+static final String PAR_PROT = "protocol"; 
 
 
 /**
@@ -301,7 +312,7 @@ private static Map protocols;
  *  This value can be substituted by setting the configuration parameter
  *  PAR_MAXDEPTH.
  */
-private static int maxdepth = 100;
+private static int maxdepth = DEFAULT_MAXDEPTH;
 
 /** Debug level */
 private static int debugLevel = DEBUG_NO;
@@ -319,7 +330,7 @@ public static Properties setConfig( Properties p ) {
 
 	Properties prev = config;
 	config = p;
-	maxdepth = Configuration.getInt(PAR_MAXDEPTH, 100);
+	maxdepth = Configuration.getInt(PAR_MAXDEPTH, DEFAULT_MAXDEPTH);
 	
 	// initialize protocol id-s
 	protocols = new HashMap();
@@ -331,9 +342,9 @@ public static Properties setConfig( Properties p ) {
 	}
 
 	String debug = config.getProperty(PAR_DEBUG);
-	if (PAR_EXTENDED.equals(debug))
+	if (DEBUG_EXTENDED.equals(debug))
 	  debugLevel = DEBUG_CONTEXT;
-	else if (PAR_FULL.equals(debug)) {
+	else if (DEBUG_FULL.equals(debug)) {
 		Map map = new TreeMap();
 		Enumeration e = p.propertyNames();
 		while (e.hasMoreElements()) {
@@ -934,9 +945,9 @@ public static Object[] getInstanceArray( String name ) {
  * of entries separated by any non-word characters.
  * <p>
  * It is not required that all entries are listed.
- * If {@link #PAR_INCLUDE} is used, then only those entries are returned
+ * If {@value #PAR_INCLUDE} is used, then only those entries are returned
  * that are listed.
- * If {@link #PAR_ORDER} is used, then all names are returned,
+ * If {@value #PAR_ORDER} is used, then all names are returned,
  * but the array will start
  * with those that are listed. The rest of the names follow in alphabetical
  * order.

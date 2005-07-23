@@ -18,7 +18,6 @@
 
 package peersim.vector;
 
-import java.lang.reflect.*;
 import peersim.config.*;
 import peersim.core.*;
 
@@ -30,7 +29,8 @@ import peersim.core.*;
  * This dynamics class can initialize any protocol field containing a 
  * primitive value, provided that the field is associated with a setter method 
  * that modifies it.
- * The method to be used is specified through parameter {@value #PAR_METHOD}.
+ * The method to be used is specified through parameter 
+ * {@value peersim.vector.VectControl#PAR_METHOD}.
  * For backward compatibility, if no method is specified, the method
  * {@link SingleValue#setValue(double)} is used. In this way, classes
  * implementing the {@link SingleValue} interface can be initialized using the
@@ -51,7 +51,7 @@ public class PeakDistribution extends VectControl
  * nodes.
  * @config
  */
-public static final String PAR_VALUE = "value";
+private static final String PAR_VALUE = "value";
 
 
 /** 
@@ -61,7 +61,7 @@ public static final String PAR_VALUE = "value";
  * current network size. Defaults to 1. 
  * @config
  */
-public static final String PAR_PEAKS = "peaks";
+private static final String PAR_PEAKS = "peaks";
 
 
 // --------------------------------------------------------------------------
@@ -79,6 +79,8 @@ private final double peaks;
 // --------------------------------------------------------------------------
 
 /**
+ * Standard constructor that reads the configuration parameters.
+ * Invoked by the simulation engine.
  * @param prefix the configuration prefix for this class
  */
 public PeakDistribution(String prefix)

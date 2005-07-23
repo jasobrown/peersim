@@ -18,11 +18,9 @@
 
 package peersim.vector;
 
+import java.lang.reflect.*;
 import peersim.config.*;
 import peersim.core.*;
-import peersim.dynamics.*;
-import java.io.*;
-import java.lang.reflect.*;
 
 /**
  * Serves as an abstract superclass for dynamics objects that deal
@@ -31,7 +29,8 @@ import java.lang.reflect.*;
  * Such a dynamics class can initialize any protocol field containing a 
  * primitive value, provided that the field is associated with a setter method 
  * that modifies it.
- * The method to be used is specified through parameter {@value #PAR_METHOD}.
+ * The method to be used is specified through parameter 
+ * {@value peersim.vector.VectControl#PAR_METHOD}.
  * For backward compatibility, if no method is specified, the method
  * {@link SingleValue#setValue(double)} is used. In this way, classes
  * implementing the {@link SingleValue} interface can be initialized using the
@@ -48,10 +47,10 @@ abstract class VectControl implements Control
 // --------------------------------------------------------------------------
 
 /**
- * The protocol to be initialized.
+ * The protocol to operate on.
  * @config
  */
-public static final String PAR_PROT = "protocol";
+private static final String PAR_PROT = "protocol";
 
 /**
  * The setter method used to set values in the protocol instances. Defauls to
@@ -61,7 +60,7 @@ public static final String PAR_PROT = "protocol";
  * information about getters and setters.
  * @config
  */
-public static final String PAR_METHOD = "setter";
+static final String PAR_METHOD = "setter";
 
 
 // --------------------------------------------------------------------------
@@ -69,26 +68,27 @@ public static final String PAR_METHOD = "setter";
 // --------------------------------------------------------------------------
 
 /** Identifier of the protocol to be initialized */
-protected final int pid;
+final int pid;
 
 /** Setter method name */
-protected final String methodName;
+final String methodName;
 
 /** Setter method */
-protected final Method method;
+final Method method;
 
 /** Field type */
-protected final Class type;
+final Class type;
 
 // --------------------------------------------------------------------------
 // Initialization
 // --------------------------------------------------------------------------
 
 /**
- * @param prefix
- *          the configuration prefix for this class
+ * Standard constructor that reads the configuration parameters.
+ * Invoked by the simulation engine.
+ * @param prefix the configuration prefix for this class
  */
-public VectControl(String prefix)
+VectControl(String prefix)
 {
 	// Read configuration parameter
 	pid = Configuration.getPid(prefix + "." + PAR_PROT);
@@ -112,7 +112,7 @@ public VectControl(String prefix)
 /**
 * Sets the given integer value.
 */
-protected void set(Node n, long val) {
+void set(Node n, long val) {
 	
 	try 
 	{
@@ -134,7 +134,7 @@ protected void set(Node n, long val) {
 /**
 * Sets the given real value.
 */
-protected void set(Node n, double val) {
+void set(Node n, double val) {
 	
 	try
 	{
@@ -156,14 +156,14 @@ protected void set(Node n, double val) {
 /**
 * Sets the given integer value.
 */
-protected void set(int i, long val) { set(Network.get(i),val); }
+void set(int i, long val) { set(Network.get(i),val); }
 
 // --------------------------------------------------------------------------
 
 /**
 * Sets the given real value.
 */
-protected void set(int i, double val) { set(Network.get(i),val); }
+void set(int i, double val) { set(Network.get(i),val); }
 
 }
 

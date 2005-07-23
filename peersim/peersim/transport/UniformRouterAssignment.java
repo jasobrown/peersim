@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -20,8 +20,6 @@ package peersim.transport;
 
 import peersim.config.*;
 import peersim.core.*;
-import peersim.dynamics.*;
-import peersim.util.*;
 
 
 /**
@@ -38,9 +36,10 @@ public class UniformRouterAssignment implements Control
 //---------------------------------------------------------------------
 
 /** 
- * Parameter name used to configure the protocol that should be initialized 
+ * Parameter name used to configure the protocol that should be initialized
+ * @config 
  */
-private static final String PAR_PROTOCOL = "protocol"; 
+private static final String PAR_PROT = "protocol"; 
 	
 //---------------------------------------------------------------------
 //Methods
@@ -59,7 +58,7 @@ private int pid;
  */
 public UniformRouterAssignment(String prefix)
 {
-	pid = Configuration.getPid(prefix+"."+PAR_PROTOCOL);
+	pid = Configuration.getPid(prefix+"."+PAR_PROT);
 }
 
 //---------------------------------------------------------------------

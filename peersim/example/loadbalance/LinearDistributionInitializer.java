@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -24,28 +24,31 @@ import peersim.vector.SingleValue;
 
 public class LinearDistributionInitializer  implements Control {
 
-////////////////////////////////////////////////////////////////////////////
-// Constants
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
+//Parameters
+//--------------------------------------------------------------------------
 
 /** 
- * String name of the parameter used to determine the upper bound of the
- * values.
+ * The upper bound of the values.
+ * @config
  */
-public static final String PAR_MAX = "max";
+private static final String PAR_MAX = "max";
 
 /** 
- * String name of the parameter used to determine the lower bound of the
- * values. Defaults to -max.
+ * The lower bound of the values. Defaults to -max.
+ * @config
  */
-public static final String PAR_MIN = "min";
+private static final String PAR_MIN = "min";
 
-/** 
- * String name of the parameter that defines the protocol to initialize.
- * Parameter read will has the full name
- * <tt>prefix+"."+PAR_PROT</tt>
+/**
+ * The protocol to operate on.
+ * @config
  */
-public static final String PAR_PROT = "protocol";
+private static final String PAR_PROT = "protocol";
+
+//--------------------------------------------------------------------------
+//Fields
+//--------------------------------------------------------------------------
 
 private final double max;
 
@@ -53,9 +56,9 @@ private final double min;
 
 private final int protocolID;
 
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 // Initialization
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 
 public LinearDistributionInitializer(String prefix)
 {
@@ -64,9 +67,9 @@ public LinearDistributionInitializer(String prefix)
 	protocolID = Configuration.getPid(prefix+"."+PAR_PROT);
 }
 
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 // Methods
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 
 
 // Comment inherited from interface

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -40,28 +40,33 @@ public class WireScaleFreeBA implements Control {
 // =======================================================================
 
 
-/** 
- *  String name of the parameter used to select the protocol to operate on
+/**
+ * The protocol to operate on.
+ * @config
  */
-public static final String PAR_PROT = "protocol";
-
-/** 
- * This config property represents the number of edges added to each new
- * node (apart from those forming the initial network).
- */
-public static final String PAR_DEGREE = "degree";
+private static final String PAR_PROT = "protocol";
 
 /**
- * If this parameter is defined, method pack() is invoked on the specified
- * protocol at the end of the wiring phase. Default to false.
+ * The number of edges added to each new node (apart from those forming the 
+ * initial network).
+ * @config
  */
-public static final String PAR_PACK = "pack";
+private static final String PAR_DEGREE = "degree";
 
-/** 
-*  String name of the parameter to set if the graph should be undirected,
-* that is, for each link (i,j) a link (j,i) will also be added.
-*/
-public static final String PAR_UNDIR = "undirected";
+/**
+ * If this config property is defined, method {@link Linkable#pack()} is 
+ * invoked on the specified protocol at the end of the wiring phase. 
+ * Default to false.
+ * @config
+ */
+private static final String PAR_PACK = "pack";
+
+/**
+ * If set,  if the graph should be undirected,
+ * that is, for each link (i,j) a link (j,i) will also be added.
+ * @config
+ */
+private static final String PAR_UNDIR = "undirected";
 
 
 // =================== fields ============================================

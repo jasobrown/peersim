@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -22,55 +22,57 @@ import peersim.config.Configuration;
 import peersim.core.*;
 
 /**
-* A network dynamics manager which can grow networks.
-*/
+ * A network dynamic manager that can make networks oscillate.
+ */
 public class OscillatingNetwork implements Control
 {
 
-////////////////////////////////////////////////////////////////////////
-// Constants
-////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
+//Parameters
+//--------------------------------------------------------------------------
 
-/** 
-* Config parameter which gives prefix of node initializers.
-*/
-public static final String PAR_INIT = "init";
-
-/** 
- * Config parameter used to define the number of cycles needed
- * to complete an oscillation.
- 	 */
-public static final String PAR_PERIOD = "periodicity";
-
-/** 
- * Config parameter used to defined the maximum size of the 
- * oscillating network.
+/**
+ * Config parameter which gives prefix of node initializers.
+ * @config
  */
-public static final String PAR_MAX = "maxsize";
+private static final String PAR_INIT = "init";
 
-/** 
- * Config parameter used to defined the minimum size of the 
- * oscillating network.
+/**
+ * Config parameter used to define the number of cycles needed to complete an
+ * oscillation.
+ * @config
  */
-public static final String PAR_MIN = "minsize";
+private static final String PAR_PERIOD = "periodicity";
 
-/** 
-* Operation starts from this time point.
-* This operator will be applied first at this time.
-* Defaults to 0.
-*/
-public static final String PAR_FROM = "from";
+/**
+ * Config parameter used to defined the maximum size of the oscillating network.
+ * @config
+ */
+private static final String PAR_MAX = "maxsize";
 
-/** 
-* Operation ends at this time point.
-* This operator will be applied last at this time.
-* Defaults to <tt>Integer.MAX_VALUE</tt>.
-*/
-public static final String PAR_UNTIL = "until";
+/**
+ * Config parameter used to defined the minimum size of the oscillating network.
+ * @config
+ */
+private static final String PAR_MIN = "minsize";
 
-////////////////////////////////////////////////////////////////////////
-// Fields
-////////////////////////////////////////////////////////////////////////
+/**
+ * Operation starts from this time point. This operator will be applied first at
+ * this time. Defaults to 0.
+ * @config
+ */
+private static final String PAR_FROM = "from";
+
+/**
+ * Operation ends at this time point. This operator will be applied last at this
+ * time. Defaults to <tt>Integer.MAX_VALUE</tt>.
+ * @config
+ */
+private static final String PAR_UNTIL = "until";
+
+//--------------------------------------------------------------------------
+//Fields
+//--------------------------------------------------------------------------
 
 /** Periodicity */
 private final int periodicity;
@@ -91,10 +93,16 @@ private final int until;
 private final NodeInitializer[] inits;
 
 
-////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 // Initialization
-////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 
+/**
+ * Standard constructor that reads the configuration parameters. Invoked by the
+ * simulation engine.
+ * @param prefix
+ *          the configuration prefix for this class
+ */
 public OscillatingNetwork(String prefix)
 {
 
@@ -115,11 +123,11 @@ public OscillatingNetwork(String prefix)
 	}
 }
 
-////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 // Methods
-////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 
-private void add(int toAdd)
+protected void add(int toAdd)
 {
 
 	Node[] newnodes = new Node[Math.min(maxsize - Network.size(), toAdd)];
@@ -152,7 +160,7 @@ private void add(int toAdd)
 
 // ------------------------------------------------------------------
 
-private void remove(int toRemove)
+protected void remove(int toRemove)
 {
 
 	for (int i = 0; i < toRemove; ++i)
@@ -166,6 +174,9 @@ private void remove(int toRemove)
 
 // ------------------------------------------------------------------
 
+/**
+ * {@inheritDoc}
+ */
 public boolean execute()
 {
 	long time = CommonState.getTime();

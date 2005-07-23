@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -35,26 +35,29 @@ public abstract class GraphObserver implements Control {
 // ===================== fields =======================================
 // ====================================================================
 
-/** 
-*  String name of the parameter used to select the protocol to operate on
-*/
-public static final String PAR_PROT = "protocol";
+/**
+ * The protocol to operate on.
+ * @config
+ */
+private static final String PAR_PROT = "protocol";
 
-/** 
-* If defined, the undirected version of the graph will be analized.
-* Not defined by default;
-*/
-public static final String PAR_UNDIR = "undir";
+/**
+ * If defined, the undirected version of the graph will be analized. Not defined
+ * by default.
+ * @config
+ */
+protected static final String PAR_UNDIR = "undir";
 
-/** 
-* If defined, the undirected version of the graph will be stored using much
-* more memory but observers will be in general a few times faster.
-* As a consequence, it will not work with large graphs. Not defined by default. 
-* It is a static property, that is, it affects all graph observers that are
-* used in a simulation. That is, it is not a parameter of any observer, the
-* name should be specified as a standalone property.
-*/
-public static final String PAR_FAST = "graphobserver.fast";
+/**
+ * If defined, the undirected version of the graph will be stored using much
+ * more memory but observers will be in general a few times faster. As a
+ * consequence, it will not work with large graphs. Not defined by default. It
+ * is a static property, that is, it affects all graph observers that are used
+ * in a simulation. That is, it is not a parameter of any observer, the name
+ * should be specified as a standalone property.
+ * @config
+ */
+private static final String PAR_FAST = "graphobserver.fast";
 
 /** The name of this observer in the configuration */
 protected final String name;
@@ -88,6 +91,11 @@ private static boolean needUndir=false;
 // =====================================================================
 
 
+/**
+ * Standard constructor that reads the configuration parameters.
+ * Invoked by the simulation engine.
+ * @param name the configuration prefix for this class
+ */
 protected GraphObserver(String name) {
 
 	this.name = name;

@@ -25,11 +25,11 @@ import peersim.config.*;
 /**
  * Normalizes the values of a protocol vector. 
  * <p>
- * This dynamics class can normalie any protocol field containing a 
+ * This dynamics class can normalize any protocol field containing a 
  * primitive value, provided that the field is associated with a getter method 
  * that reads it and setter method that modifies it.
  * The methods to be used are specified through parameters 
- * {@value #PAR_GETTER} and {@value #PAR_SETTER}.
+ * {@value #PAR_GETTER} and {@value peersim.vector.VectControl#PAR_METHOD}.
  * Only getter/setter for float/double fields are valid.
  * <p>
  * For backward compatibility, if no methods are specified, the method
@@ -53,7 +53,7 @@ public class Normalizer extends VectControl
  * L1 norm will be the value given here. Defaults to 1.
  * @config
  */
-public static final String PAR_L1 = "l1";
+private static final String PAR_L1 = "l1";
 
 /**
  * The getter method used to obtain the protocol values. 
@@ -64,7 +64,7 @@ public static final String PAR_L1 = "l1";
  * information about getters and setters.
  * @config
  */
-public static final String PAR_GETTER = "getter";
+private static final String PAR_GETTER = "getter";
 
 // --------------------------------------------------------------------------
 // Fields
@@ -81,8 +81,9 @@ private final Method getter;
 // --------------------------------------------------------------------------
 
 /**
- * @param prefix
- *          the configuration prefix for this class
+ * Standard constructor that reads the configuration parameters.
+ * Invoked by the simulation engine.
+ * @param prefix the configuration prefix for this class
  */
 public Normalizer(String prefix)
 {

@@ -49,17 +49,19 @@ public class ValueDumper implements Control
 // --------------------------------------------------------------------------
 // Parameter names
 // --------------------------------------------------------------------------
+
 /**
- * The protocol to be initialized.
+ * The protocol to operate on.
  * @config
  */
-public static final String PAR_PROT = "protocol";
+private static final String PAR_PROT = "protocol";
 
 /**
  * This is the base name of the file where the values are saved. The full name
  * will be baseName+cycleid+".vec".
+ * @config
  */
-public static final String PAR_BASENAME = "outf";
+private static final String PAR_BASENAME = "outf";
 
 /**
  * The getter method(s) used to get values from the protocol instances.
@@ -71,7 +73,7 @@ public static final String PAR_BASENAME = "outf";
  * information about getters and setters.
  * @config
  */
-public static final String PAR_METHODS = "getter";
+private static final String PAR_METHODS = "getter";
 
 // --------------------------------------------------------------------------
 // Fields
@@ -99,8 +101,9 @@ private final Method[] methods;
 // --------------------------------------------------------------------------
 
 /**
- * @param prefix
- *          the configuration prefix for this class
+ * Standard constructor that reads the configuration parameters.
+ * Invoked by the simulation engine.
+ * @param prefix the configuration prefix for this class
  */
 public ValueDumper(String prefix)
 {

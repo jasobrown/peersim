@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -15,47 +15,48 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-		
+
 package peersim.reports;
 
-import peersim.config.Configuration;
-import peersim.core.Network;
-import peersim.core.CommonState;
-import peersim.util.IncrementalStats;
-import peersim.util.RandPermutation;
+import peersim.config.*;
+import peersim.core.*;
+import peersim.util.*;
 
 /**
-* Control to analyse the ball expansion, it the number of nodes that
-* are accessable from a given node in at most 1, 2, etc steps.
-* It works only after the simulation.
-*/
-public class BallExpansion extends GraphObserver {
-
+ * Control that analyzes the ball expansion, i.e. the number of nodes that are
+ * accessable from a given node in at most 1, 2, etc steps. It works only after
+ * the simulation.
+ */
+public class BallExpansion extends GraphObserver
+{
 
 // ===================== fields =======================================
 // ====================================================================
 
-/** 
-* Name for the parameter maxd, which defines the maximal distance which
-* we print. Defaults to the network size. Note that this default is
-* normally way too much (for random graphs with a low diameter).
-* Also note that the <em>initial</em> network size is used if no value is
-* given which might not be what you want if eg the network is growing.
-*/
-public static final String PAR_MAXD = "maxd";
+/**
+ * This parameter defines the maximal distance which we print. Defaults to the
+ * network size. Note that this default is normally way too much (for random
+ * graphs with a low diameter). Also note that the <em>initial</em> network
+ * size is used if no value is given which might not be what you want if eg the
+ * network is growing.
+ * @config
+ */
+private static final String PAR_MAXD = "maxd";
 
-/** 
-* Name for the parameter which defines the number of nodes to print info about.
-* Defaults to 1000.
-*/
-public static final String PAR_N = "n";
+/**
+ * The number of nodes to print info about.
+ * Defaults to 1000.
+ * @config
+ */
+private static final String PAR_N = "n";
 
-/** 
-* If defines, statistics are printed instead over the minimal path lengths.
-* Not defined by default;
-*/
-public static final String PAR_STATS = "stats";
-  
+/**
+ * If defined, statistics are printed instead over the minimal path lengths. Not
+ * defined by default.
+ * @config
+ */
+private static final String PAR_STATS = "stats";
+
 private final int maxd;
 
 private final int n;
@@ -67,64 +68,53 @@ private final int[] b;
 
 private final RandPermutation rp = new RandPermutation(CommonState.r);
 
-
 // ===================== initialization ================================
 // =====================================================================
 
-
-public BallExpansion(String name) {
-
+/**
+ * Standard constructor that reads the configuration parameters.
+ * Invoked by the simulation engine.
+ * @param name the configuration prefix for this class
+ */
+public BallExpansion(String name)
+{
 	super(name);
-	maxd = Configuration.getInt(name+"."+PAR_MAXD,Network.size());
-	n = Configuration.getInt(name+"."+PAR_N,1000);
-	stats = Configuration.contains(name+"."+PAR_STATS);
+	maxd = Configuration.getInt(name + "." + PAR_MAXD, Network.size());
+	n = Configuration.getInt(name + "." + PAR_N, 1000);
+	stats = Configuration.contains(name + "." + PAR_STATS);
 	b = new int[maxd];
 }
-
 
 // ====================== methods ======================================
 // =====================================================================
 
-
-public boolean execute() {
-	
+public boolean execute()
+{
 	updateGraph();
-	
-	System.out.print(name+": ");
-	
+	System.out.print(name + ": ");
 	rp.reset(g.size());
-	if(stats)
-	{
+	if (stats) {
 		IncrementalStats is = new IncrementalStats();
-		for(int i=0; i<n && i<g.size(); ++i)
-		{
-			ga.flooding( g, b, rp.next() );
-			int j=1;
-			while(j<b.length && b[j]>0)
-			{
-				is.add(j,b[j++]);
+		for (int i = 0; i < n && i < g.size(); ++i) {
+			ga.flooding(g, b, rp.next());
+			int j = 1;
+			while (j < b.length && b[j] > 0) {
+				is.add(j, b[j++]);
 			}
 		}
 		System.out.println(is);
-	}
-	else
-	{
+	} else {
 		System.out.println();
-		for(int i=0; i<n && i<g.size(); ++i)
-		{
-			ga.flooding( g, b, rp.next() );
-			int j=0;
-			while(j<b.length && b[j]>0)
-			{
-				System.out.print(b[j++]+" ");
+		for (int i = 0; i < n && i < g.size(); ++i) {
+			ga.flooding(g, b, rp.next());
+			int j = 0;
+			while (j < b.length && b[j] > 0) {
+				System.out.print(b[j++] + " ");
 			}
 			System.out.println();
 		}
 	}
-	
 	return false;
 }
 
 }
-
-

@@ -1,3 +1,14 @@
+AM 23/07/05
+- Cleaned up some imports, that were generating warnings in Eclipse. 
+  Cleaned up documentation, changed access rights of all parameters 
+  but one (Node.PAR_PROT) to private, and added @config tags.
+  Started a first clean-up of documentation and code.
+  Some reformatting, particularly in the examples.
+  NOTE: This commit is HUGE, but it is just an aesthetic commit; no
+  fundamental code has been changed.
+  
+- Now config code, if fo
+
 MJ 21/07/05
 - Added some implementations of NextCycleEvent
 

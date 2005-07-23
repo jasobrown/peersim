@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -26,31 +26,35 @@ import peersim.core.*;
 */
 public class ResetQuota implements Control {
 
-////////////////////////////////////////////////////////////////////////////
-// Constants
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
+//Parameters
+//--------------------------------------------------------------------------
 
 /** 
- * String name of the parameter used to determine the load at
- * the peak node. Parameter read has the full name
- * <tt>prefix+"."+PAR_VALUE</tt>
+ * The load at the peak node. 
+ * @config
  */
-public static final String PAR_VALUE = "value";
+private static final String PAR_VALUE = "value";
 
-/** 
- * String name of the parameter that defines the protocol to initialize.
- * Parameter read will has the full name
- * <tt>prefix+"."+PAR_PROT</tt>
+/**
+ * The protocol to operate on.
+ * @config
  */
-public static final String PAR_PROT = "protocol";
+private static final String PAR_PROT = "protocol";
 
+//--------------------------------------------------------------------------
+//Fields
+//--------------------------------------------------------------------------
+
+/** Load value */
 private final double value;
 
+/** Value obtained from config property {@link #PAR_PROT}. */
 private final int protocolID;
 
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 // Initialization
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 
 public ResetQuota(String prefix)
 {
@@ -58,10 +62,9 @@ public ResetQuota(String prefix)
 	protocolID = Configuration.getPid(prefix+"."+PAR_PROT);
 }
 
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 // Methods
-////////////////////////////////////////////////////////////////////////////
-
+//--------------------------------------------------------------------------
 
 // Comment inherited from interface
 public boolean execute() {

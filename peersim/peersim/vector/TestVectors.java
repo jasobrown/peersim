@@ -18,7 +18,6 @@
 
 package peersim.vector;
 
-import peersim.core.*;
 
 /**
  * for testing the vector package.
@@ -65,40 +64,42 @@ public Object clone() throws CloneNotSupportedException
 //--------------------------------------------------------------------------
 
 /**
- * @inheritDoc
+ * 
  */
 public int getIValue() { return ivalue; }
 
 //--------------------------------------------------------------------------
 
 /**
- * @inheritDoc
+ * 
  */
 public void setIValue(int value) { ivalue = value; }
 
 //--------------------------------------------------------------------------
+
 /**
- * @inheritDoc
+ * 
  */
 public float getFValue() { return fvalue; }
 
 //--------------------------------------------------------------------------
 
 /**
- * @inheritDoc
+ * 
  */
 public void setFValue(float value) { fvalue = value; }
 
 //--------------------------------------------------------------------------
+
 /**
- * @inheritDoc
+ * 
  */
 public long getLValue() { return lvalue; }
 
 //--------------------------------------------------------------------------
 
 /**
- * @inheritDoc
+ * 
  */
 public void setLValue(long value) { lvalue = value; }
 

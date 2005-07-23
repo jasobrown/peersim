@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -29,12 +29,12 @@ import java.util.zip.*;
  * 
  * Inspired from some code written by David Postill (david@postill.org.uk)
  * (found in http://groups.google.com).
- * 
+ *
  *
  * @author Alberto Montresor
  * @version $Revision$
  */
-public class ClassFinder 
+class ClassFinder 
 {
 
 //--------------------------------------------------------------------------

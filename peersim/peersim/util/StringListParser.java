@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -21,89 +21,116 @@ package peersim.util;
 import java.util.*;
 
 /**
- * Format a,b:c,e:f|*g 
- *
+ * This utility class can be used to parse range expressions. In particular,
+ * it is used by {@link peersim.RangeSimulator} to express ranges for
+ * configuration properties.
+ * <p>
+ * The language for range expression is the following: 
+ * <pre>
+ *   [rangelist] := [range] | [range],[rangelist]
+ *   [range] := value | min:max | min:max|step | 
+ *      min:max*|step
+ * </pre>
+ * where <tt>value</tt>, <tt>min</tt>, <tt>max</tt> and <tt>step</tt>
+ * are numeric atoms that defines ranges.
+ * <p>
+ * For example, the following range expression:
+ * <pre>
+ *   5,9:11,13:17|2,32:128*|2
+ * </pre>
+ * corresponds to 5 (single value), 9-10-11 (range between 9 and 11,
+ * default increment 1), 13-15-17 (range between 13 and 17, specified
+ * range 2, 32-64-128 (range between 32 and 128, multiplicative range 2).
+ * 
  * @author Alberto Montresor
  * @version $Revision$
  */
 public class StringListParser
 {
- 	
- 	
- 	public static String[] parseList(String s)
- 	{
- 		ArrayList list = new ArrayList();
- 		String[] tokens = s.split(",");
- 		for (int i=0; i < tokens.length; i++) {
-			parseItem(list, tokens[i]);
- 		}
- 		return (String[]) list.toArray(new String[list.size()]);
- 	}
- 	
- 	private static void parseItem(List list, String item)
- 	{
- 		String[] array = item.split(":");
- 		if (array.length == 1) {
- 			parseSingleItem(list, item);
- 		} else if (array.length == 2) {
- 			parseRangeItem(list, array[0], array[1]);
- 		} else {
- 			throw new IllegalArgumentException("Element " + item + 
- 				"should be formatted as <start>:<stop> or <value>");
- 		}
- 	}
- 	
- 	private static void parseSingleItem(List list, String item)
-	{
-		list.add(item);
+
+/** Disable instance construction */
+private StringListParser() { }
+
+/**
+ * Parse the specified string.
+ * 
+ * @param s the string to be parsed
+ * @return an array of strings containing all the values defined by the
+ *   range string
+ */
+public static String[] parseList(String s)
+{
+	ArrayList list = new ArrayList();
+	String[] tokens = s.split(",");
+	for (int i = 0; i < tokens.length; i++) {
+		parseItem(list, tokens[i]);
 	}
-	
-	private static void parseRangeItem(List list, String start, String stop)
-	{
-		double vstart;
-		double vstop;
-		double vinc;
-		boolean sum;
-		
-		vstart = Double.parseDouble(start);
-		int pos = stop.indexOf("|*");
+	return (String[]) list.toArray(new String[list.size()]);
+}
+
+private static void parseItem(List list, String item)
+{
+	String[] array = item.split(":");
+	if (array.length == 1) {
+		parseSingleItem(list, item);
+	} else if (array.length == 2) {
+		parseRangeItem(list, array[0], array[1]);
+	} else {
+		throw new IllegalArgumentException("Element " + item
+				+ "should be formatted as <start>:<stop> or <value>");
+	}
+}
+
+private static void parseSingleItem(List list, String item)
+{
+	list.add(item);
+}
+
+private static void parseRangeItem(List list, String start, String stop)
+{
+	double vstart;
+	double vstop;
+	double vinc;
+	boolean sum;
+	vstart = Double.parseDouble(start);
+	int pos = stop.indexOf("|*");
+	if (pos >= 0) {
+		// The string contains a multiplicative factor
+		vstop = Double.parseDouble(stop.substring(0, pos));
+		vinc = Double.parseDouble(stop.substring(pos + 2));
+		sum = false;
+	} else {
+		pos = stop.indexOf("|");
 		if (pos >= 0) {
-			// The string contains a multiplicative factor
+			// The string contains an additive factor
 			vstop = Double.parseDouble(stop.substring(0, pos));
-			vinc = Double.parseDouble(stop.substring(pos+2));
-			sum = false;
+			vinc = Double.parseDouble(stop.substring(pos + 1));
+			sum = true;
 		} else {
-			pos = stop.indexOf("|");
-			if (pos >= 0) {
-				// The string contains an additive factor
-				vstop = Double.parseDouble(stop.substring(0, pos));
-				vinc = Double.parseDouble(stop.substring(pos+1));
-				sum = true;
-			} else {
-				// The string contains just the final value
-				vstop = Double.parseDouble(stop);
-				vinc = 1;
-				sum = true;
-			}
-		}
-		if (sum) {
-			for (double i=vstart; i <= vstop; i += vinc)
-			  list.add(""+i);
-		} else {
-			for (double i=vstart; i <= vstop; i *= vinc)
-				list.add(""+i);
+			// The string contains just the final value
+			vstop = Double.parseDouble(stop);
+			vinc = 1;
+			sum = true;
 		}
 	}
- 			
-	public static void main(String[] args)
-	{
-		String[] ret = parseList(args[0]);
-		for (int i=0; i < ret.length; i++)
-			System.out.print(ret[i]+ " ");
-		System.out.println("");
-		
+	if (sum) {
+		for (double i = vstart; i <= vstop; i += vinc)
+			list.add("" + i);
+	} else {
+		for (double i = vstart; i <= vstop; i *= vinc)
+			list.add("" + i);
 	}
+}
 
-
-
+/**
+ * Test main.
+ * @param args parse the first command-line argument.
+ */
+public static void main(String[] args)
+{
+	String[] ret = parseList(args[0]);
+	for (int i = 0; i < ret.length; i++)
+		System.out.print(ret[i] + " ");
+	System.out.println("");
+}
 }

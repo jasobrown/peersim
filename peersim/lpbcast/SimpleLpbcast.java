@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -18,7 +18,6 @@
 		
 package lpbcast;
 
-import peersim.util.*;
 import peersim.core.*;
 import peersim.config.*;
 import peersim.cdsim.*;
@@ -37,25 +36,36 @@ public class SimpleLpbcast implements CDProtocol, Linkable {
 
 
 /**
-* config parameter name for the max view size. If less than 1 then there
-* is no view, only subs. Defaults to -1. 
-*/
-public static final String PAR_L = "l";
-
-/** config parameter name for the max subs size */
-public static final String PAR_SUBS = "subs";
-
-/** config parameter name for the max unsubs size */
-public static final String PAR_UNSUBS = "unSubs";
+ * The max view size. If less than 1 then there is no view, only subs. Defaults
+ * to -1.
+ * @config
+ */
+private static final String PAR_L = "l";
 
 /**
-* config parameter name for the timeout of an unsubscription.
-* If negative, there is no timeout. Defaults to -1.
-*/
-public static final String PAR_UNSUBSTOUT = "unSubsTout";
+ * The max subs size
+ * @config
+ */
+private static final String PAR_SUBS = "subs";
 
-/** config parameter name for F. Defaults to 1. */
-public static final String PAR_F = "F";
+/**
+ * The max unsubs size
+ * @config
+ */
+private static final String PAR_UNSUBS = "unSubs";
+
+/**
+ * This parameter defines the timeout of an unsubscription. If negative, there
+ * is no timeout. Defaults to -1.
+ * @config
+ */
+private static final String PAR_UNSUBSTOUT = "unSubsTout";
+
+/**
+ * config parameter name for F. Defaults to 1.
+ * @config
+ */
+private static final String PAR_F = "F";
 
 private static int l;
 

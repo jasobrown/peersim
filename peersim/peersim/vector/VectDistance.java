@@ -54,35 +54,35 @@ public class VectDistance implements Control
  * The first protocol to be observed.
  * @config
  */
-public static final String PAR_PROT1 = "protocol1";
+private static final String PAR_PROT1 = "protocol1";
 
 /**
  * The second protocol to be observed.
  * @config
  */
-public static final String PAR_PROT2 = "protocol2";
+private static final String PAR_PROT2 = "protocol2";
 
 /**
  * The getter method used to obtain the values of the first protocol. 
- * Defauls to "getValue" (for backward compatibility with previous 
+ * Defaults to "getValue" (for backward compatibility with previous 
  * implementation of this class, that were based on the 
  * {@link SingleValue} interface.
  * Refer to the {@linkplain peersim.vector vector package description} for more 
  * information about getters and setters.
  * @config
  */
-public static final String PAR_METHOD1 = "getter1";
+private static final String PAR_METHOD1 = "getter1";
 
 /**
  * The getter method used to obtain the values of the second protocol. 
- * Defauls to "getValue" (for backward compatibility with previous 
+ * Defaults to "getValue" (for backward compatibility with previous 
  * implementation of this class, that were based on the 
  * {@link SingleValue} interface.
  * Refer to the {@linkplain peersim.vector vector package description} for more 
  * information about getters and setters.
  * @config
  */
-public static final String PAR_METHOD2 = "getter2";
+private static final String PAR_METHOD2 = "getter2";
 
 // --------------------------------------------------------------------------
 // Fields
@@ -113,6 +113,11 @@ private final Method method2;
 // Initialization
 // --------------------------------------------------------------------------
 
+/**
+ * Standard constructor that reads the configuration parameters.
+ * Invoked by the simulation engine.
+ * @param prefix the configuration prefix for this class
+ */
 public VectDistance(String prefix)
 {
 	name = prefix;

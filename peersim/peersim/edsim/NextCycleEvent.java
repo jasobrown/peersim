@@ -46,7 +46,7 @@ public class NextCycleEvent implements Cloneable {
 * the next cycle. Its type is (or extends) {@link NextCycleEvent}.
 * Defaults to {@link NextCycleEvent}.
 */
-public static final String PAR_NEXTC = "nextcycle";
+protected static final String PAR_NEXTCYCLE = "nextcycle";
 
 
 // =============================== initialization ======================

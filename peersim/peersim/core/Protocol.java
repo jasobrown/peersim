@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -15,14 +15,21 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-		
+
 package peersim.core;
 
-public interface Protocol extends Cloneable {
-	
-	/**
-	* We have to include this to change the access right to public.
-	*/
-	public Object clone() throws CloneNotSupportedException;
-}
+/**
+ * Generic tag interface to identify protocols.
+ * 
+ * @author Alberto Montresor
+ * @version $Revision$
+ */
+public interface Protocol extends Cloneable
+{
 
+/**
+ * We have to include this to change the access right to public.
+ */
+public Object clone() throws CloneNotSupportedException;
+
+}

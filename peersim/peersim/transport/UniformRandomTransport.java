@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -21,7 +21,6 @@ package peersim.transport;
 import peersim.config.*;
 import peersim.core.*;
 import peersim.edsim.*;
-import peersim.util.*;
 
 
 /**
@@ -37,10 +36,16 @@ public class UniformRandomTransport implements Transport
 //Parameters
 //---------------------------------------------------------------------
 
-/** String name of the parameter used to configure the minimum latency */	
+/** 
+ * String name of the parameter used to configure the minimum latency 
+ * @config
+ */	
 private static final String PAR_MINDELAY = "mindelay";	
 	
-/** String name of the parameter used to configure the maximum latency */	
+/** 
+ * String name of the parameter used to configure the maximum latency
+ * @config 
+ */	
 private static final String PAR_MAXDELAY = "maxdelay";	
 	
 //---------------------------------------------------------------------

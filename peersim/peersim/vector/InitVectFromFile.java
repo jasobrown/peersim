@@ -18,12 +18,10 @@
 
 package peersim.vector;
 
+import java.io.*;
+import java.util.*;
 import peersim.config.*;
 import peersim.core.*;
-import peersim.dynamics.*;
-import java.io.*;
-import java.lang.reflect.*;
-import java.util.StringTokenizer;
 
 /**
  * Initializes a protocol vector from data read from a file. The file has to
@@ -34,7 +32,8 @@ import java.util.StringTokenizer;
  * This dynamics class can initialize any protocol field containing a 
  * primitive value, provided that the field is associated with a setter method 
  * that modifies it.
- * The method to be used is specified through parameter {@value #PAR_METHOD}.
+ * The method to be used is specified through parameter 
+ * {@value peersim.vector.VectControl#PAR_METHOD}.
  * For backward compatibility, if no method is specified, the method
  * {@link SingleValue#setValue(double)} is used. In this way, classes
  * implementing the {@link SingleValue} interface can be initialized using the
@@ -54,7 +53,7 @@ public class InitVectFromFile extends VectControl
  * The filename to load links from.
  * @config
  */
-public static final String PAR_FILE = "file";
+private static final String PAR_FILE = "file";
 
 // --------------------------------------------------------------------------
 // Fields
@@ -68,8 +67,9 @@ private final String file;
 // --------------------------------------------------------------------------
 
 /**
- * @param prefix
- *          the configuration prefix for this class
+ * Standard constructor that reads the configuration parameters.
+ * Invoked by the simulation engine.
+ * @param prefix the configuration prefix for this class
  */
 public InitVectFromFile(String prefix)
 {

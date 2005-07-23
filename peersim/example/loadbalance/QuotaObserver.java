@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -18,10 +18,9 @@
 
 package example.loadbalance;
 
-import peersim.core.*;
-import peersim.reports.*;
 import peersim.config.*;
-import peersim.util.IncrementalStats;
+import peersim.core.*;
+import peersim.util.*;
 
 public class QuotaObserver implements Control {
 
@@ -30,10 +29,11 @@ public class QuotaObserver implements Control {
 // Constants
 ////////////////////////////////////////////////////////////////////////////
 
-/** 
- *  String name of the parameter used to select the protocol to operate on
+/**
+ * The protocol to operate on.
+ * @config
  */
-public static final String PAR_PROT = "protocol";
+private static final String PAR_PROT = "protocol";
 
 ////////////////////////////////////////////////////////////////////////////
 // Fields

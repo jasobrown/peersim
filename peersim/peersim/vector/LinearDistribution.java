@@ -18,10 +18,8 @@
 
 package peersim.vector;
 
-import java.lang.reflect.*;
 import peersim.config.*;
 import peersim.core.*;
-import peersim.dynamics.*;
 
 /**
  * Initializes a protocol vector with values in the range [{@value #PAR_MIN}, 
@@ -30,7 +28,8 @@ import peersim.dynamics.*;
  * This dynamics class can initialize any protocol field containing a 
  * primitive value, provided that the field is associated with a setter method 
  * that modifies it.
- * The method to be used is specified through parameter {@value #PAR_METHOD}.
+ * The method to be used is specified through parameter 
+ * {@value peersim.vector.VectControl#PAR_METHOD}.
  * For backward compatibility, if no method is specified, the method
  * {@link SingleValue#setValue(double)} is used. In this way, classes
  * implementing the {@link SingleValue} interface can be initialized using the
@@ -50,13 +49,13 @@ public class LinearDistribution extends VectControl
  * The upper bound of the uniform random variable.
  * @config
  */
-public static final String PAR_MAX = "max";
+private static final String PAR_MAX = "max";
 
 /**
  * The lower bound of the uniform random variable. Defaults to -max.
  * @config
  */
-public static final String PAR_MIN = "min";
+private static final String PAR_MIN = "min";
 
 // --------------------------------------------------------------------------
 // Fields
@@ -76,6 +75,8 @@ private final double step;
 // --------------------------------------------------------------------------
 
 /**
+ * Standard constructor that reads the configuration parameters.
+ * Invoked by the simulation engine.
  * @param prefix the configuration prefix for this class
  */
 public LinearDistribution(String prefix)

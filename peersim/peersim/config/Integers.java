@@ -20,7 +20,7 @@ import org.lsmp.djep.groupJep.interfaces.*;
  * as BigInteger; in this way we avoid NumberFormatException when
  * reading values such as 10.0.
  */
-public class Integers extends Group implements IntegralDomainI,HasDivI,
+class Integers extends Group implements IntegralDomainI,HasDivI,
 	OrderedSetI,HasModI,HasPowerI {
 	
 	/**

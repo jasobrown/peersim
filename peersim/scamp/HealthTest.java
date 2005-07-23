@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -29,11 +29,12 @@ public class HealthTest implements Control {
 // ===================== fields =======================================
 // ====================================================================
 
-/** 
-*  String name of the parameter used to select the protocol to operate on
-*/
-public static final String PAR_PROT = "protocol";
-  
+/**
+ * The protocol to operate on.
+ * @config
+ */
+private static final String PAR_PROT = "protocol";
+
 /** The name of this observer in the configuration */
 private final String name;
 

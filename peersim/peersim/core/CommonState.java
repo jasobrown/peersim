@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -93,8 +93,9 @@ public static ExtendedRandom r = null;
 /**
 * Configuration parameter used to initialize the random seed.
 * If it is not specified the current time is used.
+* @config
 */
-public static String PAR_SEED = "random.seed";
+private static final String PAR_SEED = "random.seed";
 
 
 /**
@@ -108,7 +109,6 @@ static {
 		Configuration.getLong(PAR_SEED,System.currentTimeMillis());
 	r = new ExtendedRandom(seed);
 }
-
 
 // ======================= methods =================================
 // =================================================================

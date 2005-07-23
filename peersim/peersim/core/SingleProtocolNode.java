@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -22,24 +22,31 @@ import peersim.config.*;
 
 /**
  * This class represents a node that has a {@link Linkable} protocol
- * wired in with protocol id 0, and a single protocol with protocol id
+ * wired in with protocol id 0, and a singleton protocol with protocol id
  * 1.
  */
 public class SingleProtocolNode 
 implements Protocol, Node, Linkable 
 {
 
-//////////////////////////////////////////////////////////////////////
-// Constants
-//////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
+//Parameters
+//--------------------------------------------------------------------------
 
-public static final int DEFAULT_INITIAL_CAPACITY=10;
+/**
+* Default init capacity
+*/
+private static final int DEFAULT_INITIAL_CAPACITY = 10;
 
-public static final String PAR_INITCAP = "capacity";
+/**
+* Initial capacity. Defaults to {@value #DEFAULT_INITIAL_CAPACITY}.
+* @config
+*/
+private static final String PAR_INITCAP = "capacity";
 
-//////////////////////////////////////////////////////////////////////
-// Fields
-//////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
+//Fields
+//--------------------------------------------------------------------------
 
 /** Neighbors */
 private Node[] neighbors;
@@ -59,9 +66,9 @@ private Protocol protocol = null;
  */
 private int index;
 
-//////////////////////////////////////////////////////////////////////
-// Constructor and initialization
-//////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
+//Initialization
+//--------------------------------------------------------------------------
 
 public SingleProtocolNode(String prefix) {
 	neighbors =
@@ -84,9 +91,9 @@ public Object clone() throws CloneNotSupportedException
 	return result;
 }
 
-//////////////////////////////////////////////////////////////////////
+//-----------------------------------------------------------------
 // Public methods
-//////////////////////////////////////////////////////////////////////
+//-----------------------------------------------------------------
 
 public void setFailState(int failState) {
 
@@ -152,9 +159,9 @@ public void setIndex(int index) {
 }
 
 
-//////////////////////////////////////////////////////////////////////
+//-----------------------------------------------------------------
 // Methods
-//////////////////////////////////////////////////////////////////////
+//-----------------------------------------------------------------
 
 
 public int getCapacity()
@@ -261,5 +268,6 @@ public String toString() {
 	return buffer.append("] "+protocol).toString();
 }
 
+//-----------------------------------------------------------------
 
 }

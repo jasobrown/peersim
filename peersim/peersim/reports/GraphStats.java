@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -32,26 +32,27 @@ public class GraphStats extends GraphObserver {
 // ===================== fields =======================================
 // ====================================================================
 
-
 /** 
-* Name for the parameter which defines the number of nodes to use fore
+* The number of nodes to use for
 * sampling average path length.
 * If zero is given, than no statistics
 * will be printed about path length. If a negative value is given then
 * the value is the full size of the graph.
 * Defaults to zero.
+* @config
 */
-public static final String PAR_NL = "nl";
+private static final String PAR_NL = "nl";
 
 /** 
-* Name for the parameter which defines the number of nodes to use to sample
+* The number of nodes to use to sample
 * average clustering.
 * If zero is given, than no statistics
 * will be printed about clustering. If a negative value is given then
 * the value is the full size of the graph.
 * Defaults to zero.
+* @config
 */
-public static final String PAR_NC = "nc";
+private static final String PAR_NC = "nc";
 
 protected final int nc;
 
@@ -62,6 +63,11 @@ protected final int nl;
 // =====================================================================
 
 
+/**
+ * Standard constructor that reads the configuration parameters.
+ * Invoked by the simulation engine.
+ * @param name the configuration prefix for this class
+ */
 public GraphStats(String name) {
 
 	super(name);

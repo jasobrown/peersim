@@ -32,7 +32,7 @@ import peersim.dynamics.*;
  * provided that the former field is associated with a getter method,
  * while the latter is associated with a setter method.
  * The methods to be used are specified through parameters 
- * {@value #PAR_GETTER} and {@value #PAR_SETTER}.
+ * {@value #PAR_GETTER} and {@value peersim.vector.VectControl#PAR_METHOD}.
  * For backward compatibility, if no methods are specified, the method
  * {@link SingleValue#getValue()} and {@link SingleValue#setValue(double)} 
  * are used, respectively. In this way, classes
@@ -51,11 +51,11 @@ public class VectCopy extends VectControl implements  NodeInitializer
 
 /**
  * The identifier of the protocol to be copied. The protocol given in 
- * parameter {@value #PAR_PROT} will initialized copying values from this
+ * parameter {@value peersim.vector.VectControl#PAR_PROT} will initialized copying values from this
  * protocol.
  * @config
  */
-public static final String PAR_SOURCE = "source";
+private static final String PAR_SOURCE = "source";
 
 /**
  * The getter method used to obtain the protocol values. 
@@ -66,7 +66,7 @@ public static final String PAR_SOURCE = "source";
  * information about getters and setters.
  * @config
  */
-public static final String PAR_GETTER = "getter";
+private static final String PAR_GETTER = "getter";
 
 // --------------------------------------------------------------------------
 // Variables
@@ -83,8 +83,9 @@ private final Method getter;
 //--------------------------------------------------------------------------
 
 /**
- * @param prefix
- *          the configuration prefix for this class
+ * Standard constructor that reads the configuration parameters.
+ * Invoked by the simulation engine.
+ * @param prefix the configuration prefix for this class
  */
 public VectCopy(String prefix)
 {

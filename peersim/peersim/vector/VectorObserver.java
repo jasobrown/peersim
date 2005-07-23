@@ -49,10 +49,11 @@ public class VectorObserver implements Control
 //--------------------------------------------------------------------------
 
 
-/** 
- * The protocol vector to be observed
+/**
+ * The protocol to operate on.
+ * @config
  */
-public static final String PAR_PROT = "protocol";
+private static final String PAR_PROT = "protocol";
 
 /**
  * The getter method(s) used to get values from the protocol instances.
@@ -64,7 +65,7 @@ public static final String PAR_PROT = "protocol";
  * information about getters and setters.
  * @config
  */
-public static final String PAR_METHODS = "getter";
+private static final String PAR_METHODS = "getter";
 
 //--------------------------------------------------------------------------
 //Fields
@@ -88,6 +89,8 @@ private final Method[] methods;
 //--------------------------------------------------------------------------
 
 /**
+ * Standard constructor that reads the configuration parameters.
+ * Invoked by the simulation engine.
  * @param prefix the configuration prefix for this class
  */
 public VectorObserver(String prefix)

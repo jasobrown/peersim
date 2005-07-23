@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 The BISON Project
+ * Copyright (c) 2003-2005 The BISON Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -20,7 +20,6 @@ package peersim;
 
 import java.io.*;
 import java.util.*;
-import peersim.cdsim.*;
 import peersim.config.*;
 import peersim.edsim.*;
 import peersim.util.*;
@@ -35,40 +34,46 @@ import peersim.core.Log;
 public class RangeSimulator extends Simulator
 {
 
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 // Constants
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
+
 /**
  *  
  */
 public static final String CONFIG_EXTENSIONS = ".cfg";
 
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 // Configuration parameters
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
+
 /**
  * This config property define the parameters that defines separate experiments
  * and the corresponding values. For each value, a different result file will
  * be produced.
+ * @config
  */
-public static final String PAR_CONCURRENT = "range.concurrent";
+private static final String PAR_CONCURRENT = "range.concurrent";
 
 /**
  * This config property defines the parameters that vary during a single
  * experiment and the corresponding values.
+ * @config
  */
-public static final String PAR_RANGE = "range";
+private static final String PAR_RANGE = "range";
 
 /**
  * This config property defines the number of repetitions that will be executed
  * of the same experiment.
+ * @config
  */
-public static final String PAR_EXPS = "simulation.experiments";
+private static final String PAR_EXPS = "simulation.experiments";
 
 
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 // Methods
-////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
+
 /**
  * Main method of the system.
  */
@@ -350,9 +355,11 @@ public static void doExperiments(Properties properties)
 }
 
 //--------------------------------------------------------------------
+
 private static void usage() {
 	System.err.println("Usage:");
 	System.err.println("  RangeSimulator -d <configdir> [<resultdir>]");
 	System.err.println("  RangeSimulator <configfile> <property>*");
 }
+
 }

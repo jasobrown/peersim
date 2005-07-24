@@ -27,7 +27,7 @@ doc:
 
 docnew:
 	rm -rf doc/*
-	javadoc -docletpath /home/montreso/Workspace/Doclet/classes -doclet doclets.standard.Standard -classpath .:jep-2.3.0.jar:djep-1.0.0.jar -d doc \
+	javadoc -docletpath peersim-doclet.jar -doclet doclets.standard.Standard -classpath .:jep-2.3.0.jar:djep-1.0.0.jar -d doc \
                 -group "Peersim" "peersim*" \
                 -group "Examples" "example.*" \
 		peersim \
@@ -45,7 +45,6 @@ docnew:
 		example.newscast \
 		example.aggregation \
 		example.hot 
-#	javadoc -docletpath peersim-doclet.jar -doclet doclets.standard.Standard -classpath .:jep-2.3.0.jar:djep-1.0.0.jar -d doc \
 
 release: all doc
 	rm -fr peersim-$(VER)

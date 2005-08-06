@@ -7,8 +7,6 @@ AM 23/07/05
   NOTE: This commit is HUGE, but it is just an aesthetic commit; no
   fundamental code has been changed.
   
-- Now config code, if fo
-
 MJ 21/07/05
 - Added some implementations of NextCycleEvent
 

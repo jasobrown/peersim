@@ -35,8 +35,8 @@ public class EDSimulator
 //---------------------------------------------------------------------
 	
 /**
- * The ending time for simulation. No event after this value
- * will be executed.
+ * The ending time for simulation. Only events that have a strictly smaller
+ * value are executed..
  * @config
  */
 private static final String PAR_ENDTIME = "simulation.endtime";	
@@ -90,9 +90,6 @@ protected static Control[] controls=null;
 
 /** Holds the control schedulers of this simulation */
 protected static Scheduler[] ctrlSchedules = null;
-
-/** Holds the control schedulers of this simulation */
-protected static Scheduler[] cdpSchedules = null;
 
 /** Ordered list of events (heap) */
 protected static Heap heap = new Heap();
@@ -148,46 +145,6 @@ protected static void scheduleControls()
 
 //---------------------------------------------------------------------
 
-protected static void scheduleCDProtocols()
-{
-	// CDProtocol instances are searched in Network.prototype, which
-	// contains the prototype node for the network (even if the network
-	// size is 0).
-	String[] names = Configuration.getNames(Node.PAR_PROT);
-	Node node = Network.prototype;
-	int size = node.protocolSize();
-	cdpSchedules = new Scheduler[size];
-	for (int i=0; i < size; i++)
-	{
-		if (node.getProtocol(i) instanceof CDProtocol)
-		{
-			// with no default values to avoid "overscheduling"
-			// due to lack of step option.
-			cdpSchedules[i] = new Scheduler(names[i], false);
-			NextCycleEvent nce = null;
-			String nceprop = names[i]+"."+NextCycleEvent.PAR_NEXTCYCLE;
-			if( Configuration.contains(nceprop) )
-			{
-				nce = (NextCycleEvent)
-					Configuration.getInstance(nceprop);
-			}
-			else
-			{
-				nce = new NextCycleEvent((String)null);
-			}
-			
-			for( int j=0; j<Network.size(); ++j )
-			{
-				// adds a clone of itself to the queue
-				nce.scheduleFirstEvent(
-					Network.get(j),i,cdpSchedules[i]);
-			}
-		}
-	}
-}
-
-//---------------------------------------------------------------------
-
 /**
  * Adds a new event to be scheduled, specifying the number of time units
  * of delay, and the execution order parameter.
@@ -203,7 +160,7 @@ protected static void scheduleCDProtocols()
  */
 static void addControlEvent(long time, int order, Object event)
 {
-	if (time > endtime) return;
+	if (time >= endtime) return;
 	time = (time << rbits) | order;
 	heap.add(time, event, null, (byte) 0);
 }
@@ -243,7 +200,7 @@ private static boolean executeNext() {
 		do { nextlog+=logtime; }
 		while(time >= nextlog);
 	}
-	if (time > endtime)
+	if (time >= endtime)
 	{
 		System.err.println("EDSimulator: reached end time, quitting,"+
 		" leaving "+heap.size()+" unprocessed events in the queue");
@@ -265,7 +222,7 @@ private static boolean executeNext() {
 		if( ev.event instanceof NextCycleEvent )
 		{
 			NextCycleEvent nce = (NextCycleEvent) ev.event;
-			nce.execute(cdpSchedules[pid]);
+			nce.execute();
 		}
 		else
 		{try
@@ -309,7 +266,6 @@ public static void nextExperiment()
 	CommonState.setTime(0); // needed here
 	runInitializers();
 	scheduleControls();
-	scheduleCDProtocols();
 
 	// Perform the actual simulation; executeNext() will tell when to
 	// stop.
@@ -334,7 +290,8 @@ public static void nextExperiment()
  * will be delivered.
  * 
  * @param delay 
- *   The number of time units before the event is scheduled
+ *   The number of time units before the event is scheduled.
+ *   Has to be non-negative.
  * @param event 
  *   The object associated to this event
  * @param node 
@@ -345,13 +302,17 @@ public static void nextExperiment()
  */
 public static void add(long delay, Object event, Node node, int pid)
 {
+	if (delay < 0 )
+		throw new IllegalArgumentException("Protocol "+
+			node.getProtocol(pid)+" is trying to add event "+
+			event+" with a negative delay: "+delay);
 	if (pid > Byte.MAX_VALUE) 
 		throw new IllegalArgumentException(
 				"This version does not support more than " 
 				+ Byte.MAX_VALUE + " protocols");
 	
 	long time = CommonState.getTime()+delay;
-	if (time > endtime) return;
+	if (time >= endtime) return;
 	time = (time << rbits) | CommonState.r.nextInt(1 << rbits);
 	heap.add(time, event, node, (byte) pid);
 }

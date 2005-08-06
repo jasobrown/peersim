@@ -26,27 +26,17 @@ import peersim.cdsim.CDProtocol;
 * this class is used to wrap a CDProtocol instance into an event so
 * that it can be used in the event based simulation engine.
 * This class is responsible for calling the nextCycle method of the CDProtocol
-* and to schedule the next cycle. This class can be configured in the
-* configuration through parameter {@value #PAR_NEXTCYCLE}. The default
-* is this base class, that implements fixed length cycles, that is,
-* cycles, that is, the nextCycle method is scheduled to run in reguler
-* fixed length intervals.
+* and to schedule the next cycle.
 *
 * <p>
-* Note that reimplementing this class allows for arbitrary scheduling,
+* Note that reimplementing method {@link #nextDelay} of this class allows
+* for arbitrary scheduling,
 * including adaptively changing or irregular cycle lengths, etc.
 */
 public class NextCycleEvent implements Cloneable {
 
-// ============================== fields ==============================
-// ====================================================================
 
-/**
-* Parameter that is used to define the class that is used to schedule
-* the next cycle. Its type is (or extends) {@link NextCycleEvent}.
-* Defaults to {@link NextCycleEvent}.
-*/
-protected static final String PAR_NEXTCYCLE = "nextcycle";
+protected final Scheduler sch;
 
 
 // =============================== initialization ======================
@@ -56,10 +46,13 @@ protected static final String PAR_NEXTCYCLE = "nextcycle";
 /**
 * Reads configuration to initialize the object. Extending classes should
 * have a constructor with the same signature, often as simple as
-* <pre>super(n)</pre>.
-* This specific implementation does nothing.
+* <pre>super(n,obj)</pre>.
+* This constructor is called by internal classes only.
 */
-public NextCycleEvent(String n) {}
+protected NextCycleEvent(String n, Object obj) {
+
+	sch = (Scheduler)obj;
+}
 
 // --------------------------------------------------------------------
 
@@ -80,37 +73,21 @@ protected Object clone() throws CloneNotSupportedException {
 
 
 /**
- * Schedules the protocol
- * for the first execution adding it to the priority queue of the event driven
- * simulation. The time of the first execution is detemined by
- * {@link #firstTime}. This mehtod creates a clone of the object and puts
- * that clone into the queue. Also, it calls the {@link #firstTime} of the
- * clone and not this object.
- */
-public final void scheduleFirstEvent(Node node, int pid, Scheduler sch) {
-
-	NextCycleEvent nce=null;
-	try { nce = (NextCycleEvent)this.clone(); }
-	catch(CloneNotSupportedException e) {} //cannot possibly happen
-	long time = CommonState.getTime();
-	long firsttime = nce.firstTime(sch);
-	if( firsttime > time ) EDSimulator.add(firsttime-time, nce, node, pid);
-}
-
-// --------------------------------------------------------------------
-
-/**
 * Executes the nextCycle method of the protocol, and schedules the next call
 * using the delay returned by {@link #nextDelay}.
+* If the next execution time as defined by the delay is outside of the
+* valid times as defined by {@link #sch}, then the next event is not scheduled.
+* Note that this means that this protocol will no longer be scheduled because
+* the next event after the next event is scheduled by the next event.
 */
-public final void execute(Scheduler sch) {
+public final void execute() {
 
 	int pid = CommonState.getPid();
 	Node node = CommonState.getNode();
 	CDProtocol cdp = (CDProtocol)node.getProtocol(pid);
 	cdp.nextCycle(node,pid);
 	
-	long delay = nextDelay(sch);
+	long delay = nextDelay();
 	if( CommonState.getTime()+delay < sch.until )
 		EDSimulator.add(delay, this, node, pid);
 
@@ -119,39 +96,13 @@ public final void execute(Scheduler sch) {
 // --------------------------------------------------------------------
 
 /**
-* Schedules the object for the next execution
-* adding it to the priority queue of the event driven simulation.
-* This default impementation uses a constant delay equal to the step
+* Calculates the delay until the next execution of the protocol.
+* This default impementation returns a constant delay equal to the step
 * parameter of the schedule of this event (as set in the config file).
 */
-protected long nextDelay(Scheduler sch) {
+protected long nextDelay() {
 	
 	return sch.step;
-}
-
-// --------------------------------------------------------------------
-
-/**
-* Returns the first time this even is executed.
-* This implementation returns a randomly selected point within the cycle
-* length, which is given by {@link Scheduler#step}.
-* It also makes sure that the value is within the sceduled execution
-* interval. In other words, it returns a random point from the interval
-* that beginds with <pre>max(currentTime,from)</pre>, inclusive, and
-* ends with <pre>min(max(currentTime,from)+step,until)</pre>, exclusive.
-* @param sch is the schedule that contains the values from, until and step.
-* @return the selected time point or -1, if there is no feasible one
-*/
-protected long firstTime(Scheduler sch) {
-	
-	long from = Math.max(CommonState.getTime(),sch.from);
-	if( sch.until > from )
-	{
-		long delaybound = Math.min(sch.step,sch.until-from);
-		return from+CommonState.r.nextLong(delaybound);
-	}
-	else
-		return -1;
 }
 
 }

@@ -1,3 +1,13 @@
+MJ 06/08/05
+- The endtime parameter's semantics slightly changed: now the interval
+  ov valid times is from zero to endtime, _exclusive_ the endtime.
+- Refactored the cycle based protocol support in the event driven
+  engine. Now we have a Control (and also NodeInitializer): CDScheduler
+  that schedules the first execution of the protocol instances. It has
+  a "nexcycle" parameter in which an object can be specified that extends
+  NextCycleEvent and that specifies the delay until the next execution of
+  the protocol instance. A few example implementations are included too.
+
 AM 23/07/05
 - Cleaned up some imports, that were generating warnings in Eclipse. 
   Cleaned up documentation, changed access rights of all parameters 

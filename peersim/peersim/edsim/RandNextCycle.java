@@ -23,6 +23,7 @@ import peersim.core.*;
 
 /**
 * Implements random delay between calling the nextCycle method of the protocol.
+* @see #nextDelay
 */
 public class RandNextCycle extends NextCycleEvent {
 
@@ -34,7 +35,7 @@ public class RandNextCycle extends NextCycleEvent {
 /**
 * Calls super constructor.
 */
-public RandNextCycle(String n) { super(n); }
+public RandNextCycle(String n, Object obj) { super(n,obj); }
 
 // --------------------------------------------------------------------
 
@@ -52,12 +53,13 @@ protected Object clone() throws CloneNotSupportedException {
 
 
 /**
-* Returns a random delay with uniform distribution between 0 and
-* 2*<code>step</code> (expected value is therefore <code>step</code>).
+* Returns a random delay with uniform distribution between 1 (inclusive) and
+* 2*<code>step</code> (exclusive)
+* (expected value is therefore <code>step</code>).
 */
-protected long nextDelay(Scheduler sch) {
+protected long nextDelay() {
 	
-	return CommonState.r.nextLong(sch.step<<1);
+	return 1+CommonState.r.nextLong((sch.step<<1)-1);
 }
 
 

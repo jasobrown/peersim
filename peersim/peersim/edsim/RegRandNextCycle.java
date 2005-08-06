@@ -23,24 +23,13 @@ import peersim.core.*;
 
 
 /**
-* Implements a random delay, but making sure there is one call in each
+* Implements a random delay, but making sure there is exactly one call in each
 * consequtive <code>step</code> time units.
 */
 public class RegRandNextCycle extends NextCycleEvent {
 
 // ============================== fields ==============================
 // ====================================================================
-
-
-/**
-* If set, the beginning of the first cycle will be initialized to the
-* time of construction. It means that if all protocols are added at once,
-* all will have to same idea of the beginning and end of the cycle.
-* Not set by default. In that case the beginning of the cycle is initialized
-* to be the time of first invocation, which is a random time.
-* @config
-*/
-private static final String PAR_STARTNOW = "startnow";
 
 /**
 * Indicates the start of the next cycle for a particular protocol
@@ -55,11 +44,9 @@ private long nextCycleStart = -1;
 /**
 * Calls super constructor.
 */
-public RegRandNextCycle(String n) {
+public RegRandNextCycle(String n, Object obj) {
 
-	super(n);
-	if( Configuration.contains(n+"."+PAR_STARTNOW) )
-		nextCycleStart = CommonState.getTime();
+	super(n,obj);
 }
 
 // --------------------------------------------------------------------
@@ -73,27 +60,38 @@ protected Object clone() throws CloneNotSupportedException {
 }
 
 
-
 // ========================== methods ==================================
 // =====================================================================
 
 
 /**
-* Returns a random delay but making sure there is one invocation in each
-* consequtive interval of length <code>step</code>.
+* Returns a random delay but making sure there is exactly one invocation in each
+* consequtive interval of length <code>step</code>. The beginning of these
+* intervals is defined by the first invocation which is in turn defined by
+* {@link CDScheduler} that initiates the protocol in question.
 */
-protected long nextDelay(Scheduler sch) {
+protected long nextDelay() {
+	
+	// at this point nextCycleStart points to the start of the next cycle
+	// (the cycle after the one in which this execution is taking place)
+	// (note that the start of the cycle is included in the cycle)
 	
 	final long now = CommonState.getTime();
 	if(nextCycleStart<0)
 	{
 		// not initialized
-		nextCycleStart=now;
+		nextCycleStart=now+sch.step;
 	}
-
-	while(nextCycleStart<now) nextCycleStart+=sch.step;
+	
+	// to be on the safe side, we do the next while loop.
+	// although currently it never executes
+	while(nextCycleStart<=now) nextCycleStart+=sch.step;
+	
+	// we increment nextCycleStart to point to the start of the cycle
+	// after the next cycle
 	nextCycleStart+=sch.step;
-	return nextCycleStart-now-CommonState.r.nextLong(sch.step);
+	
+	return nextCycleStart-now-CommonState.r.nextLong(sch.step)-1;
 }
 
 }

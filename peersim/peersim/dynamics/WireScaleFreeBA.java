@@ -33,60 +33,25 @@ http://arxiv.org/pdf/cond-mat/0408391</a>. In both cases, the number of the
 * added. The first added node is connected to all of the initial nodes,
 * and after that the BA model is used normally.
 */
-public class WireScaleFreeBA implements Control {
+public class WireScaleFreeBA extends WireGraph {
 
 
 // ================ constants ============================================
 // =======================================================================
-
-
-/**
- * The protocol to operate on.
- * @config
- */
-private static final String PAR_PROT = "protocol";
 
 /**
  * The number of edges added to each new node (apart from those forming the 
  * initial network).
  * @config
  */
-private static final String PAR_DEGREE = "degree";
-
-/**
- * If this config property is defined, method {@link Linkable#pack()} is 
- * invoked on the specified protocol at the end of the wiring phase. 
- * Default to false.
- * @config
- */
-private static final String PAR_PACK = "pack";
-
-/**
- * If set,  if the graph should be undirected,
- * that is, for each link (i,j) a link (j,i) will also be added.
- * @config
- */
-private static final String PAR_UNDIR = "undirected";
+private static final String PAR_DEGREE = "k";
 
 
 // =================== fields ============================================
 // =======================================================================
 
-
-/** Protocol id */
-private final int pid;
-
-/** Number of nodes */
-private final int nodes;
-
-/** Average number of edges to be created */
-private int degree;
-
-/** If true, method pack() is invoked on the initialized protocol */
-private final boolean pack;
-
-private final boolean undirected;
-
+/** Parameter of the BA model. */
+private int k;
 
 // ===================== initialization ==================================
 // =======================================================================
@@ -94,12 +59,8 @@ private final boolean undirected;
 
 public WireScaleFreeBA(String prefix)
 {
-	/* Read parameters */
-	pid = Configuration.getPid(prefix + "." + PAR_PROT);
-	nodes = Network.size();
-	degree = Configuration.getInt(prefix + "." + PAR_DEGREE);
-	pack = Configuration.contains(prefix+"."+PAR_PACK);
-	undirected = Configuration.contains(prefix+"."+PAR_UNDIR);
+	super(prefix);
+	k = Configuration.getInt(prefix + "." + PAR_DEGREE);
 }
 
 
@@ -108,22 +69,9 @@ public WireScaleFreeBA(String prefix)
 
 
 /** calls {@link GraphFactory#wireScaleFreeBA}.*/
-public boolean execute() {
+public void wire(Graph g) {
 	
-	GraphFactory.wireScaleFreeBA(
-		new OverlayGraph(pid,!undirected), 
-		degree,
-		CommonState.r );
-		
-	if (pack) {
-		int size = Network.size();
-		for (int i=0; i < size; i++) {
-			Linkable link=(Linkable)Network.get(i).getProtocol(pid);
-			link.pack();
-		}
-	}
-
-	return false;
+	GraphFactory.wireScaleFreeBA(g,k,CommonState.r );
 }
 
 }

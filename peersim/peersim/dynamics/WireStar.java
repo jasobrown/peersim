@@ -27,96 +27,23 @@ import peersim.config.Configuration;
  * topology. No connections are removed, they are only added. So it can be used
  * in combination with other initializers.
  */
-public class WireStar implements Control, NodeInitializer {
+public class WireStar extends WireGraph {
 
+// ===================== initialization ==============================
+// ===================================================================
 
-// ========================= fields =================================
-// ==================================================================
-
-
-/**
- * The protocol to operate on.
- * @config
- */
-private static final String PAR_PROT = "protocol";
-
-/**
- * If this config property is defined, method {@link Linkable#pack()} is 
- * invoked on the specified protocol at the end of the wiring phase. 
- * Default to false.
- * @config
- */
-private static final String PAR_PACK = "pack";
-
-/**
- * The protocol we want to wire
- */
-private final int pid;
-
-/** If true, method pack() is invoked on the initialized protocol */
-private final boolean pack;
-
-/**
- * Used as center in the {@link NodeInitializer} implementation.
- */
-private Node center = null;
-
-
-// ==================== initialization ==============================
-//===================================================================
-
-
-public WireStar(String prefix) {
-
-	pid = Configuration.getPid(prefix+"."+PAR_PROT);
-	pack = Configuration.contains(prefix+"."+PAR_PACK);
-}
-
+public WireStar(String prefix) { super(prefix); }
 
 // ===================== public methods ==============================
 // ===================================================================
 
 
-/** Calls {@link GraphFactory#wireStar} if size is larger than 0.*/
-public boolean execute() {
+/** Calls {@link GraphFactory#wireStar}.*/
+public void wire(Graph g) {
 	
-	if( Network.size() == 0 ) return false;
-	
-	GraphFactory.wireStar(new OverlayGraph(pid));
-	
-	center = Network.get(0);
-	
-	if (pack) {
-		int size = Network.size();
-		for (int i=0; i < size; i++) {
-			Linkable link=(Linkable)Network.get(i).getProtocol(pid);
-			link.pack();
-		}
-	}
-	
-	return false;
+	GraphFactory.wireStar(g);
 }
 
-// -------------------------------------------------------------------
-
-/**
- * Adds a link to a fixed node, the center. This fixed node remains the same
- * throughout consequitive calls to this method. If the center fails in the
- * meantime, a new one is chosen so care should be taken. The center is the 0th
- * index node at the time of the first call to the function.
- */
-public void initialize(Node n) {
-	
-	if( Network.size() == 0 ) return;
-	
-	if( center == null || !center.isUp() ) center = Network.get(0);
-
-	((Linkable)n.getProtocol(pid)).addNeighbor(center);
-	
-	if (pack) {
-		((Linkable)n.getProtocol(pid)).pack();
-	}
-}
 
 }
 

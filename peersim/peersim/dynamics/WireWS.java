@@ -28,18 +28,11 @@ import peersim.config.Configuration;
 * connections are removed, they are only added. So it can be used in
 * combination with other initializers.
 */
-public class WireWS 
-implements Control
-{
+public class WireWS extends WireGraph {
+
 
 // ========================= fields =================================
 // ==================================================================
-
-/**
- * The protocol to operate on.
- * @config
- */
-private static final String PAR_PROT = "protocol";
 
 /**
  * The beta parameter of a Watts-Strogatz graph represents the probability for a
@@ -52,50 +45,28 @@ private static final String PAR_BETA = "beta";
  * The degree of the graph. See {@link GraphFactory#wireRingLattice}.
  * @config
  */
-private static final String PAR_DEGREE = "degree";
-
-/**
- * If this config property is defined, method {@link Linkable#pack()} is 
- * invoked on the specified protocol at the end of the wiring phase. 
- * Default to false.
- * @config
- */
-private static final String PAR_PACK = "pack";
-
-/**
- * The protocol we want to wire
- */
-private final int pid;
+private static final String PAR_DEGREE = "k";
 
 /**
  * The degree of the regular graph
  */
-private final int degree;
+private final int k;
 
 /**
  * The degree of the regular graph
  */
 private final double beta;
 
-/** If true, method pack() is invoked on the initialized protocol */
-private final boolean pack;
-
 
 // ==================== initialization ==============================
 //===================================================================
 
 
-/**
- * Standard constructor that reads the configuration parameters.
- * Invoked by the simulation engine.
- * @param prefix the configuration prefix for this class
- */
 public WireWS(String prefix) {
 
-	pid = Configuration.getPid(prefix+"."+PAR_PROT);
-	degree = Configuration.getInt(prefix+"."+PAR_DEGREE);
+	super(prefix);
+	k = Configuration.getInt(prefix+"."+PAR_DEGREE);
 	beta = Configuration.getDouble(prefix+"."+PAR_BETA);
-	pack = Configuration.contains(prefix+"."+PAR_PACK);
 }
 
 
@@ -104,19 +75,10 @@ public WireWS(String prefix) {
 
 
 /** calls {@link GraphFactory#wireWS}.*/
-public boolean execute()  {
+public void wire(Graph g) {
 
-	GraphFactory.wireWS(new OverlayGraph(pid),degree,beta,CommonState.r);
-	
-	if (pack) {
-		int size = Network.size();
-		for (int i=0; i < size; i++) {
-			Linkable link=(Linkable)Network.get(i).getProtocol(pid);
-			link.pack();
-		}
-	}
-
-	return false;
+	GraphFactory.wireWS(g,k,beta,CommonState.r);
 }
 
 }
+

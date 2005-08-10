@@ -49,6 +49,12 @@ private static final String PAR_PROT = "protocol";
 protected static final String PAR_UNDIR = "undir";
 
 /**
+* Alias for {@value #PAR_UNDIR}.
+@ @config
+*/
+private static final String PAR_UNDIR_ALT = "undirected";
+
+/**
  * If defined, the undirected version of the graph will be stored using much
  * more memory but observers will be in general a few times faster. As a
  * consequence, it will not work with large graphs. Not defined by default. It
@@ -100,7 +106,8 @@ protected GraphObserver(String name) {
 
 	this.name = name;
 	protocolID = Configuration.getPid(name+"."+PAR_PROT);
-	undir = Configuration.contains(name+"."+PAR_UNDIR);
+	undir = (Configuration.contains(name + "." + PAR_UNDIR) |
+		Configuration.contains(name + "." + PAR_UNDIR_ALT));
 	GraphObserver.fast = Configuration.contains(PAR_FAST);
 	GraphObserver.needUndir = (GraphObserver.needUndir || undir);
 }

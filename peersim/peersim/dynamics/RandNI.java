@@ -18,17 +18,14 @@
 
 package peersim.dynamics;
 
-import peersim.graph.*;
 import peersim.core.*;
 import peersim.config.Configuration;
 
 /**
- * Takes a {@link Linkable} protocol and adds random connections. Note that no
- * connections are removed, they are only added. So it can be used in
- * combination with other initializers.
+ * Initializes the neighbor list of a node with ranom links.
  */
-public class WireRegularRandom implements Control, NodeInitializer
-{
+public class RandNI implements NodeInitializer {
+
 
 //--------------------------------------------------------------------------
 //Parameters
@@ -41,17 +38,11 @@ public class WireRegularRandom implements Control, NodeInitializer
 private static final String PAR_PROT = "protocol";
 
 /**
- * The out-degree degree of the graph.
+ * The number of samples (with replacement) to draw to initialize the
+ * neighbor list of the node.
  * @config
  */
-private static final String PAR_DEGREE = "degree";
-
-/**
- * If set, the generated graph is undirected. In other words, for each link
- * (i,j) a link (j,i) will also be added. Defaults to false.
- * @config
- */
-private static final String PAR_UNDIR = "undirected";
+private static final String PAR_DEGREE = "k";
 
 /**
  * If this config property is defined, method {@link Linkable#pack()} is 
@@ -73,17 +64,13 @@ private final int pid;
 /**
  * The degree of the regular graph
  */
-private final int degree;
+private final int k;
 
 /**
  * If true, method pack() is invoked on the initialized protocol
  */
 private final boolean pack;
 
-/**
- * Value obtained from parameter {@link #PAR_UNDIR}.
- */
-private final boolean undirected;
 
 //--------------------------------------------------------------------------
 //Initialization
@@ -95,11 +82,10 @@ private final boolean undirected;
  * @param prefix
  *          the configuration prefix for this class
  */
-public WireRegularRandom(String prefix)
+public RandNI(String prefix)
 {
 	pid = Configuration.getPid(prefix + "." + PAR_PROT);
-	degree = Configuration.getInt(prefix + "." + PAR_DEGREE);
-	undirected = Configuration.contains(prefix + "." + PAR_UNDIR);
+	k = Configuration.getInt(prefix + "." + PAR_DEGREE);
 	pack = Configuration.contains(prefix + "." + PAR_PACK);
 }
 
@@ -107,40 +93,22 @@ public WireRegularRandom(String prefix)
 //Methods
 //--------------------------------------------------------------------------
 
-/** Calls {@link GraphFactory#wireRegularRandom}. */
-public boolean execute()
-{
-	GraphFactory.wireRegularRandom(new OverlayGraph(pid, !undirected), degree,
-			CommonState.r);
-	if (pack) {
-		int size = Network.size();
-		for (int i = 0; i < size; i++) {
-			Linkable link = (Linkable) Network.get(i).getProtocol(pid);
-			link.pack();
-		}
-	}
-	return false;
-}
-
-// -------------------------------------------------------------------
-
 /**
  * Takes {@value #PAR_DEGREE} random samples with replacement from the nodes of
- * the overlay network.
+ * the overlay network. No loop edges are added.
  */
 public void initialize(Node n)
 {
-	if (Network.size() == 0)
-		return;
-	for (int j = 0; j < degree; ++j) {
-		((Linkable) n.getProtocol(pid)).addNeighbor(Network.get(CommonState.r
-				.nextInt(Network.size())));
+	if (Network.size() == 0) return;
+	
+	for (int j = 0; j < k; ++j)
+	{
+		((Linkable) n.getProtocol(pid)).addNeighbor(
+			Network.get(CommonState.r.nextInt(Network.size())));
 	}
-	if (pack) {
-		((Linkable) n.getProtocol(pid)).pack();
-	}
+
+	if (pack) ((Linkable) n.getProtocol(pid)).pack();
 }
 
-//--------------------------------------------------------------------------
-
 }
+

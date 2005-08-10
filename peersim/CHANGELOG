@@ -1,3 +1,18 @@
+MJ 10/08/05
+I added a number of changes, some of them will break existing config files:
+- Refactoring the Wire* controls. They have a common superclass now and
+  the NodeInitializer implementations were separated into separate classes
+  (RandNI and StarNI).
+- The Wire* classes now have a public Graph field that can be used to
+  initialize arbitrary graphs (see classdocs of WireGraph).
+- In all classes that used it, now "undir" and "undirected" are both
+  accepted as equivalent parameters.
+- RENAMED A VERY POPULAR CLASS: now WireRegularRandom is WireKOut, which
+  is the correct name for it. In the past it caused lots of confusion, we
+  finally got rid of the bogous name.
+- RENAMED VERY POPULAR PARAMETERS: instead of "degree", now every class
+  uses "k".
+
 MJ 06/08/05
 - The endtime parameter's semantics slightly changed: now the interval
   ov valid times is from zero to endtime, _exclusive_ the endtime.

@@ -153,7 +153,7 @@ public int degree(int i) { return g.degree(i)+(in==null?0:in[i].size()); }
 public static void main( String[] args ) {
 
 	Graph net = new BitMatrixGraph(20);
-	GraphFactory.wireRegularRandom(net,5,new Random());
+	GraphFactory.wireKOut(net,5,new Random());
 	ConstUndirGraph ug = new ConstUndirGraph(net);
 	for(int i=0; i<net.size(); ++i)
 		System.err.println(

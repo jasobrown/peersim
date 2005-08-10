@@ -99,7 +99,7 @@ public static Graph wireWS( Graph g, int k, double p, Random r ) {
 * @param r source of randomness
 * @return returns g for convinience
 */
-public static Graph wireRegularRandom( Graph g, int k, Random r ) {
+public static Graph wireKOut( Graph g, int k, Random r ) {
 
 	int n = g.size();
 	if( n < 2 ) return g;
@@ -213,7 +213,7 @@ public static void main(String[] pars) {
 	GraphIO.writeChaco(new UndirectedGraph(g),System.out);
 	*/
 	//wireScaleFreeBA(g,3,new Random());
-	wireRegularRandom(g,k,new Random());
+	wireKOut(g,k,new Random());
 	GraphIO.writeNeighborList(g,System.out);
 }
 

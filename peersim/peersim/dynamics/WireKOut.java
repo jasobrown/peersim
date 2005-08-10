@@ -18,95 +18,60 @@
 
 package peersim.dynamics;
 
-import peersim.graph.Graph;
-import peersim.config.*;
+import peersim.graph.*;
 import peersim.core.*;
+import peersim.config.*;
 
 /**
- * 
- *
- * @author Alberto Montresor
- * @version $Revision$
+ * Takes a {@link Linkable} protocol and adds random connections. Note that no
+ * connections are removed, they are only added. So it can be used in
+ * combination with other initializers.
  */
-public class WireScaleFreeDM extends WireGraph {
-
+public class WireKOut extends WireGraph {
 
 //--------------------------------------------------------------------------
-// Constants
+//Parameters
 //--------------------------------------------------------------------------
 
-/** 
- * This config property represents the number of edges added to each new
- * node (apart from those forming the initial network).
+/**
+ * The out-degree degree of the graph. this many different random links
+ * will be generated out of each node. No loop edges are generated.
+ * In the undirected case, the degree
+ * of nodes will be on average almost twice as much because the incoming links
+ * also become links out of each node.
  * @config
  */
-private static final String PAR_EDGES = "k";
-
+private static final String PAR_DEGREE = "k";
 
 //--------------------------------------------------------------------------
-// Fields
+//Fields
 //--------------------------------------------------------------------------
 
-
-/** Average number of edges to be created */	
+/**
+ * The degree of the regular graph
+ */
 private final int k;
 
-
 //--------------------------------------------------------------------------
-// Constructor
+//Initialization
 //--------------------------------------------------------------------------
 
-public WireScaleFreeDM(String prefix)
+/**
+ */
+public WireKOut(String prefix)
 {
 	super(prefix);
-	k = Configuration.getInt(prefix + "." + PAR_EDGES);
+	k = Configuration.getInt(prefix + "." + PAR_DEGREE);
 }
 
-
 //--------------------------------------------------------------------------
-// Methods
+//Methods
 //--------------------------------------------------------------------------
 
+/** Calls {@link GraphFactory#wireKOut}. */
 public void wire(Graph g) {
 
-	int nodes=g.size();
-	int[] links = new int[4*k*nodes];
-
-	// Initial number of nodes connected as a clique
-	int clique = (k > 3 ? k : 3);
-
-	// Add initial edges, to form a clique
-	int len=0;
-	for (int i=0; i < clique; i++)
-	for (int j=0; j < clique; j++)
-	{
-		if (i != j)
-		{
-			g.setEdge(i,j);
-			g.setEdge(j,i);
-			links[len*2] = i;
-			links[len*2+1] = j;
-			len++;
-		}
-	}
-
-	for (int i=clique; i < nodes; i++)
-	for (int l=0; l < k; l++)
-	{
-		int edge = CommonState.r.nextInt(len);
-		int m = links[edge*2];
-		int j = links[edge*2+1];
-		g.setEdge(i, m);
-		g.setEdge(m, i);
-		g.setEdge(j, m);
-		g.setEdge(m, j);
-		links[len*2] = i;
-		links[len*2+1] = m;
-		len++;
-		links[len*2] = j;
-		links[len*2+1] = m;
-		len++;
-	}
+	GraphFactory.wireKOut(g,k,CommonState.r);
 }
-		
+
 }

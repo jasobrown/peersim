@@ -99,7 +99,7 @@ VectControl(String prefix)
 		method = GetterSetterFinder.getSetterMethod(clazz, methodName);
 	} catch (NoSuchMethodException e) {
 		throw new IllegalParameterException(prefix + "." +
-		PAR_METHOD, e.getMessage());
+		PAR_METHOD, e+"");
 	}
 	// Obtain the type of the field
 	type = GetterSetterFinder.getSetterType(method);

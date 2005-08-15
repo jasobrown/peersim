@@ -111,10 +111,10 @@ public static void main(String[] args)
 	try {
 		doExperiments(properties);
 	} catch (MissingParameterException e) {
-		System.err.println(e.getMessage());
+		System.err.println(e+"");
 		System.exit(1);
 	} catch (IllegalParameterException e) {
-		System.err.println(e.getMessage());
+		System.err.println(e+"");
 		System.exit(1);
 	}
 	System.exit(0);

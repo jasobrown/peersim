@@ -97,8 +97,8 @@ public Normalizer(String prefix)
 	try {
 		getter = GetterSetterFinder.getGetterMethod(clazz,getterMethod);
 	} catch (NoSuchMethodException e) {
-		throw new IllegalParameterException(prefix + "." + PAR_GETTER, e
-				.getMessage());
+		throw new IllegalParameterException(prefix + "." + PAR_GETTER,
+				e+"");
 	}
 	
 	if( !(type==double.class || type==float.class) )

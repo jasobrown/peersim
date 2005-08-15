@@ -99,7 +99,7 @@ public VectCopy(String prefix)
 		getter = GetterSetterFinder.getGetterMethod(gclass, gmethod);
 	} catch (NoSuchMethodException e) {
 		throw new IllegalParameterException(prefix + "." + PAR_GETTER,
-			e.getMessage());
+			e+"");
 	}
 }
 

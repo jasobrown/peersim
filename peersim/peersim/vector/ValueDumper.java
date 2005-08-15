@@ -129,7 +129,7 @@ public ValueDumper(String prefix)
 		catch (NoSuchMethodException e)
 		{
 			throw new IllegalParameterException(prefix + "." +
-				PAR_METHODS, e.getMessage());
+				PAR_METHODS, e+"");
 		}
 	}
 }

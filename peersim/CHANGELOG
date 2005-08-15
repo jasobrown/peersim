@@ -1,3 +1,8 @@
+MJ 15/08/05
+- Added MethodInvoker, a Control that can invoke a "void method()" type of
+  method
+- Some minor cleanup on error message printing
+
 MJ 10/08/05
 I added a number of changes, some of them will break existing config files:
 - Refactoring the Wire* controls. They have a common superclass now and

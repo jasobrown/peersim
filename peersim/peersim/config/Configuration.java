@@ -839,7 +839,7 @@ public static Object getInstance( String name ) {
 	}
 	catch( Exception e )
 	{
-		throw new IllegalParameterException(name, e.getMessage());
+		throw new IllegalParameterException(name, e+"");
 	} 
 }
 
@@ -891,7 +891,7 @@ public static Object getInstance( String name, Object obj ) {
 	}
 	catch( Exception e )
 	{
-		throw new IllegalParameterException(name, e.getMessage());
+		throw new IllegalParameterException(name, e+"");
 	} 
 }
 

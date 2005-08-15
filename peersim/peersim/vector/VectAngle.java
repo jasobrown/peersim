@@ -131,13 +131,13 @@ public VectAngle(String prefix)
 		method1=GetterSetterFinder.getGetterMethod(class1,methodName1);
 	} catch (NoSuchMethodException e) {
 		throw new IllegalParameterException(prefix+"." + PAR_METHOD1,
-			e.getMessage());
+			e+"");
 	}
 	try {
 		method2=GetterSetterFinder.getGetterMethod(class1,methodName2);
 	} catch (NoSuchMethodException e) {
 		throw new IllegalParameterException(prefix + "." + PAR_METHOD1,
-			e.getMessage());
+			e+"");
 	}
 }
 

@@ -92,7 +92,7 @@ public Graph g=null;
  * @param prefix
  *          the configuration prefix for this class
  */
-public WireGraph(String prefix) {
+protected WireGraph(String prefix) {
 
 	pid = Configuration.getPid(prefix + "." + PAR_PROT);
 	pack = Configuration.contains(prefix + "." + PAR_PACK);

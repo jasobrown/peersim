@@ -57,7 +57,7 @@ private static final String PAR_UNDIR = "undir";
 
 /**
 * Alias for {@value #PAR_UNDIR}.
-@ @config
+* @config
 */
 private static final String PAR_UNDIR_ALT = "undirected";
 

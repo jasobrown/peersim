@@ -145,11 +145,13 @@ public VectAngle(String prefix)
 // Methods
 // --------------------------------------------------------------------------
 
-public boolean execute()
-{
+public boolean execute() {
+
 	double sqrsum1 = 0, sqrsum2 = 0, prod = 0;
-	try {
-		for (int i = 0; i < Network.size(); ++i) {
+	try
+	{
+		for (int i = 0; i < Network.size(); ++i)
+		{
 			Object obj1 = Network.get(i).getProtocol(pid1);
 			Object obj2 = Network.get(i).getProtocol(pid2);
 			double v1=((Number) method1.invoke(obj1)).doubleValue();
@@ -158,14 +160,26 @@ public boolean execute()
 			sqrsum2 += v2 * v2;
 			prod += v2 * v1;
 		}
-	} catch (InvocationTargetException e) {
+	}
+	catch (InvocationTargetException e)
+	{
 		e.getTargetException().printStackTrace();
 		System.exit(1);
-	} catch (Exception e) {
+	}
+	catch (Exception e)
+	{
 		throw new RuntimeException(e);
 	}
-	Log.println(name, (prod / Math.sqrt(sqrsum1) / Math.sqrt(sqrsum2)) + " "
-			+ Math.sqrt(sqrsum1) + " " + Math.sqrt(sqrsum2));
+	
+	double cos = prod / Math.sqrt(sqrsum1) / Math.sqrt(sqrsum2);
+	
+	// deal with numeric errors
+	if( cos > 1 ) cos=1;
+	if( cos < -1 ) cos = -1;
+	
+	Log.println(name, cos + " "
+			+ Math.sqrt(sqrsum1) + " " + Math.sqrt(sqrsum2) + " "
+			+ Math.acos(cos));
 	return false;
 }
 

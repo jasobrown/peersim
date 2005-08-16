@@ -37,7 +37,7 @@ import peersim.config.Configuration;
 * it does not trigger an error. Lines starting with a "#" character and
 * empty lines are ignored.
 */
-public class WireFromFile implements Control {
+public class WireFromFile extends WireGraph {
 
 
 // ========================= fields =================================
@@ -45,40 +45,12 @@ public class WireFromFile implements Control {
 
 
 /** 
-*  The protocol to operate on.
-*  @config
-*/
-private static final String PAR_PROT = "protocol";
-
-/** 
 *  The filename to load links from.
 *  @config
 */
 private static final String PAR_FILE = "file";
 
-/**
- * If this config property is defined, method {@link Linkable#pack()} is 
- * invoked on the specified protocol at the end of the wiring phase. 
- * Default to false.
- * @config
- */
-private static final String PAR_PACK = "pack";
-
-/** 
-*  String name of the parameter to set if the graph should be undirected,
-* that is, for each link (i,j) a link (j,i) will also be added.
-* @config
-*/
-private static final String PAR_UNDIR = "undirected";
-
-private final int pid;
-
 private final String file;
-
-/** If true, method pack() is invoked on the initialized protocol */
-private final boolean pack;
-
-private final boolean undirected;
 
 // ==================== initialization ==============================
 // ==================================================================
@@ -91,10 +63,8 @@ private final boolean undirected;
  */
 public WireFromFile(String prefix) {
 
-	pid = Configuration.getPid(prefix+"."+PAR_PROT);
+	super(prefix);
 	file = Configuration.getString(prefix+"."+PAR_FILE);
-	pack = Configuration.contains(prefix+"."+PAR_PACK);
-	undirected = Configuration.contains(prefix+"."+PAR_UNDIR);
 }
 
 
@@ -102,12 +72,11 @@ public WireFromFile(String prefix) {
 // ===================================================================
 
 
-public boolean execute() {
+public void wire(Graph g) {
 try
 {
 	FileReader fr = new FileReader(file);
 	LineNumberReader lnr = new LineNumberReader(fr);
-	Graph g = new OverlayGraph(pid,!undirected);
 	String line;
 	boolean wasOutOfRange=false;
 	while((line=lnr.readLine()) != null)
@@ -140,16 +109,6 @@ catch( Exception e )
 {
 	throw new RuntimeException(e);
 }
-
-	if (pack) {
-		int size = Network.size();
-		for (int i=0; i < size; i++) {
-			Linkable link=(Linkable)Network.get(i).getProtocol(pid);
-			link.pack();
-		}
-	}
-
-	return false;
 }
 
 }

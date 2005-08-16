@@ -1,3 +1,7 @@
+MJ 16/08/05
+- minor fixes in the documentation
+- WireFromFile now extends WireGraph
+
 MJ 15/08/05
 - Added MethodInvoker, a Control that can invoke a "void method()" type of
   method

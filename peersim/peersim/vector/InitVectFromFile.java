@@ -24,9 +24,14 @@ import peersim.config.*;
 import peersim.core.*;
 
 /**
- * Initializes a protocol vector from data read from a file. The file has to
- * contain one value per line. Lines starting with # or lines that contain only
- * whitespace are ignored. The file can contain more values than necessary but
+ * Initializes a protocol vector from data read from a file.
+ * The file format is as follows:
+ * lines starting with # or lines that contain only
+ * whitespace are ignored.
+ * From the rest of the lines the first field separated by whitespace is
+ * read. Only the first field is read from each line, the rest of the line
+ * is ignored.
+ * The file can contain more values than necessary but
  * enough values must be present.
  * <p>
  * This dynamics class can initialize any protocol field containing a 
@@ -82,7 +87,15 @@ public InitVectFromFile(String prefix)
 // --------------------------------------------------------------------------
 
 /**
- * Initializes values from a file. The file has to contain one value per line.
+ * Initializes values from a file.
+ * The file format is as follows:
+ * lines starting with # or lines that contain only
+ * whitespace are ignored.
+ * From the rest of the lines the first field separated by whitespace is
+ * read. Only the first field is read from each line, the rest of the line
+ * is ignored.
+ * The file can contain more values than necessary but
+ * enough values must be present.
  * Lines starting with # or lines that contain only whitespace are ignored. The
  * file can contain more values than necessary but enough values must be
  * present.

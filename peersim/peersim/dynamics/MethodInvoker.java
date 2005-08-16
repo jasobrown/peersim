@@ -32,7 +32,7 @@ import java.util.ArrayList;
  * it.
  * <p>
  * Although the method cannot have any parameters, it can of course read
- * {@link #CommonState}. It is guaranteed that the state is up-to-date,
+ * {@link CommonState}. It is guaranteed that the state is up-to-date,
  * inlcuding eg method {@link CommonState#getNode}.
  */
 public class MethodInvoker implements Control, NodeInitializer {

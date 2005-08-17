@@ -23,7 +23,7 @@ import peersim.core.*;
 
 /**
  * Initializes a protocol vector with values in the range [{@value #PAR_MIN}, 
- * {@value #PAR_MAX}], linearly increasing.
+ * {@value #PAR_MAX}] (inclusive both ends), linearly increasing.
  * <p>
  * This dynamics class can initialize any protocol field containing a 
  * primitive value, provided that the field is associated with a setter method 
@@ -46,13 +46,13 @@ public class LinearDistribution extends VectControl
 //--------------------------------------------------------------------------
 
 /**
- * The upper bound of the uniform random variable.
+ * Upper end of the interval..
  * @config
  */
 private static final String PAR_MAX = "max";
 
 /**
- * The lower bound of the uniform random variable. Defaults to -max.
+ * Lower end of the interval. Defaults to -{@value #PAR_MAX}.
  * @config
  */
 private static final String PAR_MIN = "min";

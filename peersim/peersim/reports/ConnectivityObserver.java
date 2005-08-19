@@ -24,6 +24,8 @@ import peersim.config.Configuration;
 import peersim.util.IncrementalStats;
 
 /**
+ * Reports statistics about connectivity properties of the network, such as
+ * weakly or strongly connected clusters.
  */
 public class ConnectivityObserver extends GraphObserver
 {
@@ -39,12 +41,27 @@ public class ConnectivityObserver extends GraphObserver
  */
 private static final String PAR_SIZESTATS = "sizestats";
 
+/**
+ * Defines the types of connected clusters to discover.
+ * Possible values are
+ * <ul>
+ * <li>"wcc": weakly connected clusters</li>
+ * <li>"scc": strongly connected clusters</li>
+ * </ul>
+ * Defaults to "wcc".
+ * @config
+ */
+private static final String PAR_TYPE = "type";
+
 //--------------------------------------------------------------------------
 //Fields
 //--------------------------------------------------------------------------
 
 /** {@link #PAR_SIZESTATS} */
 private final boolean sizestats;
+
+/** {@link #PAR_TYPE} */
+private final String type;
 
 //--------------------------------------------------------------------------
 //Initialization
@@ -59,6 +76,7 @@ public ConnectivityObserver(String name)
 {
 	super(name);
 	sizestats = Configuration.contains(name + "." + PAR_SIZESTATS);
+	type = Configuration.getString(name + "." + PAR_TYPE,"wcc");
 }
 
 //--------------------------------------------------------------------------
@@ -70,11 +88,20 @@ public ConnectivityObserver(String name)
  */
 public boolean execute()
 {
+	Map clst;
 	updateGraph();
+	
+	if(type.equals("wcc"))
+		clst=ga.weaklyConnectedClusters(g);
+	else if(type.equals("scc"))
+		clst=ga.tarjan(g);
+	else
+		throw new RuntimeException(
+		"Unsupported connted cluster type '"+type+"'");
+
 	if (!sizestats) {
-		System.out.println(name + ": " + ga.weaklyConnectedClusters(g));
+		System.out.println(name + ": " + clst);
 	} else {
-		Map clst = ga.weaklyConnectedClusters(g);
 		IncrementalStats stats = new IncrementalStats();
 		Iterator it = clst.values().iterator();
 		while (it.hasNext()) {

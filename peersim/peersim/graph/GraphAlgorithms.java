@@ -30,6 +30,11 @@ public class GraphAlgorithms {
 // =================== public fields ==================================
 // ====================================================================
 
+public int[] root = null;
+private Stack<Integer> stack = new Stack<Integer>();
+private int counter=0;
+
+private Graph g=null;
 
 public final static int WHITE=0;
 public final static int GREY=1;
@@ -62,7 +67,7 @@ public int[] d = null;
 * The result is the modified array {@link #color} and the modified set
 * {@link #cluster}.
 */
-private void dfs( Graph g, int from ) {
+private void dfs( int from ) {
 
 	color[from]=GREY;
 
@@ -72,7 +77,7 @@ private void dfs( Graph g, int from ) {
 		int j = ((Integer)it.next()).intValue();
 		if( color[j]==WHITE )
 		{
-			dfs(g,j);
+			dfs(j);
 		}
 		else
 		{
@@ -94,7 +99,7 @@ private void dfs( Graph g, int from ) {
 * length of the shortest path from "from" to i. d must be long enough or must
 * be null.
 */
-private void bfs( Graph g, int from ) {
+private void bfs( int from ) {
 
 	List q = new LinkedList();
 	int u, du;
@@ -134,12 +139,49 @@ private void bfs( Graph g, int from ) {
 
 // --------------------------------------------------------------------
 
+/** The recursive part of the Tarjan algorithm. */
+private void tarjanVisit(int i) {
+
+	color[i]=counter++;
+	root[i]=i;
+	stack.push(i);
+	int j;
+	
+	Iterator it=g.getNeighbours(i).iterator();
+	while( it.hasNext() )
+	{
+		j = ((Integer)it.next()).intValue();
+		if( color[j]==WHITE )
+		{
+			tarjanVisit(j);
+		}
+		if( color[j]>0 ) // inComponent is false
+		{
+			root[i] = (root[j]<root[i]?root[j]:root[i]);
+		}
+	}
+
+	if(root[i]==i) //this node is the root of its cluster
+	{
+		do
+		{
+			j=stack.pop();
+			color[j]=-color[j];
+		}
+		while(j!=i);
+	}
+}
+
+// =================== public methods ================================
+// ====================================================================
+
 /** Returns the weakly connected cluster indexes with size as a value.
 * Cluster membership can be seen from the content of the array {@link #color};
 * each node has the cluster index as color.
 */
 public Map weaklyConnectedClusters( Graph g ) {
 
+	this.g=g;
 	if( cluster == null ) cluster = new HashSet();
 	if( color==null || color.length<g.size() ) color = new int[g.size()];
 
@@ -151,7 +193,7 @@ public Map weaklyConnectedClusters( Graph g ) {
 		if( color[i]==WHITE )
 		{
 			cluster.clear();
-			bfs(g,i); // dfs is recursive, for large graphs not ok
+			bfs(i); // dfs is recursive, for large graphs not ok
 			--actCluster;
 			for(j=0; j<g.size(); ++j)
 			{
@@ -184,6 +226,7 @@ public Map weaklyConnectedClusters( Graph g ) {
 */
 public void dist( Graph g, int i ) {
 
+	this.g=g;
 	if( d==null || d.length<g.size() ) d = new int[g.size()];
 	if( color==null || color.length<g.size() ) color = new int[g.size()];
 	
@@ -193,7 +236,7 @@ public void dist( Graph g, int i ) {
 		d[j] = -1;
 	}
 	
-	bfs( g, i );
+	bfs(i);
 }
 
 // --------------------------------------------------------------------
@@ -288,13 +331,14 @@ public static void multicast( Graph g, int[] b, Random r ) {
 */
 public void flooding( Graph g, int[] b, int k ) {
 
+	this.g=g;
 	if( color==null || color.length<g.size() ) color = new int[g.size()];
 	if( d==null || d.length<g.size() ) d = new int[g.size()];
 	for(int i=0; i<g.size(); ++i)
 		d[i]=color[i]=WHITE; // we use that WHITE=0
 	for(int i=0; i<b.length; ++i) b[i]=0;
 
-	bfs(g,k);
+	bfs(k);
 	
 	for(int i=0; i<d.length; ++i)
 	{
@@ -304,6 +348,46 @@ public void flooding( Graph g, int[] b, int k ) {
 	b[0] = 1; 
 }
 
+// --------------------------------------------------------------------
+
+/** Returns the strongly connected cluster roots with size as a value.
+* Cluster membership can be seen from the content of the array {@link #root};
+* each node has the root of the strongly connected cluster it belongs to.
+* A word of caution: for large graphs that have a large diameter and that
+* are strongly connected (such as large rings) you can get stack overflow
+* because of the large depth of recursion.
+*/
+//XXX implement a non-recursive version ASAP!!!
+public Map tarjan( Graph g ) {
+	
+	this.g=g;
+	stack.clear();
+	if( root==null || root.length<g.size() ) root = new int[g.size()];
+	if( color==null || color.length<g.size() ) color = new int[g.size()];
+	for( int i=0; i<g.size(); ++i) color[i]=WHITE;
+	counter = 1;
+	
+	// color is WHITE (0): not visited
+	// not WHITE, positive (c>1): visited as the c-th node
+	// color is negative (c<1): inComponent true
+	for(int i=0; i<g.size(); ++i)
+	{
+		if( color[i]==WHITE ) tarjanVisit(i);
+	}
+	
+	for( int i=0; i<g.size(); ++i) color[i]=0;
+	for( int i=0; i<g.size(); ++i) color[root[i]]++;
+	Hashtable ht = new Hashtable();
+	for(int j=0; j<g.size(); ++j)
+	{
+		if(color[j]>0)
+		{
+			ht.put(j,color[j]);
+		}
+	}
+	
+	return ht;
+}
 
 }
 

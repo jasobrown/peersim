@@ -1,3 +1,11 @@
+MJ 19/08/05
+- Implemented the Tarjan algorithm to detect the strongly connected components
+  in GraphAlgorithms. ConnectivityObserver now has a "type" parameter that
+  can be set to "scc" to get strongly connected components. Note that for
+  large diameter, large strongly connected components we can get stack
+  overflows because the implementation is recursive: it should be fixed soon!
+  But until then better than nothing...
+
 MJ 16/08/05
 - minor fixes in the documentation
 - WireFromFile now extends WireGraph

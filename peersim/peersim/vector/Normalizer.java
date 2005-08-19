@@ -135,6 +135,7 @@ try {
 		RuntimeException("Attempted to normalize all zero vector.");
 	}
 	double factor = l1 / sum;
+System.out.println("AASASAS factor: "+factor);	
 	for (int i = 0; i < Network.size(); ++i)
 	{
 		Number n=(Number)getter.invoke(Network.get(i).getProtocol(pid));

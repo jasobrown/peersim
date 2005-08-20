@@ -26,6 +26,16 @@ import peersim.dynamics.NodeInitializer;
 /**
 * Schedules the first execution of the cycle based protocol instances in
 * the event driven angine.
+* Unlike {@link Scheduler}, this component is a standalone {@link Control},
+* so for all {@link CDProtocol}s one instance of this scheduler needs to be
+* specified in an event driven simulation. It will most often be used as an
+* initializer, since the scheduled events schedule themselves for the
+* consequtive executions (see {@link NextCycleEvent}).
+*
+* <p>The {@link CDProtocol} specification in the configuration needs to
+* contain a {@link Scheduler} specification for the step size (config
+* parameter {@value Scheduler#PAR_STEP}). This value is used as a cycle length.
+*@see NextCycleEvent
 */
 public class CDScheduler implements Control, NodeInitializer {
 

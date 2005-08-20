@@ -93,7 +93,7 @@ private final Method[] methods;
  * Invoked by the simulation engine.
  * @param prefix the configuration prefix for this class
  */
-protected VectorObserver(String prefix)
+public VectorObserver(String prefix)
 {
 	this.prefix = prefix;
 	pid = Configuration.getPid(prefix + "." + PAR_PROT);

@@ -23,15 +23,20 @@ import peersim.cdsim.CDProtocol;
 
 
 /**
-* this class is used to wrap a CDProtocol instance into an event so
+* This class is used to wrap a CDProtocol instance into an event so
 * that it can be used in the event based simulation engine.
 * This class is responsible for calling the nextCycle method of the CDProtocol
 * and to schedule the next cycle.
+* In the configuration of an event driven simulation {@link CDProtocol}s can be
+* configured using {@link CDScheduler}, which places appropriate instances of
+* this events in the queue.
 *
 * <p>
 * Note that reimplementing method {@link #nextDelay} of this class allows
 * for arbitrary scheduling,
 * including adaptively changing or irregular cycle lengths, etc.
+*@see CDScheduler
+*@see CDProtocol
 */
 public class NextCycleEvent implements Cloneable {
 

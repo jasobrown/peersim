@@ -1,3 +1,7 @@
+MJ 21/08/05
+- some minor documentation fixes
+- CDScheduler can now accept a list of protocols instead of only one
+
 MJ 19/08/05
 - Implemented the Tarjan algorithm to detect the strongly connected components
   in GraphAlgorithms. ConnectivityObserver now has a "type" parameter that

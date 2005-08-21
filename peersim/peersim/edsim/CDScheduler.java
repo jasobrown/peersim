@@ -51,7 +51,11 @@ public class CDScheduler implements Control, NodeInitializer {
 private static final String PAR_NEXTC = "nextcycle";
 
 /**
-* The protocol that this scheduler schedules for the first execution.
+* The protocols that this scheduler schedules for the first execution.
+* It might contain several protocol names, separated by whitespace. All
+* protocols will be scheduled based on the common parameters set for this
+* scheduler and the parameters of the protocol (cycle length).
+* Protocols are scheduled independently of each other.
 * @config
 */
 private static final String PAR_PROTOCOL = "protocol";
@@ -67,11 +71,11 @@ private static final String PAR_PROTOCOL = "protocol";
 */
 private static final String PAR_RNDSTART = "randstart";
 
-private final NextCycleEvent nce;
+private final NextCycleEvent[] nce;
 
-private final Scheduler sch;
+private final Scheduler[] sch;
 
-private final int pid;
+private final int[] pid;
 
 private final boolean randstart;
 
@@ -87,26 +91,35 @@ private final String name;
 public CDScheduler(String n) {
 
 	name = n;
-	String protname = Node.PAR_PROT+"."+
-		Configuration.getString(n+"."+PAR_PROTOCOL);
-	pid = Configuration.getPid(n+"."+PAR_PROTOCOL);
-	if( !(Network.prototype.getProtocol(pid) instanceof CDProtocol))
-	{
-		throw new IllegalParameterException(n+"."+PAR_PROTOCOL,
-			"A CDProtocol is needed here");
-	}
 	
-	// with no default values to avoid "overscheduling"
-	// due to lack of step option.
-	sch = new Scheduler(protname, false);
-	if( Configuration.contains(n+"."+PAR_NEXTC) )
+	String[] prots=Configuration.getString(n+"."+PAR_PROTOCOL).split("\\s");
+	pid = new int[prots.length];
+	sch = new Scheduler[prots.length];
+	nce = new NextCycleEvent[prots.length];
+	for(int i=0; i<prots.length; ++i)
 	{
-		nce = (NextCycleEvent)
-			Configuration.getInstance(n+"."+PAR_NEXTC,sch);
-	}
-	else
-	{
-		nce = new NextCycleEvent((String)null,sch);
+		pid[i] = Configuration.lookupPid(prots[i]);
+		if( !(Network.prototype.getProtocol(pid[i]) instanceof
+			CDProtocol))
+		{
+			throw new IllegalParameterException(n+"."+PAR_PROTOCOL,
+				"Only CDProtocols are accepted here");
+		}
+	
+		// with no default values to avoid "overscheduling"
+		// due to lack of step option.
+		String protname = Node.PAR_PROT+"."+prots[i];
+		sch[i] = new Scheduler(protname, false);
+	
+		if( Configuration.contains(n+"."+PAR_NEXTC) )
+		{
+			nce[i] = (NextCycleEvent)
+			  Configuration.getInstance(n+"."+PAR_NEXTC,sch[i]);
+		}
+		else
+		{
+			nce[i] = new NextCycleEvent((String)null,sch[i]);
+		}
 	}
 
 	randstart = Configuration.contains(n+"."+PAR_RNDSTART);
@@ -147,15 +160,18 @@ public boolean execute() {
 */
 public void initialize(Node n) {
 	
-	Object nceclone=null;
-	try { nceclone = nce.clone(); }
-	catch(CloneNotSupportedException e) {} //cannot possibly happen
-	
 	final long time = CommonState.getTime();
-	final long delay = firstDelay();
-	final long nexttime = time+delay;
-	if( nexttime < sch.until && nexttime >= sch.from )
-		EDSimulator.add(delay, nceclone, n, pid);
+	for(int i=0; i<pid.length; ++i)
+	{
+		Object nceclone=null;
+		try { nceclone = nce[i].clone(); }
+		catch(CloneNotSupportedException e) {} //cannot possibly happen
+		
+		final long delay = firstDelay(sch[i].step);
+		final long nexttime = time+delay;
+		if( nexttime < sch[i].until && nexttime >= sch[i].from )
+			EDSimulator.add(delay, nceclone, n, pid[i]);
+	}
 }
 
 // --------------------------------------------------------------------
@@ -166,11 +182,13 @@ public void initialize(Node n) {
 * If {@value #PAR_RNDSTART} is not set, it returns zero, otherwise
 * a random value between 0, inclusive, and the configured cycle length
 * (the {@value Scheduler#PAR_STEP} parameter of the protocol), exclusive.
+* @param cyclelength The length of a cycle of the cycle based protocol
+* for which this method is called
 */
-protected long firstDelay() {
+protected long firstDelay(long cyclelength) {
 	
 	if(randstart)
-		return CommonState.r.nextLong(sch.step);
+		return CommonState.r.nextLong(cyclelength);
 	else
 		return 0;
 }

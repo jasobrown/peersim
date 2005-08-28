@@ -52,7 +52,7 @@ public void send(Node src, Node dest, Object msg, int pid);
  * @param src sender node
  * @param dest destination node
  */
-public int getLatency(Node src, Node dest);
+public long getLatency(Node src, Node dest);
 
 
 }

@@ -52,7 +52,7 @@ private static final String PAR_LOCAL = "local";
 private static int tid;
 	
 /** Latency of local connection between nodes */
-private static int local;
+private static long local;
 
 //---------------------------------------------------------------------
 //Fields
@@ -72,7 +72,7 @@ private int router = -1;
 public E2ETransport(String prefix)
 {
 	tid = CommonState.getPid();
-	local = Configuration.getInt(prefix + "." + PAR_LOCAL, 0);
+	local = Configuration.getLong(prefix + "." + PAR_LOCAL, 0);
 }
 
 //---------------------------------------------------------------------
@@ -95,7 +95,7 @@ public void send(Node src, Node dest, Object msg, int pid)
 	/* Assuming that the sender corresponds to the source node */
 	E2ETransport sender = (E2ETransport) src.getProtocol(tid);
 	E2ETransport receiver = (E2ETransport) dest.getProtocol(tid);
-	int latency =
+	long latency =
 	   E2ENetwork.getLatency(sender.router, receiver.router) + local*2;
 	EDSimulator.add(latency, msg, dest, pid);
 }
@@ -103,7 +103,7 @@ public void send(Node src, Node dest, Object msg, int pid)
 //---------------------------------------------------------------------
 
 //Comment inherited from interface
-public int getLatency(Node src, Node dest)
+public long getLatency(Node src, Node dest)
 {
 	/* Assuming that the sender corresponds to the source node */
 	E2ETransport sender = (E2ETransport) src.getProtocol(tid);

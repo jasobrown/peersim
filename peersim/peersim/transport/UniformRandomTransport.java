@@ -53,10 +53,10 @@ private static final String PAR_MAXDELAY = "maxdelay";
 //---------------------------------------------------------------------
 
 /** Minimum delay for message sending */
-private int min;
+private final long min;
 	
 /** Delay range */
-private int range;
+private final long range;
 
 	
 //---------------------------------------------------------------------
@@ -68,8 +68,8 @@ private int range;
  */
 public UniformRandomTransport(String prefix)
 {
-	min = Configuration.getInt(prefix + "." + PAR_MINDELAY);
-	int max = Configuration.getInt(prefix + "." + PAR_MAXDELAY);
+	min = Configuration.getLong(prefix + "." + PAR_MINDELAY);
+	long max = Configuration.getLong(prefix + "." + PAR_MAXDELAY);
 	if (max < min) 
 	   throw new IllegalParameterException(prefix+"."+PAR_MAXDELAY, 
 	   "The maximum latency cannot be smaller than the minimum latency");
@@ -78,6 +78,11 @@ public UniformRandomTransport(String prefix)
 
 //---------------------------------------------------------------------
 
+/**
+* Retuns <code>this</code>. This way only one instance exists in the system
+* that is linked from all the nodes. This is because this protocol has no
+* node specific state.
+*/
 public Object clone()
 {
 	return this;
@@ -90,14 +95,14 @@ public Object clone()
 // Comment inherited from interface
 public void send(Node src, Node dest, Object msg, int pid)
 {
-	int delay = min + CommonState.r.nextInt(range);
+	long delay = min + CommonState.r.nextLong(range);
 	EDSimulator.add(delay, msg, dest, pid);
 }
 
 //Comment inherited from interface
-public int getLatency(Node src, Node dest)
+public long getLatency(Node src, Node dest)
 {
-	return min + CommonState.r.nextInt(range);
+	return min + CommonState.r.nextLong(range);
 }
 
 

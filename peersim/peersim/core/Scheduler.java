@@ -65,7 +65,7 @@ private static final String PAR_AT = "at";
 private static final String PAR_FROM = "from";
 
 /** 
-* Defaults to <tt>Integer.MAX_VALUE</tt>.
+* Defaults to <tt>Long.MAX_VALUE</tt>.
 * @config
 */
 private static final String PAR_UNTIL = "until";
@@ -103,16 +103,16 @@ public Scheduler(String prefix) {
 
 public Scheduler(String prefix, boolean useDefault)
 {
-	long at = Configuration.getInt(prefix+"."+PAR_AT,-1);
+	long at = Configuration.getLong(prefix+"."+PAR_AT,-1);
 	if( at < 0 )
 	{
 		if (useDefault) 
-			step = Configuration.getInt(prefix+"."+PAR_STEP,1);
+			step = Configuration.getLong(prefix+"."+PAR_STEP,1);
 		else
-			step = Configuration.getInt(prefix+"."+PAR_STEP);
-		from = Configuration.getInt(prefix+"."+PAR_FROM,0);
-		until = Configuration.getInt(
-				prefix+"."+PAR_UNTIL,Integer.MAX_VALUE);
+			step = Configuration.getLong(prefix+"."+PAR_STEP);
+		from = Configuration.getLong(prefix+"."+PAR_FROM,0);
+		until = Configuration.getLong(
+				prefix+"."+PAR_UNTIL,Long.MAX_VALUE);
 	}
 	else
 	{

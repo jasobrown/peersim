@@ -56,7 +56,8 @@ private static long time = 0;
 private static long endtime = -1;
 
 /**
- * The maxival value {@link #time} can ever take.
+ * Number of used bits in the long representation of time, calculated
+ * based on the endtime.
  */
 private static int toshift = -1;
 

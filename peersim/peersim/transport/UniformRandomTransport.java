@@ -44,6 +44,7 @@ private static final String PAR_MINDELAY = "mindelay";
 	
 /** 
  * String name of the parameter used to configure the maximum latency
+ * Defaults to {@value PAR_MINDELAY}, which results in a constant delay.
  * @config 
  */	
 private static final String PAR_MAXDELAY = "maxdelay";	
@@ -69,7 +70,7 @@ private final long range;
 public UniformRandomTransport(String prefix)
 {
 	min = Configuration.getLong(prefix + "." + PAR_MINDELAY);
-	long max = Configuration.getLong(prefix + "." + PAR_MAXDELAY);
+	long max = Configuration.getLong(prefix + "." + PAR_MAXDELAY,min);
 	if (max < min) 
 	   throw new IllegalParameterException(prefix+"."+PAR_MAXDELAY, 
 	   "The maximum latency cannot be smaller than the minimum latency");
@@ -95,14 +96,15 @@ public Object clone()
 // Comment inherited from interface
 public void send(Node src, Node dest, Object msg, int pid)
 {
-	long delay = min + CommonState.r.nextLong(range);
+	// avoid calling nextLong if possible
+	long delay = (range==1?min:min + CommonState.r.nextLong(range));
 	EDSimulator.add(delay, msg, dest, pid);
 }
 
 //Comment inherited from interface
 public long getLatency(Node src, Node dest)
 {
-	return min + CommonState.r.nextLong(range);
+	return (range==1?min:min + CommonState.r.nextLong(range));
 }
 
 

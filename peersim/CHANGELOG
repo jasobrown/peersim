@@ -1,6 +1,7 @@
 MJ 28/08/05
 - Fixed a bug in Scheduler: now all times are realy long
 - Also longified the Transport interface
+- Added transport to FastConfig
 
 MJ 21/08/05
 - some minor documentation fixes

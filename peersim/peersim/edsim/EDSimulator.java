@@ -232,8 +232,9 @@ private static boolean executeNext() {
 		}
 		catch (ClassCastException e)
 		{
-			throw new IllegalArgumentException("Protocol " + pid + 
-					" does not implement EDProtocol");
+			throw new IllegalArgumentException("Protocol " +
+				Configuration.lookupPid(pid) + 
+				" does not implement EDProtocol");
 		}}
 	}
 	

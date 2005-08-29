@@ -41,17 +41,18 @@ public class UnreliableTransport implements Transport
 //Parameters
 //---------------------------------------------------------------------
 
-/** 
- * String name of the parameter used to configure the protocol identifier
- * for the support transport protocol.
+/**
+ * The name of the transport protocol to wrap.
+ * @config
  */
-private static String PAR_TRANSPORT = "transport";
-	
+private static final String PAR_TRANSPORT = "transport";
+
 /** 
  * String name of the parameter used to configure the probability that a 
  * message sent through this transport is lost.
+ * @config
  */
-private static String PAR_DROP = "drop";
+private static final String PAR_DROP = "drop";
 
 
 //---------------------------------------------------------------------
@@ -59,10 +60,10 @@ private static String PAR_DROP = "drop";
 //---------------------------------------------------------------------
 
 /** Protocol identifier for the support transport protocol */
-private int pid;
+private final int pid;
 
 /** Probability of dropping messages */
-private float loss;
+private final float loss;
 
 //---------------------------------------------------------------------
 //Initialization
@@ -80,8 +81,9 @@ public UnreliableTransport(String prefix)
 //---------------------------------------------------------------------
 
 /**
- * Cloning method. This implementation does not require instance data,
- * so we can use a singleton instance for all the nodes.
+* Retuns <code>this</code>. This way only one instance exists in the system
+* that is linked from all the nodes. This is because this protocol has no
+* node specific state.
  */
 public Object clone()
 {
@@ -102,7 +104,7 @@ public void send(Node src, Node dest, Object msg, int pid)
 	}
 }
 
-//Comment inherited from interface
+/** Simply returns the latency of the underlying protocol.*/
 public long getLatency(Node src, Node dest)
 {
 	Transport t = (Transport) src.getProtocol(pid);

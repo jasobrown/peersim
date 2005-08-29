@@ -46,7 +46,7 @@ private static final String PAR_LINKABLE = "linkable";
  * protocol.
  * @config
  */
-private static final String PAR_TRANSFER = "transport";
+private static final String PAR_TRANSPORT = "transport";
 
 /**
  * This array stores the protocol id of the {@link peersim.core.Linkable}
@@ -90,9 +90,9 @@ static {
 		else
 			links[i] = -1;
 		
-		if (Configuration.contains(names[i] + "." + PAR_TRANSFER))
+		if (Configuration.contains(names[i] + "." + PAR_TRANSPORT))
 			transports[i] = 
-			Configuration.getPid(names[i] + "." + PAR_TRANSFER);
+			Configuration.getPid(names[i] + "." + PAR_TRANSPORT);
 		else
 			transports[i] = -1;
 	}
@@ -151,7 +151,7 @@ public static int getTransport(int pid)
 	if (transports[pid] < 0) {
 		String[] names = Configuration.getNames(Configuration.PAR_PROT);
 		throw new IllegalParameterException(names[pid],
-		"Protocol " + pid + " has no "+PAR_TRANSFER + " parameter");
+		"Protocol " + pid + " has no "+PAR_TRANSPORT + " parameter");
 	}
 	return transports[pid];
 }

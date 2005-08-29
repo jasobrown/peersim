@@ -1,3 +1,7 @@
+MJ 29/08/05
+- Added possibility to look up protocol names based on pid in Configuration.
+  Error messages should use that method instead of dumping the pid.
+
 MJ 28/08/05
 - Fixed a bug in Scheduler: now all times are realy long
 - Also longified the Transport interface

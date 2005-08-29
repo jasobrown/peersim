@@ -304,7 +304,7 @@ private static Properties config = null;
  * Map associating string protocol names to the numeric protocol
  * identifiers. The protocol names are understood without prefix.
  */
-private static Map protocols;
+private static Map<String,Integer> protocols;
 
 
 /**
@@ -333,7 +333,7 @@ public static Properties setConfig( Properties p ) {
 	maxdepth = Configuration.getInt(PAR_MAXDEPTH, DEFAULT_MAXDEPTH);
 	
 	// initialize protocol id-s
-	protocols = new HashMap();
+	protocols = new HashMap<String,Integer>();
 	String[] prots = getNames(PAR_PROT);//they're retunred in correct order
 	for(int i=0; i<prots.length; ++i)
 	{
@@ -717,8 +717,9 @@ public static int getPid( String property, int pid ) {
 //-------------------------------------------------------------------
 
 /**
- * Reads the given string property and returns the associated numeric 
- * protocol identifier. The parameter should be the name of a
+ * Returns the numeric 
+ * protocol identifier of the given protocol name.
+ * The parameter should be the name of a
  * protocol, which is an arbitrary string, and which gets mapped to a
  * number, a protocol id, according to some sorting defined over the
  * protocol names. By default the sorting is alphabetical.
@@ -737,6 +738,36 @@ public static int lookupPid( String protname ) {
 
 	}
 	return ret.intValue();
+}
+
+//-------------------------------------------------------------------
+
+/**
+ * Returns the name of a 
+ * protocol that has the given identifier.
+ * The parameter should be the id of a
+ * protocol. It perform exactly the inverse of {@link #lookupPid(String)},
+ * apart from different exception handling. This method does not throw
+ * exception, but insted returns null if the given id is not found.
+ *
+ * <p>Note that this is not a constant time operation, although typically there
+ * are very few protocols defined.
+ * 
+ * @param pid numeric protocol identifier.
+ * @return name of the protocol that has the given id. null if no protocols
+ * have the given id.
+ */
+public static String lookupPid( int pid ) {
+	
+	if(!protocols.containsValue(pid))  return null;
+	for(Map.Entry<String,Integer> i : protocols.entrySet())
+	{
+		if(i.getValue().intValue()==pid)
+			return i.getKey();
+	}
+	
+	// never reached but java needs it...
+	return null;
 }
 
 //-------------------------------------------------------------------

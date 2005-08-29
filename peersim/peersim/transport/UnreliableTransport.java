@@ -60,7 +60,7 @@ private static final String PAR_DROP = "drop";
 //---------------------------------------------------------------------
 
 /** Protocol identifier for the support transport protocol */
-private final int pid;
+private final int transport;
 
 /** Probability of dropping messages */
 private final float loss;
@@ -74,7 +74,7 @@ private final float loss;
  */
 public UnreliableTransport(String prefix)
 {
-	pid = Configuration.getPid(prefix+"."+PAR_TRANSPORT);
+	transport = Configuration.getPid(prefix+"."+PAR_TRANSPORT);
 	loss = (float) Configuration.getDouble(prefix+"."+PAR_DROP);
 }
 
@@ -97,17 +97,27 @@ public Object clone()
 // Comment inherited from interface
 public void send(Node src, Node dest, Object msg, int pid)
 {
-	if (CommonState.r.nextFloat() >= loss) {
-		// Message is not lost
-		Transport t = (Transport) src.getProtocol(pid);
-		t.send(src, dest, msg, pid);
+	try
+	{
+		if (CommonState.r.nextFloat() >= loss)
+		{
+			// Message is not lost
+			Transport t = (Transport) src.getProtocol(transport);
+			t.send(src, dest, msg, pid);
+		}
+	}
+	catch(ClassCastException e)
+	{
+		throw new IllegalArgumentException("Protocol " +
+				Configuration.lookupPid(transport) + 
+				" does not implement Transport");
 	}
 }
 
 /** Simply returns the latency of the underlying protocol.*/
 public long getLatency(Node src, Node dest)
 {
-	Transport t = (Transport) src.getProtocol(pid);
+	Transport t = (Transport) src.getProtocol(transport);
 	return t.getLatency(src, dest);
 }
 

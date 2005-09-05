@@ -19,14 +19,14 @@
 package peersim.util;
 
 /**
-* This class provides iterations over the set of integers [0...len-1].
+* This class provides iterations over the set of integers [0...k-1].
 */
 public interface IndexIterator {
 
 	/**
-	* This resets the iteration. The set of integers will be 0,..,len-1.
+	* This resets the iteration. The set of integers will be 0,..,k-1.
 	*/
-	public void reset(int len);
+	public void reset(int k);
 	
 	/**
 	* Returns next index.

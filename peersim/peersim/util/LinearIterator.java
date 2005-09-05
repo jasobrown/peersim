@@ -21,7 +21,7 @@ package peersim.util;
 import java.util.NoSuchElementException;
 
 /**
-* This class gives the linear order 0,1,etc or alternatively len-1, len-2, etc.
+* This class gives the linear order 0,1,etc or alternatively k-1, k-2, etc.
 */
 public class LinearIterator implements IndexIterator {
 
@@ -29,7 +29,6 @@ public class LinearIterator implements IndexIterator {
 // ======================= private fields ============================
 // ===================================================================
 
-/** if true then the order is len-1,len-2,..., otherwise 0,1,... */
 private final boolean reverse;
 
 private int len = 0;
@@ -41,15 +40,27 @@ private int pointer = 0;
 // ===================================================================
 
 
+/**
+* Construct an interator for an empty set of numbers.
+* You have to call {@link #reset} to actually fully initialize the object.
+* The numbers returned by consecutive calls to {@link #next} are 0,1,...
+*/
 public LinearIterator() { reverse=false; }
 
 // -------------------------------------------------------------------
 
+/**
+* Construct an interator for an empty set of numbers.
+* You have to call {@link #reset} to actually fully initialize the object.
+* If parameter is true then the numbers returned by consecutive calls to
+* {@link #next} are k-1,k-2,..., otherwise 0,1,...
+*/
 public LinearIterator( boolean rev ) { reverse=rev; }
 
 
 // ======================= public methods ============================
 // ===================================================================
+
 
 public void reset(int k) {
 	

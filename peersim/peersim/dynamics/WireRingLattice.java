@@ -45,7 +45,6 @@ private static final String PAR_K = "k";
 // --------------------------------------------------------------------------
 
 /**
- * The degree of the regular graph
  */
 private final int k;
 

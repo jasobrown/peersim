@@ -72,6 +72,14 @@ public WireFromFile(String prefix) {
 // ===================================================================
 
 
+/**
+* Wires the graph from a file.
+* The format of the file is as follows. Each line begins with a node ID
+* (IDs start from 0) followed by a list of neighbors, separated by whitespace.
+* All node IDs larger than the actual network size will be discarded, but
+* it does not trigger an error. Lines starting with a "#" character and
+* empty lines are ignored.
+*/
 public void wire(Graph g) {
 try
 {

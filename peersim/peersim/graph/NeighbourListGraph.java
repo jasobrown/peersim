@@ -46,8 +46,9 @@ private final Vector nodes;
 */
 private final Hashtable nodeindex;
 
-/** Contains sets of node indeces (as defined by "nodes"). */
-private final Vector neighbours;
+/** Contains sets of node indeces. If "nodes" is not null, indices are 
+* defined by "nodes", otherwise they correspond to 0,1,... */
+private final Vector<Set<Integer>> neighbors;
 
 /** Indicates if the graph is directed. */
 private final boolean directed;
@@ -62,8 +63,25 @@ private final boolean directed;
 public NeighbourListGraph( boolean directed ) {
 
 	nodes = new Vector(1000,1000);	
-	neighbours = new Vector(1000,1000);
+	neighbors = new Vector<Set<Integer>>(1000,1000);
 	nodeindex = new Hashtable(1000);
+	this.directed = directed;
+}
+
+// ---------------------------------------------------------------
+
+/**
+* Constructs a graph with a fixed size without edges. If the graph is
+* constructed this way, it is not possible to associate objects to nodes,
+* nore it is possible to grow the graph using {@link #addNode}.
+* @param directed if true the graph will be directed
+*/
+public NeighbourListGraph( int size, boolean directed ) {
+
+	nodes = null;
+	neighbors = new Vector<Set<Integer>>(size);
+	for(int i=0; i<size; ++i) neighbors.add(new HashSet<Integer>());
+	nodeindex = null;
 	this.directed = directed;
 }
 
@@ -72,7 +90,10 @@ public NeighbourListGraph( boolean directed ) {
 
 /**
 * If the given object is not associated with a node yet, adds a new
-* node. Returns the index of the node.
+* node. Returns the index of the node. If the graph was constructed to have
+* a specific size, it is not possible to add nodes and therefore calling
+* this method will throw an exception.
+* @throws NullPointerException if the size was specified at construction time.
 */
 public int addNode( Object o ) {
 
@@ -81,7 +102,7 @@ public int addNode( Object o ) {
 	{
 		index = new Integer(nodes.size());
 		nodes.add(o);
-		neighbours.add(new HashSet());
+		neighbors.add(new HashSet<Integer>());
 		nodeindex.put(o,index);
 	}
 
@@ -95,8 +116,8 @@ public int addNode( Object o ) {
 
 public boolean setEdge( int i, int j ) {
 	
-	boolean ret = ((Set)neighbours.get(i)).add(new Integer(j));
-	if( ret && !directed ) ((Set)neighbours.get(j)).add(new Integer(i));
+	boolean ret = neighbors.get(i).add(j);
+	if( ret && !directed ) neighbors.get(j).add(i);
 	return ret;
 }
 
@@ -104,8 +125,8 @@ public boolean setEdge( int i, int j ) {
 
 public boolean clearEdge( int i, int j ) {
 	
-	boolean ret = ((Set)neighbours.get(i)).remove(new Integer(j));
-	if( ret && !directed ) ((Set)neighbours.get(j)).remove(new Integer(i));
+	boolean ret = neighbors.get(i).remove(j);
+	if( ret && !directed ) neighbors.get(j).remove(i);
 	return ret;
 }
 
@@ -113,19 +134,19 @@ public boolean clearEdge( int i, int j ) {
 
 public boolean isEdge(int i, int j) {
 	
-	return ((Set)neighbours.get(i)).contains(new Integer(j));
+	return neighbors.get(i).contains(j);
 }
 
 // ---------------------------------------------------------------
 
 public Collection getNeighbours(int i) {
 	
-	return Collections.unmodifiableCollection((Set)neighbours.get(i));
+	return Collections.unmodifiableCollection(neighbors.get(i));
 }
 
 // ---------------------------------------------------------------
 
-public Object getNode(int i) { return nodes.get(i); }
+public Object getNode(int i) { return (nodes==null?null:nodes.get(i)); }
 	
 // ---------------------------------------------------------------
 
@@ -136,7 +157,7 @@ public Object getEdge(int i, int j) { return null; }
 
 // ---------------------------------------------------------------
 
-public int size() { return nodes.size(); }
+public int size() { return neighbors.size(); }
 
 // --------------------------------------------------------------------
 	
@@ -144,7 +165,7 @@ public boolean directed() { return directed; }
 
 // --------------------------------------------------------------------
 
-public int degree(int i) { return ((Set)neighbours.get(i)).size(); }
+public int degree(int i) { return neighbors.get(i).size(); }
 }
 
 

@@ -34,8 +34,8 @@ public class WireKOut extends WireGraph {
 //--------------------------------------------------------------------------
 
 /**
- * The out-degree degree of the graph. this many different random links
- * will be generated out of each node. No loop edges are generated.
+ * The number of outgoing edges to generate from each node.
+ * No loop edges are generated.
  * In the undirected case, the degree
  * of nodes will be on average almost twice as much because the incoming links
  * also become links out of each node.
@@ -48,7 +48,7 @@ private static final String PAR_DEGREE = "k";
 //--------------------------------------------------------------------------
 
 /**
- * The degree of the regular graph
+ * The number of outgoing edges to generate from each node.
  */
 private final int k;
 

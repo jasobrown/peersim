@@ -93,7 +93,7 @@ public static Graph wireWS( Graph g, int k, double p, Random r ) {
 * (edge targets) are chosen randomly without replacement from the nodes of the
 * graph other than the source node (ie no loop edge is added).
 * If k is larger than N-1 (where N is the number of nodes) then k is set to
-* be N-1 and a complete graph is returned.
+* be N-1 and a complete graph is returned. No loop edges are generated.
 * @param g the graph to be wired
 * @param k samples to be drawn for each node
 * @param r source of randomness

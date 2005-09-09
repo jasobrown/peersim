@@ -117,7 +117,7 @@ public static Integer getCycleObj()
 
 /**
  * Returns the current time within the current cycle, for cycle based
- * simulations. Note that the time returned by {@link #getCycle}is the cycle id
+ * simulations. Note that the time returned by {@link #getCycle} is the cycle id
  * in this case. In other words, it returns the number of nodes that have
  * already been visisted in a given cycle. It is negative if the simulation
  * is not cycle driven.

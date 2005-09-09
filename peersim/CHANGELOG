@@ -1,4 +1,6 @@
 MJ 09/09/05
+- Went through the classdocs of the cdsim package, and revised/fixed/extended
+  it significantly. Planning to do it with all the packages... 
 - Small changes in WireGraph to support non-overly graphs better (see classdocs)
 - NeighbourListGraph can now be constructed with a specified size
 - Some documentation fixes

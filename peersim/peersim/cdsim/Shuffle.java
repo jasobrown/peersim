@@ -21,9 +21,9 @@ package peersim.cdsim;
 import peersim.core.*;
 
 /**
-* A network dynamics manager which can shuffle networks. Similar to the
-* shuffle parameter of the simulator. Only more flexible,
-* can be scheduled arbitrarily, etc.
+* Shuffles the network. After shuffling, the order in which the nodes
+* are iterated over during a cycle of a cycle driven simulation
+* will be random. It has an effect only in cycle driven simulations.
 */
 public class Shuffle implements Control {
 
@@ -43,7 +43,10 @@ public Shuffle(String prefix) {}
 
 
 /**
-* Calls {@link Network#shuffle()}.
+* Calls {@link Network#shuffle()}. 
+* As a result, the order in which the nodes
+* are iterated over during a cycle of a cycle driven simulation
+* will be random. It has an effect only in cycle driven simulations.
 */
 public final boolean execute() {
 

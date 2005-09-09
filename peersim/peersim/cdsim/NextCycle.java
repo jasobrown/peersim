@@ -22,6 +22,9 @@ import peersim.config.*;
 import peersim.core.*;
 
 /**
+* It generalizes its superclass so that the list of protocols to run can
+* be specified. The superclass ({@link FullNextCycle}) always runs all the
+* {@link CDProtocol}s.
 */
 public class NextCycle extends FullNextCycle {
 
@@ -43,7 +46,9 @@ private final int[] pids;
 // =============== initialization ======================================
 // =====================================================================
 
-
+/**
+* reads configuration parameters and the {@link Scheduler}s.
+*/
 public NextCycle(String prefix) {
 	
 	super(prefix);
@@ -61,8 +66,9 @@ public NextCycle(String prefix) {
 // =====================================================================
 
 /** 
- * Execute the configured protocols on all nodes. It sets the {@link CDState}
- * appropriately.
+ * Execute the configured protocols on all nodes.
+ * It works exactly as {@link FullNextCycle#execute}, only just the configured
+ * protocols are iterated over.
  */
 public boolean execute() {
 

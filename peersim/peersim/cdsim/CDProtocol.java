@@ -21,12 +21,18 @@ package peersim.cdsim;
 import peersim.core.Protocol;
 import peersim.core.Node;
 
+/**
+* Defines cycle driven protocols, that is, protocols that have a periodic
+* activity in regular time intervals.
+*/
 public interface CDProtocol extends Protocol
 {
 
 /**
  * A protocol which is defined by performing an algorithm in more or less
- * regular periodic intrevals. The implementation defines the protocol.
+ * regular periodic intrevals.
+ * This method is called by the simulator engine once in each cycle with
+ * the appropriate parameters.
  * 
  * @param node
  *          the node on which this component is run

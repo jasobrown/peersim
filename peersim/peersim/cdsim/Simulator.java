@@ -23,10 +23,36 @@ import peersim.config.*;
 import peersim.core.*;
 
 /**
-* This is the executable class for performing a cycle driven simulation.
-* The class is completely static as at the same time we expect to have only
-* one simulation running in a virtual machine.
-* The simulation is highly configurable.
+* This is the cycle driven simulation engine. 
+* It is a fully static singleton class.
+* For a cycle driven simulation 
+* the configuration has to describe a set of {@link CDProtocol}s, and their
+* ordering, a set of {@link Control}s and their ordering and a set of
+* initializers and their ordering. See parameters {@value PAR_INIT},
+* {@value PAR_CTRL}.
+* <p>
+* One experiment run by {@link #nextExperiment} works as follows.
+* First the initializers are run in the specified order, then the following
+* is iterated {@value PAR_CYCLES} times:
+* If {@value PAR_NOMAIN} is specified, then simply the controls specified
+* in the configuration are run in the specified order.
+* If {@value PAR_NOMAIN} is not specified, then the controls in the
+* configuration are run in the specified order, followed by the
+* execution of {@link FullNextCycle}.
+* <p>
+* All components (controls and protocols) can have configuration parameters
+* that control their scheduling (see {@link Scheduler}). This way they
+* can skip cycles, start from a specified cycle, etc.
+* As a special case, components can be scheduled to run after the last cycle.
+* That is, each experiment is finished by running the controls that are
+* scheduled after the last cycle.
+* <p>
+* Finally, any control can interrupt an experiment at any time it is
+* executed by returning true in method {@link Control#execute}.
+* However, the controls scheduled to run after the last cycle are still
+* executed completely, irrespective of their return value and even if
+* the experiment was interrupted.
+* @see Configuration
 */
 public class Simulator {
 
@@ -43,7 +69,9 @@ private static final String PAR_CYCLES = "simulation.cycles";
 /**
  * This option is only for experts. It switches off the main cycle that calles
  * the cycle driven protocols. When you switch this off, you need to control the
- * execution of the protocols by configuring controls that do the job. It's
+ * execution of the protocols by configuring controls that do the job
+ * (eg, {@link FullNextCycle}, {@link NextCycle}).
+ * It's
  * there for people who want maximal flexibility for their hacks.
  * @config
  */
@@ -51,13 +79,19 @@ private static final String PAR_NOMAIN = "simulation.nodefaultcycle";
 
 /**
  * This is the prefix for initializers. These have to be of type
- * {@link Control}.
+ * {@link Control}. They are run at the beginning of each experiment, in the
+ * order specified by the configuration.
+ * @see Configuration
  * @config
  */
 private static final String PAR_INIT = "init";
 
 /**
  * This is the prefix for controls.
+ * These have to be of type
+ * {@link Control}. They are run before each cycle, in the
+ * order specified by the configuration.
+ * @see Configuration
  * @config
  */
 private static final String PAR_CTRL = "control";
@@ -126,18 +160,18 @@ private static String[] loadControls() {
 
 /**
  * This method is used to check whether the current configuration can
- * be used for cycle-driven simulations. 
+ * be used for cycle-driven simulations.
+ * It checks for the existence of configuration parameter {@value #PAR_CYCLES}.
  */
 public static final boolean isConfigurationCycleDriven()
 {
-	return Configuration.getInt(PAR_CYCLES,-132)
-			!= -132;
+	return Configuration.contains(PAR_CYCLES);
 }
 
 //---------------------------------------------------------------------
 
 /**
- * Runs an experiment
+ * Runs an experiment, resetting everything except the random seed.
  */
 public static final void nextExperiment()  {
 

@@ -86,6 +86,10 @@ public Object clone() throws CloneNotSupportedException {
 // ===================================================================
 
 	
+/**
+* Runs the configured controls if {@link CDState#getCycleT} %
+* {@value #PAR_STEP}=0.
+*/
 public void nextCycle( Node node, int protocolID ) {
 
 	if( CDState.getCycleT() % step != 0 ) return;

@@ -1,3 +1,9 @@
+MJ 10/09/05
+- Revised the vector package again, including some major refactoring and
+  complete revision of documentation.
+- Changed the behavior of the vector observers, now they accept only one method
+  to observe. Simplicity wins here over features.
+
 MJ 09/09/05
 - Went through the classdocs of the cdsim package, and revised/fixed/extended
   it significantly. Planning to do it with all the packages... 

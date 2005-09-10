@@ -23,11 +23,13 @@ import peersim.core.*;
 import peersim.util.*;
 
 /**
-* Print statistics over the network assuming the nodes implement
+* Print statistics over a vector. The vector is defined by a protocol,
+* specified by {@value PAR_PROT}, that has to  implement
 * {@link SingleValue}.
-* Statistics printed are: standard deviation, standard 
-* deviation reduction, average/maximum/minimum of averages,
-* and actual size.
+* Statistics printed are: min, max, number of samples, average, variance,
+* number of minimal instances, number of maximal instances (using
+* {@link IncrementalStats#toString}).
+* @see IncrementalStats
 */
 public class SingleValueObserver implements Control {
 
@@ -38,9 +40,10 @@ public class SingleValueObserver implements Control {
 
 /** 
  *  The parameter used to determine the accuracy
- *  for standard deviation before stopping the simulation. If not 
+ *  (standard deviation) before stopping the simulation. If not 
  *  defined, a negative value is used which makes sure the observer 
  *  does not stop the simulation.
+ * @see #execute
  *  @config
  */
 private static final String PAR_ACCURACY = "accuracy";
@@ -71,7 +74,9 @@ private final int pid;
 //--------------------------------------------------------------------------
 
 /**
- *  Creates a new observer using clear()
+ * Standard constructor that reads the configuration parameters.
+ * Invoked by the simulation engine.
+ * @param name the configuration prefix for this class
  */
 public SingleValueObserver(String name)
 {
@@ -86,7 +91,15 @@ public SingleValueObserver(String name)
 //--------------------------------------------------------------------------
 
 /**
- * @inheritDoc
+* Print statistics over a vector. The vector is defined by a protocol,
+* specified by {@value PAR_PROT}, that has to  implement
+* {@link SingleValue}.
+* Statistics printed are: min, max, number of samples, average, variance,
+* number of minimal instances, number of maximal instances (using 
+* {@link IncrementalStats#toString}).
+* @return true if the standard deviation is below the value of
+ * {@value PAR_ACCURACY}, and the time of the simulation is larger then zero
+ * (ie it has started).
  */
 public boolean execute()
 {

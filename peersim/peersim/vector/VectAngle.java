@@ -34,10 +34,6 @@ import peersim.core.Log;
  * that reads it.
  * The methods to be used are specified through parameter {@value #PAR_METHOD1}
  * and {@value #PAR_METHOD2}.
- * For backward compatibility, if no method is specified, the
- * method {@link SingleValue#getValue()} is used. In this way, 
- * classes implementing the {@link SingleValue} interface can be
- * observed using the old configuration syntax.
  * <p>
  * Please refer to package {@link peersim.vector} for a detailed description of 
  * this mechanism. 
@@ -63,9 +59,9 @@ private static final String PAR_PROT2 = "protocol2";
 
 /**
  * The getter method used to obtain the values of the first protocol. 
- * Defauls to "getValue" (for backward compatibility with previous 
+ * Defauls to <code>getValue</code> (for backward compatibility with previous 
  * implementation of this class, that were based on the 
- * {@link SingleValue} interface.
+ * {@link SingleValue} interface).
  * Refer to the {@linkplain peersim.vector vector package description} for more 
  * information about getters and setters.
  * @config
@@ -74,9 +70,9 @@ private static final String PAR_METHOD1 = "getter1";
 
 /**
  * The getter method used to obtain the values of the second protocol. 
- * Defauls to "getValue" (for backward compatibility with previous 
+ * Defauls to <code>getValue</code> (for backward compatibility with previous 
  * implementation of this class, that were based on the 
- * {@link SingleValue} interface.
+ * {@link SingleValue} interface).
  * Refer to the {@linkplain peersim.vector vector package description} for more 
  * information about getters and setters.
  * @config
@@ -90,23 +86,9 @@ private static final String PAR_METHOD2 = "getter2";
 /** The prefix for this observer*/
 private final String name;
 
-/** Identifier of the first protocol */
-private final int pid1;
+private final Getter getter1;
 
-/** Identifier of the second protocol */
-private final int pid2;
-
-/** Method name, first protocol */
-private final String methodName1;
-
-/** Method name, second protocol */
-private final String methodName2;
-
-/** Method, first protocol */
-private final Method method1;
-
-/** Method, second protocol */
-private final Method method2;
+private final Getter getter2;
 
 // --------------------------------------------------------------------------
 // Initialization
@@ -120,55 +102,30 @@ private final Method method2;
 public VectAngle(String prefix)
 {
 	name = prefix;
-	pid1 = Configuration.getPid(prefix + "." + PAR_PROT1);
-	pid2 = Configuration.getPid(prefix + "." + PAR_PROT2);
-	methodName1=Configuration.getString(prefix+"."+PAR_METHOD1,"getValue");
-	methodName2=Configuration.getString(prefix+"."+PAR_METHOD2,"getValue");
-	// Search the methods
-	Class class1 = Network.prototype.getProtocol(pid1).getClass();
-	Class class2 = Network.prototype.getProtocol(pid2).getClass();
-	try {
-		method1=GetterSetterFinder.getGetterMethod(class1,methodName1);
-	} catch (NoSuchMethodException e) {
-		throw new IllegalParameterException(prefix+"." + PAR_METHOD1,
-			e+"");
-	}
-	try {
-		method2=GetterSetterFinder.getGetterMethod(class1,methodName2);
-	} catch (NoSuchMethodException e) {
-		throw new IllegalParameterException(prefix + "." + PAR_METHOD1,
-			e+"");
-	}
+	getter1 = new Getter(prefix,PAR_PROT1,PAR_METHOD1);
+	getter2 = new Getter(prefix,PAR_PROT2,PAR_METHOD2);
 }
 
 // --------------------------------------------------------------------------
 // Methods
 // --------------------------------------------------------------------------
 
+/**
+ * Observes the cosine angle between two vectors. The printed values
+ * are: cosine, Eucledian norm of vect 1, Eucledian norm of vector 2,
+ * angle in radians.
+* @return always false
+*/
 public boolean execute() {
 
 	double sqrsum1 = 0, sqrsum2 = 0, prod = 0;
-	try
+	for (int i = 0; i < Network.size(); ++i)
 	{
-		for (int i = 0; i < Network.size(); ++i)
-		{
-			Object obj1 = Network.get(i).getProtocol(pid1);
-			Object obj2 = Network.get(i).getProtocol(pid2);
-			double v1=((Number) method1.invoke(obj1)).doubleValue();
-			double v2=((Number) method2.invoke(obj2)).doubleValue();
-			sqrsum1 += v1 * v1;
-			sqrsum2 += v2 * v2;
-			prod += v2 * v1;
-		}
-	}
-	catch (InvocationTargetException e)
-	{
-		e.getTargetException().printStackTrace();
-		System.exit(1);
-	}
-	catch (Exception e)
-	{
-		throw new RuntimeException(e);
+		double v1= getter1.get(i).doubleValue();
+		double v2= getter2.get(i).doubleValue();
+		sqrsum1 += v1 * v1;
+		sqrsum2 += v2 * v2;
+		prod += v2 * v1;
 	}
 	
 	double cos = prod / Math.sqrt(sqrsum1) / Math.sqrt(sqrsum2);

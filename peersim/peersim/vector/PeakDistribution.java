@@ -25,19 +25,8 @@ import peersim.core.*;
 /**
  * Initializes the values so that {@value #PAR_PEAKS} nodes have value
  * {@value #PAR_VALUE}/{@value #PAR_PEAKS}, the rest zero.
- * <p>
- * This dynamics class can initialize any protocol field containing a 
- * primitive value, provided that the field is associated with a setter method 
- * that modifies it.
- * The method to be used is specified through parameter 
- * {@value peersim.vector.VectControl#PAR_METHOD}.
- * For backward compatibility, if no method is specified, the method
- * {@link SingleValue#setValue(double)} is used. In this way, classes
- * implementing the {@link SingleValue} interface can be initialized using the
- * old configuration syntax.
- * <p>
- * Please refer to package {@link peersim.vector} for a detailed description of 
- * the concept of protocol vector and the role of getters and setters. 
+ * @see VectControl
+ * @see peersim.vector
  */
 public class PeakDistribution extends VectControl
 {
@@ -89,7 +78,7 @@ public PeakDistribution(String prefix)
 	
 	peaks = Configuration.getDouble(prefix+"."+PAR_PEAKS, 1);
 	
-	if( type==int.class || type==long.class )
+	if( setter.isInteger() )
 		value = new Long(Configuration.getLong(prefix+"."+PAR_VALUE));
 	else
 		value = new Double(Configuration.getDouble(prefix + "." +
@@ -101,23 +90,25 @@ public PeakDistribution(String prefix)
 // --------------------------------------------------------------------------
 
 /**
- * @inheritDoc
+ * Initializes the values so that {@value #PAR_PEAKS} nodes have value
+ * {@value #PAR_VALUE}/{@value #PAR_PEAKS}, the rest zero.
+ * @return always false
  */
 public boolean execute()
 {
 	int pn = (peaks < 1 ? (int) (peaks*Network.size()) : (int) peaks);
 	
-	if( type==long.class || type==int.class )
+	if( setter.isInteger() )
 	{
 		long v = value.longValue()/pn;
-		for (int i=0; i < pn; i++) set(i, v);
-		for (int i=pn; i < Network.size(); i++) set(i,0);
+		for (int i=0; i < pn; i++) setter.set(i, v);
+		for (int i=pn; i < Network.size(); i++) setter.set(i,0);
 	}
 	else
 	{
 		double v = value.doubleValue()/pn;
-		for (int i=0; i < pn; i++) set(i, v);
-		for (int i=pn; i < Network.size(); i++) set(i,0.0);
+		for (int i=0; i < pn; i++) setter.set(i, v);
+		for (int i=pn; i < Network.size(); i++) setter.set(i,0.0);
 	}
 
 	return false;

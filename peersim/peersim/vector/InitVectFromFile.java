@@ -33,19 +33,8 @@ import peersim.core.*;
  * is ignored.
  * The file can contain more values than necessary but
  * enough values must be present.
- * <p>
- * This dynamics class can initialize any protocol field containing a 
- * primitive value, provided that the field is associated with a setter method 
- * that modifies it.
- * The method to be used is specified through parameter 
- * {@value peersim.vector.VectControl#PAR_METHOD}.
- * For backward compatibility, if no method is specified, the method
- * {@link SingleValue#setValue(double)} is used. In this way, classes
- * implementing the {@link SingleValue} interface can be initialized using the
- * old configuration syntax.
- * <p>
- * Please refer to package {@link peersim.vector} for a detailed description of 
- * the concept of protocol vector and the role of getters and setters. 
+ * @see VectControl
+ * @see peersim.vector
  */
 public class InitVectFromFile extends VectControl
 {
@@ -99,6 +88,7 @@ public InitVectFromFile(String prefix)
  * Lines starting with # or lines that contain only whitespace are ignored. The
  * file can contain more values than necessary but enough values must be
  * present.
+ * @return true if the file could not be read otherwise false
  */
 public boolean execute() {
 
@@ -114,13 +104,17 @@ try {
 		StringTokenizer st = new StringTokenizer(line);
 		if (!st.hasMoreTokens())
 			continue;
-		if( type==int.class || type==long.class )
-			set(i,Long.parseLong(st.nextToken()));
-		else	set(i,Double.parseDouble(st.nextToken()));
+		if( setter.isInteger() )
+			setter.set(i,Long.parseLong(st.nextToken()));
+		else	setter.set(i,Double.parseDouble(st.nextToken()));
 		i++;
 	}
 }
-catch(Exception e) { throw new RuntimeException(e); }
+catch(IOException e)
+{
+	System.err.println("Unable to read file: " + e);
+	return true;
+}
 	
 	if (i < Network.size())
 		throw new RuntimeException(

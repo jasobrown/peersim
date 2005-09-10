@@ -24,20 +24,9 @@ import peersim.dynamics.*;
 
 /**
  * Initializes the values drawing uniform random samples from the range
- * [{@value #PAR_MIN}, {@value #PAR_MAX}].
- * <p>
- * This dynamics class can initialize any protocol field containing a 
- * primitive value, provided that the field is associated with a setter method 
- * that modifies it.
- * The method to be used is specified through parameter 
- * {@value peersim.vector.VectControl#PAR_METHOD}.
- * For backward compatibility, if no method is specified, the method
- * {@link SingleValue#setValue(double)} is used. In this way, classes
- * implementing the {@link SingleValue} interface can be initialized using the
- * old configuration syntax.
- * <p>
- * Please refer to package {@link peersim.vector} for a detailed description of 
- * the concept of protocol vector and the role of getters and setters. 
+ * [{@value #PAR_MIN}, {@value #PAR_MAX}[.
+ * @see VectControl
+ * @see peersim.vector
  */
 public class UniformDistribution extends VectControl implements NodeInitializer
 {
@@ -47,14 +36,14 @@ public class UniformDistribution extends VectControl implements NodeInitializer
 //--------------------------------------------------------------------------
 
 /**
- * The upper bound of the uniform random variable.
+ * The upper bound of the uniform random variable, exclusive.
  * @config
  */
 private static final String PAR_MAX = "max";
 
 /**
  * The lower bound of the uniform
- * random variable. Defaults to -{@value #PAR_MAX}.
+ * random variable, inclusive. Defaults to -{@value #PAR_MAX}.
  * @config
  */
 private static final String PAR_MIN = "min";
@@ -83,7 +72,7 @@ public UniformDistribution(String prefix)
 	super(prefix);
 	
 	// Read parameters based on type
-	if (type==long.class || type==int.class) {
+	if (setter.isInteger()) {
 		max = new Long(Configuration.getLong(prefix + "." + PAR_MAX));
 		min = new Long(Configuration.getLong(prefix + "." + PAR_MIN, 
 				-max.longValue()));
@@ -99,16 +88,18 @@ public UniformDistribution(String prefix)
 // --------------------------------------------------------------------------
 
 /**
- * @inheritDoc
+ * Initializes the values drawing uniform random samples from the range
+ * [{@value #PAR_MIN}, {@value #PAR_MAX}[.
+ * @return always false
  */
 public boolean execute() {
 
-	if( type==long.class || type==int.class)
+	if(setter.isInteger())
 	{
 		long d = max.longValue() - min.longValue();
 		for (int i = 0; i < Network.size(); ++i)
 		{
-			set(i,CommonState.r.nextLong(d) + min.longValue());
+			setter.set(i,CommonState.r.nextLong(d)+min.longValue());
 		}
 	}
 	else
@@ -116,7 +107,8 @@ public boolean execute() {
 		double d = max.doubleValue() - min.doubleValue();
 		for (int i = 0; i < Network.size(); ++i)
 		{
-			set(i,CommonState.r.nextDouble()*d);
+			setter.set(i,CommonState.r.nextDouble()*d+
+			min.doubleValue());
 		}
 	}
 
@@ -126,19 +118,21 @@ public boolean execute() {
 // --------------------------------------------------------------------------
 
 /**
- * @inheritDoc
+ * Initializes the value drawing a uniform random sample from the range
+ * [{@value #PAR_MIN}, {@value #PAR_MAX}[.
+ * @param n the node to initialize
  */
 public void initialize(Node n) {
 
-	if( type==long.class || type==int.class)
+	if( setter.isInteger() )
 	{
 		long d = max.longValue() - min.longValue();
-		set(n,CommonState.r.nextLong(d) + min.longValue());
+		setter.set(n,CommonState.r.nextLong(d) + min.longValue());
 	}
 	else
 	{
 		double d = max.doubleValue() - min.doubleValue();
-		set(n,CommonState.r.nextDouble()*d);
+		setter.set(n,CommonState.r.nextDouble()*d);
 	}
 }
 

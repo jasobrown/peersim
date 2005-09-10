@@ -24,19 +24,8 @@ import peersim.core.*;
 /**
  * Initializes a protocol vector with values in the range [{@value #PAR_MIN}, 
  * {@value #PAR_MAX}] (inclusive both ends), linearly increasing.
- * <p>
- * This dynamics class can initialize any protocol field containing a 
- * primitive value, provided that the field is associated with a setter method 
- * that modifies it.
- * The method to be used is specified through parameter 
- * {@value peersim.vector.VectControl#PAR_METHOD}.
- * For backward compatibility, if no method is specified, the method
- * {@link SingleValue#setValue(double)} is used. In this way, classes
- * implementing the {@link SingleValue} interface can be initialized using the
- * old configuration syntax.
- * <p>
- * Please refer to package {@link peersim.vector} for a detailed description of 
- * the concept of protocol vector and the role of getters and setters. 
+ * @see VectControl
+ * @see peersim.vector
  */
 public class LinearDistribution extends VectControl
 {
@@ -84,7 +73,7 @@ public LinearDistribution(String prefix)
 	super(prefix);
 	
 	// Read parameters based on type
-	if (type==long.class || type==int.class) {
+	if (setter.isInteger()) {
 		max = new Long(Configuration.getLong(prefix + "." + PAR_MAX));
 		min = new Long(Configuration.getLong(prefix + "." + PAR_MIN, 
 				-max.longValue()));
@@ -103,23 +92,25 @@ public LinearDistribution(String prefix)
 // --------------------------------------------------------------------------
 
 /**
- * @inheritDoc
+ * Initializes a protocol vector with values in the range [{@value #PAR_MIN}, 
+ * {@value #PAR_MAX}] (inclusive both ends), linearly increasing.
+ * @return always false
  */
 public boolean execute() {
 	
-	if (type==int.class || type==long.class)
+	if ( setter.isInteger() )
 	{
 		for(int i=0; i<Network.size(); ++i)
 		{
 			// we avoid the entire expression being cast to double
-			set(i,Math.round(i*step)+min.longValue());
+			setter.set(i,Math.round(i*step)+min.longValue());
 		}
 	}
 	else
 	{
 		for(int i=0; i<Network.size(); ++i)
 		{
-			set(i,i*step+min.doubleValue());
+			setter.set(i,i*step+min.doubleValue());
 		}
 	}
 

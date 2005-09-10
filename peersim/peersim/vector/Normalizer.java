@@ -23,23 +23,12 @@ import peersim.core.*;
 import peersim.config.*;
 
 /**
- * Normalizes the values of a protocol vector. 
- * <p>
- * This dynamics class can normalize any protocol field containing a 
- * primitive value, provided that the field is associated with a getter method 
- * that reads it and setter method that modifies it.
- * The methods to be used are specified through parameters 
- * {@value #PAR_GETTER} and {@value peersim.vector.VectControl#PAR_METHOD}.
- * Only getter/setter for float/double fields are valid.
- * <p>
- * For backward compatibility, if no methods are specified, the method
- * {@link SingleValue#getValue()} and {@link SingleValue#setValue(double)} 
- * are used, respectively. In this way, classes
- * implementing the {@link SingleValue} interface can be initialized using the
- * old configuration syntax.
- * <p>
- * Please refer to package {@link peersim.vector} for a detailed description of 
- * the concept of protocol vector and the role of getters and setters. 
+ * Normalizes the values of a protocol vector.
+ * The normalization is based on the L1 norm, that is, the sum of the
+ * absolute values of the vector elements. Parameter {@value PAR_L1} defines
+ * the L1 norm that the vector will have after normalization.
+ * @see VectControl
+ * @see peersim.vector
  */
 public class Normalizer extends VectControl
 {
@@ -55,16 +44,6 @@ public class Normalizer extends VectControl
  */
 private static final String PAR_L1 = "l1";
 
-/**
- * The getter method used to obtain the protocol values. 
- * Defauls to "getValue" (for backward compatibility with previous 
- * implementation of this class, that were based on the 
- * {@link SingleValue} interface.
- * Refer to the {@linkplain peersim.vector vector package description} for more 
- * information about getters and setters.
- * @config
- */
-private static final String PAR_GETTER = "getter";
 
 // --------------------------------------------------------------------------
 // Fields
@@ -73,8 +52,6 @@ private static final String PAR_GETTER = "getter";
 /** L1 norm */
 private final double l1;
 
-/** Getter method to be invoked on the source protocol */
-private final Method getter;
 
 // --------------------------------------------------------------------------
 // Initialization
@@ -89,28 +66,16 @@ public Normalizer(String prefix)
 {
 	super(prefix);
 	l1 = Configuration.getDouble(prefix + "." + PAR_L1, 1);
-	// Read parameters
-	String getterMethod = Configuration.getString(prefix + "." + PAR_GETTER,
-			"getValue");
-	// Search methods
-	Class clazz = Network.prototype.getProtocol(pid).getClass();
-	try {
-		getter = GetterSetterFinder.getGetterMethod(clazz,getterMethod);
-	} catch (NoSuchMethodException e) {
-		throw new IllegalParameterException(prefix + "." + PAR_GETTER,
-				e+"");
-	}
 	
-	if( !(type==double.class || type==float.class) )
+	if( setter.isInteger() ) 
 		throw new IllegalParameterException(prefix + "." + PAR_METHOD,
-			"type of value must be floating point, instead of "+
-			type);
+			"setter value must be floating point, instead of "+
+			setter.getType());
 			
-	if( type !=  GetterSetterFinder.getGetterType(getter) )
+	if( setter.getType() !=  getter.getType() )
 		throw new IllegalParameterException(prefix + "." + PAR_GETTER,
-			"getter and setter must have the same numeric type, "+
-			"but we have "+type+" and "+
-			GetterSetterFinder.getGetterType(getter));
+		"getter and setter must have the same numeric type, "+
+		"but we have "+setter.getType()+" and "+getter.getType());
 }
 
 //--------------------------------------------------------------------------
@@ -118,16 +83,18 @@ public Normalizer(String prefix)
 //--------------------------------------------------------------------------
 
 /**
- * Makes the sum of the absolute values (L1 norm) equal to the value given in
- * the configuration parameter {@value #PAR_L1}.
+ * Makes the sum of the absolute values (L1 norm) equal to the value
+ * given in the configuration parameter {@value #PAR_L1}. If the value is
+ * negative, the L1 norm will be the absolute value and the vector elements
+ * change sign.
+ * @return always false
  */
 public boolean execute() {
-try {
+	
 	double sum = 0.0;
 	for (int i = 0; i < Network.size(); ++i)
 	{
-		Number n=(Number)getter.invoke(Network.get(i).getProtocol(pid));
-		sum += Math.abs(n.doubleValue());
+		sum += getter.getDouble(i);
 	}
 	if (sum == 0.0)
 	{
@@ -137,17 +104,9 @@ try {
 	double factor = l1 / sum;
 	for (int i = 0; i < Network.size(); ++i)
 	{
-		Number n=(Number)getter.invoke(Network.get(i).getProtocol(pid));
-		double val = n.doubleValue()*factor;
-		set(i,val);
+		double val = getter.getDouble(i)*factor;
+		setter.set(i,val);
 	}
-} catch (InvocationTargetException e) {
-	e.getTargetException().printStackTrace();
-	System.exit(1);
-} catch (Exception e) {
-	throw new RuntimeException(e);
-}
-
 	return false;
 }
 

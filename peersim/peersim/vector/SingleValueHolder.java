@@ -22,7 +22,7 @@ import peersim.core.*;
 
 /**
  * The task of this protocol is to store a single double value and make it
- * available through the SingleValue interface.
+ * available through the {@link SingleValue} interface.
  *
  * @author Alberto Montresor
  * @version $Revision$
@@ -44,7 +44,7 @@ protected double value;
 //--------------------------------------------------------------------------
 
 /**
- * Builds a new (not initialized) value holder.
+ * Does nothing.
  * @param prefix the configuration prefix for this class
  */
 public SingleValueHolder(String prefix)

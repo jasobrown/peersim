@@ -27,61 +27,15 @@ import peersim.util.*;
  * This class computes and reports statistics information about one or more 
  * protocol vectors. Provided statistics include average, max, min, variance,
  * etc. Values are printed according to the string format of {@link 
- * IncrementalStats}.
- * <p>
- * This observer class can observe any protocol field containing a 
- * primitive value, provided that the field is associated with a getter method 
- * that reads it.
- * The methods to be used are specified through parameter {@value #PAR_METHODS}.
- * For backward compatibility, if no method is specified, the method
- * {@link SingleValue#getValue()} is used. In this way, classes
- * implementing the {@link SingleValue} interface can be initialized using the
- * old configuration syntax.
- * <p>
- * Please refer to package {@link peersim.vector} for a detailed description of 
- * the concept of protocol vector and the role of getters and setters. 
+ * IncrementalStats#toString}.
+ * @see VectControl
+ * @see peersim.vector
  */
-public class VectorObserver implements Control 
-{
+public class VectorObserver extends VectControl {
 
-//--------------------------------------------------------------------------
-//Parameters
-//--------------------------------------------------------------------------
-
-
-/**
- * The protocol to operate on.
- * @config
- */
-private static final String PAR_PROT = "protocol";
-
-/**
- * The getter method(s) used to get values from the protocol instances.
- * Multiple methods can be specified, separated with spaces.
- * Defauls to "getValue" (for backward compatibility with previous 
- * implementation of this class, that were based on the 
- * {@link SingleValue} interface.
- * Refer to the {@linkplain peersim.vector vector package description} for more 
- * information about getters and setters.
- * @config
- */
-private static final String PAR_METHODS = "getter";
-
-//--------------------------------------------------------------------------
-//Fields
-//--------------------------------------------------------------------------
 
 /** The name of this observer in the configuration */
 private final String prefix;
-
-/** Protocol identifier */
-private final int pid;
-
-/** Methods name */
-private final String[] methodNames;
-
-/** Methods */
-private final Method[] methods;
 
 
 //--------------------------------------------------------------------------
@@ -93,30 +47,10 @@ private final Method[] methods;
  * Invoked by the simulation engine.
  * @param prefix the configuration prefix for this class
  */
-public VectorObserver(String prefix)
-{
+public VectorObserver(String prefix) {
+
+	super(prefix);
 	this.prefix = prefix;
-	pid = Configuration.getPid(prefix + "." + PAR_PROT);
-	String value = Configuration.getString(prefix + "." + PAR_METHODS,
-		"getValue");
-	methodNames = value.split("\\s");
-	
-	// Search the methods
-	Class clazz = Network.prototype.getProtocol(pid).getClass();
-	methods = new Method[methodNames.length];
-	for (int i=0; i < methodNames.length; i++)
-	{
-		try
-		{
-			methods[i] = GetterSetterFinder.getGetterMethod(
-			clazz, methodNames[i]);
-		}
-		catch (NoSuchMethodException e)
-		{
-			throw new IllegalParameterException(prefix + "." +
-			PAR_METHODS, e+"");
-		}
-	}
 }
 
 //--------------------------------------------------------------------------
@@ -124,38 +58,25 @@ public VectorObserver(String prefix)
 //--------------------------------------------------------------------------
 
 /**
- * @inheritDoc
+ * Prints statistics information about one or more 
+ * protocol vectors. Provided statistics include average, max, min, variance,
+ * etc. Values are printed according to the string format of {@link 
+ * IncrementalStats#toString}.
+ * @return always false
  */
-public boolean execute()
-{
-	StringBuilder buffer = new StringBuilder();
+public boolean execute() {
+
 	IncrementalStats stats = new IncrementalStats();
 
-	for (int i=0; i < methods.length; i++) {
-		stats.reset();
-		/* Compute max, min, average */
-		for (int j = 0; j < Network.size(); j++) {
-			Object obj = Network.get(j).getProtocol(pid);
-			try {
-				Number v = (Number) methods[i].invoke(obj);
-				stats.add( v.doubleValue() );
-			} catch (InvocationTargetException e) {
-				e.getTargetException().printStackTrace();
-				System.exit(1);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-		}
-		buffer.append(methodNames[i]);
-		buffer.append(" ");
-		buffer.append(stats);
-		buffer.append(" ");
+	for (int j = 0; j < Network.size(); j++)
+	{
+		Number v = getter.get(j);
+		stats.add( v.doubleValue() );
 	}
-	Log.println(prefix, buffer.toString());	
+	
+	Log.println(prefix, stats.toString());	
 
 	return false;
 }
-
-//--------------------------------------------------------------------------
 
 }

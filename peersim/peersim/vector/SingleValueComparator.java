@@ -24,7 +24,7 @@ import java.util.*;
 /**
  * This comparator class compares two node objects based on the value 
  * maintained by one of its protocols. The protocol must implemente the
- * SingleValue interface; its identifier has to be specified when a
+ * {@link SingleValue} interface; its identifier has to be specified when a
  * new comparator is built.
  *
  * @author Alberto Montresor
@@ -37,13 +37,16 @@ public class SingleValueComparator implements Comparator
 private int pid;
 
 /**
- * Builds a new comparators that compares the double values maintained
- * by protocol identified by <code>pid</pid>.
+ * Builds a new comparator that compares the double values maintained
+ * by protocol identified by <code>pid</code>.
  */
 public SingleValueComparator(int pid) { this.pid = pid; }
 
 /**
- * @inheritDoc
+ * Compares the values of two protocols. The parameters must have dynamic type
+ * {@link Node}. The protocol {@link #pid} is accessed on both nodes. These
+ * protocols have to implement the {@link SingleValue} interface. The values
+ * held by these protocol instances are then compared.
  */
 public int compare(Object o1, Object o2)
 {

@@ -88,7 +88,9 @@ public InitVectFromFile(String prefix)
  * Lines starting with # or lines that contain only whitespace are ignored. The
  * file can contain more values than necessary but enough values must be
  * present.
- * @return true if the file could not be read otherwise false
+ * @throws RuntimeException if the file cannot be read or contains too few
+ * values
+ * @return always false
  */
 public boolean execute() {
 
@@ -112,8 +114,7 @@ try {
 }
 catch(IOException e)
 {
-	System.err.println("Unable to read file: " + e);
-	return true;
+	throw new RuntimeException("Unable to read file: " + e);
 }
 	
 	if (i < Network.size())

@@ -1,0 +1,22 @@
+<html>
+<body>
+The PeerSim simulator.
+<h2>Conventions over Exceptions</h2>
+In this documentation we treat exceptions as follows.
+We do not always document three kinds of exceptions:
+<code>RuntimeException</code>, {@link peersim.config.IllegalParameterException}
+and {@link peersim.config.MissingParameterException}.
+The last two are thrown when there is a problem while reading the configuration.
+The <code>RuntimeException</code> should be thrown in case of any other
+problem during the running of the simulator such as file i/o, etc.
+We always document those exceptions that are different from these three
+or that are explicitly declared in the API.
+<p>
+Note that the component that actually handles these exceptions is
+the main class {@link peersim.Simulator}.
+It always exits as a result of any exceptions, after attempting to
+dump some information about the details of the failure on the standard
+error.
+</body>
+</html>
+

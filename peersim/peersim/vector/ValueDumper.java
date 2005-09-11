@@ -25,11 +25,11 @@ import java.io.*;
 import java.lang.reflect.*;
 
 /**
- * Dump the content of one or more protocol vectors in a file. Each line
- * represent a single node, with values from different protocols separated 
- * by spaces. Values are dumped to a file whose name is obtained from a
- * configurable prefix, a number specifying the current simulation time,
- * and the extension ".vec".
+ * Dump the content of a vector in a file. Each line
+ * represent a single node.
+ * Values are dumped to a file whose name is obtained from a
+ * configurable prefix (set by {@value PAR_BASENAME}), a number that is
+ * increased before each dump by one, and the extension ".vec".
  * <p>
  * This observer class can observe any protocol field containing a 
  * primitive value, provided that the field is associated with a getter method 
@@ -86,7 +86,13 @@ public ValueDumper(String prefix) {
 // --------------------------------------------------------------------------
 
 /**
- @return true if the file could not be written, otherwise false
+ * Dump the content of a vector in a file. Each line
+ * represent a single node.
+ * Values are dumped to a file whose name is obtained from a
+ * configurable prefix (set by {@value PAR_BASENAME}), a number that is
+ * increased before each dump by one, and the extension ".vec".
+ * @return always false
+ * @throws RuntimeException if there is an I/O problem
  */
 public boolean execute() {
 try
@@ -108,8 +114,7 @@ try
 }
 catch (IOException e)
 {
-	System.err.println(prefix + ": Unable to write to file: " + e);
-	return true;
+	throw new RuntimeException(prefix + ": Unable to write to file: " + e);
 }
 
 	return false;

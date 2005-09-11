@@ -24,8 +24,8 @@ import peersim.core.*;
 import peersim.util.*;
 
 /**
- * This class computes and reports statistics information about one or more 
- * protocol vectors. Provided statistics include average, max, min, variance,
+ * This class computes and reports statistics information about a vector.
+ * Provided statistics include average, max, min, variance,
  * etc. Values are printed according to the string format of {@link 
  * IncrementalStats#toString}.
  * @see VectControl
@@ -58,8 +58,8 @@ public VectorObserver(String prefix) {
 //--------------------------------------------------------------------------
 
 /**
- * Prints statistics information about one or more 
- * protocol vectors. Provided statistics include average, max, min, variance,
+ * Prints statistics information about a vector.
+ * Provided statistics include average, max, min, variance,
  * etc. Values are printed according to the string format of {@link 
  * IncrementalStats#toString}.
  * @return always false

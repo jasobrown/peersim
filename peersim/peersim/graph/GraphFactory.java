@@ -44,7 +44,7 @@ private GraphFactory() {}
 */
 public static Graph wireRingLattice(Graph g, int k) {
 	
-	int n = g.size();
+	final int n = g.size();
 	for(int i=0; i<n; ++i)
 	for(int j=-k/2; j<=k/2; ++j)
 	{
@@ -69,7 +69,7 @@ public static Graph wireRingLattice(Graph g, int k) {
 */
 public static Graph wireWS( Graph g, int k, double p, Random r ) {
 
-	int n = g.size();
+	final int n = g.size();
 	for(int i=0; i<n; ++i)
 	for(int j=-k/2; j<=k/2; ++j)
 	{
@@ -101,7 +101,7 @@ public static Graph wireWS( Graph g, int k, double p, Random r ) {
 */
 public static Graph wireKOut( Graph g, int k, Random r ) {
 
-	int n = g.size();
+	final int n = g.size();
 	if( n < 2 ) return g;
 	if( n <= k ) k=n-1;
 	int[] nodes = new int[n];
@@ -135,8 +135,34 @@ public static Graph wireKOut( Graph g, int k, Random r ) {
 */
 public static Graph wireStar( Graph g ) {
 
-	int n = g.size();
+	final int n = g.size();
 	for(int i=1; i<n; ++i) g.setEdge(i,0);
+	return g;
+}
+
+// -------------------------------------------------------------------
+
+/**
+* A regular rooted tree.
+* Wires a regular rooted tree. The root is 0, it has links to 1,...,k.
+* In general, node i has links to i*k+1,...,i*k+k.
+* @param g the graph to be wired
+* @param k the number of outgoing links of nodes in the tree (except
+* leafes that have zero out-links, and exactly one node that might have
+* less than k).
+* @return returns g for convinience
+*/
+public static Graph wireRegRootedTree( Graph g, int k ) {
+
+	if( k==0 ) return g;
+	final int n = g.size();
+	int i=0; // node we wire
+	int j=1; // next free node to link to
+	while(j<n)
+	{
+		for(int l=0; l<k && j<n; ++l,++j) g.setEdge(i,j);
+		++i;
+	}
 	return g;
 }
 
@@ -213,7 +239,8 @@ public static void main(String[] pars) {
 	GraphIO.writeChaco(new UndirectedGraph(g),System.out);
 	*/
 	//wireScaleFreeBA(g,3,new Random());
-	wireKOut(g,k,new Random());
+	//wireKOut(g,k,new Random());
+	wireRegRootedTree(g,k);
 	GraphIO.writeNeighborList(g,System.out);
 }
 

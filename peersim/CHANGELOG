@@ -1,3 +1,6 @@
+MJ 11/09/05
+- Some more classdocs cleanup, some refactoring of config property loading
+
 MJ 10/09/05
 - Revised the vector package again, including some major refactoring and
   complete revision of documentation.

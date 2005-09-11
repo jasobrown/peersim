@@ -24,22 +24,24 @@ import peersim.edsim.EDSimulator;
 
 
 /**
-* This is the main entry point to peersim. This class load configuration and
+* This is the main entry point to peersim. This class loads configuration and
 * detects the simulation type. According to this, it invokes the appropriate
 * simulator. The known simulators at this moment, along with the way to
 * detect them are the following:
 * <ul>
 * <li>{@link peersim.cdsim.Simulator}:
-* if the configuration contains the property
-* <code>simulation.cycles</code> and does not contain the property
-* <code>simulation.order</code> then this standard cycle based simulator is
-* invoked.
-* <li>{@link EDSimulator}: if the configuration contains the property
-* <code>simulation.endtime</code> then this standard event based simulator is
-* invoked.
+* if {@link peersim.cdsim.Simulator#isConfigurationCycleDriven} returns
+* true</li>
+* <li>{@link EDSimulator}:
+* if {@link EDSimulator#isConfigurationEventDriven} returns
+* true
+* </li>
 * </ul>
+* This list represents the order in which these alternatives are checked.
+* That is, if more than one return true, then the first will be taken.
 * Note that this class checks only for these clues and does not check if the
 * configuration is consistent or valid.
+* @see #main
 */
 public class Simulator {
 
@@ -65,13 +67,14 @@ protected static final String[] simName = {
  * Defaults to 1.
  * @config
  */
-private static final String PAR_EXPS = "simulation.experiments";
+protected static final String PAR_EXPS = "simulation.experiments";
 	
 // ========================== methods ===================================
 // ======================================================================
 
 /**
-* Returns the numeric id of the simulator to invoke.
+* Returns the numeric id of the simulator to invoke. At the moment this can
+* be {@link #CDSIM}, {@link #EDSIM} or {@link #UNKNOWN}.
 */
 protected static int getSimID() {
 	
@@ -88,12 +91,48 @@ protected static int getSimID() {
 
 // ----------------------------------------------------------------------
 
+/**
+* Loads the configuration and executes the experiments.
+* The number of independent experiments is given by config parameter
+* {@value #PAR_EXPS}. In all experiments the configuration is the same,
+* only the random seed is not re-initialized between experiments.
+* <p>
+* Loading the configuration is currently done with the help of constructing
+* an instance of {@link ParsedProperties} using the constructor
+* {@link ParsedProperties#ParsedProperties(String[])}.
+* The parameter
+* <code>args</code> is simply passed to this class. This class is then used
+* to initialize the configuration.
+* <p>
+* After loading the configuration, the experiments are run by invoking the
+* appropriate engine, which is identified as follows:
+* <ul>
+* <li>{@link peersim.cdsim.Simulator}:
+* if {@link peersim.cdsim.Simulator#isConfigurationCycleDriven} returns
+* true</li>
+* <li>{@link EDSimulator}:
+* if {@link EDSimulator#isConfigurationEventDriven} returns
+* true
+* </li>
+* </ul>
+* <p>
+* This list represents the order in which these alternatives are checked.
+* That is, if more than one return true, then the first will be taken.
+* Note that this class checks only for these clues and does not check if the
+* configuration is consistent or valid.
+* @param args passed on to
+* {@link ParsedProperties#ParsedProperties(String[])}
+* @see ParsedProperties
+* @see Configuration
+* @see peersim.cdsim.Simulator
+* @see EDSimulator
+*/
 public static void main(String[] args)
 {
 	long time = System.currentTimeMillis();	
 	
 	System.err.println("Simulator: loading configuration");
-	Configuration.setConfig( new ExtendedConfigProperties(args) );
+	Configuration.setConfig( new ParsedProperties(args) );
 
 	int exps = Configuration.getInt(PAR_EXPS,1);
 

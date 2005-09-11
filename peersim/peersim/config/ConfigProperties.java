@@ -33,7 +33,7 @@ public class ConfigProperties extends Properties {
 
 
 /**
-* Calls the Properties onstructor.
+* Calls super constructor.
 */
 public ConfigProperties() { super(); }
 
@@ -47,12 +47,12 @@ public ConfigProperties() { super(); }
 * existing filename. If it is, reading properties from that file is
 * attempted. Then (if pars[0] was a filename then from index 0 otherwise
 * from index 1) pars is loaded as if it was a command line argument list
-* using <code>loadCommandLineDefs</code>.
-*
+* using {@link #loadCommandLineDefs}.
+* <p>
 * A little inconvinience is that if pars[0] is supposed to be the first
 * command line argument but it is a valid filename at the same time by
 * accident. The caller must take care of that.
-*
+* <p>
 * No exceptions are thrown, instead error messages are written to the
 * standard error. Users who want a finer control should use
 * the public methods of this class.
@@ -114,7 +114,8 @@ public	ConfigProperties( String[] pars, String resource ) {
 // -------------------------------------------------------------------
 
 /**
-* Constructs a ConfigProperty object by loading a file.
+* Constructs a ConfigProperty object by loading a file by calling
+* {@link #load}.
 * @param fileName The name of the configuration file.
 */
 public ConfigProperties( String fileName ) throws IOException {
@@ -125,7 +126,7 @@ public ConfigProperties( String fileName ) throws IOException {
 // -------------------------------------------------------------------
 
 /**
-* Calls the Properties constructor.
+* Calls super constructor.
 */
 public	ConfigProperties( Properties props ) {
 
@@ -135,7 +136,7 @@ public	ConfigProperties( Properties props ) {
 // -------------------------------------------------------------------
 
 /**
-* Calls the contructor with resource set to null.
+* Calls {@link #ConfigProperties(String[],String)} with resource set to null.
 */
 public	ConfigProperties( String[] pars ) {
 

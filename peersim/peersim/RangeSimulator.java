@@ -62,13 +62,6 @@ private static final String PAR_CONCURRENT = "range.concurrent";
  */
 private static final String PAR_RANGE = "range";
 
-/**
- * This config property defines the number of repetitions that will be executed
- * of the same experiment.
- * @config
- */
-private static final String PAR_EXPS = "simulation.experiments";
-
 
 //--------------------------------------------------------------------------
 // Methods
@@ -103,7 +96,7 @@ public static void main(String[] args)
 	} else {
 		// The simulator is use to execute a single file, with the possibility
 		// to define properties on the command line.
-		properties = new ExtendedConfigProperties(args);
+		properties = new ParsedProperties(args);
 		Configuration.setConfig(properties);
 	}
 	// Executes experiments; report short messages about exceptions that are
@@ -177,7 +170,7 @@ private static Properties checkFile(File config, File resultdir)
 	Properties properties;
 	// Read config files; skip the file if not readable for any reason.
 	try {
-		properties = new ExtendedConfigProperties(config.getAbsolutePath());
+		properties = new ParsedProperties(config.getAbsolutePath());
 		Configuration.setConfig(properties);
 	} catch (IOException e) {
 		System.err.println("Warning: File " + config + " cannot be open");

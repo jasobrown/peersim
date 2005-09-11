@@ -169,12 +169,12 @@ static void addControlEvent(long time, int order, Object event)
 
 /**
  * This method is used to check whether the current configuration can
- * be used for cycle-driven simulations. 
+ * be used for event driven simulations. It checks for the existence of
+ * config parameter {@value PAR_ENDTIME}.
  */
 public static final boolean isConfigurationEventDriven()
 {
-	return Configuration.getInt(PAR_ENDTIME,-132)
-			!= -132;
+	return Configuration.contains(PAR_ENDTIME);
 }
 
 //---------------------------------------------------------------------

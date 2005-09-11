@@ -1,5 +1,6 @@
 MJ 11/09/05
 - Some more classdocs cleanup, some refactoring of config property loading
+- Added WireRegRootedTree that can wire a regular rooted tree
 
 MJ 10/09/05
 - Revised the vector package again, including some major refactoring and

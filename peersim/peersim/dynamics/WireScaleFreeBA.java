@@ -32,6 +32,7 @@ http://arxiv.org/pdf/cond-mat/0408391</a>. In both cases, the number of the
 * initial set of nodes is the same as the degree parameter, and no links are
 * added. The first added node is connected to all of the initial nodes,
 * and after that the BA model is used normally.
+* @see GraphFactory#wireScaleFreeBA
 */
 public class WireScaleFreeBA extends WireGraph {
 
@@ -42,6 +43,7 @@ public class WireScaleFreeBA extends WireGraph {
 /**
  * The number of edges added to each new node (apart from those forming the 
  * initial network).
+ * Passed to {@link GraphFactory#wireScaleFreeBA}.
  * @config
  */
 private static final String PAR_DEGREE = "k";
@@ -56,7 +58,11 @@ private int k;
 // ===================== initialization ==================================
 // =======================================================================
 
-
+/**
+ * Standard constructor that reads the configuration parameters.
+ * Invoked by the simulation engine.
+ * @param prefix the configuration prefix for this class
+*/
 public WireScaleFreeBA(String prefix)
 {
 	super(prefix);

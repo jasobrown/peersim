@@ -21,6 +21,7 @@ package peersim;
 import peersim.config.*;
 import peersim.core.*;
 import peersim.edsim.EDSimulator;
+import peersim.cdsim.CDSimulator;
 
 
 /**
@@ -29,8 +30,8 @@ import peersim.edsim.EDSimulator;
 * simulator. The known simulators at this moment, along with the way to
 * detect them are the following:
 * <ul>
-* <li>{@link peersim.cdsim.Simulator}:
-* if {@link peersim.cdsim.Simulator#isConfigurationCycleDriven} returns
+* <li>{@link CDSimulator}:
+* if {@link CDSimulator#isConfigurationCycleDriven} returns
 * true</li>
 * <li>{@link EDSimulator}:
 * if {@link EDSimulator#isConfigurationEventDriven} returns
@@ -48,7 +49,7 @@ public class Simulator {
 // ========================== static constants ==========================
 // ======================================================================
 
-/** {@link peersim.cdsim.Simulator} */
+/** {@link CDSimulator} */
 protected static final int CDSIM = 0;
 
 /** {@link EDSimulator} */
@@ -58,7 +59,7 @@ protected static final int UNKNOWN = -1;
 
 /** the class names of simulators used */
 protected static final String[] simName = {
-	"peersim.cdsim.Simulator",
+	"peersim.cdsim.CDSimulator",
 	"peersim.edsim.EDSimulator",
 };
 
@@ -78,7 +79,7 @@ protected static final String PAR_EXPS = "simulation.experiments";
 */
 protected static int getSimID() {
 	
-	if( peersim.cdsim.Simulator.isConfigurationCycleDriven())
+	if( CDSimulator.isConfigurationCycleDriven())
 	{
 		return CDSIM;
 	}
@@ -107,8 +108,8 @@ protected static int getSimID() {
 * After loading the configuration, the experiments are run by invoking the
 * appropriate engine, which is identified as follows:
 * <ul>
-* <li>{@link peersim.cdsim.Simulator}:
-* if {@link peersim.cdsim.Simulator#isConfigurationCycleDriven} returns
+* <li>{@link CDSimulator}:
+* if {@link CDSimulator#isConfigurationCycleDriven} returns
 * true</li>
 * <li>{@link EDSimulator}:
 * if {@link EDSimulator#isConfigurationEventDriven} returns
@@ -124,7 +125,7 @@ protected static int getSimID() {
 * {@link ParsedProperties#ParsedProperties(String[])}
 * @see ParsedProperties
 * @see Configuration
-* @see peersim.cdsim.Simulator
+* @see CDSimulator
 * @see EDSimulator
 */
 public static void main(String[] args)
@@ -157,7 +158,7 @@ public static void main(String[] args)
 			switch(SIMID)
 			{
 			case CDSIM:
-				peersim.cdsim.Simulator.nextExperiment();
+				CDSimulator.nextExperiment();
 				break;
 			case EDSIM:
 				EDSimulator.nextExperiment();

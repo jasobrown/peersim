@@ -12,7 +12,8 @@
 random.seed 1234569890
 
 simulation.cycles 13
-simulation.shuffle
+
+control.sh Shuffle
 
 overlay.size 1
 overlay.maxSize 50000
@@ -22,26 +23,26 @@ protocol.0.c 0
 #protocol.0.leaseTimeout 100
 #protocol.0.indirectionTTL 10
 
-dynamics.0 peersim.dynamics.GrowingNetwork
-dynamics.0.add 500
-dynamics.0.step 2
-dynamics.0.until 20
-dynamics.0.init.0 scamp.Subscribe
-dynamics.0.init.0.protocol 0
+control.0 DynamicNetwork
+control.0.add 500
+control.0.step 2
+control.0.until 20
+control.0.init.0 scamp.Subscribe
+control.0.init.0.protocol 0
 
-dynamics.1 scamp.Unsubscribe
-dynamics.1.add -100
-dynamics.1.step 1
-dynamics.1.from 10
-dynamics.1.protocol 0
+control.1 scamp.Unsubscribe
+control.1.add -100
+control.1.step 1
+control.1.from 10
+control.1.protocol 0
 
-observer.0 peersim.reports.DegreeStats
-observer.0.protocol 0
+control.o0 peersim.reports.DegreeStats
+control.o0.protocol 0
 
-observer.1 peersim.reports.ConnectivityObserver
-observer.1.protocol 0
+control.o1 peersim.reports.ConnectivityObserver
+control.o1.protocol 0
 
-observer.2 scamp.HealthTest
-observer.2.protocol 0
+control.o2 scamp.HealthTest
+control.o2.protocol 0
 
 

@@ -26,6 +26,7 @@ import peersim.config.*;
  * Takes a {@link Linkable} protocol and adds random connections. Note that no
  * connections are removed, they are only added. So it can be used in
  * combination with other initializers.
+ * @see GraphFactory#wireKOut
  */
 public class WireKOut extends WireGraph {
 
@@ -35,6 +36,7 @@ public class WireKOut extends WireGraph {
 
 /**
  * The number of outgoing edges to generate from each node.
+ * Passed to {@link GraphFactory#wireKOut}.
  * No loop edges are generated.
  * In the undirected case, the degree
  * of nodes will be on average almost twice as much because the incoming links
@@ -57,6 +59,9 @@ private final int k;
 //--------------------------------------------------------------------------
 
 /**
+ * Standard constructor that reads the configuration parameters.
+ * Invoked by the simulation engine.
+ * @param prefix the configuration prefix for this class
  */
 public WireKOut(String prefix)
 {

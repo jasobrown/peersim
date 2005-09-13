@@ -21,7 +21,8 @@ package peersim;
 import java.io.*;
 import java.util.*;
 import peersim.config.*;
-import peersim.edsim.*;
+import peersim.edsim.EDSimulator;
+import peersim.cdsim.CDSimulator;
 import peersim.util.*;
 import peersim.core.Log;
 
@@ -332,7 +333,7 @@ public static void doExperiments(Properties properties)
 		// this is easier to read.
 		switch(simid) {
 			case CDSIM:
-			     	peersim.cdsim.Simulator.nextExperiment();
+			     	CDSimulator.nextExperiment();
 				break;
 			case EDSIM:
 				EDSimulator.nextExperiment();

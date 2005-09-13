@@ -22,7 +22,10 @@ import peersim.config.Configuration;
 import peersim.core.*;
 
 /**
- * A network dynamics manager which can grow networks.
+ * This {@link Control} can change the size of networks by adding and removing
+ * nodes. Can be used to model churn. This class support only permanent removal
+ * of nodes and the addition of brand new nodes. That is, temporary downtime
+ * is not supported by this class.
  */
 public class DynamicNetwork implements Control
 {
@@ -32,27 +35,45 @@ public class DynamicNetwork implements Control
 // --------------------------------------------------------------------------
 
 /**
- * Config parameter which gives prefix of node initializers.
+ * Config parameter which gives the prefix of node initializers. An arbitrary
+ * number of node initializers can be specified (Along with their parameters).
+ * These will be applied
+ * on the newly created nodes. The initializers are ordered according to
+ * alphabetical order if their ID.
+ * Example:
+ * <pre>
+control.0 DynamicNetwork
+control.0.init.0 RandNI
+control.0.init.0.k 5
+...
+ * </pre>
  * @config
  */
 private static final String PAR_INIT = "init";
 
 /**
  * If defined, nodes are substituted (an existing node is removed, a new one is
- * added.
+ * added. That is, first the number of nodes to add (or remove is the result
+ * is negative) is calculated, and then exactly the same number of nodes are
+ * removed (or added) immediately so that the network size remains constant.
+ * Not set by default.
  * @config
  */
 private static final String PAR_SUBST = "substitute";
 
 /**
- * The number of nodes to add when nodes are scheduled for addition.
+ * Specifies the number of nodes to add or remove. It can
+ * be negative in which case nodes are removed. If its absolute value is
+ * less than one, then it is interpreted as proportion of current network
+ * size. Otherwise it is rounded to an integer and interpreted as exact number
+ * of nodes.
  * @config
  */
 private static final String PAR_ADD = "add";
 
 /**
  * Nodes are added until the size specified by this parameter is reached. The
- * network will never exceed this size as a result of this network manager.
+ * network will never exceed this size as a result of this class.
  * Defaults to {@link Network#getCapacity()}.
  * @config
  */
@@ -60,34 +81,30 @@ private static final String PAR_MAX = "maxsize";
 
 /**
  * Nodes are removed until the size specified by this parameter is reached. The
- * network will never go below this size as a result of this network manager.
+ * network will never go below this size as a result of this class.
  * Defaults to 0.
  * @config
  */
 private static final String PAR_MIN = "minsize";
 
-/**
- * If this parameter is present, nodes are not crashed, but just made temporary
- * down.
- * @config
- */
-private static final String PAR_DOWN = "down";
-
 // --------------------------------------------------------------------------
 // Fields
 // --------------------------------------------------------------------------
 
-protected double add;
+/** value of {@value #PAR_ADD} */
+protected final double add;
 
-protected boolean substitute;
+/** value of {@value #PAR_SUBST} */
+protected final boolean substitute;
 
-protected int minsize;
+/** value of {@value #PAR_MIN} */
+protected final int minsize;
 
-protected int maxsize;
+/** value of {@value #PAR_MAX} */
+protected final int maxsize;
 
-protected boolean down;
-
-protected NodeInitializer[] inits;
+/** node initializers to apply on the newly added nodes */
+protected final NodeInitializer[] inits;
 
 // --------------------------------------------------------------------------
 // Protected methods
@@ -122,33 +139,22 @@ protected void add(int n)
 // ------------------------------------------------------------------
 
 /**
- * Removes n nodes from the network. Extending classes can implement any
- * algorithm to do that. Based on the PAR_DOWN parameter, the default algorithm
- * removes either set their status to down, or remove them simply by calling
- * {@link Network#remove()}. This is equivalent to permanent failure without
- * any cleanup.
- * 
+ * Removes n random nodes from the network. Extending classes can implement any
+ * algorithm to do that. The default algorithm removes random nodes simply by
+ * calling {@link Network#remove()}. This is equivalent to permanent failure
+ * without any cleanup.
  * @param n
  *          the number of nodes to remove
  */
 protected void remove(int n)
 {
-	if (down) {
-		// Remove random nodes
-		for (int i = 0; i < n; ++i) {
-			int r;
-			do {
-				r = CommonState.r.nextInt(Network.size());
-			} while (!Network.get(r).isUp());
-			Network.get(r).setFailState(Fallible.DOWN);
-		}
-	} else {
-		for (int i = 0; i < n; ++i) {
-			Network.swap(Network.size() - 1, CommonState.r.nextInt(Network.size()));
-			Network.remove();
-		}
+	for (int i = 0; i < n; ++i) {
+		Network.swap(Network.size() - 1,
+			CommonState.r.nextInt(Network.size()));
+		Network.remove();
 	}
 }
+
 
 // --------------------------------------------------------------------------
 // Initialization
@@ -169,9 +175,8 @@ public DynamicNetwork(String prefix)
 		System.out.println("Inits " + tmp[i]);
 		inits[i] = (NodeInitializer) tmp[i];
 	}
-	maxsize = Configuration.getInt(prefix + "." + PAR_MAX, Network.getCapacity());
+	maxsize=Configuration.getInt(prefix+"."+PAR_MAX,Network.getCapacity());
 	minsize = Configuration.getInt(prefix + "." + PAR_MIN, 0);
-	down = Configuration.contains(prefix + "." + PAR_DOWN);
 }
 
 // --------------------------------------------------------------------------
@@ -179,8 +184,9 @@ public DynamicNetwork(String prefix)
 // --------------------------------------------------------------------------
 
 /**
- * Calls {@link #add} or {@link #remove} with the parameters defined by the
+ * Calls {@link #add(int)} or {@link #remove} with the parameters defined by the
  * configuration.
+ * @return always false 
  */
 public final boolean execute()
 {

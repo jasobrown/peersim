@@ -17,7 +17,7 @@ init.0.protocol 0
 
 # this will print statistics about the degree of the nodes (size of out-view)
 # the numbers printed are min, max, number of nodes, avg, std.
-observer.0 peersim.reports.DegreeStats
-observer.0.protocol 0
-observer.0.FINAL
+control.o0 peersim.reports.DegreeStats
+control.o0.protocol 0
+control.o0.FINAL
 

@@ -26,12 +26,18 @@ import peersim.config.Configuration;
  * Takes a {@link Linkable} protocol and adds connection which for a star
  * topology. No connections are removed, they are only added. So it can be used
  * in combination with other initializers.
+ * @see GraphFactory#wireStar
  */
 public class WireStar extends WireGraph {
 
 // ===================== initialization ==============================
 // ===================================================================
 
+/**
+ * Standard constructor that reads the configuration parameters.
+ * Invoked by the simulation engine.
+ * @param prefix the configuration prefix for this class
+ */
 public WireStar(String prefix) { super(prefix); }
 
 // ===================== public methods ==============================

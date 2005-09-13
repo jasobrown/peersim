@@ -1,3 +1,12 @@
+MJ 12/09/05
+- Cleaned up the reports package. A noticable change that will break
+  existing config files: GrowingNetwork is gone. It's functionality is
+  provided by DynamicNetwork. A small change though: config par "percentage"
+  is no longer supported, but you can set -1<add<1 which is taken as
+  proportion. The "down" parameter is gone too: it was only a hack, that
+  will maybe reincarnate in another class.
+- renamed peersim.cdsim.Simulator to CDSimulator
+
 MJ 11/09/05
 - Some more classdocs cleanup, some refactoring of config property loading
 - Added WireRegRootedTree that can wire a regular rooted tree

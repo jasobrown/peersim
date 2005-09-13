@@ -27,6 +27,7 @@ import peersim.config.Configuration;
 * small-world model of Watts and Strogatz. Note that no
 * connections are removed, they are only added. So it can be used in
 * combination with other initializers.
+* @see GraphFactory#wireWS
 */
 public class WireWS extends WireGraph {
 
@@ -37,12 +38,14 @@ public class WireWS extends WireGraph {
 /**
  * The beta parameter of a Watts-Strogatz graph represents the probability for a
  * node to be re-wired.
+ * Passed to {@link GraphFactory#wireWS}.
  * @config
  */
 private static final String PAR_BETA = "beta";
 
 /**
  * The degree of the graph. See {@link GraphFactory#wireRingLattice}.
+ * Passed to {@link GraphFactory#wireWS}.
  * @config
  */
 private static final String PAR_DEGREE = "k";
@@ -62,6 +65,11 @@ private final double beta;
 //===================================================================
 
 
+/**
+ * Standard constructor that reads the configuration parameters.
+ * Invoked by the simulation engine.
+ * @param prefix the configuration prefix for this class
+ */
 public WireWS(String prefix) {
 
 	super(prefix);

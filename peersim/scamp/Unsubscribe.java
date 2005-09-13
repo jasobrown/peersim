@@ -20,7 +20,7 @@ package scamp;
 
 import peersim.config.Configuration;
 import peersim.core.*;
-import peersim.dynamics.GrowingNetwork;
+import peersim.dynamics.DynamicNetwork;
 
 /**
 * A network dynamics manager which can unsubscribe nodes according to the
@@ -28,7 +28,7 @@ import peersim.dynamics.GrowingNetwork;
 * Since it is not intended to be used for increasing networks, a warning
 * is given in that case.
 */
-public class Unsubscribe extends GrowingNetwork {
+public class Unsubscribe extends DynamicNetwork {
 
 
 // ========================= fields =================================

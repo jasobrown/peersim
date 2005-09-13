@@ -22,7 +22,15 @@ import peersim.config.Configuration;
 import peersim.core.*;
 
 /**
- * A network dynamic manager that can make networks oscillate.
+ * Makes the network size oscillate.
+ * The network size will be the function of time, parameterized by this
+ * parameter. The size function is
+ * <code>avg+sin(time*pi/{@value #PAR_PERIOD})*ampl</code> where
+ * <code>avg=({@value #PAR_MAX}+{@value #PAR_MIN})/2</code> and 
+ * <code>ampl=({@value #PAR_MAX}-{@value #PAR_MIN})/2</code>.
+ * This function is independent of how many times this class is executed, that
+ * is, whenever it is executed, it takes the current time and sets the network
+ * size accordingly.
  */
 public class OscillatingNetwork implements Control
 {
@@ -32,62 +40,62 @@ public class OscillatingNetwork implements Control
 //--------------------------------------------------------------------------
 
 /**
- * Config parameter which gives prefix of node initializers.
+ * Config parameter which gives the prefix of node initializers. An arbitrary
+ * number of node initializers can be specified (Along with their parameters).
+ * These will be applied
+ * on the newly created nodes. The initializers are ordered according to
+ * alphabetical order if their ID.
+ * Example:
+ * <pre>
+control.0 DynamicNetwork
+control.0.init.0 RandNI
+control.0.init.0.k 5
+...
+ * </pre>
  * @config
  */
 private static final String PAR_INIT = "init";
 
 /**
- * Config parameter used to define the number of cycles needed to complete an
- * oscillation.
- * @config
- */
-private static final String PAR_PERIOD = "periodicity";
-
-/**
- * Config parameter used to defined the maximum size of the oscillating network.
+ * Nodes are added until the size specified by this parameter is reached. The
+ * network will never exceed this size as a result of this class.
+ * Defaults to {@link Network#getCapacity()}.
  * @config
  */
 private static final String PAR_MAX = "maxsize";
 
 /**
- * Config parameter used to defined the minimum size of the oscillating network.
+ * Nodes are removed until the size specified by this parameter is reached. The
+ * network will never go below this size as a result of this class.
+ * Defaults to 0.
  * @config
  */
 private static final String PAR_MIN = "minsize";
 
 /**
- * Operation starts from this time point. This operator will be applied first at
- * this time. Defaults to 0.
+ * Config parameter used to define the length of one period of the oscillation.
+ * The network size will be the function of time, parameterized by this
+ * parameter. The size function is
+ * <code>avg+sin(time*pi/{@value #PAR_PERIOD})*ampl</code> where
+ * <code>avg=({@value #PAR_MAX}+{@value #PAR_MIN})/2</code> and 
+ * <code>ampl=({@value #PAR_MAX}-{@value #PAR_MIN})/2</code>.
  * @config
  */
-private static final String PAR_FROM = "from";
+private static final String PAR_PERIOD = "period";
 
-/**
- * Operation ends at this time point. This operator will be applied last at this
- * time. Defaults to <tt>Integer.MAX_VALUE</tt>.
- * @config
- */
-private static final String PAR_UNTIL = "until";
 
 //--------------------------------------------------------------------------
 //Fields
 //--------------------------------------------------------------------------
 
-/** Periodicity */
-private final int periodicity;
+/** Period */
+private final int period;
 
 /** Maximum size */
 private final int minsize;
 
 /** Minimum size */
 private final int maxsize;
-
-/** Operation starts from this time point */
-private final int from;
-
-/** Operation ends at this time point */
-private final int until;
 
 /** New nodes initializers */
 private final NodeInitializer[] inits;
@@ -106,9 +114,7 @@ private final NodeInitializer[] inits;
 public OscillatingNetwork(String prefix)
 {
 
-	periodicity = Configuration.getInt(prefix + "." + PAR_PERIOD);
-	from = Configuration.getInt(prefix + "." + PAR_FROM, 0);
-	until=Configuration.getInt(prefix + "." + PAR_UNTIL, Integer.MAX_VALUE);
+	period = Configuration.getInt(prefix + "." + PAR_PERIOD);
 	maxsize =
 		Configuration.getInt(
 			prefix + "." + PAR_MAX,
@@ -127,46 +133,46 @@ public OscillatingNetwork(String prefix)
 // Methods
 //--------------------------------------------------------------------------
 
-protected void add(int toAdd)
+/**
+ * Adds n nodes to the network. Extending classes can implement any algorithm to
+ * do that. The default algorithm adds the given number of nodes after calling
+ * all the configured initializers on them.
+ * 
+ * @param n
+ *          the number of nodes to add, must be non-negative.
+ */
+protected void add(int n)
 {
-
-	Node[] newnodes = new Node[Math.min(maxsize - Network.size(), toAdd)];
-
-	// create empty (not initialized) nodes
-	try
-	{
-		for (int i = 0; i < newnodes.length; ++i)
-		{
-			newnodes[i] = (Node) Network.prototype.clone();
+	for (int i = 0; i < n; ++i) {
+		Node newnode = null;
+		try {
+			newnode = (Node) Network.prototype.clone();
+		} catch (CloneNotSupportedException e) {
+			// this is fatal but should never happen because nodes
+			// are cloneable
+			throw new Error(e + "");
 		}
-	} catch (CloneNotSupportedException e)
-	{
-		// this is fatal but should never happen because nodes
-		// are cloneable
-		throw new Error(e + "");
-	}
-
-	// initialize nodes
-	for (int j=0; j < newnodes.length; j++) 
-		for (int i = 0; i < inits.length; ++i)
-			inits[i].initialize(newnodes[j]);
-
-	// add nodes to overlay network
-	for (int i = 0; i < newnodes.length; ++i)
-	{
-		Network.add(newnodes[i]);
+		for (int j = 0; j < inits.length; ++j) {
+			inits[j].initialize(newnode);
+		}
+		Network.add(newnode);
 	}
 }
 
 // ------------------------------------------------------------------
 
-protected void remove(int toRemove)
+/**
+ * Removes n random nodes from the network. Extending classes can implement any
+ * algorithm to do that. The default algorithm removes random nodes simply by
+ * calling {@link Network#remove()}. This is equivalent to permanent failure
+ * without any cleanup.
+ * @param n
+ *          the number of nodes to remove
+ */
+protected void remove(int n)
 {
-
-	for (int i = 0; i < toRemove; ++i)
-	{
-		Network.swap(
-			Network.size() - 1,
+	for (int i = 0; i < n; ++i) {
+		Network.swap(Network.size() - 1,
 			CommonState.r.nextInt(Network.size()));
 		Network.remove();
 	}
@@ -175,14 +181,23 @@ protected void remove(int toRemove)
 // ------------------------------------------------------------------
 
 /**
- * {@inheritDoc}
+ * Takes the current time and sets the network size according to a periodic
+ * function of time.
+ * The size function is
+ * <code>avg+sin(time*pi/{@value #PAR_PERIOD})*ampl</code> where
+ * <code>avg=({@value #PAR_MAX}+{@value #PAR_MIN})/2</code> and 
+ * <code>ampl=({@value #PAR_MAX}-{@value #PAR_MIN})/2</code>.
+ * Calls {@link #add(int)} or {@link #remove} depending on whether the size
+ * needs to be increased or decreased to get the desired size.
+ * @return always false 
  */
 public boolean execute()
 {
 	long time = CommonState.getTime();
-	int oscillation = (maxsize - minsize) / 2;
+	int amplitude = (maxsize - minsize) / 2;
 	int newsize = (maxsize + minsize) / 2 + 
-	  (int) (Math.sin(((double) time) / periodicity * 3.14) * oscillation);
+	  (int) (Math.sin(((double) time) / period * Math.PI) *
+	  amplitude);
 	int diff = newsize - Network.size();
 	if (diff < 0)
 		remove(-diff);

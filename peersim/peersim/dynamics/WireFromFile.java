@@ -19,6 +19,7 @@
 package peersim.dynamics;
 
 
+import java.io.IOException;
 import java.io.FileReader;
 import java.io.LineNumberReader;
 import java.util.StringTokenizer;
@@ -113,7 +114,7 @@ try
 		System.err.println("WireFromFile warning: in "+file+" "+
 			"some nodes were out of range and so ignored.");
 }
-catch( Exception e )
+catch( IOException e )
 {
 	throw new RuntimeException(e);
 }

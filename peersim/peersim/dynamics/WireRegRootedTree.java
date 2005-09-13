@@ -38,6 +38,7 @@ public class WireRegRootedTree extends WireGraph {
 
 /**
  * The parameter of the tree wiring method.
+ * It is passed to {@link GraphFactory#wireRegRootedTree}.
  * @config
  */
 private static final String PAR_DEGREE = "k";
@@ -53,6 +54,9 @@ private final int k;
 //--------------------------------------------------------------------------
 
 /**
+ * Standard constructor that reads the configuration parameters.
+ * Invoked by the simulation engine.
+ * @param prefix the configuration prefix for this class
  */
 public WireRegRootedTree(String prefix)
 {

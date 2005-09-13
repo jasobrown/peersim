@@ -26,6 +26,7 @@ import peersim.config.Configuration;
  * Takes a {@link Linkable} protocol and adds edges that define a ring lattice.
  * Note that no connections are removed, they are only added. So it can be used
  * in combination with other initializers.
+ * @see  GraphFactory#wireRingLattice
  */
 public class WireRingLattice extends WireGraph {
 
@@ -35,7 +36,8 @@ public class WireRingLattice extends WireGraph {
 
 /**
  * The "lattice parameter" of the graph. The out-degree of the graph is equal to
- * 2k. See {@link GraphFactory#wireRingLattice} for further details.
+ * 2k. See {@link GraphFactory#wireRingLattice} (to which this parameter is
+ * passed) for further details.
  * @config
  */
 private static final String PAR_K = "k";
@@ -53,6 +55,9 @@ private final int k;
 // --------------------------------------------------------------------------
 
 /**
+ * Standard constructor that reads the configuration parameters.
+ * Invoked by the simulation engine.
+ * @param prefix the configuration prefix for this class
  */
 public WireRingLattice(String prefix)
 {

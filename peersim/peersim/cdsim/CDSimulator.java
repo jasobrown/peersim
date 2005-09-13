@@ -54,7 +54,7 @@ import peersim.core.*;
 * the experiment was interrupted.
 * @see Configuration
 */
-public class Simulator {
+public class CDSimulator {
 
 
 // ============== fields ===============================================
@@ -152,7 +152,8 @@ private static String[] loadControls() {
 		controls[i]=(Control)Configuration.getInstance(names[i]);
 		ctrlSchedules[i] = new Scheduler(names[i]);
 	}
-	System.err.println("Simulator: loaded controls "+Arrays.asList(names));
+	System.err.println(
+		"CDSimulator: loaded controls "+Arrays.asList(names));
 	return names;
 }
 
@@ -181,14 +182,14 @@ public static final void nextExperiment()  {
 
 	// initialization
 	CDState.setCycle(0);
-	System.err.println("Simulator: resetting");
+	System.err.println("CDSimulator: resetting");
 	Network.reset();
-	System.err.println("Simulator: running initializers");
+	System.err.println("CDSimulator: running initializers");
 	runInitializers();
 	
 	// main cycle
 	loadControls();
-	System.err.println("Simulator: starting simulation");
+	System.err.println("CDSimulator: starting simulation");
 	for(int i=0; i<cycles; ++i)
 	{
 		CDState.setCycle(i);
@@ -200,7 +201,7 @@ public static final void nextExperiment()  {
 				stop = stop || controls[j].execute();
 		}
 		if( stop ) break;
-		System.err.println("Simulator: cycle "+i+" done");
+		System.err.println("CDSimulator: cycle "+i+" done");
 	}
 
 	CDState.setPhase(CDState.POST_SIMULATION);

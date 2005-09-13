@@ -23,10 +23,11 @@ import peersim.config.*;
 import peersim.core.*;
 
 /**
- * 
- *
- * @author Alberto Montresor
- * @version $Revision$
+ * Wires a scale free graph using a method described in
+ * <a href="http://xxx.lanl.gov/abs/cond-mat/0106144">this paper</a>.
+ * It is an incremental technique, where the new nodes are connected to
+ * the two ends of an edge that is already in the network.
+ * This model always wires undirected links.
  */
 public class WireScaleFreeDM extends WireGraph {
 
@@ -36,8 +37,9 @@ public class WireScaleFreeDM extends WireGraph {
 //--------------------------------------------------------------------------
 
 /** 
- * This config property represents the number of edges added to each new
- * node (apart from those forming the initial network).
+ * The number of edges added to each new
+ * node (apart from those forming the initial network) is twice this
+ * value.
  * @config
  */
 private static final String PAR_EDGES = "k";
@@ -48,7 +50,7 @@ private static final String PAR_EDGES = "k";
 //--------------------------------------------------------------------------
 
 
-/** Average number of edges to be created */	
+/** The number of edges created for a new node is 2*k. */	
 private final int k;
 
 
@@ -56,6 +58,11 @@ private final int k;
 // Constructor
 //--------------------------------------------------------------------------
 
+/**
+ * Standard constructor that reads the configuration parameters.
+ * Invoked by the simulation engine.
+ * @param prefix the configuration prefix for this class
+ */
 public WireScaleFreeDM(String prefix)
 {
 	super(prefix);
@@ -67,6 +74,13 @@ public WireScaleFreeDM(String prefix)
 // Methods
 //--------------------------------------------------------------------------
 
+/**
+ * Wires a scale free graph using a method described in
+ * <a href="http://xxx.lanl.gov/abs/cond-mat/0106144">this paper</a>.
+ * It is an incremental technique, where the new nodes are connected to
+ * the two ends of an edge that is already in the network.
+ * This model always wires undirected links.
+*/
 public void wire(Graph g) {
 
 	int nodes=g.size();

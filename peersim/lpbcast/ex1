@@ -4,7 +4,8 @@
 random.seed 1234569890
 
 simulation.cycles 100
-simulation.shuffle
+
+control.sh Shuffle
 
 overlay.size 50000
 
@@ -15,14 +16,14 @@ protocol.0.subs 20
 protocol.0.unSubs 20
 #protocol.0.unSubsTout 50
 
-init.0 peersim.init.WireRegularRandom
-init.0.degree 20
+init.0 WireKOut
+init.0.k 20
 init.0.protocol 0
 
 
-observer.0 peersim.reports.DegreeStats
-observer.0.protocol 0
+control.o0 peersim.reports.DegreeStats
+control.o0.protocol 0
 
-observer.1 peersim.reports.ConnectivityObserver
-observer.1.protocol 0
+control.o1 peersim.reports.ConnectivityObserver
+control.o1.protocol 0
 

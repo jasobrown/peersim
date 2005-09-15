@@ -773,15 +773,24 @@ public static String lookupPid( int pid ) {
 //-------------------------------------------------------------------
 
 /**
- * Returns the class object for the specified classname. If the specified 
+ * Returns the class object for the classname specified by the
+ * given property. If the specified 
  * class does not
- * exist, few attempts are done to identify the correct class, or
+ * exist, a few attempts are done to identify the correct class, or
  * at least provide some suggestions.
  * 
  */
-private static Class getClass(String property, String classname)
+public static Class getClass(String property)
 {
+	String classname = config.getProperty(property);
+	if (classname == null) 
+		throw new MissingParameterException(property, 
+				"\nPossible uncorrect property: " +
+				getSimilarProperty(property));
+	debug(property, classname);
+	
 	Class c = null;
+	
 	try {
 		// Maybe classname is just a fully-qualified name
 		c = Class.forName(classname);
@@ -828,6 +837,26 @@ private static Class getClass(String property, String classname)
 //-------------------------------------------------------------------
 
 /**
+* Reads given configuration item. If not found, returns the default value.
+* @param name Name of configuration property
+* @param def default value
+*/
+public static Class getClass( String name, Class def ) {
+
+	try
+	{
+		return Configuration.getClass(name);
+	}
+	catch( Exception e )
+	{
+		debug(name, ""+def+" (DEFAULT)");
+		return def;
+	}
+}
+
+// -------------------------------------------------------------------
+
+/**
 * Reads given configuration item for a class name. It returns an instance of
 * the class. The class must implement a constructor that takes a String as an
 * argument. The value of this string will be <tt>name</tt>. Note that this
@@ -837,14 +866,8 @@ private static Class getClass(String property, String classname)
 */
 public static Object getInstance( String name ) {
 
-	String classname = config.getProperty(name);
-	if (classname == null) 
-		throw new MissingParameterException(name, 
-				"\nPossible uncorrect property: " +
-				getSimilarProperty(name));
-	debug(name, classname);
-
-	Class c = getClass(name, classname);		
+	Class c = getClass(name);
+	final String classname = c.getSimpleName();
 		
 	try {
 		Class pars[] = { String.class };
@@ -891,14 +914,8 @@ public static Object getInstance( String name, Object obj ) {
 // XXX if necessary, API will have to be provided to force the (String,Object)
 // constructor and not using the default (string) constructor
 
-	String classname = config.getProperty(name);
-	if (classname == null) 
-		throw new MissingParameterException(name, 
-				"\nPossible uncorrect property: " +
-				getSimilarProperty(name));
-	debug(name, classname);
-	
-	Class c = getClass(name, classname);		
+	Class c = getClass(name);		
+	final String classname = c.getSimpleName();
 
 	try
 	{

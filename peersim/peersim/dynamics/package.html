@@ -1,13 +1,16 @@
 <html><body>
-Dynamics classes for initializing a network or 
+{@link peersim.core.Control} classes for initializing a network or 
 modifying it during simulation.
 <p>
-Current classes can be subdivided in two groups:
+Among other things, this package includes classes for the following two
+purposes:
 <ul>
-  <li> <em>wiring classes</em> are used to wire network topologies
+  <li> <em>wiring:</em> used to wire network topologies
     like ring lattices, regular random graphs, scale-free networks,
-    etc. </li>
-  <li> <em>churn classes</em> are used to simulate churn; </li>
+    etc. It is also possible to wire networks using an arbitrary custom
+    made method using {@link peersim.dynamics.WireByMethod}.</li>
+  <li> <em>churn:</em> used to simulate node addition and removal
+  patterns (aka churn)</li>
 </ul>
 </body></html>
 

@@ -1,4 +1,10 @@
-MJ 12/09/05
+MJ 15/09/05
+- Finishing the cleanup of the dynamics package
+- Added WireByMethod which is quite powerful and flexible for wiring
+  networks. We no longer need to define a separate Control for all different
+  kinds of networks.
+
+MJ 13/09/05
 - Cleaned up the dynamics package. A noticable change that will break
   existing config files: GrowingNetwork is gone. Its functionality is
   provided by DynamicNetwork. A small change though: config par "percentage"

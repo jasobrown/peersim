@@ -16,12 +16,6 @@
  *
  */
 
-/*
- * MedianIncrementalStats.java
- *
- * Created on 2 novembre 2004, 16.23
- */
-
 package peersim.util;
 
 import java.util.ArrayList;
@@ -29,7 +23,9 @@ import java.util.Collections;
 import java.util.Random;
 
 /**This class adds the ability to retrive the median element to the
- *{@link IncrementalStats} class.
+ *{@link IncrementalStats} class. Note that this class actually stores
+ * all the elements, so (unlike in its superclass) storage requirements
+ * depend on the number of items processed. 
  *
  * @author  giampa
  */
@@ -38,9 +34,9 @@ public class MedianStats extends IncrementalStats {
     /** Structure to store each entry. */
     private ArrayList data;
     
-    /** Creates a new instance of MedianIncrementalStats */
+/** Calls {@link #reset}. */
     public MedianStats() {
-        data = new ArrayList();
+    	reset();
     }
     
     /** Retrives the median in the current data collection.
@@ -67,21 +63,19 @@ public class MedianStats extends IncrementalStats {
         return result;
     }
     
-    /** Adds a value to the current data collection.
-     *
-     *@param item The item to be added.
-     */
-    public void add(double item) {
-        super.add(item);
-        data.add(new Double(item));
+    public void add(double item, int k) {
+        for(int i=0; i<k; ++i)
+	{
+		super.add(item,1);
+        	data.add(new Double(item));
+    	}
     }
     
-    /** Resets the structure. */
     public void reset() {
         super.reset();
         if (data != null) data.clear();
     }
-    
+   /* 
     public static void main( String[] args ) {
         MedianStats s = new MedianStats();
         Random r = new Random();
@@ -92,5 +86,5 @@ public class MedianStats extends IncrementalStats {
         System.out.println("Average: "+s.getAverage());
         System.out.println("Median: "+s.getMedian());
         
-    }
+    }*/
 }

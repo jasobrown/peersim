@@ -1,3 +1,7 @@
+MJ 17/09/05
+- Cleanup of peersim.util package; mainly docs, but some bugfixes too
+  eg in IncrementalFreq.equals. 
+
 MJ 15/09/05
 - Finishing the cleanup of the dynamics package
 - Added WireByMethod which is quite powerful and flexible for wiring

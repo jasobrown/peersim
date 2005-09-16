@@ -16,12 +16,6 @@
  *
  */
 
-/*
- * ExtendedStats.java
- *
- * Created on 9 febbraio 2004, 16.10
- */
-
 package peersim.util;
 
 /**
@@ -35,33 +29,27 @@ public class MomentStats extends IncrementalStats {
     
     private double cubicsum, quadsum; // incremental sums
     
-    /** Creates a new instance of MomentStats */
+    /** Calls {@link #reset} */
     public MomentStats() {
-        super();
-        cubicsum = 0.0;
-        quadsum = 0.0;
+    	reset();
     }
     
-    /** Reset all the statistics inside the object. */
     public void reset() {
         super.reset();
         cubicsum = quadsum = 0.0;
     }
     
-    /** Add a value to the statistics. 
-     * 
-     *@param item value to be added to the statistics.
-     */
-    public void add(double item) {
-        super.add(item);
-        cubicsum += item * item * item;
-        quadsum += item * cubicsum;
+    public void add(double item, int k) {
+        for(int i=0; i<k; ++i)
+	{
+        	super.add(item,1);
+        	cubicsum += item * item * item;
+        	quadsum += item * cubicsum;
+    	}
     }
    
-    /** Outputs on a single line the superclass statistics plus the 
+    /** Outputs on a single line the superclass statistics postfixed by the 
      * current skewness and kurtosis.
-     *
-     * @return All the statistics available.
      */
     public String toString() {
         return super.toString()+" "+getSkewness()+" "+getKurtosis();

@@ -22,10 +22,16 @@ import java.util.NoSuchElementException;
 import java.util.Random;
 
 /**
-* This class provides a random permutation of indexes. Useful for random
-* walks and random sampling without replacement.
-* The next sample is taken according to the probability distribution defined
-* by the weights given as a parameter.
+* This class provides a weighted random permutation of indexes.
+* Useful for weighted random sampling without replacement.
+* The next sample is taken according to the weights given as a parameter
+* to {@link #reset(int,double[])}. The weights work as follows.
+* The first sample is drawn according to the probability distribution
+* defined by the (normalized) weights.
+* After this the remaining k-1 elements and the associated k-1
+* (re-normalized) weights
+* define a new probability distribution, according to which the 2nd element
+* is drawn, and so on.
 */
 public class WeightedRandPerm implements IndexIterator {
 
@@ -51,6 +57,8 @@ private final Random r;
 // ===================================================================
 
 
+/** Set the source of randomness to use. You need to call
+* {@link #reset(int,double[])} to fully initialize the object. */
 public WeightedRandPerm( Random r ) { this.r=r; }
 
 
@@ -61,9 +69,14 @@ public WeightedRandPerm( Random r ) { this.r=r; }
 /**
 * It initiates a random permutation of the integeres from 0 to k-1.
 * It does not actually calculate the permutation.
-* It uses the given weights to assign probabilities to the integers.
 * The permutation can be read using method {@link #next}.
 * If the previous permutation was of the same length, it is more efficient.
+* @param k the set is defined as 0,...,k-1
+* @param w the weights. The length of the array must be at least k, and
+* the vector elements must be positive. It cannot be null when calling
+* this method for the first time. However, it can be null later, but only
+* if k is also the same as it was for the previous call. In this case, the
+* same weights are used as in the previous call.
 */
 public void reset(int k, double[] w ) {
 	
@@ -109,10 +122,21 @@ public void reset(int k, double[] w ) {
 
 // -------------------------------------------------------------------
 
+/** Calls <code>reset(k,null)</code>.
+* @see #reset(int,double[]) */ 
 public void reset( int k ) { reset(k,null); }
 
 // -------------------------------------------------------------------
 
+/**
+* The first sample is drawn according to the probability distribution
+* defined by the (normalized) weights.
+* After this the remaining k-1 elements and the associated k-1
+* (re-normalized) weights
+* define a new probability distribution, according to which the 2nd element
+* is drawn, and so on.
+* @see #reset(int,double[])
+*/
 public int next() {
 	
 	if( pointer < 1 ) throw new NoSuchElementException();
@@ -136,14 +160,11 @@ public int next() {
 
 // -------------------------------------------------------------------
 
-/**
-* Returns true if {@link #next} can be called at least one more time.
-*/
 public boolean hasNext() { return pointer > 0; }
 
 // -------------------------------------------------------------------
 
-/** to test the class */
+/*
 public static void main( String pars[] ) throws Exception {
 	
 	WeightedRandPerm rp = new WeightedRandPerm(new Random());
@@ -165,6 +186,6 @@ public static void main( String pars[] ) throws Exception {
 	
 	System.out.println();
 }
-
+*/
 }
 

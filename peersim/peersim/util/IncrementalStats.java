@@ -48,10 +48,14 @@ private int countmax;
 // ====================================================================
 
 
+/** Calls {@link #reset}. */
 public IncrementalStats() { reset(); }
 
 // --------------------------------------------------------------------
 
+/** Resets the staistics to reflect the zero elements set.
+* Min and max are set to positive and negative infinity, respectively.
+*/
 public void reset() {
 	
 	countmin=0;
@@ -68,11 +72,15 @@ public void reset() {
 // ====================================================================
 
 
-public void add( double item ) { add(item,1); }
+/** Updates the statistics according to this element. It calls
+* <code>add(item,1)</code>.
+* @see #add(double,int) */
+public final void add( double item ) { add(item,1); }
 
 // --------------------------------------------------------------------
 
-/** Adds item k times */
+/** Updates the staistics assuming element <code>item</code> is added
+* <code>k</code> times.*/
 public void add( double item, int k ) {
 	
 	if( item < min )
@@ -102,7 +110,7 @@ public void add( double item, int k ) {
 
 // --------------------------------------------------------------------
 
-/** The number of data items seen so far */
+/** The number of data items processed so far */
 public int getN() { return n; }
 
 // --------------------------------------------------------------------
@@ -151,7 +159,7 @@ public double getVar() {
 		(((double)n) / (n-1)) * (sqrsum/n - getAverage()*getAverage());
 	return (var>=0.0?var:0.0);
 	// XXX note that we have very little possibility to increase numeric
-	// stability if this class is "gready", ie, if it has no memory
+	// stability if this class is "greedy", ie, if it has no memory
 	// In a more precise implementation we could delay the calculation of
 	// statistics and store the data in some intelligent structure
 }
@@ -163,9 +171,16 @@ public double getStD() { return Math.sqrt(getVar()); }
 
 // --------------------------------------------------------------------
 
+/**
+* Prints the following quantities separated by spaces in a single line
+* in this order.
+* Minimum, maximum, number of items, average, variance, number of minimal
+* items, number of maximal items.
+*/
 public String toString() {
 
-	return min+" "+max+" "+n+" "+sum/n+" "+getVar()+" "+countmin+" "+countmax;
+	return min+" "+max+" "+n+" "+sum/n+" "+getVar()+" "
+	+countmin+" "+countmax;
 }
 
 }

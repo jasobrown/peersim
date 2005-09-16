@@ -103,6 +103,8 @@ try {
 	
 	if( format.equals("neighborlist") )
 		GraphIO.writeNeighborList(g, pstr);
+	else if( format.equals("edgelist") )
+		GraphIO.writeEdgeList(g, pstr);
 	else if( format.equals("chaco") )
 		GraphIO.writeChaco(g, pstr);
 	else if( format.equals("netmeter") )

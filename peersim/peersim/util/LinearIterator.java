@@ -21,7 +21,8 @@ package peersim.util;
 import java.util.NoSuchElementException;
 
 /**
-* This class gives the linear order 0,1,etc or alternatively k-1, k-2, etc.
+* This class gives the linear order 0,1,etc or alternatively k-1, k-2, etc.,
+* depending on the constructor.
 */
 public class LinearIterator implements IndexIterator {
 
@@ -70,6 +71,10 @@ public void reset(int k) {
 
 // -------------------------------------------------------------------
 
+/**
+* Returns next index. The indices are returned in increasing or decreasing
+* order depending on the parameter given at construction time.
+*/
 public int next() {
 	
 	if( !hasNext() ) throw new NoSuchElementException();
@@ -79,14 +84,11 @@ public int next() {
 
 // -------------------------------------------------------------------
 
-/**
-* Returns true if {@link #next} can be called at least one more time.
-*/
 public boolean hasNext() { return (reverse ? pointer >= 0 : pointer < len); }
 
 // -------------------------------------------------------------------
 
-/** to test the class */
+/*
 public static void main( String pars[] ) throws Exception {
 	
 	LinearIterator rp = new LinearIterator(pars[0].equals("rev"));
@@ -102,5 +104,5 @@ public static void main( String pars[] ) throws Exception {
 	while(rp.hasNext()) System.out.println(rp.next());
 	System.out.println(rp.next());
 }
-
+*/
 }

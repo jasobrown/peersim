@@ -35,6 +35,7 @@ public interface IndexIterator {
 
 	/**
 	* Returns true if {@link #next} can be called at least one more time.
+	* Note that {@link #next} can be called k times after {@link #reset}.
 	*/
 	public boolean hasNext();
 }

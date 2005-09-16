@@ -24,9 +24,6 @@ import java.io.PrintStream;
 // using hashtables.
 /**
 * A class that can collect frequency information on integer input.
-* Even though it is easy to get such statistics with other tools and scripts,
-* this class is useful for reducing the ize of output when this information
-* is needed frequently.
 * right now it can handle only unsigned input. It simply ignores negative
 * numbers.
 */
@@ -37,16 +34,16 @@ public class IncrementalFreq implements Cloneable {
 // =====================================================================
 
 
-protected int n;
+private int n;
 
 /** freq[i] holds the frequency of i. primitive implementation, to be changed */
-protected int[] freq = null; 
+private int[] freq = null; 
 
 /**
 * The capacity, if larger than 0. Added values larger than or equal to
 * this one will be ignored.
 */
-protected final int N;
+private final int N;
 
 
 // ====================== initialization ==============================
@@ -54,7 +51,8 @@ protected final int N;
 
 
 /**
-* Values larger than this one will be ignored.
+* @param maxvalue Values in the input set larger than this one will be ignored.
+* However, if it is negative, no values are ignored.
 */
 public IncrementalFreq(int maxvalue) {
 	
@@ -64,14 +62,18 @@ public IncrementalFreq(int maxvalue) {
 
 // --------------------------------------------------------------------
 
+/** Calls <code>this(-1)</code>.
+* @see #IncrementalFreq(int) */
 public IncrementalFreq() {
 	
-	N=0;
-	reset();
+	this(-1);
 }
 
 // --------------------------------------------------------------------
 
+/** Reset the state of the object. After calling this, all public methods
+* behave the same as they did after constructing the object.
+*/
 public void reset() {
 
 	if( freq==null || N==0 ) freq = new int[0];
@@ -84,6 +86,12 @@ public void reset() {
 // ====================================================================
 
 
+/**
+* Adds the given number to the input set. That is, it increments the
+* counter for the given number, if it is non-negative. However,
+* if the number is larger than the maximum set at construction time
+* (if that maximum was set) then the state of the object does not change.
+*/
 public void add( int i ) {
 	
 	if( N>0 && i>=N ) return;
@@ -100,12 +108,14 @@ public void add( int i ) {
 
 // --------------------------------------------------------------------
 
-/** Returns number of processed data items.*/
+/** Returns number of processed data items.
+* This is the number of items over which the class holds statistics.
+*/
 public int getN() { return n; }
 
 // --------------------------------------------------------------------
 
-/** Returns frequency of given integer. */
+/** Returns the number of occurrences of the given integer. */
 public int getFreq(int i) {
 	
 	if( i>=0 && i<freq.length ) return freq[i];
@@ -128,7 +138,7 @@ public int getFreq(int i) {
  */
 public void remove(IncrementalFreq other, boolean strict) {
 
-	// check is other has non-zero elements in non-overlapping part
+	// check if other has non-zero elements in non-overlapping part
 	if(strict && other.freq.length>freq.length)
 	{
 		for(int i=other.freq.length-1; i>=freq.length; --i)
@@ -138,12 +148,12 @@ public void remove(IncrementalFreq other, boolean strict) {
 		}
 	}
 	
-	int minLength = Math.min(other.freq.length, freq.length);
+	final int minLength = Math.min(other.freq.length, freq.length);
 	for (int i=minLength-1; i>=0; i--)
 	{
 		if (strict && freq[i] < other.freq[i])
 			throw new IllegalArgumentException();
-		int remove = Math.min(other.freq[i], freq[i]);
+		final int remove = Math.min(other.freq[i], freq[i]);
 		n -= remove;
 		freq[i] -= remove;
 	}
@@ -158,6 +168,7 @@ public void remove(IncrementalFreq other, boolean strict) {
 * <pre>
 * value frequency
 * </pre>
+* That is, numbers with zero occurrences will also be printed. 
 */
 public void printAll( PrintStream out ) {
 	
@@ -171,7 +182,7 @@ public void printAll( PrintStream out ) {
 
 /**
 * Prints current frequency information. Prints a separate line for
-* all values that have a frequency different from zero using the 
+* all values that have a number of occurrences different from zero using the 
 * format
 * <pre>
 * value frequency
@@ -230,16 +241,22 @@ public Object clone() throws CloneNotSupportedException {
 
 /**
 * Tests equality between two IncrementalFreq instances.
+* Two objects are equal if both hold the same set of numbers that have
+* occurred non-zero times and the number of occurrences is also equal for
+* these numbers.
 */
 public boolean equals(Object obj) {
 
 	IncrementalFreq other = (IncrementalFreq)obj;
+	final int minlength = Math.min(other.freq.length, freq.length);
+	
+	for (int i=minlength-1; i>=0; i--)
+		if (freq[i] != other.freq[i])
+			return false;
 
-	if (this.freq.length != other.freq.length)
-		return false;
-
-	for (int i=freq.length-1; i>=0; i--)
-		if (this.freq[i] != other.freq[i])
+	if( freq.length > minlength ) other=this;
+	for (int i=minlength; i<other.freq.length; i++)
+		if( other.freq[i] != 0 )
 			return false;
 
 	return true;
@@ -247,7 +264,7 @@ public boolean equals(Object obj) {
 
 // ---------------------------------------------------------------------
 
-/** to test. Input is a list of numbers in command line. */
+/*
 public static void main(String[] pars) {
 	
 	IncrementalFreq ifq = new IncrementalFreq(Integer.parseInt(pars[0]));
@@ -258,7 +275,7 @@ public static void main(String[] pars) {
 	ifq.print(System.out);
 	System.out.println(ifq);
 }
-
+*/
 }
 
 

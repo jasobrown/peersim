@@ -169,6 +169,36 @@ public static Graph wireRegRootedTree( Graph g, int k ) {
 // -------------------------------------------------------------------
 
 /**
+* A hypercube.
+* Wires a hypercube.
+* For a node i the following links are added: i xor 2^0, i xor 2^1, etc.
+* this define a log(graphsize) dimensional hypercube (if the log is an
+* integer).
+* @param g the graph to be wired
+* @return returns g for convinience
+*/
+public static Graph wireHypercube( Graph g ) {
+
+	final int n = g.size();
+	if(n<=1) return g;
+	final int highestone = Integer.highestOneBit(n-1); // not zero
+	for(int i=0; i<n; ++i)
+	{
+		int mask = highestone;
+		while(mask>0)
+		{
+			int j = i^mask;
+			if(j<n) g.setEdge(i,j);
+			mask = mask >> 1;
+		}
+		
+	}
+	return g;
+}
+
+// -------------------------------------------------------------------
+
+/**
 * This contains the implementation of the Barabasi-Albert model
 * of growing scale free networks. The original model is described in
 * <a href="http://arxiv.org/abs/cond-mat/0106096">
@@ -232,7 +262,7 @@ public static Graph wireScaleFreeBA( Graph g, int k, Random r ) {
 public static void main(String[] pars) {
 	
 	int n = Integer.parseInt(pars[0]);
-	int k = Integer.parseInt(pars[1]);
+	//int k = Integer.parseInt(pars[1]);
 	Graph g = new BitMatrixGraph(n);
 	/*
 	wireWS(g,20,.1,new Random());
@@ -240,7 +270,8 @@ public static void main(String[] pars) {
 	*/
 	//wireScaleFreeBA(g,3,new Random());
 	//wireKOut(g,k,new Random());
-	wireRegRootedTree(g,k);
+	//wireRegRootedTree(g,k);
+	wireHypercube(g);
 	GraphIO.writeNeighborList(g,System.out);
 }
 

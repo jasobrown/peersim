@@ -122,10 +122,7 @@ private static void parseRangeItem(List list, String start, String stop)
 	}
 }
 
-/**
- * Test main.
- * @param args parse the first command-line argument.
- */
+/*
 public static void main(String[] args)
 {
 	String[] ret = parseList(args[0]);
@@ -133,4 +130,5 @@ public static void main(String[] args)
 		System.out.print(ret[i] + " ");
 	System.out.println("");
 }
+*/
 }

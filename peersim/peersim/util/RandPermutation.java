@@ -22,8 +22,8 @@ import java.util.NoSuchElementException;
 import java.util.Random;
 
 /**
-* This class provides a random permutation of indexes. Useful for random
-* walks and random sampling without replacement.
+* This class provides a random permutation of indexes. Useful for
+* random sampling without replacement.
 */
 public class RandPermutation implements IndexIterator {
 
@@ -45,6 +45,8 @@ private final Random r;
 // ===================================================================
 
 
+/** Sets source of randomness to be used. You need to call
+* {@link #reset} to fully initialize the object. */
 public RandPermutation( Random r ) { this.r=r; }
 
 
@@ -56,6 +58,11 @@ public RandPermutation( Random r ) { this.r=r; }
 * It calculates a random permutation of the integeres from 0 to k-1.
 * The permutation can be read using method {@link #get}. 
 * If the previous permutation was of the same length, it is more efficient.
+* Note that after calling this the object is reset, so {@link #next} can
+* be called k times, even if {@link #get} was called an arbitrary number of
+* times. Note however that mixing {@link #get} and {@link #next} results in
+* incorrect behavior for {@link #get} (but {@link #next} works fine).
+* The idea is to use this method only in connection with {@link #get}.
 */
 public void setPermutation(int k) {
 	
@@ -74,6 +81,8 @@ public void setPermutation(int k) {
 
 /**
 * Returns the ith element of the permutation set by {@link #setPermutation}.
+* If {@link #next} is called after {@link #setPermutation} and before
+* this method, then the behavior of this method is unspecified.
 */
 public int get(int i) {
 	
@@ -106,6 +115,7 @@ public void reset(int k) {
 
 // -------------------------------------------------------------------
 
+/** Next random sample without replacement */
 public int next() {
 	
 	if( pointer < 1 ) throw new NoSuchElementException();
@@ -120,14 +130,11 @@ public int next() {
 
 // -------------------------------------------------------------------
 
-/**
-* Returns true if {@link #next} can be called at least one more time.
-*/
 public boolean hasNext() { return pointer > 0; }
 
 // -------------------------------------------------------------------
 
-/** to test the class */
+/*
 public static void main( String pars[] ) throws Exception {
 	
 	RandPermutation rp = new RandPermutation(new Random());
@@ -151,5 +158,5 @@ public static void main( String pars[] ) throws Exception {
 	while(rp.hasNext()) System.out.println(rp.next());
 	System.out.println(rp.next());
 }
-
+*/
 }

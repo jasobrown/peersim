@@ -23,7 +23,7 @@ import java.io.*;
 
 /**
 * Generates a series of filenames for classes that have to save eg
-* snapshots regularly. 
+* snapshots regularly.
 */
 public class FileNameGenerator {
 
@@ -33,10 +33,11 @@ public class FileNameGenerator {
 */
 private long counter = 0;
 
+/** The prefix of the filename */
+public final String prefix;
 
-private final String prefix;
-
-private final String ext;
+/** The extension of the filename */
+public final String ext;
 
 
 // ==================== initialization ==============================
@@ -59,8 +60,11 @@ public FileNameGenerator(String prefix, String ext) {
 
 
 /**
-* Generates a name based on a counter. It will be filled in with leading
-* zeros so that the number is always 8 characters long.
+* Generates a name based on a counter.
+* The format of the name returned is {@link #prefix} followed by
+* an 8 digit zero padded number, followed by {@link #ext}.
+* The first number used is zero.
+* @return the next filename after increasing the counter
 */
 public String nextCounterName() {
 	
@@ -72,11 +76,12 @@ public String nextCounterName() {
 
 // ------------------------------------------------------------------
 
+/*
 public static void main(String args[]) {
 	
 	FileNameGenerator fng = new FileNameGenerator(args[0],args[1]);
 	for(int i=0; i<100; ++i) System.err.println(fng.nextCounterName()); 
 }
-
+*/
 }
 

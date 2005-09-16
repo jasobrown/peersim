@@ -22,17 +22,19 @@ import java.util.Random;
 import java.lang.Math;
 
 /**
- * Simple distributions not provided by java
+ * Extends the functionality of <code>java.util.Random</code>.
  */
 public class ExtendedRandom extends Random {
 
+/** Calls super constructor */
 public ExtendedRandom(long seed) { super(seed); }
 
 // -------------------------------------------------------------------------
+
 /**
  * Extracts the next integer, according to a Poisson distribution.
  * 
- * @param mean The expected mean.
+ * @param mean The mean of the Poisson distribution.
  * @return An integer Poisson extraction.
  */
 public int nextPoisson(double mean) {
@@ -52,20 +54,8 @@ public int nextPoisson(double mean) {
 // -------------------------------------------------------------------------
 
 /**
-* Returns a sample from the exponential distribution with mean b.
-* In other words, the it will be approximately true for the returned
-* value x that <pre>P(x&lt =X)=1-e^(-X/b)</pre>.
-* @param mean The expected mean.
-*/
-public double nextExponential(double mean) {
-	
-	return -1 * mean * Math.log(nextDouble());
-}
-
-// -------------------------------------------------------------------------
-
-/**
-* Implements nextLong(long) the same way nexInt(int) is implemented in Random.
+* Implements nextLong(long) the same way nexInt(int) is implemented in
+* java.util.Random.
 * @param n the bound on the random number to be returned. Must be positive.
 * @return a pseudorandom, uniformly distributed long value between 0
 * (inclusive) and n (exclusive).
@@ -93,6 +83,7 @@ public long nextLong(long n) {
 
 // -------------------------------------------------------------------------
 
+/*
 public static void main(String[] args) {
 
 	ExtendedRandom er = new ExtendedRandom(12345678);
@@ -100,5 +91,6 @@ public static void main(String[] args) {
 		System.out.println(er.nextLong(Long.parseLong(args[0])));
 	
 }
+*/
 }
 

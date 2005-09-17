@@ -257,7 +257,8 @@ public static void nextExperiment()
 		+" should be >= 8 or <= 64");
 	}
 	endtime = Configuration.getLong(PAR_ENDTIME);
-	CommonState.setEndTime(endtime);
+	if( CommonState.getEndTime() < 0 ) // not initialized yet
+		CommonState.setEndTime(endtime);
 	logtime = Configuration.getLong(PAR_LOGTIME, Long.MAX_VALUE);
 
 	// initialization

@@ -10,6 +10,8 @@ MJ 17/09/05
 - new methods in GraphIO and GraphFactory
 - Cleanup of peersim.reports; fixed a bug too: GraphObserver did not work
   correctly if more overlays were observed simultaneously.
+- fixed bug in simulators related to setting end time (did not work with
+  multiple experiments)
 
 MJ 15/09/05
 - Finishing the cleanup of the dynamics package

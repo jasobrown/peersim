@@ -178,7 +178,8 @@ public static final void nextExperiment()  {
 
 	// Reading parameter
 	cycles = Configuration.getInt(PAR_CYCLES);
-	CDState.setEndTime(cycles);
+	if( CommonState.getEndTime() < 0 ) // not initialized yet
+		CDState.setEndTime(cycles);
 
 	// initialization
 	CDState.setCycle(0);

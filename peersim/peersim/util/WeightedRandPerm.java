@@ -25,7 +25,8 @@ import java.util.Random;
 * This class provides a weighted random permutation of indexes.
 * Useful for weighted random sampling without replacement.
 * The next sample is taken according to the weights given as a parameter
-* to {@link #reset(int,double[])}. The weights work as follows.
+* to {@link #reset(int)}.
+* The weights work as follows.
 * The first sample is drawn according to the probability distribution
 * defined by the (normalized) weights.
 * After this the remaining k-1 elements and the associated k-1
@@ -39,9 +40,15 @@ public class WeightedRandPerm implements IndexIterator {
 // ======================= private fields ============================
 // ===================================================================
 
+/** Holds the weights that are used to initialize the permutation */
+private final double[] w;
+
+/** Holds the sum of the weights until the given index, inclusive. */
+private final double[] wsum;
 
 private int[] buffer = null;
 
+/** Working array for calculating the permutation */ 
 private double[] weights = null;
 
 private int len = 0;
@@ -57,9 +64,32 @@ private final Random r;
 // ===================================================================
 
 
-/** Set the source of randomness to use. You need to call
-* {@link #reset(int,double[])} to fully initialize the object. */
-public WeightedRandPerm( Random r ) { this.r=r; }
+/** Set the source of randomness to use and the weights. You need to call
+* {@link #reset} to fully initialize the object.
+* @param r source of randomness
+* @param weights The array that holds the weights for the calculation of the
+* permutation. The length of the array will be an upper bound on the
+* parameter {@link #reset} accepts. If {@link #reset} is called with a
+* parameter less than the length of weights, the prefix of the same length
+* is used.
+* The vector elements must be positive, that is, zero is not accepted either.
+*/
+public WeightedRandPerm( Random r, double[] weights ) {
+
+	this.r=r;
+	w = weights.clone();
+	wsum = weights.clone();;
+	this.weights = new double[w.length];
+	buffer = new int[w.length];
+	
+	for(int i=0; i<w.length; ++i)
+	{
+		if( w[i] <= 0.0 ) throw new IllegalArgumentException(
+			"weights should be positive: w["+i+"]="+w[i]);
+	}
+	
+	for(int i=1; i<w.length; ++i) wsum[i]+=wsum[i-1];
+}
 
 
 // ======================= public methods ============================
@@ -67,64 +97,39 @@ public WeightedRandPerm( Random r ) { this.r=r; }
 
 
 /**
-* It initiates a random permutation of the integeres from 0 to k-1.
+* It initiates a random weighted permutation of the integeres from 0 to k-1.
 * It does not actually calculate the permutation.
 * The permutation can be read using method {@link #next}.
 * If the previous permutation was of the same length, it is more efficient.
+* The weights set at construction time work as follows.
+* The first sample is drawn according to the probability distribution
+* defined by the (normalized) weights.
+* After this the remaining k-1 elements and the associated k-1
+* (re-normalized) weights
+* define a new probability distribution, according to which the 2nd element
+* is drawn, and so on.
 * @param k the set is defined as 0,...,k-1
-* @param w the weights. The length of the array must be at least k, and
-* the vector elements must be positive. It cannot be null when calling
-* this method for the first time. However, it can be null later, but only
-* if k is also the same as it was for the previous call. In this case, the
-* same weights are used as in the previous call.
 */
-public void reset(int k, double[] w ) {
+public void reset(int k) {
+	
+	if( k<0 || k>w.length )
+		throw new IllegalArgumentException(
+			"k should be non-negative and <= "+w.length);
 	
 	pointer = k;
+	sum = wsum[k-1];
 	
-	// make sure weights and sum are initialized
-	if( w != null )
+	if( k != len )
 	{
-		if( w.length < k ) throw new
-			IllegalArgumentException("array w too short");
-		
-		if( weights == null || weights.length < k ) 
-			weights = new double[k];
-		
-		sum = 0.0;
+		// we need to initialize weights and buffer
 		for(int i=0; i<k; ++i)
 		{
-			if( w[i] <= 0.0 ) throw new IllegalArgumentException(
-				"weights should be positive: "+w[i]);
-			sum+=(weights[i]=w[i]);
+			weights[i]=w[i];
+			buffer[i]=i;
 		}
+		len=k;
 	}
-	else
-	{
-		if( len != k || weights == null || weights.length < k )
-			throw new
-			IllegalArgumentException("array w should not be null");
-		
-		sum = 0.0;
-		for(int i=0; i<k; ++i) sum+=weights[i];
-		
-	}
-	
-	// make sure buffer and len are initialized
-	if( buffer == null || buffer.length < k ) buffer = new int[k];
-	
-	if( len != k || w != null )
-	{
-		len = k;
-		for( int i=0; i<len; ++i ) buffer[i]=i;
-	}	
 }
-
-// -------------------------------------------------------------------
-
-/** Calls <code>reset(k,null)</code>.
-* @see #reset(int,double[]) */ 
-public void reset( int k ) { reset(k,null); }
 
 // -------------------------------------------------------------------
 
@@ -135,7 +140,7 @@ public void reset( int k ) { reset(k,null); }
 * (re-normalized) weights
 * define a new probability distribution, according to which the 2nd element
 * is drawn, and so on.
-* @see #reset(int,double[])
+* @see #reset
 */
 public int next() {
 	
@@ -167,19 +172,17 @@ public boolean hasNext() { return pointer > 0; }
 /*
 public static void main( String pars[] ) throws Exception {
 	
-	WeightedRandPerm rp = new WeightedRandPerm(new Random());
 
-	int k = Integer.parseInt(pars[0]);
+	int k = pars.length;
 	double w[] = new double[k];
-	for(int i=0; i<k; ++i) w[i] = Double.parseDouble(pars[i+1]);
+	for(int i=0; i<k; ++i) w[i] = Double.parseDouble(pars[i]);
 	
-	rp.reset(k,w);
+	WeightedRandPerm rp = new WeightedRandPerm(new Random(),w);
+	rp.reset(k);
 	for(int i=0; i<1000; ++i)
 	{
-		if(i%4==0) rp.reset(k,w);
-		if(i%4==1) rp.reset(k);
-		if(i%4==2) rp.reset(k-1,w);
-		if(i%4==3) rp.reset(k-1);
+		if(i%2==0) rp.reset(k);
+		if(i%2==1) rp.reset(k-1);
 		while(rp.hasNext()) System.out.print(rp.next()+" ");
 		System.out.println();
 	}

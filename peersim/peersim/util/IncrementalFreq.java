@@ -33,7 +33,7 @@ public class IncrementalFreq implements Cloneable {
 // ===================== fields ========================================
 // =====================================================================
 
-
+/** The number of items inserted. */
 private int n;
 
 /** freq[i] holds the frequency of i. primitive implementation, to be changed */
@@ -85,25 +85,41 @@ public void reset() {
 // ======================== methods ===================================
 // ====================================================================
 
+/**
+ * Adds item <code>i</code> to the input set.
+ * It calls <code>add(i,1)</code>.
+ * @see #add(int,int)
+ */
+public final void add( int i ) { add(i,1); }
+
+
+// --------------------------------------------------------------------
 
 /**
-* Adds the given number to the input set. That is, it increments the
-* counter for the given number, if it is non-negative. However,
-* if the number is larger than the maximum set at construction time
-* (if that maximum was set) then the state of the object does not change.
-*/
-public void add( int i ) {
-	
-	if( N>0 && i>=N ) return;
-	n++;
-	if( i>=0 && i<freq.length ) freq[i]++;
-	else if( i>=0 )
-	{
-		int tmp[] = new int[i+1];
-		System.arraycopy(freq,0,tmp,0,freq.length);
-		tmp[i]++;
-		freq=tmp;
-	}
+ * Adds item <code>i</code> to the input set <code>k</code> times.
+ * That is, it increments counter <code>i</code> by <code>k</code>.
+ * If, however, <code>i</code> is negative, or larger than the maximum defined
+ * at construction time (if a maximum was set at all) the operation is ignored.
+ */
+public void add( int i, int k ) {
+  
+  if( N>0 && i>=N ) return;
+  if( i<0 || k<=0 ) return;
+
+  // Increase number of items by k.
+  n+=k;
+
+  // If index i is out of bounds for the current array of counters,
+  // increase the size of the array to i+1.
+  if( i>=freq.length )
+  {
+    int tmp[] = new int[i+1];
+    System.arraycopy(freq, 0, tmp, 0, freq.length);
+    freq=tmp;
+  }
+
+  // Finally, increase counter i by k.
+  freq[i]+=k;
 }
 
 // --------------------------------------------------------------------

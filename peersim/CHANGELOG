@@ -1,3 +1,9 @@
+SV 17/09/05
+- Fixed a bug in IncrementalFreq: When a negative item is submitted, the number
+  of inserted items (n) is not increased.
+- Added method add(int i,int k) in IncrementalFreq, that can add an item k times
+  at once.
+
 MJ 17/09/05
 - Cleanup of peersim.util package; mainly docs, but some bugfixes too
   eg in IncrementalFreq.equals. 

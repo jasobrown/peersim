@@ -53,7 +53,7 @@ public IncrementalStats() { reset(); }
 
 // --------------------------------------------------------------------
 
-/** Resets the staistics to reflect the zero elements set.
+/** Resets the statistics to reflect the zero elements set.
 * Min and max are set to positive and negative infinity, respectively.
 */
 public void reset() {
@@ -79,7 +79,7 @@ public final void add( double item ) { add(item,1); }
 
 // --------------------------------------------------------------------
 
-/** Updates the staistics assuming element <code>item</code> is added
+/** Updates the statistics assuming element <code>item</code> is added
 * <code>k</code> times.*/
 public void add( double item, int k ) {
 	
@@ -151,7 +151,7 @@ public double getAverage() { return sum/n; }
 // --------------------------------------------------------------------
 
 /** The empirical variance of the data items. Guaranteed to be larger or
-equal to 0.0. If due to rounding errors the value would be negative,
+equal to 0.0. If due to rounding errors the value becomes negative,
 it returns 0.0.*/
 public double getVar() {
 
@@ -179,8 +179,7 @@ public double getStD() { return Math.sqrt(getVar()); }
 */
 public String toString() {
 
-	return min+" "+max+" "+n+" "+sum/n+" "+getVar()+" "
-	+countmin+" "+countmax;
+	return min+" "+max+" "+n+" "+sum/n+" "+getVar()+" "+countmin+" "+countmax;
 }
 
 }

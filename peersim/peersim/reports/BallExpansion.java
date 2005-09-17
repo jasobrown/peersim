@@ -23,9 +23,9 @@ import peersim.core.*;
 import peersim.util.*;
 
 /**
- * Control that analyzes the ball expansion, i.e. the number of nodes that are
- * accessable from a given node in at most 1, 2, etc steps. It works only after
- * the simulation.
+ * Control to observe the ball expansion, that is,
+ * the number of nodes that are
+ * accessible from a given node in at most 1, 2, etc steps.
  */
 public class BallExpansion extends GraphObserver
 {
@@ -34,9 +34,16 @@ public class BallExpansion extends GraphObserver
 // ====================================================================
 
 /**
- * This parameter defines the maximal distance which we print. Defaults to the
- * network size. Note that this default is normally way too much (for random
- * graphs with a low diameter). Also note that the <em>initial</em> network
+ * This parameter defines the maximal distance we care about.
+ * In other words, two nodes are further away, they will not be taken
+ * into account when caclulating statistics.
+ * <p>
+ * Defaults to the
+ * network size (which means all distances are taken into account).
+ * Note that this default is normally way too much; many low diameter graphs
+ * have only short distances between the nodes. Setting a short
+ * (but sufficient) distance saves memory.
+ * Also note that the <em>initial</em> network
  * size is used if no value is given which might not be what you want if eg the
  * network is growing.
  * @config
@@ -88,6 +95,18 @@ public BallExpansion(String name)
 // ====================== methods ======================================
 // =====================================================================
 
+/**
+* Prints information about ball expansion. It uses {@value #PAR_N} nodes to
+* collect statistics.
+* If parameter {@value #PAR_STATS} is defined then the output is
+* produced by {@link IncrementalStats#toString}, over the values of minimal
+* distances from the given number of nodes to all other nodes in the network.
+* Otherwise one line is printed for all nodes we observe, containing the
+* number of nodes at distance 1, 2, etc, separated by spaces.
+* Finally, the {@value #PAR_N} nodes are not guaranteed to be the same nodes
+* over consecutive calls to this method.
+* @return always false
+*/
 public boolean execute()
 {
 	updateGraph();

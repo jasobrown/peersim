@@ -39,7 +39,7 @@ public class ConnectivityObserver extends GraphObserver
  * list of clusters. Not set by default.
  * @config
  */
-private static final String PAR_SIZESTATS = "sizestats";
+private static final String PAR_STATS = "stats";
 
 /**
  * Defines the types of connected clusters to discover.
@@ -75,7 +75,7 @@ private final String type;
 public ConnectivityObserver(String name)
 {
 	super(name);
-	sizestats = Configuration.contains(name + "." + PAR_SIZESTATS);
+	sizestats = Configuration.contains(name + "." + PAR_STATS);
 	type = Configuration.getString(name + "." + PAR_TYPE,"wcc");
 }
 
@@ -84,8 +84,18 @@ public ConnectivityObserver(String name)
 //--------------------------------------------------------------------------
 
 /**
- * @inheritDoc
- */
+* Prints information about clusters.
+* If parameter {@value #PAR_STATS} is defined then the output is
+* produced by {@link IncrementalStats#toString}, over the sizes of the
+* clusters.
+* Otherwise one line is printed that contains the string representation of
+* a map, that holds cluster IDs mapped to cluster sizes.
+* The meaning of the cluster IDs is not specified, but is printed for
+* debugging purposes.
+* @return always false
+* @see peersim.graph.GraphAlgorithms#tarjan
+* @see peersim.graph.GraphAlgorithms#weaklyConnectedClusters
+*/
 public boolean execute()
 {
 	Map clst;

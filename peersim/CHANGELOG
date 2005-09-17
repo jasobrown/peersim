@@ -1,6 +1,6 @@
 SV 17/09/05
 - Fixed a bug in IncrementalFreq: When a negative item is submitted, the number
-  of inserted items (n) is not increased.
+  of inserted items (n) is now not increased.
 - Added method add(int i,int k) in IncrementalFreq, that can add an item k times
   at once.
 
@@ -8,6 +8,8 @@ MJ 17/09/05
 - Cleanup of peersim.util package; mainly docs, but some bugfixes too
   eg in IncrementalFreq.equals. 
 - new methods in GraphIO and GraphFactory
+- Cleanup of peersim.reports; fixed a bug too: GraphObserver did not work
+  correctly if more overlays were observed simultaneously.
 
 MJ 15/09/05
 - Finishing the cleanup of the dynamics package

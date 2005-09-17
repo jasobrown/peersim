@@ -23,9 +23,8 @@ import peersim.graph.GraphAlgorithms;
 import peersim.util.IncrementalStats;
 
 /**
- * Control to analyse the ball expansion, it the number of nodes that are
- * accessable from a given node in at most 1, 2, etc steps. It works only after
- * the simulation.
+ * Control to observe the clustering coefficient.
+ * @see GraphAlgorithms#clustering
  */
 public class Clustering extends GraphObserver
 {
@@ -34,7 +33,7 @@ public class Clustering extends GraphObserver
 // ====================================================================
 
 /**
- * The number of nodes to print info about. Defaults to size of the graph.
+ * The number of nodes to collect info about. Defaults to the size of the graph.
  * @config
  */
 private static final String PAR_N = "n";
@@ -58,6 +57,15 @@ public Clustering(String name)
 // ====================== methods ======================================
 // =====================================================================
 
+/**
+* Prints information about the clustering coefficient.
+* It uses {@value #PAR_N} nodes to collect statistics.
+* The output is
+* produced by {@link IncrementalStats#toString}, over the values of
+* the clustering coefficients of the given number of nodes.
+* Clustering coefficients are calculated by {@link GraphAlgorithms#clustering}.
+* @return always false
+*/
 public boolean execute()
 {
 	IncrementalStats stats = new IncrementalStats();

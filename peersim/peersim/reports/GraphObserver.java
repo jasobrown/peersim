@@ -24,8 +24,8 @@ import peersim.graph.*;
 import peersim.cdsim.CDState;
 
 /**
-* Class that provides functionality for observer dealing with graphs.
-* It can efficiently create undirected version of the graph, making sure
+* Class that provides functionality for observing graphs.
+* It can efficiently create an undirected version of the graph, making sure
 * it is updated only when the simulation has advanced already, and provides
 * some common parameters.
 */
@@ -68,7 +68,7 @@ private static final String PAR_FAST = "graphobserver.fast";
 /** The name of this observer in the configuration */
 protected final String name;
 
-protected final int protocolID;
+protected final int pid;
 
 protected final boolean undir;
 
@@ -77,6 +77,8 @@ protected final GraphAlgorithms ga = new GraphAlgorithms();
 protected Graph g;
 
 // ---------------------------------------------------------------------
+
+private static int lastpid = -1234;
 
 private static long time = -1234;
 
@@ -105,7 +107,7 @@ private static boolean needUndir=false;
 protected GraphObserver(String name) {
 
 	this.name = name;
-	protocolID = Configuration.getPid(name+"."+PAR_PROT);
+	pid = Configuration.getPid(name+"."+PAR_PROT);
 	undir = (Configuration.contains(name + "." + PAR_UNDIR) |
 		Configuration.contains(name + "." + PAR_UNDIR_ALT));
 	GraphObserver.fast = Configuration.contains(PAR_FAST);
@@ -116,19 +118,35 @@ protected GraphObserver(String name) {
 // ====================== methods ======================================
 // =====================================================================
 
+/**
+* Sets {@link #g}.
+* It MUST be called by any implementation of {@link #execute} before
+* doing anyting else.
+* Attempts to initialize {@link #g} from a
+* pre-calculated graph stored in a static field, but first it
+* checks whether it needs to be updated.
+* If the simulation time has progressed or it was calculated for a different
+* protocol, then updates this static graph as well.
+* The purpose of this mechanism is to save the time of constructing the
+* graph if many observers are run on the same graph. Time savings can be very
+* significant if the undirected version of the same graph is observed by many
+* observers.
+*/
 protected void updateGraph() {
 	
 	if( CommonState.getTime() != GraphObserver.time ||
 	    (CDState.isCD() && (CDState.getCycleT() != GraphObserver.ctime)) ||
-	    CommonState.getPhase() != GraphObserver.phase )
+	    CommonState.getPhase() != GraphObserver.phase ||
+	    pid != GraphObserver.lastpid )
 	{
 		// we need to update the graphs
 		
+		GraphObserver.lastpid = pid;
 		GraphObserver.time = CommonState.getTime();
 		if( CDState.isCD() ) GraphObserver.ctime = CDState.getCycleT();
 		GraphObserver.phase = CommonState.getPhase();
 
-		GraphObserver.dirg = new OverlayGraph(protocolID);
+		GraphObserver.dirg = new OverlayGraph(pid);
 		if( GraphObserver.needUndir )
 		{
 			if( fast )

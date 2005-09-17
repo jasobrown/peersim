@@ -35,10 +35,10 @@ public class GraphPrinter extends GraphObserver {
 // ====================================================================
 
 /**
-* This is the base name of the file where the graph is saved. The
-* full name will be baseName+cycleid.extension where extension depends
-* on the format used. If no basename is given, the graph is dumped on
-* the standard output.
+* This is the prefix of the filename where the graph is saved.
+* The extension is ".graph" and after the prefix the basename contains
+* a numeric index that is incremented at each saving point.
+* If not given, the graph is dumped on the standard output.
 * @config
 */
 private static final String PAR_BASENAME = "outf";
@@ -48,7 +48,12 @@ private static final String PAR_BASENAME = "outf";
 * which is a plain dump of neighbors. The class
 * {@link peersim.dynamics.WireFromFile} can read this format.
 * Other supported formats are "chaco" to be used with Yehuda Koren's
-* Embedder, and "netmeter" to be used with Sergi Valverde's netmeter.
+* Embedder, "netmeter" to be used with Sergi Valverde's netmeter and
+* "edgelist" that dumps one (directed) node pair in each line for each edge.
+* @see GraphIO#writeEdgeList
+* @see GraphIO#writeChaco
+* @see GraphIO#writeNeighborList
+* @see GraphIO#writeNetmeter
 * @config
 */
 private static final String PAR_FORMAT = "format";
@@ -83,6 +88,10 @@ public GraphPrinter(String name) {
 // =====================================================================
 
 
+/**
+* Saves the graph according to the specifications in the configuration.
+* @return always false
+*/
 public boolean execute() {
 try {	
 	updateGraph();
@@ -118,8 +127,7 @@ try {
 }
 catch( IOException e )
 {
-	System.err.println(name+": Unable to write to file: "+e);
-	return true;
+	throw new RuntimeException(e);
 }
 }
 

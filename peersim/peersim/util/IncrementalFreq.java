@@ -182,7 +182,7 @@ public void remove(IncrementalFreq other, boolean strict) {
 * all values from 0 to the capacity of the internal representation using the
 * format
 * <pre>
-* value frequency
+* value occurences
 * </pre>
 * That is, numbers with zero occurrences will also be printed. 
 */
@@ -201,7 +201,7 @@ public void printAll( PrintStream out ) {
 * all values that have a number of occurrences different from zero using the 
 * format
 * <pre>
-* value frequency
+* value occurences
 * </pre>
 */
 public void print( PrintStream out ) {

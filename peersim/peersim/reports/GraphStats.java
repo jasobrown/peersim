@@ -25,6 +25,9 @@ import peersim.util.IncrementalStats;
 /**
 * Prints reports on the graph like average clustering and average path length,
 * based on random sampling of the nodes.
+* In fact its functionality is a subset of the union of {@link Clustering}
+* and {@link BallExpansion}, and therefore is redundant,
+* but it is there for historical reasons.
 */
 public class GraphStats extends GraphObserver {
 
@@ -35,7 +38,7 @@ public class GraphStats extends GraphObserver {
 /** 
 * The number of nodes to use for
 * sampling average path length.
-* If zero is given, than no statistics
+* If zero is given, then no statistics
 * will be printed about path length. If a negative value is given then
 * the value is the full size of the graph.
 * Defaults to zero.
@@ -46,7 +49,7 @@ private static final String PAR_NL = "nl";
 /** 
 * The number of nodes to use to sample
 * average clustering.
-* If zero is given, than no statistics
+* If zero is given, then no statistics
 * will be printed about clustering. If a negative value is given then
 * the value is the full size of the graph.
 * Defaults to zero.
@@ -54,9 +57,9 @@ private static final String PAR_NL = "nl";
 */
 private static final String PAR_NC = "nc";
 
-protected final int nc;
+private final int nc;
 
-protected final int nl;
+private final int nl;
 
 
 // ===================== initialization ================================
@@ -79,7 +82,15 @@ public GraphStats(String name) {
 // ====================== methods ======================================
 // =====================================================================
 
-
+/**
+* Returns staistics over minimal path length and clustering.
+* The output is {@link IncrementalStats#toString} over the set of
+* clustering coefficients of randomly selected nodes, and the
+* set of distances from randomly selected nodes to all the other nodes
+* (appended in one line).
+* See also the configuration parameters.
+* @return always false
+*/
 public boolean execute() {
 	
 	System.out.print(name+": ");

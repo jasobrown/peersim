@@ -23,6 +23,7 @@ import peersim.core.*;
 import peersim.util.*;
 
 /**
+ * Prints several statistics about the node degrees in the graph.
  */
 public class DegreeStats extends GraphObserver
 {
@@ -49,9 +50,10 @@ private static final String PAR_TRACE = "trace";
 
 /**
  * Selects a method to use when printing results. Three methods are known:
- * "stats" will create and print a {@link IncrementalStats} object. "freq" will
- * create and print a {@link IncrementalFreq} object. "list" will print the
- * degrees of the sample nodes one by one in one line. Default is "stats".
+ * "stats" will use {@link IncrementalStats#toString}. "freq" will
+ * use {@link IncrementalFreq#print}. "list" will print the
+ * degrees of the sample nodes one by one in one line, separated by spaces.
+ * Default is "stats".
  * @config
  */
 private static final String PAR_METHOD = "method";
@@ -61,7 +63,7 @@ private static final String PAR_METHOD = "method";
  * known: "live": links pointing to live nodes, "dead": links pointing to nodes
  * that are unavailable and "all": both dead and live links summed. "all" and
  * "dead" require parameter {@value peersim.reports.GraphObserver#PAR_UNDIR} 
- * to be set. Default is "live".
+ * to be unset (graph must be directed). Default is "live".
  * @config
  */
 private static final String PAR_TYPE = "linktype";
@@ -101,9 +103,10 @@ public DegreeStats(String name)
 	method = Configuration.getString(name + "." + PAR_METHOD, "stats");
 	type = Configuration.getString(name + "." + PAR_TYPE, "live");
 	if ((type.equals("all") || type.equals("dead")) && undir) {
-		throw new IllegalParameterException(name + "." + PAR_TYPE, " Parameter "
-				+ name + "." + PAR_UNDIR + " must not be defined if " + name + "."
-				+ PAR_TYPE + "=" + type + ".");
+		throw new IllegalParameterException(
+			name + "." + PAR_TYPE, " Parameter "+ name + "." +
+			PAR_UNDIR + " must not be defined if " + name + "."
+			+ PAR_TYPE + "=" + type + ".");
 	}
 }
 
@@ -149,7 +152,9 @@ private int nextDegree()
 // ---------------------------------------------------------------------
 
 /**
- * {@inheritDoc}
+ * Prints statistics about node degree. The format of the output is specified
+ * by {@value PAR_METHOD}. See also the rest of the configuration parameters.
+ * @return always false
  */
 public boolean execute()
 {

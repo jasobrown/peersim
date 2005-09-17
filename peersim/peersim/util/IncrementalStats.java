@@ -179,7 +179,8 @@ public double getStD() { return Math.sqrt(getVar()); }
 */
 public String toString() {
 
-	return min+" "+max+" "+n+" "+sum/n+" "+getVar()+" "+countmin+" "+countmax;
+	return min+" "+max+" "+n+" "+sum/n+" "+getVar()+" "+
+		countmin+" "+countmax;
 }
 
 }

@@ -2,10 +2,11 @@
 # (SINCE RELEASE 0.2).
 #random.seed 1234567890
 simulation.cycles 30
-simulation.shuffle
+control.0 peersim.cdsim.Shuffle
 
 # Imposes the correct protocol running order:
 order.protocol ncast,avgagr
+include.control avgobs
 
 overlay.size 50000
 overlay.maxsize 200000
@@ -16,9 +17,9 @@ protocol.ncast.cache 20
 protocol.avgagr example.aggregation.AverageFunction
 protocol.avgagr.linkable ncast
 
-init.wrr peersim.dynamics.WireRegularRandom
+init.wrr peersim.dynamics.WireKOut
 init.wrr.protocol ncast
-init.wrr.degree 20
+init.wrr.k 20
 
 # UNCOMMENT THE FOLLOWING LINES TO GET A PEAK DISTRIBUTION
 #init.pkdistrib example.aggregation.PeakDistributionInitializer
@@ -26,17 +27,17 @@ init.wrr.degree 20
 #init.pkdistrib.protocol avgagr
 
 # UNCOMMENT THE FOLLOWING LINES TO GET A LINEAR DISTRIBUTION
-init.ldistrib example.loadbalance.LinearDistributionInitializer
+init.ldistrib peersim.vector.LinearDistribution
 init.ldistrib.protocol avgagr
 init.ldistrib.max 100
 init.ldistrib.min 1
 
-observer.avgobs example.aggregation.AverageObserver
-observer.avgobs.protocol avgagr
+control.avgobs example.aggregation.AverageObserver
+control.avgobs.protocol avgagr
 
-dynamics.grnetwork peersim.dynamics.GrowingNetwork
-dynamics.grnetwork.add -500
-dynamics.grnetwork.minsize 4000
-dynamics.grnetwork.from 5
-dynamics.grnetwork.until 10
+control.dnetwork peersim.dynamics.DynamicNetwork
+control.dnetwork.add -500
+control.dnetwork.minsize 4000
+control.dnetwork.from 5
+control.dnetwork.until 10
  

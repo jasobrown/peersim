@@ -146,8 +146,8 @@ public static Graph InetTree(Graph g, Random rnd, int pid, double maxcoord,
 		} else { // degree 1:
 			for (int j = 0; j < i; j++) {
 				Node parent = (Node) g.getNode(j);
-				InetNodeProtocol prot_parent = (InetNodeProtocol) parent
-						.getProtocol(pid);
+//				InetNodeProtocol prot_parent = (InetNodeProtocol) parent
+//						.getProtocol(pid);
 
 				double value = hops(parent, pid) + (alfa * distance(n, parent, pid));
 				if (value < min) {

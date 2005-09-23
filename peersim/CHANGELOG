@@ -1,3 +1,9 @@
+GJ 22/09/05
+- Updated examples config files.
+- Refactored example.hot.* package (now using WireByMethod class).
+- Updated example docs.
+- Updated REAME file.
+
 SV 17/09/05
 - Fixed a bug in IncrementalFreq: When a negative item is submitted, the number
   of inserted items (n) is now not increased.

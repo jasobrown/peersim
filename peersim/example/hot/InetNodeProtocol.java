@@ -20,7 +20,7 @@ public class InetNodeProtocol extends IdleProtocol {
     public double y;
     
     public int in_degree;
-    public int hops;
+    public int hops; // hop distance from ROOT node
     public boolean isroot;
    
     

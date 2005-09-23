@@ -1,7 +1,7 @@
 # PEERSIM EXAMPLE 3
 #random.seed 1234567890
 simulation.cycles 200
-#simulation.shuffle
+#control.0 peersim.cdsim.Shuffle
 
 overlay.size 250
 overlay.maxSize 250
@@ -19,16 +19,16 @@ protocol.1.linkable 0
 protocol.1.quota 1
 
 # Monitors the load distribution convergence
-observer.0 example.loadbalance.LBObserver
-observer.0.protocol 1
-observer.0.show_values 1
+control.1 example.loadbalance.LBObserver
+control.1.protocol 1
+control.1.show_values 1
 
-observer.1 example.loadbalance.QuotaObserver
-observer.1.protocol 1
+control.2 example.loadbalance.QuotaObserver
+control.2.protocol 1
 
-init.0 peersim.dynamics.WireRegularRandom
+init.0 peersim.dynamics.WireKOut
 init.0.protocol 0
-init.0.degree 20
+init.0.k 20
 
 # UNCOMMENT THE FOLLOWING LINES TO GET A PEAK DISTRIBUTION
 #init.1 example.aggregation.PeakDistributionInitializer
@@ -37,13 +37,13 @@ init.0.degree 20
 #init.1.protocol 1
 
 # UNCOMMENT THE FOLLOWING LINES TO GET A LINEAR DISTRIBUTION
-init.1 example.loadbalance.LinearDistributionInitializer
+init.1 peersim.vector.LinearDistribution
 init.1.protocol 1
 init.1.max 100
 init.1.min 1
 
-dynamics.0 example.loadbalance.ResetQuota
-dynamics.0.protocol 1
-dynamics.0.value 1
+control.3 example.loadbalance.ResetQuota
+control.3.protocol 1
+control.3.value 1
 
 

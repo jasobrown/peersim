@@ -13,9 +13,10 @@ This archive is composed of:
 
 To run the examples type:
 
-java -cp peersim-0.4.jar:jep-2.3.0.jar:djep-1.0.0.jar peersim.Simulator example/config-example1.txt
+java -cp "peersim-0.4.jar:jep-2.3.0.jar:djep-1.0.0.jar" peersim.Simulator example/config-example1.txt
 
 in the directory of this README file in the extracted archive.
+On a Windows system, substitute ':' with ';' in the provided classpath string.
 
 For more information and documentation visit the Peersim site at
 sourceforge:

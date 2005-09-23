@@ -1,7 +1,7 @@
 # PEERSIM EXAMPLE 2
 #random.seed 1234567890
 simulation.cycles 30
-simulation.shuffle
+control.0 peersim.cdsim.Shuffle
 
 overlay.size 50000
 overlay.maxsize 200000
@@ -12,9 +12,9 @@ protocol.0.cache 20
 protocol.1 example.aggregation.AverageFunction
 protocol.1.linkable 0
 
-init.0 peersim.dynamics.WireRegularRandom
+init.0 peersim.dynamics.WireKOut
 init.0.protocol 0
-init.0.degree 20
+init.0.k 20
 
 # UNCOMMENT THE FOLLOWING LINES TO GET A PEAK DISTRIBUTION
 #init.1 example.aggregation.PeakDistributionInitializer
@@ -23,17 +23,17 @@ init.0.degree 20
 #init.1.protocol 1
 
 # UNCOMMENT THE FOLLOWING LINES TO GET A LINEAR DISTRIBUTION
-init.1 example.loadbalance.LinearDistributionInitializer
+init.1 peersim.vector.LinearDistribution
 init.1.protocol 1
 init.1.max 100
 init.1.min 1
 
-observer.0 example.aggregation.AverageObserver
-observer.0.protocol 1
+control.1 example.aggregation.AverageObserver
+control.1.protocol 1
 
-dynamics.0 peersim.dynamics.GrowingNetwork
-dynamics.0.add -500
-dynamics.0.minsize 4000
-dynamics.0.from 5
-dynamics.0.until 10
+control.2 peersim.dynamics.DynamicNetwork
+control.2.add -500
+control.2.minsize 4000
+control.2.from 5
+control.2.until 10
  

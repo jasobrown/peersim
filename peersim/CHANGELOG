@@ -1,8 +1,12 @@
+GJ 26/09/05
+- Removed example.hot.InetFactory class: old and unused.
+- Updated exscript.txt config file.
+
 GJ 22/09/05
 - Updated examples config files.
 - Refactored example.hot.* package (now using WireByMethod class).
 - Updated example docs.
-- Updated REAME file.
+- Updated REAME file (fixed command line instruction).
 
 SV 17/09/05
 - Fixed a bug in IncrementalFreq: When a negative item is submitted, the number

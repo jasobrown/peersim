@@ -10,19 +10,19 @@ protocol.0 example.hot.InetNodeProtocol
 
 init.0 example.hot.InetInitializer
 #init.0.max_coord 1000
-init.0.alfa 20
 init.0.protocol 0
-init.0.d 2
+init.0.d 1
 
-init.1 WireByMethod
+init.1 peersim.dynamics.WireByMethod
+init.1.protocol 0
 init.1.class example.hot.InetInitializer
 init.1.method wireHOTOverlay
-init.1.arg1 2 # d
-init.1.arg2 0.5 # alfa , default 0.5   
+init.1.arg1 1 # d
+init.1.arg2 4 # alfa , default 0.5   
 
 control.0 example.hot.InetObserver
 control.0.protocol 0
 #control.0.graph_file ./graph.dat
 #control.0.graph_degree ./degree_graph.dat
 #control.0.robustness
-control.0.at 1
+control.0.at 0

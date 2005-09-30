@@ -1,4 +1,12 @@
 <html><body>
-Configuration management. <br>
+Configuration management.
+It contains classes that read, store and to some extent process the
+system-wide configuration of the simulation.
+<p>
+The two main classes are {@link peersim.config.Configuration}, that actually
+stores the configuration and allows any class to read it, and
+{@link peersim.config.ParsedProperties} that is used to read configuration
+from a properties file and the command line, to initialize
+{@link peersim.config.Configuration}.
 </body></html>
 

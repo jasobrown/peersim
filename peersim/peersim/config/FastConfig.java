@@ -36,7 +36,8 @@ public class FastConfig
 
 /**
  * Parameter name in configuration that attaches a linkable protocol to a
- * protocol.
+ * protocol. The property can contain multiple protocol names, in one line,
+ * separated by non-word characters (eg whitespace or ",").
  * @config
  */
 private static final String PAR_LINKABLE = "linkable";
@@ -105,6 +106,10 @@ static {
 	}
 }
 
+// ---------------------------------------------------------------------
+
+/** to prevent construction */
+private FastConfig() {}
 
 // ======================= methods ==========================================
 // ==========================================================================
@@ -147,9 +152,7 @@ public static int getLinkable(int pid, int linkIndex)
 
 /**
  * Invokes <code>getLinkable(pid, 0)</code>.
- * Used for backward compatibility.
  */
-@Deprecated
 public static int getLinkable(int pid)
 {
 	return getLinkable(pid, 0);

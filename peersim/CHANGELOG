@@ -1,3 +1,10 @@
+MJ 30/09/05
+- cleaned up the Configuration package. Note that the behavior of getInstance
+  is changed; the only consequence is that now protocols MUST implement
+  the (String,Object) constructor (so far (String) was also accepted).
+  In any case if your classes don't conform, you'll get a clean error message,
+  and you can fix them in a few seconds (by adding an Object par).
+
 SV 30/09/05
 - Updated peersim.config.FastConfig to support multiple linkables per protocol,
   and fixed respective documentation.

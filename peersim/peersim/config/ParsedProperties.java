@@ -59,23 +59,63 @@ public	ParsedProperties( String filename ) throws IOException {
 * Loads given file. It works exactly as <code>Properties.load</code>
 * with a file input stream to the given file, except that the file is parsed
 * the following way allowing to compress some property names
-* using <code>{</code> and <code>}</code>: the construct
+* using <code>{</code> and <code>}</code>.
+  
+  When a bracket is present, it must
+  be the only non-space element of a line. The last property defined 
+  before the opening bracket define the prefix that is added to all the 
+  properties defined included between brackets.
+  In other words, a construct like this:
   <pre>
-  property value
+  control.degree GraphObserver 
   {
-  foo value1
-  bar value2
+    protocol newscast
+    undir
   }
   </pre>
-  is equivalent to
+  is equivalent to the definition of these three properties:
   <pre>
-  property value
-  property.foo value1
-  property.bar value2
+  control.degree GraphObserver 
+  control.degree.protocol newscast
+  control.degree.undir
   </pre>
-  This mechanism can be nested.
-  The <code>{</code> and <code>}</code> must be the only non-whitespace
-  character in its line.
+  
+  Nested brackets are possible. The rule of the last property before 
+  the opening bracket applies also to the inside brackets, with
+  the prefix being the complete property definition (so, including
+  the prefix observed before). Example:
+  <pre>
+	control.1 DynamicNetwork
+	{
+	  add CRASH
+	  substitute
+	  init.0 WireRegularRandom 
+	  {
+	    degree DEGREE
+	    protocol 0
+	  }
+	}
+  </pre>
+  defines the following properties:
+  <pre>
+	control.1 DynamicNetwork
+	control.1.add CRASH
+	control.1.substitute
+	control.1.init.0 WireRegularRandom 
+	control.1.init.0.degree DEGREE
+	control.1.init.0.protocol 0
+  </pre>
+  
+  <p>
+  Know limitations: 
+  The parsing mechanism is very simple; no complex error messages
+  are provided. In case of missing closing brackets, the method
+  will stop reporting the number of missing brackets. Additional
+  closing brackets (i.e., missing opening brackets) produce an
+  error messages reporting the line where the closing bracket
+  is present. Misplaced brackets (included in lines that
+  contains other characters) are ignored, thus may indirectly produce
+  the previous error messages.
 */
 public void load( String fileName ) throws IOException {
 
@@ -173,10 +213,11 @@ throws IOException {
 
 // --------------------------------------------------------------------
 
-/** for testing */
+/*
 public static void main(String[] args)
 {
 	java.util.Properties prop = new ParsedProperties(args);
 }
+*/
 }
 

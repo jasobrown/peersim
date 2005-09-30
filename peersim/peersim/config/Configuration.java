@@ -25,21 +25,131 @@ import org.lsmp.djep.groupJep.*;
 
 /**
 * Fully static class to store configuration information.
-* Contains methods to set configuration data and utility methods to read
-* items based on their names. Its other purpose is to hide the actual
+* It defines a method, {@link #setConfig},
+* to set configuration data. This method is called by the simulator engines
+* as the very first thing they do. It can be called only once, after that the
+* class becomes read only.
+* All components can then access this configuration and utility methods to read
+* property values based on their names.
+* <p>
+* The design of this class also hides the actual
 * implementation of the configuration which can be Properties, XML, whatever.
+* Currently only Properties is supported.
 * <p>
-* Numeric configuration items can complex expressions, that are parsed
-* through Java Expression Parser (http://www.singularsys.com/jep/).
+* Apart from storing (name,value) pairs, this class also does some processing,
+* and offers some utility functions.
+* This extended functionality consists of the following: reading values with
+* type checking, ordering of entries, pre-processing
+* protocol names, parsing expressions, resolving underspecified classnames,
+* and finaly some basic debugging possibilities. We discuss these in the
+* following.
 * <p>
-* The configuration is generally blind to the semantics of the entries.
-* there is an exception, the entries that start with "protocol". These
-* entries are pre-processed a bit to enhance performance:
-* protocol names are associated to numeric protocol identifiers
-* through method {@link #getPid(String)}.
-* <h3>Expressions</h3>
-  You can use expressions in place of numeric values at all places.
-  This is implemented using <a href="http://www.singularsys.com/jep/">JEP</a>.
+* Note that the configuration is initialized using a Properties object.
+* The class of this object might implement some additional pre-processing
+* on the file or provide an extended syntax for defining property files.
+* See {@link ParsedProperties} for more details. This is the class that is
+* currently used by simulation engines.
+ <h3>Typed reading of values</h3>
+ Properties can have arbitrary values of type String. This class offers
+ a set of read methods that perform the appropriate conversion of the
+ string value to the given type, eg long.
+ They also allow for specifiying default values in case the given property
+ is not specified.
+  <h3>Resolving class names</h3>
+
+  The possibilities for the typed reading of a value includes interpreting
+  the value as a class name.
+  In this case an object will be constructed.
+  It is described at method {@link #getInstance(String)} how this is achieved
+  exactly.
+  What needs to be noted here is that the property value need not be a
+  fully specified classname.
+  It might contain only the short class name without the package specification.
+  In this case, it is attempted to locate a class with that name in the
+  classpath, and if a unique class is found, it will be used.
+  This simplifies the configuration files and also allows to remove their
+  dependence on the exact location of the class.
+  
+  <h3>Components and their ordering</h3>
+  The idea of the configuration is that it mostly contains components and their
+  descriptions (parameters).
+  Although this class is blind to the semantics of these components, it
+  offers some low level functionality that helps dealing with them.
+  This functionality is based on the assumption that
+  components have a type and a name. Both types and names are strings
+  of alphanumeric and underscore characters.
+  For example, {@value #PAR_PROT} is a type, "foo" can be a name.
+  Method {@link #getNames} allow the caller to get the list of names for a
+  given type.
+  Some other methods, like {@link #getInstanceArray} use this list to
+  return a list of components.
+  
+  <p>
+  Assuming the configuration is in Properties format (which is currently
+  the only format available) component types and names are defined as follows.
+  Property names containing two non-empty words separated by
+  one dot (".") character are
+  treated specially (the words contain word characters: alphanumeric and
+  underscore ("_")).
+  The first word will be the type, and the second is the name
+  of a component.
+  For example,
+  <pre>
+  control.conn ConnectivityObserver
+  control.1 WireKOut
+  control.2 PrintGraph
+  </pre>
+  defines control components of names "conn","1" an "2" (arguments of the
+  components not shown).
+  When
+  {@link #getNames} or {@link #getInstanceArray} are called, eg
+  <code>getNames("control")</code>, then the order in which these
+  are returned is alphabetical:
+  <code>["control.1","control.2","control.conn"]</code>.
+  If you are not satisfied with lexicographic order,
+  you can specify the order in this way.
+  <pre>
+  order.control 1,conn,2
+  </pre>
+  where the names are separated by any non-word character (non alphanumeric
+  or underscore).
+  If not all names are listed then the given order is followed by alphabetical
+  order of the rest of the items, eg
+  <pre>
+  order.control 2
+  </pre>
+  results in
+  <code>["control.2","control.1","control.conn"]</code>.
+  <p>
+  It is also possible to exclude elements from the list, while
+  ordering them. The syntax is identical to that of the above, only the
+  parameter name begins with <code>include</code>. For example
+  <pre>
+  include.control conn 2
+  </pre>
+  will result in returning <em>only</em> <code>control.conn</code> and
+  <code>control.2</code>, in this order.
+  Note that for example the empty list results in a zero length array in this
+  case.
+  <em>Important!</em> If include is
+  defined then ordering is ignored. That is, include is stronger than order.
+ <h3>Protocol names</h3>
+ As mentioned, the configuration is generally blind to the actual names of the
+ components.
+ There is an exception: the components of type {@value #PAR_PROT}. These
+ are pre-processed a bit to enhance performance:
+ protocol names are mapped to numeric protocol identifiers.
+ The numeric identifier of a protocol is its index in the array
+ returned by {@link #getNames}. See above how to control this order.
+ The numeric identifiers then can be looked up based on the name and
+ vice versa.
+ Besides, the identifier can be directly requested based on a property name
+ when the protocol name
+ is the value of a property which is frequently the case.
+ <p>
+ <h3>Expressions</h3>
+ Numeric property values can be complex expressions, that are parsed
+ using <a href="http://www.singularsys.com/jep/">JEP</a>.
   You can write expression using the syntax that you can
   find <a href="http://www.singularsys.com/jep/doc/html/op_and_func.html">
   here</a>. For example,
@@ -80,63 +190,21 @@ import org.lsmp.djep.groupJep.*;
   Parameter "overlay.size": Probable recursive definition -
   exceeded maximum depth {@value #DEFAULT_MAXDEPTH}
   
-  <h3>Ordering</h3>
-  It is possible to assign arbitrary names to multiple instances of a given
-  entity, like eg an observer or protocol. For example you can write
-
-  <pre>
-  observer.conn ConnectivityObserver
-  observer.0 Class1
-  observer.2 Class2
-  </pre>
-  This trick works with any prefix, not only observer. When method
-  {@link #getNames} or {@link #getInstanceArray} are called, eg
-  <code>getNames("observer")</code>, the the order in which these
-  are returned is alphabetical:
-  <code>["observer.0","observer.2","observer.conn"]</code>.
-  If you are not satisfied with lexicographic order,
-  you can specify the order in this way.
-  <pre>
-  order.observer 2,conn,0
-  </pre>
-  where the names are separated by any non-word character (non alphanumeric
-  or underscore).
-  If not all names are listed then the given order is followed by alphabetical
-  order of the rest of the items, eg
-  <pre>
-  order.observer 2
-  </pre>
-  results in
-  <code>["observer.2","observer.0","observer.conn"]</code>.
-  <p>
-  It is also possible to exclude elements from the list, while
-  ordering them. The syntax is identical to that of the above, only the
-  parameter name begins with <code>include</code>. For example
-  <pre>
-  include.observer conn 2
-  </pre>
-  will result in returning <em>only</em> <code>observer.conn</code> and
-  <code>observer.2</code>, in this order.
-  Note that for example the empty list results in a zero length array in this
-  case.
-  <em>Important!</em> If include is
-  defined then ordering is ignored. That is, include is stronger than order.
-
   <h3>Debug</h3>
   
   It is possible to obtain debug information about the configuration
   properties by activating special configuration properties. 
   <p>
-  If property debug.config is defined,
+  If property {@value #PAR_DEBUG} is defined,
   each config property and the associated value are printed. Properties
   that are not present in the config file but have default values are
-  postfixed with the string "(DEFAULT").
+  postfixed with the string "(DEFAULT)".
   <p>
-  If property debug.config is defined and it is equal to "context",
+  If property {@value #PAR_DEBUG}  is defined and it is equal to
+  {@value #DEBUG_EXTENDED},
   information about the configuration method invoked, and where
   this method is invoked, is also printed.
-  <p>
-  If property debug.config is defined and it is equal to "full",
+  If it is equal to {@value #DEBUG_FULL},
   all the properties are printed, even if they are not read.
   <p>
   Each line printed by this debug feature is prefixed by the
@@ -144,62 +212,10 @@ import org.lsmp.djep.groupJep.*;
 
   <h3>Use of brackets</h3>
   
-  It is possible to use brackets to simplify the writing of the 
-  configuration properties. When a bracket is present, it must
-  be the only non-space element of a line. The last property defined 
-  before the opening bracket define the prefix that is added to all the 
-  properties defined included between brackets.
-  In other words, a construct like this:
-  <pre>
-  observer.degree GraphObserver 
-  {
-    protocol newscast
-    undir
-  }
-  </pre>
-  is equivalent to the definition of these four properties:
-  <pre>
-  observer.degree GraphObserver 
-  observer.degree.protocol newscast
-  observer.degree.undir
-  </pre>
-  
-  Nested brackets are possible. The rule of the last property before 
-  the opening bracket applies also to the inside brackets, with
-  the prefix being the complete property definition (so, including
-  the prefix observed before). Example:
-  <pre>
-	dynamics.1 peersim.dynamics.DynamicNetwork
-	{
-	  add CRASH
-	  substitute
-	  init.0 peersim.dynamics.WireRegularRandom 
-	  {
-	    degree DEGREE
-	    protocol 0
-	  }
-	}
-  </pre>
-  defines the following properties:
-  <pre>
-	dynamics.1 peersim.dynamics.DynamicNetwork
-	dynamics.1.add CRASH
-	dynamics.1.substitute
-	dynamics.1.init.0 peersim.dynamics.WireRegularRandom 
-	dynamics.1.init.0.degree DEGREE
-	dynamics.1.init.0.protocol 0
-  </pre>
-  
-  <p>
-  Know limitations: 
-  The parsing mechanism is very simple; no complex error messages
-  are provided. In case of missing closing brackets, the simulator
-  will stop reporting the number of missing brackets. Additional
-  closing brackets (i.e., missing opening brackets) produce an
-  error messages reporting the line where the closing bracket
-  is present. Misplaced brackets (included in lines that
-  contains other characters) are ignored, thus may produce
-  the previous error messages.
+  For the sake of completeness, we mention it here that if this class is
+  initialized using {@link ParsedProperties}, then it is possible to
+  use some more compressed format to specify the components.
+  See {@link ParsedProperties#load}.
 *
 */
 public class Configuration {
@@ -230,12 +246,11 @@ private static final int DEBUG_CONTEXT = 2;
 private static final int DEFAULT_MAXDEPTH = 100;
 
 /**
- * The debug level for the configuration
- * mechanism. If defined, a line is printed for each configuration
- * parameter read. If defined and equal to {@value #DEBUG_EXTENDED} or
- * {@value #DEBUG_EXTENDED}, additional
+ * The debug level for the configuration.
+ * If defined, a line is printed for each configuration
+ * parameter read. If defined and equal to {@value #DEBUG_EXTENDED}, additional
  * context information for debug is printed. If defined and equal
- * to {@value #DEBUG_FULL}, all the configuration items are printed at 
+ * to {@value #DEBUG_FULL}, all the configuration properties are printed at 
  * the beginning, not just when they are called.
  * @config
  */
@@ -249,7 +264,7 @@ private static final String DEBUG_EXTENDED = "context";
 
 /**
  * If parameter {value #PAR_DEBUG} is equal to this string, 
- * all the configuration items are printed at the beginning,
+ * all the configuration properties are printed at the beginning,
  * not just when they are called.
  */
 private static final String DEBUG_FULL = "full";
@@ -263,33 +278,28 @@ private static final String DEBUG_FULL = "full";
 private static final String PAR_MAXDEPTH = "expressions.maxdepth"; 
 
 /**
- * The parameter to configure ordering of the array as returned by
- * {@link #getInstanceArray} and {@link #getNames}.
- * It is read by these methods. This is really a prefix which is followed by
- * the type specifier. For example: "order.protocol" will define the
- * order of configuration entries that start with
- * "protocol", but it works for any prefix.
+ * Used to configure ordering of the components. Determines the ordering in
+ * the array as returned by {@link #getNames}.
+ * See the general description of {@link Configuration} for details.
  * @config
  */
 private static final String PAR_ORDER = "order"; 
 
 /**
- * The parameter to configure ordering and exclusion of the array as
- * returned by {@link #getInstanceArray} and {@link #getNames}.
- * It is read by these methods. This is realy a prefix which is followed by
- * the type specifier. For example: "include.protocol" will define the
- * set and order of configuration entries that start with
- * "protocol", but it works for any prefix.
+ * Used to configure ordering of the components. Determines the ordering in
+ * the array as returned by {@link #getNames}, and can bu used to also
+ * exclude elements.
+ * See the general description of {@link Configuration} for details.
  * @config
  */
 private static final String PAR_INCLUDE = "include"; 
 
-// XXX it's ugly because it replicates the definition of PAR_PROT, but
+// XXX it's ugly because it replicates the definition of Node.PAR_PROT, but
 // this would be the only dependence on the rest of the core...
 /**
- * The parameter name prefix to specify the set of protocol entries that are
- * used
- * to calculate the protocol identifiers returned by {@link #getPid(String)}.
+ * The type name of components describing protocols. This is the only point
+ * at which the class is not blind to the actual semantics of the
+ * configuration.
  */
 static final String PAR_PROT = "protocol"; 
 
@@ -317,18 +327,31 @@ private static int maxdepth = DEFAULT_MAXDEPTH;
 /** Debug level */
 private static int debugLevel = DEBUG_NO;
 
+// =================== initialization ================================
+// ===================================================================
+
+/** to prevent construction */
+private Configuration() {}
+
 // =================== static public methods =========================
 // ===================================================================
 
 
 /** 
-* Sets the system-wide configuration in Properties format.
-* @param p The Properties object containing coniguration info
-* @return The Properties object that was set previously
+* Sets the system-wide configuration in Properties format. It can be called
+* only once. After that the configuration becomes unmodifiable (read only).
+* If modification is attempted, a RuntimeException is thrown and no change is
+* made.
+* @param p The Properties object containing configuration info
 */
-public static Properties setConfig( Properties p ) {
+public static void setConfig( Properties p ) {
 
-	Properties prev = config;
+	if( config != null )
+	{
+		throw new RuntimeException(
+			"Setting configuration was attempted twice.");
+	}
+	
 	config = p;
 	maxdepth = Configuration.getInt(PAR_MAXDEPTH, DEFAULT_MAXDEPTH);
 	
@@ -356,21 +379,18 @@ public static Properties setConfig( Properties p ) {
 		while (i.hasNext()) {
 			String name = (String) i.next();
 			System.err.println("DEBUG " + name +
-					("".equals(map.get(name)) ? "" : " = " + map.get(name))  
-					); 
+				("".equals(map.get(name)) ? 
+					"" : " = " + map.get(name))); 
 		}
 	}
 	else if (debug != null)
 		debugLevel = DEBUG_REG;
-	
-	return prev;
 }
 
 // -------------------------------------------------------------------
 
 /**
-* @return true if and only if the specified name is assigned a value in the
-* configuration
+* @return true if and only if name is a specified (exisitng) property.
 */
 public static boolean contains(String name) {
 	
@@ -382,7 +402,8 @@ public static boolean contains(String name) {
 // -------------------------------------------------------------------
 
 /**
-* Reads given configuration item. If not found, returns the default value.
+* Reads given configuration property. If not found, throws a 
+* {@link MissingParameterException}.
 * @param name Name of configuration property
 * @param def default value
 */
@@ -394,7 +415,7 @@ public static boolean getBoolean(String name, boolean def) {
 	}
 	catch( Exception e )
 	{
-		System.err.println(def + " (Default value)");
+		debug(name, ""+def+" (DEFAULT)");
 		return def;
 	}
 }
@@ -402,18 +423,20 @@ public static boolean getBoolean(String name, boolean def) {
 // -------------------------------------------------------------------
 
 /**
-* Reads given configuration item. If not found, or the value is empty string
+* Reads given property. If not found, or the value is empty string
 * then throws a 
-* MissingParameterException. Empty string is not accepted as false due to
-* the similar function of "contains" which returns true in that case.
+* {@link MissingParameterException}.
+* Empty string is not accepted as false due to
+* the similar function of {@link #contains} which returns true in that case.
 * True is returned if the lowercase value of
-* the item is "true", otherwise false is returned.
-* @param name Name of configuration property.
+* the property is "true", otherwise false is returned.
+* @param name Name of configuration property
 */
 public static boolean getBoolean(String name) {
 
 	if( config.getProperty(name) == null ) {
-		throw new MissingParameterException(name, "\nPossible uncorrect property: " +
+		throw new MissingParameterException(name,
+				"\nPossibly incorrect property: " +
 				getSimilarProperty(name));
 	}
 	if( config.getProperty(name).matches("\\p{Blank}*") )
@@ -429,7 +452,7 @@ public static boolean getBoolean(String name) {
 // -------------------------------------------------------------------
 
 /**
-* Reads given configuration item. If not found, returns the default value.
+* Reads given configuration property. If not found, returns the default value.
 * @param name Name of configuration property
 * @param def default value
 */
@@ -449,8 +472,8 @@ public static int getInt( String name, int def ) {
 // -------------------------------------------------------------------
 
 /**
-* Reads given configuration item. If not found, throws a 
-* MissingParameterException.
+* Reads given configuration property. If not found, throws a 
+* {@link MissingParameterException}.
 * @param name Name of configuration property
 */
 public static int getInt( String name ) 
@@ -463,7 +486,7 @@ public static int getInt( String name )
 // -------------------------------------------------------------------
 
 /**
-* Reads given configuration item. If not found, returns the default value.
+* Reads given configuration property. If not found, returns the default value.
 * @param name Name of configuration property
 * @param def default value
 */
@@ -483,8 +506,8 @@ public static long getLong( String name, long def ) {
 // -------------------------------------------------------------------
 
 /**
-* Reads given configuration item. If not found, throws a 
-* MissingParameterException.
+* Reads given configuration property. If not found, throws a 
+* {@link MissingParameterException}.
 * @param name Name of configuration property
 */
 public static long getLong( String name )
@@ -497,7 +520,7 @@ public static long getLong( String name )
 // -------------------------------------------------------------------
 
 /**
-* Reads given configuration item. If not found, returns the default value.
+* Reads given configuration property. If not found, returns the default value.
 * @param name Name of configuration property
 * @param def default value
 */
@@ -517,7 +540,7 @@ public static double getDouble( String name, double def ) {
 // -------------------------------------------------------------------
 
 /**
-* Reads given configuration item. If not found, throws a 
+* Reads given configuration property. If not found, throws a 
 * MissingParameterException.
 * @param name Name of configuration property
 */
@@ -538,7 +561,7 @@ public static double getDouble( String name )
  * @param depth the depth reached so far
  * @return the evaluation of the expression associated to property  
  */
-public static double getVal(String initial, String property, int depth)
+private static double getVal(String initial, String property, int depth)
 {
 	if (depth > maxdepth) {
 		throw new IllegalParameterException(initial, 
@@ -549,7 +572,8 @@ public static double getVal(String initial, String property, int depth)
 	String s = config.getProperty(property);
 	if (s == null || s.equals("")) {
 		throw new MissingParameterException(property, 
-				" when evaluating property " + initial + "\nPossible uncorrect property: " +
+				" when evaluating property " + initial +
+				"\nPossibly incorrect property: " +
 				getSimilarProperty(property));
 	}
 
@@ -576,7 +600,7 @@ public static double getVal(String initial, String property, int depth)
  * @param depth the depth reached so far
  * @return the evaluation of the expression associated to property  
  */
-public static Object getValInteger(String initial, String property, int depth)
+private static Object getValInteger(String initial, String property, int depth)
 {
 	if (depth > maxdepth) {
 		throw new IllegalParameterException(initial, 
@@ -587,7 +611,8 @@ public static Object getValInteger(String initial, String property, int depth)
 	String s = config.getProperty(property);
 	if (s == null || s.equals("")) {
 		throw new MissingParameterException(property, 
-				" when evaluating property " + initial + "\nPossible uncorrect property: " +
+				" when evaluating property " + initial +
+				"\nPossibly incorrect property: " +
 				getSimilarProperty(property));
 	}
 
@@ -631,7 +656,7 @@ private static String[] getSymbols(org.nfunk.jep.JEP jep)
 // -------------------------------------------------------------------
 
 /**
-* Reads given configuration item. If not found, returns the default value.
+* Reads given configuration property. If not found, returns the default value.
 * @param name Name of configuration property
 * @param def default value
 */
@@ -651,7 +676,8 @@ public static String getString( String name, String def ) {
 // -------------------------------------------------------------------
 
 /**
-* Reads the configuration item associated to the specified property.
+* Reads given configuration property. If not found, throws a 
+* MissingParameterException.
 * Removes trailing whitespace characters.
 * @param property Name of configuration property
 */
@@ -660,7 +686,7 @@ public static String getString( String property ) {
 	String result = config.getProperty(property);
 	if( result == null ) 
 		throw new MissingParameterException(property, 
-				"\nPossible uncorrect property: " +
+				"\nPossibly incorrect property: " +
 				getSimilarProperty(property));
 	debug(property, "" +result);
 	
@@ -670,44 +696,37 @@ public static String getString( String property ) {
 //-------------------------------------------------------------------
 
 /**
- * Reads the given string property from the configuration and returns the
- * associated numeric 
- * protocol identifier. The value of the property should be the name of a
- * protocol, which is an arbitrary string, and which gets mapped to a
- * number, a protocol id, according to some sorting defined over the
- * protocol names. By default th sorting is alphabetical.
+ * Reads the given property from the configuration interpreting it as
+ * a protocol name. Returns the numeric protocol identifier
+ * of this protocol name. See the discussion of protocol name at
+ * {@link Configuration} for details
+ * on how this numeric id is calculated
  *  
- * @param property the property name
- * @return the numeric protocol identifier associated to the protocol
- *   name
+ * @param name Name of configuration property
+ * @return the numeric protocol identifier associated to the value of the
+ * property
  */
-public static int getPid( String property ) {
+public static int getPid( String name ) {
 	
-	String protname = getString(property);
+	String protname = getString(name);
 	return lookupPid(protname);
 }
 
 //-------------------------------------------------------------------
 
 /**
- * Reads the given string property from the configuration and returns the
- * associated numeric 
- * protocol identifier. The value of the property should be the name of a
- * protocol, which is an arbitrary string, and which gets mapped to a
- * number, a protocol id, according to some sorting defined over the
- * protocol names. By default the sorting is alphabetical.
- * If the property is not defined, defaults to the specified protocol
- * identifier.
- *  
- * @param property the property name
+ * Calls {@link #getPid(String)}, and returns the default if no property
+ * is defined with the given name.
+ *
+ * @param name Name of configuration property
  * @param pid the default protocol identifier
- * @return the numeric protocol identifier associated to the protocol
- *   name
+ * @return the numeric protocol identifier associated to the value of the
+ * property, or the default if not defined
  */
-public static int getPid( String property, int pid ) {
+public static int getPid( String name, int pid ) {
 	
 	try {
-		String protname = getString(property);
+		String protname = getString(name);
 		return lookupPid(protname);
 	} catch (MissingParameterException e) {
 		return pid;
@@ -719,10 +738,6 @@ public static int getPid( String property, int pid ) {
 /**
  * Returns the numeric 
  * protocol identifier of the given protocol name.
- * The parameter should be the name of a
- * protocol, which is an arbitrary string, and which gets mapped to a
- * number, a protocol id, according to some sorting defined over the
- * protocol names. By default the sorting is alphabetical.
  * 
  * @param protname the protocol name.
  * @return the numeric protocol identifier associated to the protocol
@@ -733,7 +748,7 @@ public static int lookupPid( String protname ) {
 	Integer ret = (Integer) protocols.get(protname); 
 	if (ret == null) {
 		throw new MissingParameterException(PAR_PROT+"."+protname, 
-				"\nPossible uncorrect property: " +
+				"\nPossibly incorrect property: " +
 				getSimilarProperty(PAR_PROT+"."+protname));
 
 	}
@@ -745,13 +760,8 @@ public static int lookupPid( String protname ) {
 /**
  * Returns the name of a 
  * protocol that has the given identifier.
- * The parameter should be the id of a
- * protocol. It perform exactly the inverse of {@link #lookupPid(String)},
- * apart from different exception handling. This method does not throw
- * exception, but insted returns null if the given id is not found.
- *
- * <p>Note that this is not a constant time operation, although typically there
- * are very few protocols defined.
+ * <p>Note that this is not a constant time operation in the number of
+ * protocols, although typically there are very few protocols defined.
  * 
  * @param pid numeric protocol identifier.
  * @return name of the protocol that has the given id. null if no protocols
@@ -773,21 +783,20 @@ public static String lookupPid( int pid ) {
 //-------------------------------------------------------------------
 
 /**
- * Returns the class object for the classname specified by the
- * given property. If the specified 
- * class does not
- * exist, a few attempts are done to identify the correct class, or
- * at least provide some suggestions.
- * 
- */
-public static Class getClass(String property)
+* Reads given configuration property. If not found, throws a 
+* {@link MissingParameterException}.
+* When creating the Class object, a few attempts are done to resolve
+* the classname. See {@link Configuration} for details.
+* @param name Name of configuration property
+*/
+public static Class getClass(String name)
 {
-	String classname = config.getProperty(property);
+	String classname = config.getProperty(name);
 	if (classname == null) 
-		throw new MissingParameterException(property, 
-				"\nPossible uncorrect property: " +
-				getSimilarProperty(property));
-	debug(property, classname);
+		throw new MissingParameterException(name, 
+				"\nPossibly incorrect property: " +
+				getSimilarProperty(name));
+	debug(name, classname);
 	
 	Class c = null;
 	
@@ -809,7 +818,7 @@ public static Class getClass(String property)
 		// non-qualified name.
 		String fullname = ClassFinder.getQualifiedName(classname);
 		if (fullname != null && fullname.indexOf(',') >= 0) {
-			throw new IllegalParameterException(property,
+			throw new IllegalParameterException(name,
 			"The non-qualified class name " + classname + 
 			" corresponds to multiple fully-qualified classes: " +
 			fullname);
@@ -821,14 +830,14 @@ public static Class getClass(String property)
 		String shortname = ClassFinder.getShortName(classname);
 		String fullname = ClassFinder.getQualifiedName(shortname);
 		if (fullname != null) {
-			throw new IllegalParameterException(property,
+			throw new IllegalParameterException(name,
 			"Class " + classname + 
 			" does not exists. Possible candidate(s): " +
 			fullname);
 		}		
 	}
 	if (c == null) {
-		throw new IllegalParameterException(property,
+		throw new IllegalParameterException(name,
 				"Class " + classname + " not found");
 	}
 	return c;
@@ -837,9 +846,10 @@ public static Class getClass(String property)
 //-------------------------------------------------------------------
 
 /**
-* Reads given configuration item. If not found, returns the default value.
+* Reads given configuration property. If not found, returns the default value.
 * @param name Name of configuration property
 * @param def default value
+* @see #getClass(String)
 */
 public static Class getClass( String name, Class def ) {
 
@@ -857,12 +867,12 @@ public static Class getClass( String name, Class def ) {
 // -------------------------------------------------------------------
 
 /**
-* Reads given configuration item for a class name. It returns an instance of
+* Reads given configuration property for a class name. It returns an instance of
 * the class. The class must implement a constructor that takes a String as an
-* argument. The value of this string will be <tt>name</tt>. Note that this
-* constructor can see the configuration information so it can make use of it.
+* argument. The value of this string will be <tt>name</tt>. The constructor
+* of the class can see the configuration so it can make use of this name
+* to read its own parameters from it.
 * @param name Name of configuration property
-* @throws RuntimeException if there's any problem with creating the object.
 */
 public static Object getInstance( String name ) {
 
@@ -879,8 +889,7 @@ public static Object getInstance( String name ) {
 	{
 		throw new IllegalParameterException(name,
 			"Class " + classname + " has no " + classname +
-			("(String) or " + classname + 
-			"(String, Object) constructors"));
+			"(String) constructor");
 	}
 	catch ( InvocationTargetException e) 
 	{
@@ -900,19 +909,16 @@ public static Object getInstance( String name ) {
 // -------------------------------------------------------------------
 
 /**
-* Reads given configuration item for a class name. It returns an instance of
-* the class. If the class implements a constructor which takes the same
-* parameters as this method, it will be used. Otherwise the constructor
-* taking a String will be used, and parameter <tt>name</tt> will be passed to
-* it. Note that these
-* cosntructors can see the configuration information so it can make use of it.
+* Reads given configuration property for a class name. It returns an instance of
+* the class. The class must implement a constructor that takes a String
+* and an Object as
+* arguments. The value of the string will be <tt>name</tt>. The constructor
+* of the class can see the configuration so it can make use of this name
+* to read its own parameters from it.
 * @param name Name of configuration property
-* @param obj the second parameter to pass to the constructor
-* @throws RuntimeException if there's any problem with creating the object.
+* @param obj the object to pass to the constructor
 */
 public static Object getInstance( String name, Object obj ) {
-// XXX if necessary, API will have to be provided to force the (String,Object)
-// constructor and not using the default (string) constructor
 
 	Class c = getClass(name);		
 	final String classname = c.getSimpleName();
@@ -926,7 +932,9 @@ public static Object getInstance( String name, Object obj ) {
 	}
 	catch( NoSuchMethodException e )
 	{
-		return getInstance( name );
+		throw new IllegalParameterException(name,
+			"Class " + classname + " has no " + classname +
+			"(String, Object) constructor");
 	}
 	catch ( InvocationTargetException e) 
 	{
@@ -946,17 +954,12 @@ public static Object getInstance( String name, Object obj ) {
 //-------------------------------------------------------------------
 
 /**
-* It returns an array of class instances defined by property names
-* returned by {@link #getNames(String)}.
-* The classes must implement a constructor which
-* takes one String parameter, which will be the full property name of the class
-* in the configuration.
-* Note that constructors can see the configuration information so they can
-* make use of it. The class names are defined by the property names returned
-* by {@link #getNames(String)}.
-* @param name Prefix of the list of configuration properties which will be
+* It returns an array of class instances.
+* The instances are constructed by calling {@link #getInstance(String)}
+* on the names returned by {@link #getNames(String)}.
+* @param name The component type (ie prefix of the list of configuration
+* properties) which will be
 * passed to {@link #getNames(String)}.
-* @throws RuntimeException if there's any problem with creating the objects.
 */
 public static Object[] getInstanceArray( String name ) {
 
@@ -974,31 +977,15 @@ public static Object[] getInstanceArray( String name ) {
 //-------------------------------------------------------------------
 
 /**
- * Returns an array of names starting with the specified name.
- * {@link #getInstanceArray} will use this method to create instances.
- * In other words, calling
- * {@link #getInstance(String)} with these names results in the
- * same instances {@link #getInstanceArray} returns.
- *
- * <p>
+ * Returns an array of names prefixed by the specified name.
  * The array is sorted as follows. If there is no config entry
- * <code>PAR_INCLUDE+"."+name</code> or
- * <code>PAR_ORDER+"."+name</code> then the order is aplhabetical. Otherwise
- * this entry defines the order. It must contain a list of entries
- * from the values that belong to the given <code>name</code>, but
- * <em>without</em> the prefix. That is, eg <code>"first"</code> instead of
- * <code>name+".first"</code>.
- * It is assumed that these values contain only word characters (alphanumeric
- * and underscore '_'. The order configuration entry thus contains a list
- * of entries separated by any non-word characters.
- * <p>
- * It is not required that all entries are listed.
- * If {@value #PAR_INCLUDE} is used, then only those entries are returned
- * that are listed.
- * If {@value #PAR_ORDER} is used, then all names are returned,
- * but the array will start
- * with those that are listed. The rest of the names follow in alphabetical
- * order.
+ * <code>{@value #PAR_INCLUDE}+"."+name</code> or
+ * <code>{@value #PAR_ORDER}+"."+name</code> then the order is
+ * aplhabetical. Otherwise
+ * this entry defines the order. For more information see
+ * {@link Configuration}.
+ * @param name the component type (ie, the prefix)
+ * @return the full property names in the order specified by the configuration
  */
 public static String[] getNames( String name ) 
 {
@@ -1018,9 +1005,9 @@ public static String[] getNames( String name )
 //-------------------------------------------------------------------
 
 /**
- * The input of this method is a set of item <code>names</code>
+ * The input of this method is a set of property <code>names</code>
  * (eg initializers,
- * observers, dynamics and protocols) and a string specifying the type
+ * controls and protocols) and a string specifying the type
  * (prefix) of these.
  * The output is in <code>names</code>, which will contain a permutation
  * of the original array.
@@ -1043,9 +1030,9 @@ public static String[] getNames( String name )
  * 
  * 
  * @param names
- *   the set of item names to be searched
+ *   the set of property names to be searched
  * @param type 
- *   the string identifying the particular set of items to be inspected
+ *   the string identifying the particular set of properties to be inspected
  */
 private static String[] order(String[] names, String type)
 {
@@ -1187,7 +1174,7 @@ private static double compareStrings(String str1, String str2)
 	ArrayList pairs1 = wordLetterPairs(str1.toUpperCase());
 	ArrayList pairs2 = wordLetterPairs(str2.toUpperCase());
 	int intersection = 0;
-	int union = pairs1.size() + pairs2.size();
+	int union_ = pairs1.size() + pairs2.size();
 	for (int i = 0; i < pairs1.size(); i++) {
 		Object pair1 = pairs1.get(i);
 		for (int j = 0; j < pairs2.size(); j++) {
@@ -1199,7 +1186,7 @@ private static double compareStrings(String str1, String str2)
 			}
 		}
 	}
-	return (2.0 * intersection) / union;
+	return (2.0 * intersection) / union_;
 }
 
 //-------------------------------------------------------------------

@@ -31,9 +31,7 @@ import peersim.cdsim.CDProtocol;
  */
 public class AverageFunction extends SingleValueHolder implements CDProtocol {
 
-public AverageFunction(String prefix) { super(prefix); }
-
-public AverageFunction(String prefix, Object obj) { this(prefix); }
+public AverageFunction(String prefix, Object obj) { super(prefix,obj); }
 
 /*public Object clone() throws CloneNotSupportedException {
 	

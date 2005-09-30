@@ -45,9 +45,8 @@ protected double value;
 
 /**
  * Does nothing.
- * @param prefix the configuration prefix for this class
  */
-public SingleValueHolder(String prefix)
+public SingleValueHolder(String prefix, Object obj)
 {
 }
 

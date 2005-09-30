@@ -45,9 +45,9 @@ protected long lvalue;
 
 /**
  * Builds a new (not initialized) value holder.
- * @param prefix the configuration prefix for this class
+ * Calls super constructor.
  */
-public TestVectors(String prefix) { super(prefix); }
+public TestVectors(String prefix, Object obj) { super(prefix,obj); }
 
 //--------------------------------------------------------------------------
 

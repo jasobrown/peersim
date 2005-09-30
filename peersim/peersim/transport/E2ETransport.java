@@ -69,7 +69,7 @@ private int router = -1;
  * Reads configuration parameters. Actual initialization (i.e.,
  * router assignment) is delegated to initializers.
  */
-public E2ETransport(String prefix)
+public E2ETransport(String prefix, Object obj)
 {
 	tid = CommonState.getPid();
 	local = Configuration.getLong(prefix + "." + PAR_LOCAL, 0);

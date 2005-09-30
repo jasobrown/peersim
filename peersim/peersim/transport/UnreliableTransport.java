@@ -72,7 +72,7 @@ private final float loss;
 /**
  * Reads configuration parameter.
  */
-public UnreliableTransport(String prefix)
+public UnreliableTransport(String prefix, Object obj)
 {
 	transport = Configuration.getPid(prefix+"."+PAR_TRANSPORT);
 	loss = (float) Configuration.getDouble(prefix+"."+PAR_DROP);

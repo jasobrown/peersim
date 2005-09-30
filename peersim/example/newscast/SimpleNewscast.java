@@ -65,7 +65,7 @@ protected int[] tstamps;
 // =====================================================================
 
 
-public SimpleNewscast(String n) {
+public SimpleNewscast(String n, Object obj) {
 	
 	final int cachesize = Configuration.getInt(n+"."+PAR_CACHE);
 	if(SimpleNewscast.tn == null || SimpleNewscast.tn.length < cachesize)
@@ -76,11 +76,6 @@ public SimpleNewscast(String n) {
 	
 	cache = new Node[cachesize];
 	tstamps = new int[cachesize];
-
-}
-
-public SimpleNewscast(String s, Object obj) {
-    this(s);
 }
 
 // ---------------------------------------------------------------------

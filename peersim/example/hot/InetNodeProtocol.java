@@ -26,7 +26,7 @@ public class InetNodeProtocol extends IdleProtocol {
     
     /** Creates a new instance of hotNodeProtocol */
     public InetNodeProtocol(String prefix, Object obj) {
-        super(prefix);
+        super(prefix,obj);
         in_degree = 0;
         hops = 0;
         isroot = false;

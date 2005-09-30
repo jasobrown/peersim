@@ -1,6 +1,5 @@
 GJ 30/09/05
-- Fixed some protocols to comply to the (String,Object) signature constructor.
-  In particular: IdleProtocol and SimpleNewscast has been fixed.
+- Fixed all protocols to comply to the (String,Object) signature constructor.
 
 MJ 30/09/05
 - cleaned up the Configuration package. Note that the behavior of getInstance

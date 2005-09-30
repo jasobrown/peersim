@@ -33,7 +33,7 @@ public static final int CUTOFF=10;
 // =====================================================================
 
 
-public Test(String n) { super(n); }
+public Test(String n,Object obj) { super(n,obj); }
 
 // ---------------------------------------------------------------------
 

@@ -50,7 +50,7 @@ protected double quota; // current cycle quota
 //--------------------------------------------------------------------------
 public BasicBalance(String prefix, Object obj)
 {
-	super(prefix);
+	super(prefix,obj);
 	// get quota value from the config file. Default 1.
 	quota_value = (double) (Configuration.getInt(prefix + "." + PAR_QUOTA, 1));
 	quota = quota_value;

@@ -64,6 +64,10 @@ public IdleProtocol(String s)
 	len = 0;
 }
 
+public IdleProtocol(String s, Object o){
+    this(s);
+}
+
 //--------------------------------------------------------------------------
 
 public Object clone() throws CloneNotSupportedException

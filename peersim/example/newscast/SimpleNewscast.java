@@ -79,6 +79,10 @@ public SimpleNewscast(String n) {
 
 }
 
+public SimpleNewscast(String s, Object obj) {
+    this(s);
+}
+
 // ---------------------------------------------------------------------
 
 public Object clone() throws CloneNotSupportedException {

@@ -117,7 +117,7 @@ import org.lsmp.djep.groupJep.*;
   </pre>
   will result in returning <em>only</em> <code>observer.conn</code> and
   <code>observer.2</code>, in this order.
-  Note that for example the empy list results in a zero length array in this
+  Note that for example the empty list results in a zero length array in this
   case.
   <em>Important!</em> If include is
   defined then ordering is ignored. That is, include is stronger than order.
@@ -334,7 +334,7 @@ public static Properties setConfig( Properties p ) {
 	
 	// initialize protocol id-s
 	protocols = new HashMap<String,Integer>();
-	String[] prots = getNames(PAR_PROT);//they're retunred in correct order
+	String[] prots = getNames(PAR_PROT);//they're returned in correct order
 	for(int i=0; i<prots.length; ++i)
 	{
 		protocols.put(  prots[i].substring(PAR_PROT.length()+1),

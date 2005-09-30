@@ -1,3 +1,7 @@
+SV 30/09/05
+- Updated peersim.config.FastConfig to support multiple linkables per protocol,
+  and fixed respective documentation.
+
 GJ 26/09/05
 - Removed example.hot.InetFactory class: old and unused.
 - Updated exscript.txt config file.

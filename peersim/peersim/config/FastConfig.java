@@ -19,14 +19,14 @@
 package peersim.config;
 
 /**
- * Reads configuration for relations between protocols. This class is not
- * strictly necessary because the protocols can read the configuration
- * themselves too. It contains nothing more than is contained in the
- * configuratin, only in a format that is much faster to read, so it can be used
- * runtime. Currently it processes only configuration parameter "linkable".
+ * Reads configuration regarding relations between protocols.
  * 
+ * Technically, this class is not necessary because protocols could
+ * access the configuration directly. However, it provides much faster
+ * access to "linkable" and "transport" information, enhancing runtime speed.
+ *
  * This class is a static singleton and is initialized only when first accessed.
- * During initialization it reads the configuration and initializes the links.
+ * During initialization it reads and caches the configuration info it handles.
  */
 public class FastConfig
 {
@@ -49,10 +49,10 @@ private static final String PAR_LINKABLE = "linkable";
 private static final String PAR_TRANSPORT = "transport";
 
 /**
- * This array stores the protocol id of the {@link peersim.core.Linkable}
- * protocol that is linked to the protocol given by the array index.
+ * This array stores the protocol ids of the {@link peersim.core.Linkable}
+ * protocols that are linked to the protocol given by the array index.
  */
-protected static final int[] links;
+protected static final int[][] links;
 
 /**
  * This array stores the protocol id of the {@link peersim.transport.Transport}
@@ -68,28 +68,35 @@ protected static final int[] transports;
 /**
  * This static initialization block reads the configuration for information that
  * it understands. Currently it understands property {@value PAR_LINKABLE}
- * and {@value PAR_TRANFER}. When a
- * protocol has these parameters, it stores this info in a quickly
- * accessible array so that protocols can use it to quickly access this
- * information.
+ * and {@value PAR_TRANSPORT}.
+ * 
+ * Protocols' linkable and transport definitions are prefetched
+ * and stored in arrays, to enable fast access during simulation.
  *
- * Note that this class does not perform any type checks. The purpose if the
- * class is purely to
- * speed up the dumb reading of the configuration data.
+ * Note that this class does not perform any type checks. The purpose of the
+ * class is purely to speed up access to linkable and transport information,
+ * by providing a fast alternative to reading directly from the
+ * <code>Configuration</code> class.
  */
 static {
-
 	String[] names = Configuration.getNames(Configuration.PAR_PROT);
-	links = new int[names.length];
+	links = new int[names.length][];
 	transports = new int[names.length];
 	for (int i = 0; i < names.length; ++i)
 	{
 		if (Configuration.contains(names[i] + "." + PAR_LINKABLE))
-			links[i] = 
-			Configuration.getPid(names[i] + "." + PAR_LINKABLE);
+		{
+			// get string of linkables
+			String str = Configuration.getString(names[i] + "." + PAR_LINKABLE);
+			// split around non-word characters
+			String[] linkNames = str.split("\\W+");
+			links[i] = new int[linkNames.length];
+			for (int j=0; j<linkNames.length; ++j)
+				links[i][j] = Configuration.lookupPid(linkNames[j]);
+		}		
 		else
-			links[i] = -1;
-		
+			links[i] = new int[0]; // empty set
+
 		if (Configuration.contains(names[i] + "." + PAR_TRANSPORT))
 			transports[i] = 
 			Configuration.getPid(names[i] + "." + PAR_TRANSPORT);
@@ -104,27 +111,48 @@ static {
 
 
 /**
- * Returns true if the given protocol has a linkable protocol associated with
- * it, otherwise false.
+ * Returns true if the given protocol has at least one linkable protocol
+ * associated with it, otherwise false.
  */
-public static boolean hasLinkable(int pid) { return links[pid] >= 0; }
+public static boolean hasLinkable(int pid) { return numLinkables(pid) > 0; }
 
 // ---------------------------------------------------------------------
 
 /**
- * Returns the protocol id used by the protocol identified by pid. Throws an
+ * Returns the number of linkable protocols associated with a given protocol.
+ */
+public static int numLinkables(int pid) { return links[pid].length; }
+
+// ---------------------------------------------------------------------
+
+/**
+ * Returns the protocol id of the <code>linkIndex</code>-th linkable used by
+ * the protocol identified by pid. Throws an
  * IllegalParameterException if there is no linkable associated with the given
- * protocol: we assume here that his happens when the configuration is
+ * protocol: we assume here that this happens when the configuration is
  * incorrect.
  */
-public static int getLinkable(int pid)
+public static int getLinkable(int pid, int linkIndex)
 {
-	if (links[pid] < 0) {
+	if (linkIndex >= numLinkables(pid)) {
 		String[] names = Configuration.getNames(Configuration.PAR_PROT);
 		throw new IllegalParameterException(names[pid],
-		"Protocol " + pid + " has no "+PAR_LINKABLE+" parameter");
+			"Protocol " + pid + " has no "+PAR_LINKABLE+
+			" parameter with index" + linkIndex);
 	}
-	return links[pid];
+	return links[pid][linkIndex];
+}
+
+//---------------------------------------------------------------------
+
+/**
+ * Invokes <code>getLinkable(pid, 0)</code>.
+ * Used for backward compatibility.
+ */
+@Deprecated
+public static int getLinkable(int pid)
+{
+	return getLinkable(pid, 0);
 }
 
 // ---------------------------------------------------------------------
@@ -141,10 +169,11 @@ public static boolean hasTransport(int pid)
 // ---------------------------------------------------------------------
 
 /**
- * Returns the protocol id used by the protocol identified by pid. Throws an
- * IllegalParameterException if there is no transport associated with the given
- * protocol: we assume here that his happens when the configuration is
- * incorrect.
+ * Returns the id of the transport protocol used by the protocol identified
+ * by pid.
+ * Throws an IllegalParameterException if there is no transport associated
+ * with the given protocol: we assume here that his happens when the
+ * configuration is incorrect.
  */
 public static int getTransport(int pid)
 {

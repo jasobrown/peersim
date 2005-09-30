@@ -54,7 +54,7 @@ public void setIndex(int index);
 
 /**
  * Returns the index of this node. It is such that
- * <code>Network.get(n.getIndex())<code> returns n. This index can
+ * <code>Network.get(n.getIndex())</code> returns n. This index can
  * change during a simulation, it is not a fixed id.
  * @see Network#get
  */

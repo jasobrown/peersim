@@ -32,7 +32,7 @@ extends Protocol
 {
 
 	/**
-	* This method is invoked by the scheduler to deliver eve\nts to the
+	* This method is invoked by the scheduler to deliver events to the
 	* protcol. Apart from the event object, information about the node
 	* and the protocol identifier are also provided. Additional information
 	* can be accessed through the {@link CommonState} class.

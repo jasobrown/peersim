@@ -42,7 +42,7 @@ public RandNextCycle(String n) { super(n); }
 /**
 * Calls super.clone().
 */
-protected Object clone() throws CloneNotSupportedException {
+public Object clone() throws CloneNotSupportedException {
 	
 	return super.clone();
 }

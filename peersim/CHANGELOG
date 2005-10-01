@@ -9,6 +9,7 @@ MJ 01/10/05
 - Changed CDScheduler so that in now stores scheduling info for protocols
   in a public static array
 - Cleaned up the transport package documentation.
+- Cleaned up the edsim package documentation.
 
 AM 01/10/05
 - Fixed all protocols to comply to the (String) signature constructor 

@@ -23,10 +23,10 @@ import peersim.cdsim.CDProtocol;
 
 
 /**
-* This class is used to wrap a CDProtocol instance into an event so
+* This class is used to wrap a {@link CDProtocol} instance into an event so
 * that it can be used in the event based simulation engine.
-* This class is responsible for calling the nextCycle method of the CDProtocol
-* and to schedule the next cycle.
+* This class is responsible for calling
+* {@link CDProtocol#nextCycle} and also to schedule the consequtive cycle.
 * In the configuration of an event driven simulation {@link CDProtocol}s can be
 * configured using {@link CDScheduler}, which places appropriate instances of
 * this events in the queue.
@@ -48,21 +48,19 @@ public class NextCycleEvent implements Cloneable {
 /**
 * Reads configuration to initialize the object. Extending classes should
 * have a constructor with the same signature, often as simple as
-* <pre>super(n)</pre>.
-* This constructor is called by internal classes only.
+* <code>super(n)</code>.
 */
-protected NextCycleEvent(String n) {
-}
+public NextCycleEvent(String n) {}
 
 // --------------------------------------------------------------------
 
 /**
 * Returns a clone of the object. Overriding this method is necessary and
-* typically is as simple as <pre>return super.clone()</pre>. In general,
-* always use <pre>super.clone()</pre> to obtain the object to be returned
+* typically is as simple as <code>return super.clone()</code>. In general,
+* always use <code>super.clone()</code> to obtain the object to be returned
 * on which you can perform optional deep cloning operations (arrays, etc).
 */
-protected Object clone() throws CloneNotSupportedException {
+public Object clone() throws CloneNotSupportedException {
 	
 	return super.clone();
 }
@@ -98,7 +96,8 @@ public final void execute() {
 /**
 * Calculates the delay until the next execution of the protocol.
 * This default impementation returns a constant delay equal to the step
-* parameter of the schedule of this event (as set in the config file).
+* parameter (cycle length in this case) of the schedule of this event
+* (as set in the config file).
 */
 protected long nextDelay(long step) {
 	

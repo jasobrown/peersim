@@ -49,7 +49,7 @@ public class Scheduler {
 * Defaults to 1.
 * @config
 */
-public static final String PAR_STEP = "step";
+private static final String PAR_STEP = "step";
 
 /** 
 * Defaults to -1.

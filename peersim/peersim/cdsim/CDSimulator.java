@@ -26,10 +26,12 @@ import peersim.core.*;
 * This is the cycle driven simulation engine. 
 * It is a fully static singleton class.
 * For a cycle driven simulation 
-* the configuration has to describe a set of {@link CDProtocol}s, and their
+* the configuration can describe a set of {@link Protocol}s, and their
 * ordering, a set of {@link Control}s and their ordering and a set of
 * initializers and their ordering. See parameters {@value #PAR_INIT},
 * {@value #PAR_CTRL}.
+* Out of the set of protocols, this engine only executes the ones that
+* implement the {@link CDProtocol} interface.
 * <p>
 * One experiment run by {@link #nextExperiment} works as follows.
 * First the initializers are run in the specified order, then the following
@@ -108,6 +110,12 @@ private static Control[] controls=null;
 /** Holds the control schedulers of this simulation */
 private static Scheduler[] ctrlSchedules = null;
 
+
+// =============== initialization ======================================
+// =====================================================================
+
+/** to prevent construction */
+private CDSimulator() {}
 
 // =============== private methods =====================================
 // =====================================================================

@@ -24,7 +24,60 @@ import peersim.core.*;
 
 
 /**
- * Event-driven simulator.
+* Event-driven simulator engine.
+* It is a fully static singleton class.
+* For an event driven simulation 
+* the configuration has to describe a set of {@link Protocol}s,
+* a set of {@link Control}s and their ordering and a set of
+* initializers and their ordering. See parameters {@value #PAR_INIT},
+* {@value #PAR_CTRL}.
+* <p>
+* One experiment run by {@link #nextExperiment} works as follows.
+* First the initializers are run in the specified order. Then the first
+* execution of all specified controls is scheduled in the event queue.
+* This scheduling is defined by the {@link Scheduler} parameters of each
+* control component.
+* After this, the first event is taken from the event queue. If the event
+* wraps a control, the control is executed, otherwise the event is
+* delivered to the destination protocol, that must implement
+* {@link EDProtocol}. This
+* is iterated while the current time is less than {@value #PAR_ENDTIME} or
+* the queue becomes empty.
+* If more control events fall at the same time point, then the order given
+* in the configuration is respected. If more non-control events fall at the same
+* time point, they are processed in a random order.
+* <p>
+* The engine also provides the interface to add events to the queue.
+* Note that this engine does not explicitly run the protocols.
+* In all cases at least one control or initializer has to be defined that
+* sends event(s) to protocols.
+* <p>
+* Controls can be scheduled (using the {@link Scheduler}
+* parameters in the configuration) to run after the experiment
+* has finished.
+* That is, each experiment is finished by running the controls that are
+* scheduled to be run after the experiment.
+* <p>
+* Any control can interrupt an experiment at any time it is
+* executed by returning true in method {@link Control#execute}.
+* However, the controls scheduled to run after the experiment are still
+* executed completely, irrespective of their return value and even if
+* the experiment was interrupted.
+* <p>
+* {@link CDScheduler} has to be mentioned that is a control that
+* can bridge the gap between {@link peersim.cdsim} and the event driven
+* engine. It can wrap {@link peersim.cdsim.CDProtocol} appropriately so that the
+* execution of the cycles are scheduled in configurable ways for each node
+* individually. In some cases this can add a more fine-grained control
+* and more realism to {@link peersim.cdsim.CDProtocol} simulations,
+* at the cost of some
+* loss in performance.
+* <p>
+* When protocols at different nodes send messages to each other, they might
+* want to use a model of the transport layer so that in the simulation
+* message delay and message omissions can be modeled in a modular way.
+* This functionality is implemented in package {@link peersim.transport}.
+* @see Configuration
  */
 public class EDSimulator
 {
@@ -35,7 +88,7 @@ public class EDSimulator
 	
 /**
  * The ending time for simulation. Only events that have a strictly smaller
- * value are executed..
+ * value are executed.
  * @config
  */
 private static final String PAR_ENDTIME = "simulation.endtime";	
@@ -43,29 +96,39 @@ private static final String PAR_ENDTIME = "simulation.endtime";
 /**
  * This parameter specifies
  * how often the simulator should log the current time on the
- * console. Standard error is used for such logs.
+ * standard error.
  * @config
  */
 private static final String PAR_LOGTIME = "simulation.logtime";	
 
 /** 
  * This parameter specifies how many
- * bits are used to order events that occurs at the same time. Defaults
+ * bits are used to order events that occur at the same time. Defaults
  * to 8. A value smaller than 8 causes an IllegalParameterException.
- * Higher values allow for a better discrimination, but may reduce
- * the granularity of time values.
+ * Higher values allow for a better discrimination, but reduce
+ * the maximal time steps that can be simulated.
  * @config 
  */	
 private static final String PAR_RBITS = "simulation.timebits";
 
 /**
  * This is the prefix for initializers.
+ * These have to be of type
+ * {@link Control}. They are run at the beginning of each experiment, in the
+ * order specified by the configuration.
+ * @see Configuration
+ * @config
  * @config
  */
 private static final String PAR_INIT = "init";
 
 /**
- * This is the prefix for network dynamism managers.
+ * This is the prefix for {@link Control} components.
+ * They are run at the time points defined by the
+ * {@link Scheduler} associated to them. If some controls have to be
+ * executed at the same time point, they are executed in the order
+ * specified in the configuration.
+ * @see Configuration
  * @config
  */
 private static final String PAR_CTRL = "control";
@@ -76,24 +139,30 @@ private static final String PAR_CTRL = "control";
 //---------------------------------------------------------------------
 
 /** Maximum time for simulation */
-protected static long endtime;
+private static long endtime;
 
 /** Log time */
-protected static long logtime;
+private static long logtime;
 
 /** Number of bits used for random */
 private static int rbits;
 
 /** holds the modifiers of this simulation */
-protected static Control[] controls=null;
+private static Control[] controls=null;
 
 /** Holds the control schedulers of this simulation */
-protected static Scheduler[] ctrlSchedules = null;
+private static Scheduler[] ctrlSchedules = null;
 
 /** Ordered list of events (heap) */
-protected static Heap heap = new Heap();
+private static Heap heap = new Heap();
 
-protected static long nextlog = 0;
+private static long nextlog = 0;
+
+// =============== initialization ======================================
+// =====================================================================
+
+/** to prevent construction */
+private EDSimulator() {}
 
 //---------------------------------------------------------------------
 //Private methods
@@ -102,7 +171,7 @@ protected static long nextlog = 0;
 /**
  * Load and run initializers.
  */
-protected static void runInitializers() {
+private static void runInitializers() {
 	
 	Object[] inits = Configuration.getInstanceArray(PAR_INIT);
 	String names[] = Configuration.getNames(PAR_INIT);
@@ -117,7 +186,7 @@ protected static void runInitializers() {
 
 // --------------------------------------------------------------------
 
-protected static void scheduleControls()
+private static void scheduleControls()
 {
 	// load controls
 	String[] names = Configuration.getNames(PAR_CTRL);
@@ -155,13 +224,13 @@ protected static void scheduleControls()
  *   should be executed, if they happen to be at the same time, which is
  *   typically the case.
  * @param event 
- *   The object associated to this event
+ *   The control event
  */
-static void addControlEvent(long time, int order, Object event)
+static void addControlEvent(long time, int order, ControlEvent event)
 {
 	if (time >= endtime) return;
 	time = (time << rbits) | order;
-	heap.add(time, event, null, (byte) 0);
+	heap.add(time, event, null, (byte)0);
 }
 
 //---------------------------------------------------------------------
@@ -245,7 +314,7 @@ private static boolean executeNext() {
 //---------------------------------------------------------------------
 
 /**
- * Runs an experiment
+ * Runs an experiment, resetting everything except the random seed.
  */
 public static void nextExperiment() 
 {
@@ -296,8 +365,7 @@ public static void nextExperiment()
  * @param event 
  *   The object associated to this event
  * @param node 
- *   The node associated to the event. A value of null corresponds to a 
- *   control event and will be handled appropriately.  
+ *   The node associated to the event.
  * @param pid 
  *   The identifier of the protocol to which the event will be delivered
  */
@@ -317,7 +385,5 @@ public static void add(long delay, Object event, Node node, int pid)
 	time = (time << rbits) | CommonState.r.nextInt(1 << rbits);
 	heap.add(time, event, node, (byte) pid);
 }
-
-//---------------------------------------------------------------------
 
 }

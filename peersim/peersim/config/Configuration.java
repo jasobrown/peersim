@@ -863,6 +863,8 @@ public static Class getClass( String name, Class def ) {
 * of the class can see the configuration so it can make use of this name
 * to read its own parameters from it.
 * @param name Name of configuration property
+* @throws MissingParameterException if the given protperty is not defined
+* @throws IllegalParameterException if there is any problem creating the instance
 */
 public static Object getInstance( String name ) {
 
@@ -900,45 +902,27 @@ public static Object getInstance( String name ) {
 
 /**
 * Reads given configuration property for a class name. It returns an instance of
-* the class. The class must implement a constructor that takes a String
-* and an Object as
-* arguments. The value of the string will be <tt>name</tt>. The constructor
+* the class. The class must implement a constructor that takes a String as an
+* argument. The value of this string will be <tt>name</tt>. The constructor
 * of the class can see the configuration so it can make use of this name
 * to read its own parameters from it.
 * @param name Name of configuration property
-* @param obj the object to pass to the constructor
+* @param def The default object that is returned if there is no property
+* defined with the given name
+* @throws IllegalParameterException if the given name is defined but there is a
+* problem creating the instance.
 */
-public static Object getInstance( String name, Object obj ) {
-
-	Class c = getClass(name);		
-	final String classname = c.getSimpleName();
-
+public static Object getInstance( String name, Object def ) {
+	
 	try
 	{
-		Class pars[] = { String.class, Object.class };
-		Constructor cons = c.getConstructor( pars );
-		Object objpars[] = { name, obj };
-		return cons.newInstance( objpars );
+		return Configuration.getInstance(name);
 	}
-	catch( NoSuchMethodException e )
+	catch( MissingParameterException e )
 	{
-		throw new IllegalParameterException(name,
-			"Class " + classname + " has no " + classname +
-			"(String, Object) constructor");
+		debug(name, "" +def + " (DEFAULT)");
+		return def;
 	}
-	catch ( InvocationTargetException e) 
-	{
-		if (e.getTargetException() instanceof RuntimeException) {
-			throw (RuntimeException) e.getTargetException();
-		} else {
-			e.printStackTrace();
-			throw new RuntimeException(""+e.getTargetException());
-		}
-	}
-	catch( Exception e )
-	{
-		throw new IllegalParameterException(name, e+"");
-	} 
 }
 
 //-------------------------------------------------------------------

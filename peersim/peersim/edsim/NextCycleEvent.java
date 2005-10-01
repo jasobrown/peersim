@@ -41,9 +41,6 @@ import peersim.cdsim.CDProtocol;
 public class NextCycleEvent implements Cloneable {
 
 
-protected final Scheduler sch;
-
-
 // =============================== initialization ======================
 // =====================================================================
 
@@ -51,12 +48,10 @@ protected final Scheduler sch;
 /**
 * Reads configuration to initialize the object. Extending classes should
 * have a constructor with the same signature, often as simple as
-* <pre>super(n,obj)</pre>.
+* <pre>super(n)</pre>.
 * This constructor is called by internal classes only.
 */
-protected NextCycleEvent(String n, Object obj) {
-
-	sch = (Scheduler)obj;
+protected NextCycleEvent(String n) {
 }
 
 // --------------------------------------------------------------------
@@ -92,8 +87,8 @@ public final void execute() {
 	CDProtocol cdp = (CDProtocol)node.getProtocol(pid);
 	cdp.nextCycle(node,pid);
 	
-	long delay = nextDelay();
-	if( CommonState.getTime()+delay < sch.until )
+	long delay = nextDelay(CDScheduler.sch[pid].step);
+	if( CommonState.getTime()+delay < CDScheduler.sch[pid].until )
 		EDSimulator.add(delay, this, node, pid);
 
 }
@@ -105,9 +100,9 @@ public final void execute() {
 * This default impementation returns a constant delay equal to the step
 * parameter of the schedule of this event (as set in the config file).
 */
-protected long nextDelay() {
+protected long nextDelay(long step) {
 	
-	return sch.step;
+	return step;
 }
 
 }

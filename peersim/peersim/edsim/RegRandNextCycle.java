@@ -43,9 +43,9 @@ private long nextCycleStart = -1;
 /**
 * Calls super constructor.
 */
-public RegRandNextCycle(String n, Object obj) {
+public RegRandNextCycle(String n) {
 
-	super(n,obj);
+	super(n);
 }
 
 // --------------------------------------------------------------------
@@ -69,7 +69,7 @@ protected Object clone() throws CloneNotSupportedException {
 * intervals is defined by the first invocation which is in turn defined by
 * {@link CDScheduler} that initiates the protocol in question.
 */
-protected long nextDelay() {
+protected long nextDelay(long step) {
 	
 	// at this point nextCycleStart points to the start of the next cycle
 	// (the cycle after the one in which this execution is taking place)
@@ -79,18 +79,18 @@ protected long nextDelay() {
 	if(nextCycleStart<0)
 	{
 		// not initialized
-		nextCycleStart=now+sch.step;
+		nextCycleStart=now+step;
 	}
 	
 	// to be on the safe side, we do the next while loop.
 	// although currently it never executes
-	while(nextCycleStart<=now) nextCycleStart+=sch.step;
+	while(nextCycleStart<=now) nextCycleStart+=step;
 	
 	// we increment nextCycleStart to point to the start of the cycle
 	// after the next cycle
-	nextCycleStart+=sch.step;
+	nextCycleStart+=step;
 	
-	return nextCycleStart-now-CommonState.r.nextLong(sch.step)-1;
+	return nextCycleStart-now-CommonState.r.nextLong(step)-1;
 }
 
 }

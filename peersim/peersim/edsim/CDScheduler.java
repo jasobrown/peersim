@@ -71,9 +71,15 @@ private static final String PAR_PROTOCOL = "protocol";
 */
 private static final String PAR_RNDSTART = "randstart";
 
-private final NextCycleEvent[] nce;
+/**
+* Contains the scheduler objects for all {@link CDprotocol}s defined in the
+* configuration. The length of the array is the number of protocols defined,
+* but those entries that belong to protocols that are not {@link CDprotocol}s
+* are null.
+*/
+public static final Scheduler[] sch;
 
-private final Scheduler[] sch;
+private final NextCycleEvent[] nce;
 
 private final int[] pid;
 
@@ -84,12 +90,29 @@ private final boolean randstart;
 
 
 /**
+* Loads protocol schedulers for all protocols.
+*/
+static {
+
+	String[] names = Configuration.getNames(Node.PAR_PROT);
+	sch = new Scheduler[names.length];
+	for(int i=0; i<names.length; ++i)
+	{
+		if( Network.prototype.getProtocol(i) instanceof CDProtocol )
+			// with no default values for step to avoid
+			// "overscheduling" due to lack of step option.
+			sch[i] = new Scheduler(names[i],false);
+	}
+}
+
+// --------------------------------------------------------------------
+
+/**
 */
 public CDScheduler(String n) {
 
 	String[] prots=Configuration.getString(n+"."+PAR_PROTOCOL).split("\\s");
 	pid = new int[prots.length];
-	sch = new Scheduler[prots.length];
 	nce = new NextCycleEvent[prots.length];
 	for(int i=0; i<prots.length; ++i)
 	{
@@ -101,20 +124,9 @@ public CDScheduler(String n) {
 				"Only CDProtocols are accepted here");
 		}
 	
-		// with no default values to avoid "overscheduling"
-		// due to lack of step option.
-		String protname = Node.PAR_PROT+"."+prots[i];
-		sch[i] = new Scheduler(protname, false);
-	
-		if( Configuration.contains(n+"."+PAR_NEXTC) )
-		{
-			nce[i] = (NextCycleEvent)
-			  Configuration.getInstance(n+"."+PAR_NEXTC,sch[i]);
-		}
-		else
-		{
-			nce[i] = new NextCycleEvent((String)null,sch[i]);
-		}
+		nce[i] = (NextCycleEvent)
+			Configuration.getInstance(n+"."+PAR_NEXTC,
+			new NextCycleEvent(null));
 	}
 
 	randstart = Configuration.contains(n+"."+PAR_RNDSTART);
@@ -162,9 +174,10 @@ public void initialize(Node n) {
 		try { nceclone = nce[i].clone(); }
 		catch(CloneNotSupportedException e) {} //cannot possibly happen
 		
-		final long delay = firstDelay(sch[i].step);
+		final long delay = firstDelay(sch[pid[i]].step);
 		final long nexttime = time+delay;
-		if( nexttime < sch[i].until && nexttime >= sch[i].from )
+		if( nexttime < sch[pid[i]].until &&
+				nexttime >= sch[pid[i]].from )
 			EDSimulator.add(delay, nceclone, n, pid[i]);
 	}
 }

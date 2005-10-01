@@ -87,7 +87,8 @@ class Integers extends Group implements IntegralDomainI,HasDivI,
 
 	public Number valueOf(String str) {
 		BigDecimal bd = new BigDecimal(str);
-		return bd.round(MathContext.UNLIMITED);
+		//return bd.round(MathContext.UNLIMITED);
+		return bd.toBigInteger();
 	}
 	
 	public String toString() { return "Z: integers"; }

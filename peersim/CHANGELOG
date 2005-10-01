@@ -1,3 +1,14 @@
+MJ 01/10/05
+- Fixed some bugs in the previous commit
+- Chnaged the semantics of Configuration.getInstance(String,Object):
+  now the object is not a parameter that is passed to the constructor,
+  but a default object that is returned when the given name is not defined.
+  This behavior is more consistent, and if pars need to be passed to an
+  object, it can be solved in other ways (eg through methods after
+  construction).
+- Changed CDScheduler so that in now stores scheduling info for protocols
+  in a public static array
+
 AM 01/10/05
 - Fixed all protocols to comply to the (String) signature constructor 
   (the protocols classes)

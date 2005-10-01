@@ -136,11 +136,8 @@ protected Node getPeer()
  *          The peer with which we perform cache exchange
  * @param peerNode
  *          the node that hosts the peer newscast protocol instance
- * @param timestamp
- *          the timestamp now
  */
-protected void merge(Node thisNode, SimpleNewscast peer, Node peerNode,
-		int timestamp)
+protected void merge(Node thisNode, SimpleNewscast peer, Node peerNode )
 {
 	int i1 = 0; /* Index first cache */
 	int i2 = 0; /* Index second cache */
@@ -332,7 +329,7 @@ public void nextCycle(Node n, int protocolID)
 	}
 
 	SimpleNewscast peer = (SimpleNewscast) (peerNode.getProtocol(protocolID));
-	merge(n, peer, peerNode, CommonState.getIntTime());
+	merge(n, peer, peerNode);
 
 	// set new cache in this and peer
 	System.arraycopy(SimpleNewscast.tn, 0, cache, 0, cache.length);

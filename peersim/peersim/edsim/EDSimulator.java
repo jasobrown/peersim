@@ -136,7 +136,6 @@ protected static void scheduleControls()
 	for (int i=0; i < controls.length; i++) {
 		ControlEvent event = new ControlEvent(
 			controls[i], ctrlSchedules[i], order++);
-		EDSimulator.addControlEvent(ctrlSchedules[i].getNext(), order, event);
 		if (order > ((1 << rbits)-1))
 			throw new IllegalArgumentException(
 			"Too many control objects");

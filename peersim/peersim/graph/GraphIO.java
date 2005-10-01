@@ -251,7 +251,8 @@ throws IOException {
 		for(int j=0; j<CACHESIZE; ++j)
 		{
 			int a = dis.readInt();
-
+			dis.readLong();
+			
 			int agentIndex = gr.addNode(new Integer(a));
 			if( direction == 0 ) gr.setEdge(iind,agentIndex);
 			else gr.setEdge(agentIndex,iind);

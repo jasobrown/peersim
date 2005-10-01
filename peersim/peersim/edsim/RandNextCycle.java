@@ -35,7 +35,7 @@ public class RandNextCycle extends NextCycleEvent {
 /**
 * Calls super constructor.
 */
-public RandNextCycle(String n, Object obj) { super(n,obj); }
+public RandNextCycle(String n) { super(n); }
 
 // --------------------------------------------------------------------
 
@@ -57,9 +57,9 @@ protected Object clone() throws CloneNotSupportedException {
 * 2*<code>step</code> (exclusive)
 * (expected value is therefore <code>step</code>).
 */
-protected long nextDelay() {
+protected long nextDelay(long step) {
 	
-	return 1+CommonState.r.nextLong((sch.step<<1)-1);
+	return 1+CommonState.r.nextLong((step<<1)-1);
 }
 
 

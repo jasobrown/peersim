@@ -76,7 +76,7 @@ protected Object clone() throws CloneNotSupportedException {
 * Executes the nextCycle method of the protocol, and schedules the next call
 * using the delay returned by {@link #nextDelay}.
 * If the next execution time as defined by the delay is outside of the
-* valid times as defined by {@link #sch}, then the next event is not scheduled.
+* valid times as defined by {@link CDScheduler#sch}, then the next event is not scheduled.
 * Note that this means that this protocol will no longer be scheduled because
 * the next event after the next event is scheduled by the next event.
 */

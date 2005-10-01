@@ -72,9 +72,9 @@ private static final String PAR_PROTOCOL = "protocol";
 private static final String PAR_RNDSTART = "randstart";
 
 /**
-* Contains the scheduler objects for all {@link CDprotocol}s defined in the
+* Contains the scheduler objects for all {@link CDProtocol}s defined in the
 * configuration. The length of the array is the number of protocols defined,
-* but those entries that belong to protocols that are not {@link CDprotocol}s
+* but those entries that belong to protocols that are not {@link CDProtocol}s
 * are null.
 */
 public static final Scheduler[] sch;

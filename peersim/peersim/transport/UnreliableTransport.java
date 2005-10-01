@@ -26,10 +26,11 @@ import peersim.core.*;
  * This transport protocol can be combined with other transports
  * to simulate message losses. Its behavior is the following: each message
  * can be dropped based on the configured probability, or it will be sent
- * using the support transport protocol. 
+ * using the underlying transport protocol. 
  * <p>
  * The memory requirements are minimal, as a single instance is created and 
- * inserted in the protocol array of all nodes. 
+ * inserted in the protocol array of all nodes (because instances have no state
+ * that depends on the hosting node). 
  *
  * @author Alberto Montresor
  * @version $Revision$
@@ -42,7 +43,8 @@ public class UnreliableTransport implements Transport
 //---------------------------------------------------------------------
 
 /**
- * The name of the transport protocol to wrap.
+ * The name of the underlying transport protocol. This transport is
+ * extended with dropping messages.
  * @config
  */
 private static final String PAR_TRANSPORT = "transport";
@@ -83,7 +85,7 @@ public UnreliableTransport(String prefix)
 /**
 * Retuns <code>this</code>. This way only one instance exists in the system
 * that is linked from all the nodes. This is because this protocol has no
-* node specific state.
+* state that depends on the hosting node.
  */
 public Object clone()
 {
@@ -94,7 +96,10 @@ public Object clone()
 //Methods
 //---------------------------------------------------------------------
 
-// Comment inherited from interface
+/** Sends the message according to the underlying transport protocol.
+* With the configured probability, the message is not sent (ie the method does
+* nothing).
+*/
 public void send(Node src, Node dest, Object msg, int pid)
 {
 	try
@@ -114,7 +119,7 @@ public void send(Node src, Node dest, Object msg, int pid)
 	}
 }
 
-/** Simply returns the latency of the underlying protocol.*/
+/** Returns the latency of the underlying protocol.*/
 public long getLatency(Node src, Node dest)
 {
 	Transport t = (Transport) src.getProtocol(transport);

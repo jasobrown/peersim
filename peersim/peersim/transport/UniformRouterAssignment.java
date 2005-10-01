@@ -23,7 +23,8 @@ import peersim.core.*;
 
 
 /**
- * 
+ * Initializes {@link RouterInfo} protocols by assigning routers to them.
+ * The number of routers is defined by static singleton {@link E2ENetwork}.
  *
  * @author Alberto Montresor
  * @version $Revision$
@@ -36,7 +37,8 @@ public class UniformRouterAssignment implements Control
 //---------------------------------------------------------------------
 
 /** 
- * Parameter name used to configure the protocol that should be initialized
+ * Parameter name used to configure the {@link RouterInfo} protocol
+ * that should be initialized.
  * @config 
  */
 private static final String PAR_PROT = "protocol"; 
@@ -54,7 +56,7 @@ private int pid;
 //---------------------------------------------------------------------
 
 /**
- * Reads parameters.
+ * Reads configuration parameters.
  */
 public UniformRouterAssignment(String prefix)
 {
@@ -65,7 +67,12 @@ public UniformRouterAssignment(String prefix)
 //Methods
 //---------------------------------------------------------------------
 
-// Comment inherited from interface
+/**
+ * Initializes given {@link RouterInfo} protocol layer by assigning
+ * routers randomly.
+ * The number of routers is defined by static singleton {@link E2ENetwork}.
+* @return always false
+*/
 public boolean execute()
 {
 	int nsize = Network.size();
@@ -81,3 +88,4 @@ public boolean execute()
 }
 
 }
+

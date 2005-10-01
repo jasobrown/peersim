@@ -1,5 +1,17 @@
 <html><body>
 Classes and interfaces for simulating transport-level communication
-in overlay networks. <br>
+in overlay networks.
+This is achieved by classes implementing the interface
+{@link peersim.transport.Transport}, that are repsonsible for modeling
+message delay, message omissions, etc
+
+<p>
+It is also possible to use models of the underlying router network
+to determine latency ({@link peersim.transport.E2ETransport}).
+This model is stored in static singleton {@link peersim.transport.E2ENetwork}.
+This class can be initialized by controls using eg measurement data
+({@link peersim.transport.KingParser}). To be usable, nodes must be assigned
+to routers. An example control that does that is
+{@link peersim.transport.UniformRouterAssignment}.
 </body></html>
 

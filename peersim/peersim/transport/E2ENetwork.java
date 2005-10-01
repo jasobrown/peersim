@@ -20,8 +20,8 @@ package peersim.transport;
 
 
 /**
- * This static data structure emulates an underlying router network
- * of fixed size, and stores the latency measurements for all pair
+ * This static singleton emulates an underlying router network
+ * of fixed size, and stores the latency measurements for all pairs
  * of routers.
  *
  * @author Alberto Montresor
@@ -62,7 +62,10 @@ private E2ENetwork() {}
 
 /**
  * Resets the network, by creating a triangular (if symm is true) or
- * a rectangular (if symm is false) array of integers.
+ * a rectangular (if symm is false) array of integers. Initially all
+ * latencies between any pairs are set to be 0.
+ * @param size the number or routers
+ * @param symm if latency is symmetric between all pairs of routers
  */
 public static void reset(int size, boolean symm)
 {
@@ -77,9 +80,11 @@ public static void reset(int size, boolean symm)
 	}
 }
 	
+//---------------------------------------------------------------------
+
 /**
  * Returns the latency associated to the specified (sender, receiver)
- * pair.
+ * pair. Routers are indexed from 0.
  * 
  * @param sender the index of the sender
  * @param receiver the index of the receiver
@@ -88,8 +93,6 @@ public static void reset(int size, boolean symm)
  */
 public static int getLatency(int sender, int receiver) 
 {
-	if (sender==receiver)
-		return 0;
 	if (symm) {
 		// Symmetric network
 		if (sender < receiver) {
@@ -101,9 +104,11 @@ public static int getLatency(int sender, int receiver)
 	return array[sender][receiver];
 }
 
+//---------------------------------------------------------------------
+
 /**
  * Sets the latency associated to the specified (sender, receiver)
- * pair.
+ * pair. Routers are indexed from 0.
  * 
  * @param sender the index of the sender
  * @param receiver the index of the receiver
@@ -122,8 +127,11 @@ public static void setLatency(int sender, int receiver, int latency)
  	array[sender][receiver] = latency;
 }
 
+//---------------------------------------------------------------------
+
 /**
- * Returns the current size of the underlying network.
+ * Returns the current size of the underlying network (ie, the number of
+ * routers).
  */
 public static int getSize()
 {

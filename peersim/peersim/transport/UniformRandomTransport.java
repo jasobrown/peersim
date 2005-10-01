@@ -24,7 +24,9 @@ import peersim.edsim.*;
 
 
 /**
- * 
+ * Implement a transport layer that reliably delivers messages with a random
+ * delay, that is drawn from the configured interval according to the uniform
+ * distribution.
  *
  * @author Alberto Montresor
  * @version $Revision$
@@ -65,7 +67,7 @@ private final long range;
 //---------------------------------------------------------------------
 
 /**
- * 
+ * Reads configuration parameter.
  */
 public UniformRandomTransport(String prefix)
 {
@@ -93,7 +95,11 @@ public Object clone()
 //Methods
 //---------------------------------------------------------------------
 
-// Comment inherited from interface
+/**
+ * Delivers the message with a random
+ * delay, that is drawn from the configured interval according to the uniform
+ * distribution.
+*/
 public void send(Node src, Node dest, Object msg, int pid)
 {
 	// avoid calling nextLong if possible
@@ -101,7 +107,11 @@ public void send(Node src, Node dest, Object msg, int pid)
 	EDSimulator.add(delay, msg, dest, pid);
 }
 
-//Comment inherited from interface
+/**
+ * Returns a random
+ * delay, that is drawn from the configured interval according to the uniform
+ * distribution.
+*/
 public long getLatency(Node src, Node dest)
 {
 	return (range==1?min:min + CommonState.r.nextLong(range));

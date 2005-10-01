@@ -24,8 +24,7 @@ import peersim.config.*;
 import peersim.core.Control;
 
 /**
- * Reads a kind data set, inserting the latency information in a E2ENetwork
- * data structure.
+ * Initializes static singleton {@link E2ENetwork} by reading a king data set.
  * 
  * @author Alberto Montresor
  * @version $Revision$
@@ -84,7 +83,10 @@ public KingParser(String prefix)
 // Methods
 // ---------------------------------------------------------------------
 
-// Comment inherited from interface
+/**
+ * Initializes static singleton {@link E2ENetwork} by reading a king data set.
+* @return  always false
+*/
 public boolean execute()
 {
 	BufferedReader in = null;

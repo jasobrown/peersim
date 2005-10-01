@@ -24,9 +24,12 @@ import peersim.edsim.*;
 
 
 /**
- * This transport protocol is based on the E2ENetwork class. Each instance
- * of this class is assigned to one of the routers contained in E2ENetwork,
- * and that class is used to obtain the latency for messages sending.
+ * This transport protocol is based on the {@link E2ENetwork} class.
+ * Each instance
+ * of this transport class is assigned to one of the routers contained in
+ * the (fuly static singleton) {@link E2ENetwork},
+ * and subsequently the {@link E2ENetwork} class is used to obtain the
+ * latency for messages sending based on the router assignment.
  *
  * @author Alberto Montresor
  * @version $Revision$
@@ -39,7 +42,10 @@ public class E2ETransport implements Transport, RouterInfo
 //---------------------------------------------------------------------
 
 /**
- * The latency delay for local connections. Defaults to 0.
+ * The delay that corresponds to the time spent on the source (and destination)
+ * nodes. In other words, full latency is calculated by fetching the latency
+ * that belongs to communicting between two routers, incremented by
+ * twice this delay. Defaults to 0.
  * @config
  */
 private static final String PAR_LOCAL = "local";
@@ -51,7 +57,7 @@ private static final String PAR_LOCAL = "local";
 /** Identifier of this transport protocol */
 private static int tid;
 	
-/** Latency of local connection between nodes */
+/** Local component of latency */
 private static long local;
 
 //---------------------------------------------------------------------
@@ -66,8 +72,7 @@ private int router = -1;
 //---------------------------------------------------------------------
 
 /**
- * Reads configuration parameters. Actual initialization (i.e.,
- * router assignment) is delegated to initializers.
+ * Reads configuration parameters.
  */
 public E2ETransport(String prefix)
 {
@@ -78,7 +83,7 @@ public E2ETransport(String prefix)
 //---------------------------------------------------------------------
 
 /**
- * Clones the object. No actual initialization is performed.
+ * Clones the object.
  */
 public Object clone() throws CloneNotSupportedException
 {
@@ -89,7 +94,10 @@ public Object clone() throws CloneNotSupportedException
 //Methods inherited by Transport
 //---------------------------------------------------------------------
 
-// Comment inherited from interface
+/**
+* Delivers the message reliably, with the latency calculated by
+* {@link #getLatency}.
+*/
 public void send(Node src, Node dest, Object msg, int pid)
 {
 	/* Assuming that the sender corresponds to the source node */
@@ -102,7 +110,12 @@ public void send(Node src, Node dest, Object msg, int pid)
 
 //---------------------------------------------------------------------
 
-//Comment inherited from interface
+/**
+* Calculates latency using the static singleton {@link E2ENetwork}.
+* It looks up which routers the given nodes are assigned to, then
+* looks up the corresponding latency. Finally it increments this value
+* by adding twice the local delay configured by {@value #PAR_LOCAL}.
+*/
 public long getLatency(Node src, Node dest)
 {
 	/* Assuming that the sender corresponds to the source node */

@@ -18,14 +18,13 @@
 
 package peersim.vector;
 
-import java.lang.reflect.*;
-import peersim.core.*;
 import peersim.config.*;
+import peersim.core.*;
 
 /**
  * Normalizes the values of a protocol vector.
  * The normalization is based on the L1 norm, that is, the sum of the
- * absolute values of the vector elements. Parameter {@value PAR_L1} defines
+ * absolute values of the vector elements. Parameter {@value #PAR_L1} defines
  * the L1 norm that the vector will have after normalization.
  * @see VectControl
  * @see peersim.vector

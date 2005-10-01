@@ -59,7 +59,7 @@ private Scheduler scheduler;
  * for the first execution adding it to the priority queue of the event driven
  * simulation.
  */
-ControlEvent(Control control, Scheduler scheduler, int order)
+public ControlEvent(Control control, Scheduler scheduler, int order)
 {
 	this.control = control;
 	this.order = order;

@@ -43,7 +43,7 @@ class ClassFinder
 	
 	
 /** Local map containing the associations */
-private static Map map = new TreeMap();	
+private static Map<String,String> map = new TreeMap<String,String>();	
 	
 static {
 	try {
@@ -87,7 +87,7 @@ public static String getShortName(String className) {
  */
 public static String getQualifiedName(String name)
 {
-	return (String) map.get(name);
+	return map.get(name);
 }
 
 //--------------------------------------------------------------------------
@@ -110,7 +110,7 @@ public static String getQualifiedName(String name)
  * @param map
  * @throws IOException
  */
-private static void findClasses(Map map)
+private static void findClasses(Map<String,String> map)
 throws IOException
 {
   String classPath = System.getProperty( "java.class.path" );
@@ -143,7 +143,7 @@ throws IOException
  * @param pathFile the file name of the associated jar file
  * @throws IOException
  */
-private static void findClassInJar(Map map, File pathFile)
+private static void findClassInJar(Map<String,String> map, File pathFile)
 throws IOException
 {
   ZipFile zipFile = new ZipFile( pathFile );
@@ -172,7 +172,8 @@ throws IOException
  * @param pathFile the file (directory) to be analyzed
  * @throws IOException
  */
-private static void findClassInPathDir( Map map, String pathElement, File pathFile ) 
+private static void findClassInPathDir( Map<String,String> map, String 
+		pathElement, File pathFile ) 
 	throws IOException
 {
   String[] list = pathFile.list();
@@ -208,15 +209,13 @@ private static String classname(String classFile)
  * Testing.
  * 
  * @param argv
- * @throws IOException
  */
 public static void main( String[] argv )
-throws IOException
 {
 	Iterator i = map.keySet().iterator();
 	while (i.hasNext()) {
 		String key = (String) i.next();
-		String name = (String) map.get(key);
+		String name = map.get(key);
 		System.out.println(key + " --> " + name);
 	}
 }

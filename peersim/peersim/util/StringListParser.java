@@ -60,15 +60,15 @@ private StringListParser() { }
  */
 public static String[] parseList(String s)
 {
-	ArrayList list = new ArrayList();
+	ArrayList<String> list = new ArrayList<String>();
 	String[] tokens = s.split(",");
 	for (int i = 0; i < tokens.length; i++) {
 		parseItem(list, tokens[i]);
 	}
-	return (String[]) list.toArray(new String[list.size()]);
+	return list.toArray(new String[list.size()]);
 }
 
-private static void parseItem(List list, String item)
+private static void parseItem(List<String> list, String item)
 {
 	String[] array = item.split(":");
 	if (array.length == 1) {
@@ -81,12 +81,12 @@ private static void parseItem(List list, String item)
 	}
 }
 
-private static void parseSingleItem(List list, String item)
+private static void parseSingleItem(List<String> list, String item)
 {
 	list.add(item);
 }
 
-private static void parseRangeItem(List list, String start, String stop)
+private static void parseRangeItem(List<String> list, String start, String stop)
 {
 	double vstart;
 	double vstop;

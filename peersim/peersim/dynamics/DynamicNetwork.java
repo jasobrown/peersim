@@ -190,7 +190,6 @@ public DynamicNetwork(String prefix)
  */
 public final boolean execute()
 {
-	int tochange;
 	if (add == 0)
 		return false;
 	if (!substitute) {

@@ -50,7 +50,7 @@ protected static final String PAR_UNDIR = "undir";
 
 /**
 * Alias for {@value #PAR_UNDIR}.
-@ @config
+* @config
 */
 private static final String PAR_UNDIR_ALT = "undirected";
 
@@ -120,7 +120,7 @@ protected GraphObserver(String name) {
 
 /**
 * Sets {@link #g}.
-* It MUST be called by any implementation of {@link #execute} before
+* It MUST be called by any implementation of {@link #execute()} before
 * doing anyting else.
 * Attempts to initialize {@link #g} from a
 * pre-calculated graph stored in a static field, but first it

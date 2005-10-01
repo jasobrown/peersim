@@ -24,7 +24,7 @@ import peersim.util.*;
 
 /**
 * Print statistics over a vector. The vector is defined by a protocol,
-* specified by {@value PAR_PROT}, that has to  implement
+* specified by {@value #PAR_PROT}, that has to  implement
 * {@link SingleValue}.
 * Statistics printed are: min, max, number of samples, average, variance,
 * number of minimal instances, number of maximal instances (using
@@ -92,13 +92,13 @@ public SingleValueObserver(String name)
 
 /**
 * Print statistics over a vector. The vector is defined by a protocol,
-* specified by {@value PAR_PROT}, that has to  implement
+* specified by {@value #PAR_PROT}, that has to  implement
 * {@link SingleValue}.
 * Statistics printed are: min, max, number of samples, average, variance,
 * number of minimal instances, number of maximal instances (using 
 * {@link IncrementalStats#toString}).
 * @return true if the standard deviation is below the value of
- * {@value PAR_ACCURACY}, and the time of the simulation is larger then zero
+ * {@value #PAR_ACCURACY}, and the time of the simulation is larger then zero
  * (ie it has started).
  */
 public boolean execute()

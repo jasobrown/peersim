@@ -41,7 +41,7 @@ public class ConstUndirGraph implements Graph {
 
 protected final Graph g;
 
-protected final List[] in;
+protected final List<Integer>[] in;
 
 // ====================== public constructors ===================
 // ==============================================================
@@ -67,10 +67,10 @@ public ConstUndirGraph( Graph g ) {
 protected void initGraph() {
 
 	final int max = g.size();
-	for(int i=0; i<max; ++i) in[i] = new ArrayList();
+	for(int i=0; i<max; ++i) in[i] = new ArrayList<Integer>();
 	for(int i=0; i<max; ++i)
 	{
-		Integer thisNode = new Integer(i);
+		Integer thisNode = i;
 		Collection out = g.getNeighbours(i);
 		Iterator it = out.iterator();
 		while( it.hasNext() )
@@ -97,9 +97,9 @@ public boolean isEdge(int i, int j) {
 * Uses sets as collection so does not support multiple edges now, even if
 * the underlying direced graph does.
 */
-public Collection getNeighbours(int i) {
+public Collection<Integer> getNeighbours(int i) {
 	
-	List result = new ArrayList();
+	List<Integer> result = new ArrayList<Integer>();
 	result.addAll(g.getNeighbours(i));
 	if( in != null ) result.addAll(in[i]);
 	return Collections.unmodifiableCollection(result);

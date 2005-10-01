@@ -19,7 +19,6 @@
 package peersim.core;
 
 import peersim.config.*;
-import java.util.*;
 
 /**
 * Class that represents one node with a network address.
@@ -56,15 +55,13 @@ protected int failstate = Fallible.OK;
 
 public GeneralNode(String prefix) {
 	
-	ArrayList list = new ArrayList();
-	
 	String[] names = Configuration.getNames(PAR_PROT);
 	CommonState.setNode(this);
 	protocol = new Protocol[names.length];
 	for (int i=0; i < names.length; i++) {
 		CommonState.setPid(i);
 		Protocol p = (Protocol) 
-			Configuration.getInstance(names[i], new Integer(i));
+			Configuration.getInstance(names[i]);
 		protocol[i] = p; 
 	}
 }		

@@ -66,11 +66,11 @@ public boolean isEdge(int i, int j) {
 
 // ---------------------------------------------------------------
 
-public Collection getNeighbours(int i) {
+public Collection<Integer> getNeighbours(int i) {
 	
 	if( i<0 || i>=prefSize ) throw new IndexOutOfBoundsException();
 	
-	List result = new LinkedList();
+	List<Integer> result = new LinkedList<Integer>();
 	Iterator it = g.getNeighbours(i).iterator();
 	while(it.hasNext())
 	{

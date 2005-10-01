@@ -18,11 +18,7 @@
 
 package peersim.vector;
 
-import java.lang.reflect.*;
-import peersim.config.*;
-import peersim.core.Network;
-import peersim.core.Control;
-import peersim.core.Log;
+import peersim.core.*;
 
 /**
  * Observes the cosine angle between two vectors. The number which is output is

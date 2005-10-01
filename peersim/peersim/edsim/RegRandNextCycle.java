@@ -18,7 +18,6 @@
 
 package peersim.edsim;
 
-import peersim.config.*;
 import peersim.core.*;
 
 

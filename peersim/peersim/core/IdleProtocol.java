@@ -57,7 +57,7 @@ protected int len;
 // Initialization
 // --------------------------------------------------------------------------
 
-public IdleProtocol(String s, Object obj)
+public IdleProtocol(String s)
 {
 	neighbors = new Node[Configuration.getInt(s + "." + PAR_INITCAP,
 			DEFAULT_INITIAL_CAPACITY)];

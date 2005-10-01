@@ -69,24 +69,24 @@ private static int leaseTimeout;
 
 
 /** contains Nodes */
-private ArrayList outView = null;
+private ArrayList<Node> outView = null;
 
 /**
 * Contains creation dates of elements in outView, if leasing is used.
 * The class must make sure that it stays in sync with outView. 
 * If lease is not used, it is simply null.
 */
-private ArrayList outViewDates = null;
+private ArrayList<Integer> outViewDates = null;
 
 /** contains Nodes */
-private ArrayList inView = null;
+private ArrayList<Node> inView = null;
 
 /**
 * Contains creation dates of elements in inView, if leasing is used.
 * The class must make sure that it stays in sync with inView. 
 * If lease is not used, it is simply null.
 */
-private ArrayList inViewDates = null;
+private ArrayList<Integer> inViewDates = null;
 
 /**
 * to support the lease mechanism. with randomised resubmission it would
@@ -104,12 +104,12 @@ public Scamp(String n) {
 	Scamp.c = Configuration.getInt(n+"."+PAR_C,0);
 	Scamp.indirTTL = Configuration.getInt(n+"."+PAR_INDIRTTL,-1);
 	Scamp.leaseTimeout = Configuration.getInt(n+"."+PAR_LEASE,-1);
-	outView = new ArrayList();
-	inView = new ArrayList();
+	outView = new ArrayList<Node>();
+	inView = new ArrayList<Node>();
 	if(Scamp.leaseTimeout>0)
 	{
-		outViewDates = new ArrayList();
-		inViewDates = new ArrayList();
+		outViewDates = new ArrayList<Integer>();
+		inViewDates = new ArrayList<Integer>();
 	}
 	birthDate = CDState.getCycle();
 }
@@ -197,7 +197,7 @@ private static Node getRandomNode( Node n, int protocolID ) {
 			int id = CDState.r.nextInt(
 					l.degree()+l.inView.size() );
 			if( id<l.degree() ) n = l.getNeighbor(id);
-			else n = (Node)l.inView.get(id-l.degree());
+			else n = l.inView.get(id-l.degree());
 		}
 		else break;
 
@@ -240,12 +240,12 @@ public static void subscribe( Node n, Node s, int protocolID ) {
 	
 	for(int i=0; i<contact.outView.size(); ++i)
 	{
-		Scamp.doSubscribe( (Node)contact.outView.get(i),s,protocolID );
+		Scamp.doSubscribe( contact.outView.get(i),s,protocolID );
 	}
 	
 	for(int i=0; i<Scamp.c; ++i)
 	{
-		Scamp.doSubscribe( (Node)contact.outView.get(
+		Scamp.doSubscribe( contact.outView.get(
 			CDState.r.nextInt(contact.degree())),
 		   s, protocolID);
 	}
@@ -314,7 +314,7 @@ public static void unsubscribe( Node n, int protocolID ) {
 	if( l > 0 )
 	for(; i<ll-c-1; ++i)
 	{
-		Node from = (Node)sn.inView.get(i);
+		Node from = sn.inView.get(i);
 		if( from.isUp() ) 
 			((Scamp)from.getProtocol(protocolID)).replace(
 				n,
@@ -326,7 +326,7 @@ public static void unsubscribe( Node n, int protocolID ) {
 	// remove the remaining c+1 links to sn
 	for(; i<ll; ++i)
 	{
-		Node from = (Node)sn.inView.get(i);
+		Node from = sn.inView.get(i);
 		if( from.isUp() ) 
 			((Scamp)from.getProtocol(protocolID)).replace(
 				n, null, null );
@@ -369,7 +369,7 @@ private boolean addInNeighbor(Node node) {
 
 public Node getNeighbor(int i) {
 
-	return (Node)outView.get(i);
+	return outView.get(i);
 }
 
 // --------------------------------------------------------------------
@@ -452,8 +452,7 @@ public void nextCycle( Node thisNode, int protocolID ){
 		// the first i elements which are expired from both views
 		int i=0;
 		while( i<degree() && CDState.getCycle() - 
-				((Integer)outViewDates.get(i)).intValue() >= 
-			Scamp.leaseTimeout ) ++i;
+				outViewDates.get(i) >= Scamp.leaseTimeout ) ++i;
 		if( i > 0 )
 		{
 			outView.subList(0,i).clear();
@@ -461,8 +460,7 @@ public void nextCycle( Node thisNode, int protocolID ){
 		}
 		i = 0;
 		while( i<inView.size() && CDState.getCycle() - 
-				((Integer)inViewDates.get(i)).intValue() >= 
-			Scamp.leaseTimeout ) ++i;
+				inViewDates.get(i) >=	Scamp.leaseTimeout ) ++i;
 		if( i > 0 )
 		{
 			inView.subList(0,i).clear();
@@ -527,7 +525,7 @@ public static String test(int protocolID) {
 		// check out view
 		for(int j=0; j<currsc.degree(); ++j)
 		{
-			Node out = (Node)currsc.outView.get(j);
+			Node out = currsc.outView.get(j);
 			if(!out.isUp())
 			{
 				++failOutLinks;
@@ -544,7 +542,7 @@ public static String test(int protocolID) {
 		// check in view
 		for(int j=0; j<currsc.inView.size(); ++j)
 		{
-			Node in = (Node)currsc.inView.get(j);
+			Node in = currsc.inView.get(j);
 			if(!in.isUp())
 			{
 				++failInLinks;
@@ -566,9 +564,8 @@ public static String test(int protocolID) {
 		{
 			for(int j=1; j<currsc.degree(); ++j)
 			{
-				if( ((Integer)currsc.outViewDates.get(j-1)
-				  ).compareTo((Integer)
-				  currsc.outViewDates.get(j)) > 0 )
+				if( currsc.outViewDates.get(j-1)
+						.compareTo(currsc.outViewDates.get(j)) > 0 )
 				{
 					corruptDates++;
 					break;
@@ -582,8 +579,7 @@ public static String test(int protocolID) {
 		{
 			for(int j=1; j<currsc.inView.size(); ++j)
 			{
-				if( ((Integer)currsc.inViewDates.get(j-1)
-				  ).compareTo((Integer)
+				if( currsc.inViewDates.get(j-1).compareTo(
 				  currsc.inViewDates.get(j)) > 0 )
 				{
 					corruptInDates++;

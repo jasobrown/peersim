@@ -84,7 +84,7 @@ public final boolean undir;
 /**
 * If set (not null), this is the graph to wire. If null, the current overlay
 * is wired each time {@link #execute} is called, as specified by {@value
-* PAR_PROT}.
+* #PAR_PROT}.
 */
 public Graph g=null;
 
@@ -117,7 +117,7 @@ protected WireGraph(String prefix) {
 /**
 * Calls method {@link #wire} with the graph {@link #g},
 * or if null, on the overlay specified by the protocol given by config
-* parameter {@value PAR_PROT}. If neither {@link #g}, nor {@value PAR_PROT}
+* parameter {@value #PAR_PROT}. If neither {@link #g}, nor {@value #PAR_PROT}
 * is set, throws a RuntimException.
 */
 public final boolean execute() {

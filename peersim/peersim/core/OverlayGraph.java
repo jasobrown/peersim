@@ -103,10 +103,10 @@ public boolean isEdge(int i, int j) {
 * Returns those neighbors that are up. IF node i is not up, it returns
 * an empty list.
 */
-public Collection getNeighbours(int i) {
+public Collection<Integer> getNeighbours(int i) {
 	
 	Linkable lble=(Linkable)Network.node[i].getProtocol(protocolID);
-	ArrayList al = new ArrayList(lble.degree());
+	ArrayList<Integer> al = new ArrayList<Integer>(lble.degree());
 	if( Network.node[i].isUp() )
 	{	
 		for(int j=0; j<lble.degree(); ++j)

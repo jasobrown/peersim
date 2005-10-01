@@ -18,7 +18,6 @@
 
 package peersim.vector;
 
-import peersim.config.*;
 import peersim.core.*;
 
 /**

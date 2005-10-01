@@ -31,7 +31,7 @@ public class OracleIdleProtocol implements Protocol, Linkable {
 // ===================================================================
 
 
-public OracleIdleProtocol(String s, Object obj) {}
+public OracleIdleProtocol(String prefix) {}
 
 // --------------------------------------------------------------------
 

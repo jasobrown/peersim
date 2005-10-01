@@ -18,9 +18,8 @@
 		
 package peersim.dynamics;
 
-import peersim.graph.*;
 import peersim.core.*;
-import peersim.config.Configuration;
+import peersim.graph.*;
 
 /**
  * Takes a {@link Linkable} protocol and adds connection which for a star

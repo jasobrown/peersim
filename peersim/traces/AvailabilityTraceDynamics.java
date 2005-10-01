@@ -108,7 +108,7 @@ public AvailabilityTraceDynamics(String prefix)
 	}
 	String line = null;
 	// Skip initial lines
-	ArrayList traces = new ArrayList();
+	ArrayList<long[]> traces = new ArrayList<long[]>();
 	IncrementalStats sessions = new IncrementalStats();
 	IncrementalStats length = new IncrementalStats();
 	int zn = 0;
@@ -164,13 +164,13 @@ public AvailabilityTraceDynamics(String prefix)
 	}
   
   // From a trace array to an array of cycles
-  ArrayList[] cycles = new ArrayList[(int) (max/cycleLength+1)];
+  ArrayList<Node>[] cycles = new ArrayList[(int) (max/cycleLength+1)];
   for (int i=0; i < cycles.length; i++) {
-    cycles[i] = new ArrayList();
+    cycles[i] = new ArrayList<Node>();
   }
   
   for (int i=0; i < Network.size(); i++) {
-  	long[] trace = (long[]) traces.get(indexes[i]);
+  	long[] trace = traces.get(indexes[i]);
   	for (int j=0; j < trace.length; j++) {
   		cycles[(int) (trace[j]/cycleLength)].add(Network.get(i)); 
   	}
@@ -180,7 +180,7 @@ public AvailabilityTraceDynamics(String prefix)
   events = new Node[cycles.length][];
   for (int i=0; i < cycles.length; i++) {
   	if (cycles[i].size() != 0) {
-  		events[i] = (Node[]) cycles[i].toArray(new Node[cycles[i].size()]);
+  		events[i] = cycles[i].toArray(new Node[cycles[i].size()]);
   	}
   }
 }

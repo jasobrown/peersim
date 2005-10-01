@@ -65,7 +65,7 @@ protected int[] tstamps;
 // =====================================================================
 
 
-public SimpleNewscast(String n, Object obj) {
+public SimpleNewscast(String n) {
 	
 	final int cachesize = Configuration.getInt(n+"."+PAR_CACHE);
 	if(SimpleNewscast.tn == null || SimpleNewscast.tn.length < cachesize)

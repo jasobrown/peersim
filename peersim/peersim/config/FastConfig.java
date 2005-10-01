@@ -68,8 +68,8 @@ protected static final int[] transports;
 
 /**
  * This static initialization block reads the configuration for information that
- * it understands. Currently it understands property {@value PAR_LINKABLE}
- * and {@value PAR_TRANSPORT}.
+ * it understands. Currently it understands property {@value #PAR_LINKABLE}
+ * and {@value #PAR_TRANSPORT}.
  * 
  * Protocols' linkable and transport definitions are prefetched
  * and stored in arrays, to enable fast access during simulation.

@@ -70,7 +70,7 @@ public RandRemoval(String name)
 
 /**
 * Prints results of node removal tests. The following experiment is
-* repeated {@value PAR_N} times. From the graph 50%, 51%, ..., 99% of the nodes
+* repeated {@value #PAR_N} times. From the graph 50%, 51%, ..., 99% of the nodes
 * are removed at random. For all percentages it is calculated what is
 * the maximal
 * clustersize (weakly connected clusters) and the number of

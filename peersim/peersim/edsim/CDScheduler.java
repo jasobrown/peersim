@@ -79,9 +79,6 @@ private final int[] pid;
 
 private final boolean randstart;
 
-private final String name;
-
-
 // =============================== initialization ======================
 // =====================================================================
 
@@ -90,8 +87,6 @@ private final String name;
 */
 public CDScheduler(String n) {
 
-	name = n;
-	
 	String[] prots=Configuration.getString(n+"."+PAR_PROTOCOL).split("\\s");
 	pid = new int[prots.length];
 	sch = new Scheduler[prots.length];

@@ -23,10 +23,9 @@ import peersim.core.*;
 import peersim.vector.*;
 
 /**
- * Print statistics for an average aggregation computation.
- * Statistics printed are: standard deviation, standard 
- * deviation reduction, average/maximum/minimum of averages,
- * and actual size.
+ * Print statistics for an average aggregation computation. Statistics
+ * printed are: standard deviation, standard deviation reduction,
+ * average/maximum/minimum of averages, and actual size.
  * 
  * @author Alberto Montresor
  * @version $Revision$
@@ -34,98 +33,92 @@ import peersim.vector.*;
 public class AverageObserver implements Control
 {
 
-	///////////////////////////////////////////////////////////////////////
-	// Constants
-	///////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////
+// Constants
+// /////////////////////////////////////////////////////////////////////
 
-	/** 
-	 *  Config parameter that determines the accuracy
-	 *  for standard deviation before stopping the simulation. If not 
-	 *  defined, a negative value is used which makes sure the observer 
-	 *  does not stop the simulation
-	 *  @config
-	 */
-	private static final String PAR_ACCURACY = "accuracy";
+/**
+ * Config parameter that determines the accuracy for standard deviation
+ * before stopping the simulation. If not defined, a negative value is used
+ * which makes sure the observer does not stop the simulation
+ * @config
+ */
+private static final String PAR_ACCURACY = "accuracy";
 
-	/** 
-	 *  The protocol to operate on.
-	 *  @config
-	 */
-	private static final String PAR_PROT = "protocol";
+/**
+ * The protocol to operate on.
+ * @config
+ */
+private static final String PAR_PROT = "protocol";
 
-	///////////////////////////////////////////////////////////////////////
-	// Fields
-	///////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////
+// Fields
+// /////////////////////////////////////////////////////////////////////
 
-	/** The name of this observer in the configuration */
-	private final String name;
+/** The name of this observer in the configuration */
+private final String name;
 
-	/** Accuracy for standard deviation used to stop the simulation */
-	private final double accuracy;
+/** Accuracy for standard deviation used to stop the simulation */
+private final double accuracy;
 
-	/** Protocol identifier */
-	private final int pid;
+/** Protocol identifier */
+private final int pid;
 
-	/** Initial standard deviation */
-	private double initsd = -1.0;
+/** Initial standard deviation */
+private double initsd = -1.0;
 
-	///////////////////////////////////////////////////////////////////////
-	// Constructor
-	///////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////
+// Constructor
+// /////////////////////////////////////////////////////////////////////
 
-	/**
-	 *  Creates a new observer using clear()
-	 */
-	public AverageObserver(String name)
-	{
-		this.name = name;
-		accuracy = Configuration.getDouble(name + "." + PAR_ACCURACY, -1);
-		pid = Configuration.getPid(name + "." + PAR_PROT);
+/**
+ * Creates a new observer using clear()
+ */
+public AverageObserver(String name)
+{
+	this.name = name;
+	accuracy = Configuration.getDouble(name + "." + PAR_ACCURACY, -1);
+	pid = Configuration.getPid(name + "." + PAR_PROT);
+}
+
+// /////////////////////////////////////////////////////////////////////
+// Methods
+// /////////////////////////////////////////////////////////////////////
+
+// Comment inherited from interface
+public boolean execute()
+{
+	long time = peersim.core.CommonState.getTime();
+
+	/* Initialization */
+	final int len = Network.size();
+	double max = Double.NEGATIVE_INFINITY;
+	double min = Double.POSITIVE_INFINITY;
+	double sum = 0.0;
+	double sqrsum = 0.0;
+	int count = 0;
+
+	/* Compute max, min, average */
+	for (int i = 0; i < len; i++) {
+		SingleValue protocol = (SingleValue) Network.get(i).getProtocol(pid);
+		double value = protocol.getValue();
+		if (value > max)
+			max = value;
+		if (value < min)
+			min = value;
+		sum += value;
+		sqrsum += value * value;
+		count++;
+	}
+	double average = sum / count;
+	double sd = Math.sqrt((((double) count) / (count - 1))
+			* (sqrsum / count - average * average));
+	if (initsd < 0) {
+		initsd = sd;
 	}
 
-	///////////////////////////////////////////////////////////////////////
-	// Methods
-	///////////////////////////////////////////////////////////////////////
-
-	// Comment inherited from interface
-	public boolean execute()
-	{
-		long time = peersim.core.CommonState.getTime();
-		
-		/* Initialization */
-		final int len = Network.size();
-		double max = Double.NEGATIVE_INFINITY;
-		double min = Double.POSITIVE_INFINITY;
-		double sum = 0.0;
-		double sqrsum = 0.0;
-		int count = 0;
-
-		/* Compute max, min, average */
-		for (int i = 0; i < len; i++)
-		{
-			SingleValue protocol =
-				(SingleValue) Network.get(i).getProtocol(pid);
-			double value = protocol.getValue();
-			if (value > max)
-				max = value;
-			if (value < min)
-				min = value;
-			sum += value;
-			sqrsum += value * value;
-			count++;
-		}
-		double average = sum / count;
-		double sd = Math.sqrt(
-			(((double) count) / (count - 1)) *
-			(sqrsum / count - average * average));
-		if (initsd < 0)
-		{
-			initsd = sd;
-		}
-
-		/* Printing statistics */
-		Log.println(name, 
-			time + " " + // current time (cycle) 
+	/* Printing statistics */
+	Log.println(name, time + " " + // current time (cycle)
 			sd + " " + // standard deviation
 			sd / initsd + " " + // standard deviation reduction
 			average + " " + // Average of averages
@@ -133,16 +126,10 @@ public class AverageObserver implements Control
 			min + " " + // Minimum of averages
 			count + " " + // Nodes with a value different from 0
 			len // actual size
-		);
+	);
 
-		/* Terminate if accuracy target is reached */
-		if (sd / initsd <= accuracy)
-		{
-			return true;
-		} else
-		{
-			return false;
-		}
-	}
+	/* Terminate if accuracy target is reached */
+	return (sd / initsd <= accuracy);
+}
 
 }

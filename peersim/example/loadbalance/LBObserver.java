@@ -26,17 +26,9 @@ import peersim.vector.*;
 public class LBObserver implements Control
 {
 
-//--------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 // Parameters
-//--------------------------------------------------------------------------
-
-/**
- * The target accuracy for standard deviation. When this accuracy has been
- * reached, the simulation is stopped. If not defined, a negative value is 
- * used which makes sure the observer does not stop the simulation.
- * @config
- */
-private static final String PAR_ACCURACY = "accuracy";
+// --------------------------------------------------------------------------
 
 /**
  * The protocol to operate on.
@@ -45,77 +37,61 @@ private static final String PAR_ACCURACY = "accuracy";
 private static final String PAR_PROT = "protocol";
 
 /**
- * If defined, print the load value.
- * The default is false.
+ * If defined, print the load value. The default is false.
  * @config
  */
 private static final String PAR_SHOW_VALUES = "show_values";
 
-//--------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 // Fields
-//--------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 
 /** The name of this observer in the configuration */
 private final String name;
 
-/** Accuracy for standard deviation used to stop the simulation */
-private final double accuracy;
-
 /** Protocol identifier */
 private final int pid;
-
-/** Initial standard deviation */
-private double initsd = -1.0;
 
 /** Flag to show or not the load values at each node. */
 private int show_values = 0;
 
 private IncrementalStats stats = null;
 
-// private LoadBalance targetp;
-private int target_node;
-
 private final int len = Network.size();
 
-//--------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 // Constructor
-//--------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 
 /**
- * Standard constructor that reads the configuration parameters.
- * Invoked by the simulation engine.
- * @param name the configuration prefix for this class
+ * Standard constructor that reads the configuration parameters. Invoked by
+ * the simulation engine.
+ * @param name
+ *          the configuration prefix for this class
  */
 public LBObserver(String name)
 {
 	// Call the parent class (abstract class)
 	this.name = name;
 	// Other parameters from config file:
-	accuracy = Configuration.getDouble(name + "." + PAR_ACCURACY, -1);
 	pid = Configuration.getPid(name + "." + PAR_PROT);
 	show_values = Configuration.getInt(name + "." + PAR_SHOW_VALUES, 0);
 	stats = new IncrementalStats();
-	target_node = CommonState.r.nextInt(len);
 }
 
-//--------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 // Methods
-//--------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 
 // Returns always true!
 public boolean execute()
 {
 	// final int len = Network.size();
 	double sum = 0.0;
-	double sqrsum = 0.0;
-	double agavg = 0.0;
 	double max = Double.NEGATIVE_INFINITY;
 	double min = Double.POSITIVE_INFINITY;
 	int count_zero = 0;
 	int count_avg = 0;
-	int temp_avg = 0;
-	int target_node = 0; // designated node
-	double target_node_load = 0.0; // load of a designated node
 
 	// target_node_load = targetp.getLocalLoad();
 	/* Compute max, min, average */
@@ -143,7 +119,6 @@ public boolean execute()
 		// agavg = protocol.getAVGLoad();
 	}
 
-	temp_avg = (int) (sum / len);
 	Log.println(name, CommonState.getTime() + " " + // current time (cycle)
 			stats.getAverage() + " " + stats.getMax() + " " + stats.getMin() + " " +
 			// sum/len + " " + // average
@@ -160,6 +135,6 @@ public boolean execute()
 
 }
 
-//--------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 
 }

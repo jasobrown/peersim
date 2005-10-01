@@ -19,7 +19,6 @@
 package peersim.edsim;
 
 import java.util.*;
-import peersim.cdsim.*;
 import peersim.config.*;
 import peersim.core.*;
 
@@ -137,6 +136,7 @@ protected static void scheduleControls()
 	for (int i=0; i < controls.length; i++) {
 		ControlEvent event = new ControlEvent(
 			controls[i], ctrlSchedules[i], order++);
+		EDSimulator.addControlEvent(ctrlSchedules[i].getNext(), order, event);
 		if (order > ((1 << rbits)-1))
 			throw new IllegalArgumentException(
 			"Too many control objects");
@@ -170,7 +170,7 @@ static void addControlEvent(long time, int order, Object event)
 /**
  * This method is used to check whether the current configuration can
  * be used for event driven simulations. It checks for the existence of
- * config parameter {@value PAR_ENDTIME}.
+ * config parameter {@value #PAR_ENDTIME}.
  */
 public static final boolean isConfigurationEventDriven()
 {

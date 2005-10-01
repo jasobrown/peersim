@@ -30,7 +30,7 @@ public class BitMatrixGraph implements Graph {
 // ====================== private fileds ========================
 // ==============================================================
 
-private final List sets;
+private final List<BitSet> sets;
 
 private final boolean directed;
 
@@ -45,7 +45,7 @@ private final boolean directed;
 */
 public BitMatrixGraph( int n ) {
 
-	sets = new ArrayList(n);
+	sets = new ArrayList<BitSet>(n);
 	for(int i=0; i<n; ++i) sets.add(new BitSet());
 	this.directed = true;
 }
@@ -60,7 +60,7 @@ public BitMatrixGraph( int n ) {
 */
 public BitMatrixGraph( int n, boolean directed ) {
 
-	sets = new ArrayList(n);
+	sets = new ArrayList<BitSet>(n);
 	for(int i=0; i<n; ++i) sets.add(new BitSet());
 	this.directed = directed;
 }
@@ -72,15 +72,15 @@ public BitMatrixGraph( int n, boolean directed ) {
 
 public boolean isEdge(int i, int j) {
 	
-	return ((BitSet)sets.get(i)).get(j);
+	return sets.get(i).get(j);
 }
 
 // ---------------------------------------------------------------
 
-public Collection getNeighbours(int i) {
+public Collection<Integer> getNeighbours(int i) {
 	
-	Set result = new HashSet();
-	BitSet neighb = (BitSet)sets.get(i);
+	Set<Integer> result = new HashSet<Integer>();
+	BitSet neighb = sets.get(i);
 	final int max = size();
 	for(int j=0; j<max; ++j)
 	{
@@ -117,13 +117,13 @@ public boolean setEdge(int i, int j) {
 	if( i > size() || j > size() || i<0 || j<0 ) throw new
 		IndexOutOfBoundsException();
 
-	BitSet neighb = (BitSet)sets.get(i);
+	BitSet neighb = sets.get(i);
 	boolean old = neighb.get(j);
 	neighb.set(j);
 	
 	if( !old && !directed )
 	{
-		neighb = (BitSet)sets.get(j);
+		neighb = sets.get(j);
 		neighb.set(i);
 	}
 	
@@ -137,13 +137,13 @@ public boolean clearEdge(int i, int j) {
 	if( i > size() || j > size() || i<0 || j<0 ) throw new
 		IndexOutOfBoundsException();
 
-	BitSet neighb = (BitSet)sets.get(i);
+	BitSet neighb = sets.get(i);
 	boolean old = neighb.get(j);
 	neighb.clear(j);
 	
 	if( old && !directed )
 	{
-		neighb = (BitSet)sets.get(i);
+		neighb = sets.get(i);
 		neighb.clear(j);
 	}
 	
@@ -154,7 +154,7 @@ public boolean clearEdge(int i, int j) {
 
 public int degree(int i) {
 
-	BitSet neighb = (BitSet)sets.get(i);
+	BitSet neighb = sets.get(i);
 	return neighb.cardinality(); // only from jdk 1.4
 }
 

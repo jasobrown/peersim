@@ -18,12 +18,7 @@
 		
 package peersim.graph;
 
-import java.util.Vector;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Hashtable;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 
 /**
 * Implements a graph which uses the neighbour list representation.
@@ -35,7 +30,7 @@ public class NeighbourListGraph implements Graph, java.io.Serializable {
 // ===============================================================
 
 /** Contains the objects associated with the node indeces.*/
-private final Vector nodes;
+private final Vector<Object> nodes;
 
 /**
 * Contains the indices of the nodes. The vector "nodes" contains this
@@ -44,7 +39,7 @@ private final Vector nodes;
 * than this anyway). Note that the nodes vector is still necessary to
 * provide constant acces to nodes based on indeces.
 */
-private final Hashtable nodeindex;
+private final HashMap<Object,Integer> nodeindex;
 
 /** Contains sets of node indeces. If "nodes" is not null, indices are 
 * defined by "nodes", otherwise they correspond to 0,1,... */
@@ -62,9 +57,9 @@ private final boolean directed;
 */
 public NeighbourListGraph( boolean directed ) {
 
-	nodes = new Vector(1000,1000);	
+	nodes = new Vector<Object>(1000,1000);	
 	neighbors = new Vector<Set<Integer>>(1000,1000);
-	nodeindex = new Hashtable(1000);
+	nodeindex = new HashMap<Object,Integer>(1000);
 	this.directed = directed;
 }
 
@@ -97,7 +92,7 @@ public NeighbourListGraph( int size, boolean directed ) {
 */
 public int addNode( Object o ) {
 
-	Object index = nodeindex.get(o);
+	Integer index = nodeindex.get(o);
 	if( index == null )
 	{
 		index = new Integer(nodes.size());
@@ -106,7 +101,7 @@ public int addNode( Object o ) {
 		nodeindex.put(o,index);
 	}
 
-	return ((Integer)index).intValue();
+	return index;
 }
 
 
@@ -139,7 +134,7 @@ public boolean isEdge(int i, int j) {
 
 // ---------------------------------------------------------------
 
-public Collection getNeighbours(int i) {
+public Collection<Integer> getNeighbours(int i) {
 	
 	return Collections.unmodifiableCollection(neighbors.get(i));
 }

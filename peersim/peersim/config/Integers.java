@@ -87,10 +87,7 @@ class Integers extends Group implements IntegralDomainI,HasDivI,
 
 	public Number valueOf(String str) {
 		BigDecimal bd = new BigDecimal(str);
-		// XXX If we adopt java 1.5, we can also round the values with
-		// arbitrary precision, thus avoiding floating point errors in
-		// some tricky conversions
-		return bd.toBigInteger();
+		return bd.round(MathContext.UNLIMITED);
 	}
 	
 	public String toString() { return "Z: integers"; }

@@ -27,45 +27,45 @@ import peersim.cdsim.CDProtocol;
 public class BasicBalance extends SingleValueHolder implements CDProtocol
 {
 
-//--------------------------------------------------------------------------
-//Parameters
-//--------------------------------------------------------------------------
+// --------------------------------------------------------------------------
+// Parameters
+// --------------------------------------------------------------------------
 
 /**
  * Initial quota. Defaults to 1.
- * @config 
+ * @config
  */
-private static final String PAR_QUOTA = "quota"; 
+private static final String PAR_QUOTA = "quota";
 
-//--------------------------------------------------------------------------
-//Fields
-//--------------------------------------------------------------------------
+// --------------------------------------------------------------------------
+// Fields
+// --------------------------------------------------------------------------
 
 private final double quota_value; // original quota value taken from
 
 protected double quota; // current cycle quota
 
-//--------------------------------------------------------------------------
-//Initialization
-//--------------------------------------------------------------------------
-public BasicBalance(String prefix, Object obj)
+// --------------------------------------------------------------------------
+// Initialization
+// --------------------------------------------------------------------------
+public BasicBalance(String prefix)
 {
-	super(prefix,obj);
+	super(prefix);
 	// get quota value from the config file. Default 1.
-	quota_value = (double) (Configuration.getInt(prefix + "." + PAR_QUOTA, 1));
+	quota_value = (Configuration.getInt(prefix + "." + PAR_QUOTA, 1));
 	quota = quota_value;
 }
 
-//Implements the Protocol interface
+// Implements the Protocol interface
 public Object clone() throws CloneNotSupportedException
 {
 	BasicBalance af = (BasicBalance) super.clone();
 	return af;
 }
 
-//--------------------------------------------------------------------------
-//Methods
-//--------------------------------------------------------------------------
+// --------------------------------------------------------------------------
+// Methods
+// --------------------------------------------------------------------------
 
 // Resets the quota.
 protected void resetQuota()

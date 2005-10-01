@@ -46,7 +46,7 @@ protected double value;
 /**
  * Does nothing.
  */
-public SingleValueHolder(String prefix, Object obj)
+public SingleValueHolder(String prefix)
 {
 }
 

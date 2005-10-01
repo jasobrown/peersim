@@ -62,9 +62,9 @@ public boolean isEdge(int i, int j) {
 * Uses sets as collection so does not support multiple edges now, even if
 * the underlying direced graph does.
 */
-public Collection getNeighbours(int i) {
+public Collection<Integer> getNeighbours(int i) {
 	
-	Set result = new HashSet();
+	Set<Integer> result = new HashSet<Integer>();
 	result.addAll(g.getNeighbours(i));
 	final int max = g.size();
 	for(int j=0; j<max; ++j)

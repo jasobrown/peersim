@@ -20,71 +20,74 @@ package peersim.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Random;
 
-/**This class adds the ability to retrive the median element to the
- *{@link IncrementalStats} class. Note that this class actually stores
- * all the elements, so (unlike in its superclass) storage requirements
- * depend on the number of items processed. 
- *
- * @author  giampa
+/**
+ * This class adds the ability to retrive the median element to the
+ * {@link IncrementalStats} class. Note that this class actually stores all
+ * the elements, so (unlike in its superclass) storage requirements depend
+ * on the number of items processed.
+ * 
+ * @author giampa
  */
-public class MedianStats extends IncrementalStats {
-    
-    /** Structure to store each entry. */
-    private ArrayList data;
-    
+public class MedianStats extends IncrementalStats
+{
+
+/** Structure to store each entry. */
+private ArrayList<Double> data;
+
 /** Calls {@link #reset}. */
-    public MedianStats() {
-    	reset();
-    }
-    
-    /** Retrives the median in the current data collection.
-     *
-     *@return The current median value.
-     */
-    public double getMedian() {
-        double result;
-        
-        if ( data.isEmpty() )
-            throw new IllegalStateException( "Data vector is empty!" );
-        
-        // Sort the arraylist
-        Collections.sort(data);
-        if (data.size() % 2 != 0) { // odd number
-            int index = Math.round( data.size() / 2 );
-            result = ( (Double) data.get( index ) ).doubleValue();
-        }
-        else { // even number:
-            double a = ( (Double) data.get( data.size() / 2 ) ).doubleValue();
-            double b = ( (Double) data.get( (data.size() / 2) -1) ).doubleValue();
-            result = (a+b)/2;
-        }
-        return result;
-    }
-    
-    public void add(double item, int k) {
-        for(int i=0; i<k; ++i)
-	{
-		super.add(item,1);
-        	data.add(new Double(item));
-    	}
-    }
-    
-    public void reset() {
-        super.reset();
-        if (data != null) data.clear();
-    }
-   /* 
-    public static void main( String[] args ) {
-        MedianStats s = new MedianStats();
-        Random r = new Random();
-        
-        for(int i=0; i< 50000; i++)
-            s.add(r.nextDouble());
-        
-        System.out.println("Average: "+s.getAverage());
-        System.out.println("Median: "+s.getMedian());
-        
-    }*/
+public MedianStats()
+{
+	reset();
+}
+
+/**
+ * Retrives the median in the current data collection.
+ * 
+ * @return The current median value.
+ */
+public double getMedian()
+{
+	double result;
+
+	if (data.isEmpty())
+		throw new IllegalStateException("Data vector is empty!");
+
+	// Sort the arraylist
+	Collections.sort(data);
+	if (data.size() % 2 != 0) { // odd number
+		int index = Math.round(data.size() / 2);
+		result = data.get(index);
+	} else { // even number:
+		double a = data.get(data.size() / 2);
+		double b = data.get((data.size() / 2) - 1);
+		result = (a + b) / 2;
+	}
+	return result;
+}
+
+public void add(double item, int k)
+{
+	for (int i = 0; i < k; ++i) {
+		super.add(item, 1);
+		data.add(new Double(item));
+	}
+}
+
+public void reset()
+{
+	super.reset();
+	if (data != null)
+		data.clear();
+}
+/*
+ * public static void main( String[] args ) { MedianStats s = new
+ * MedianStats(); Random r = new Random();
+ * 
+ * for(int i=0; i< 50000; i++) s.add(r.nextDouble());
+ * 
+ * System.out.println("Average: "+s.getAverage());
+ * System.out.println("Median: "+s.getMedian());
+ *  }
+ */
 }

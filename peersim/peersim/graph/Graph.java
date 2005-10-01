@@ -42,7 +42,7 @@ public interface Graph {
 	* Returns an unmodifyable collection view to all outgoing edges from
 	* i. The objects are of type Integer.
 	*/
-	Collection getNeighbours(int i);
+	Collection<Integer> getNeighbours(int i);
 
 	/**
 	* Returns the node object associated with the index. Optional

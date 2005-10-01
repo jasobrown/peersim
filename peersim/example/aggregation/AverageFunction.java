@@ -25,39 +25,41 @@ import peersim.cdsim.CDProtocol;
 
 /**
  * 
- *
- *  @author Alberto Montresor
- *  @version $Revision$
+ * 
+ * @author Alberto Montresor
+ * @version $Revision$
  */
-public class AverageFunction extends SingleValueHolder implements CDProtocol {
+public class AverageFunction extends SingleValueHolder implements CDProtocol
+{
 
-public AverageFunction(String prefix, Object obj) { super(prefix,obj); }
+public AverageFunction(String prefix)
+{
+	super(prefix);
+}
 
-/*public Object clone() throws CloneNotSupportedException {
-	
-	AverageFunction af = (AverageFunction)super.clone();
-	af.value = value;
-	return af;
-}*/
+/*
+ * public Object clone() throws CloneNotSupportedException {
+ * 
+ * AverageFunction af = (AverageFunction)super.clone(); af.value = value;
+ * return af; }
+ */
 
 /**
  * Using a {@link Linkable} protocol choses a neighbor and performs a
  * variance reduction step.
  */
-public void nextCycle( Node node, int protocolID )
+public void nextCycle(Node node, int protocolID)
 {
 	int linkableID = FastConfig.getLinkable(protocolID);
-	Linkable linkable = (Linkable) node.getProtocol( linkableID );
-	if (linkable.degree() > 0)
-	{
-		Node peer = linkable.getNeighbor(
-				CommonState.r.nextInt(linkable.degree()));
-		
-		// XXX quick and dirty handling of failure
-		if(peer.getFailState()!=Fallible.OK) return;
-		
-		AverageFunction neighbor =
-				(AverageFunction)peer.getProtocol(protocolID);
+	Linkable linkable = (Linkable) node.getProtocol(linkableID);
+	if (linkable.degree() > 0) {
+		Node peer = linkable.getNeighbor(CommonState.r.nextInt(linkable.degree()));
+
+		// Failure handling
+		if (peer.getFailState() != Fallible.OK)
+			return;
+
+		AverageFunction neighbor = (AverageFunction) peer.getProtocol(protocolID);
 		double mean = (this.value + neighbor.value) / 2;
 		this.value = mean;
 		neighbor.value = mean;

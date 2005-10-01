@@ -18,17 +18,17 @@
 
 package peersim.vector;
 
-import peersim.core.*;
-import peersim.config.*;
-import peersim.util.FileNameGenerator;
 import java.io.*;
-import java.lang.reflect.*;
+
+import peersim.config.*;
+import peersim.core.*;
+import peersim.util.*;
 
 /**
  * Dump the content of a vector in a file. Each line
  * represent a single node.
  * Values are dumped to a file whose name is obtained from a
- * configurable prefix (set by {@value PAR_BASENAME}), a number that is
+ * configurable prefix (set by {@value #PAR_BASENAME}), a number that is
  * increased before each dump by one, and the extension ".vec".
  * <p>
  * This observer class can observe any protocol field containing a 
@@ -89,7 +89,7 @@ public ValueDumper(String prefix) {
  * Dump the content of a vector in a file. Each line
  * represent a single node.
  * Values are dumped to a file whose name is obtained from a
- * configurable prefix (set by {@value PAR_BASENAME}), a number that is
+ * configurable prefix (set by {@value #PAR_BASENAME}), a number that is
  * increased before each dump by one, and the extension ".vec".
  * @return always false
  * @throws RuntimeException if there is an I/O problem

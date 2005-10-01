@@ -142,7 +142,6 @@ public void load( String fileName ) throws IOException {
 private int parseStream(BufferedReader f, String prefix, int pars, int lines)
 throws IOException {
 
-	boolean eof = false;
 	boolean complete = true;
 	String part;
 	String line = "";

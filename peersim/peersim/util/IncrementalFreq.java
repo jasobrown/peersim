@@ -249,7 +249,7 @@ public String toArithmeticExpression() {
 public Object clone() throws CloneNotSupportedException {
 
 	IncrementalFreq result = (IncrementalFreq)super.clone();
-	if( freq != null ) result.freq = (int[])freq.clone();
+	if( freq != null ) result.freq = freq.clone();
 	return result;
 }
 

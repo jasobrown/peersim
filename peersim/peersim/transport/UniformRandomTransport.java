@@ -44,7 +44,7 @@ private static final String PAR_MINDELAY = "mindelay";
 	
 /** 
  * String name of the parameter used to configure the maximum latency
- * Defaults to {@value PAR_MINDELAY}, which results in a constant delay.
+ * Defaults to {@value #PAR_MINDELAY}, which results in a constant delay.
  * @config 
  */	
 private static final String PAR_MAXDELAY = "maxdelay";	
@@ -67,7 +67,7 @@ private final long range;
 /**
  * 
  */
-public UniformRandomTransport(String prefix, Object obj)
+public UniformRandomTransport(String prefix)
 {
 	min = Configuration.getLong(prefix + "." + PAR_MINDELAY);
 	long max = Configuration.getLong(prefix + "." + PAR_MAXDELAY,min);

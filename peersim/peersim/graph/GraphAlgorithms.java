@@ -44,7 +44,7 @@ public final static int BLACK=2;
 public int[] color = null;
 
 /** working variable for the dfs algorithm */
-public Set cluster = null;
+public Set<Integer> cluster = null;
 
 public int[] d = null;
 
@@ -101,7 +101,7 @@ private void dfs( int from ) {
 */
 private void bfs( int from ) {
 
-	List q = new LinkedList();
+	List<Integer> q = new LinkedList<Integer>();
 	int u, du;
 	
 	q.add( new Integer(from) );
@@ -111,8 +111,8 @@ private void bfs( int from ) {
 
 	while( ! q.isEmpty() )
 	{
-		u = ((Integer)q.remove(0)).intValue();
-		du = ((Integer)q.remove(0)).intValue();
+		u = q.remove(0).intValue();
+		du = q.remove(0).intValue();
 		
 		Iterator it=g.getNeighbours(u).iterator();
 		while( it.hasNext() )
@@ -182,7 +182,7 @@ private void tarjanVisit(int i) {
 public Map weaklyConnectedClusters( Graph g ) {
 
 	this.g=g;
-	if( cluster == null ) cluster = new HashSet();
+	if( cluster == null ) cluster = new HashSet<Integer>();
 	if( color==null || color.length<g.size() ) color = new int[g.size()];
 
 	// cluster numbers are negative integers
@@ -204,12 +204,12 @@ public Map weaklyConnectedClusters( Graph g ) {
 		}
 	}
 
-	Hashtable ht = new Hashtable();
+	Hashtable<Integer,Integer> ht = new Hashtable<Integer,Integer>();
 	Integer one = new Integer(1);
 	for(j=0; j<g.size(); ++j)
 	{
 		Integer in = new Integer(color[j]);
-		Integer num = (Integer)ht.get(in);
+		Integer num = ht.get(in);
 		if( num == null ) ht.put(in,one);
 		else ht.put(in,new Integer(num.intValue()+1));
 	}
@@ -377,7 +377,7 @@ public Map tarjan( Graph g ) {
 	
 	for( int i=0; i<g.size(); ++i) color[i]=0;
 	for( int i=0; i<g.size(); ++i) color[root[i]]++;
-	Hashtable ht = new Hashtable();
+	Hashtable<Integer,Integer> ht = new Hashtable<Integer,Integer>();
 	for(int j=0; j<g.size(); ++j)
 	{
 		if(color[j]>0)

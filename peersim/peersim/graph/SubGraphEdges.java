@@ -68,9 +68,9 @@ public boolean isEdge(int i, int j) {
 
 // ---------------------------------------------------------------
 
-public Collection getNeighbours(int i) {
+public Collection<Integer> getNeighbours(int i) {
 	
-	List result = new LinkedList();
+	List<Integer> result = new LinkedList<Integer>();
 	if( nodes.get(i) )
 	{
 		Iterator it = g.getNeighbours(i).iterator();

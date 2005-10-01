@@ -153,7 +153,7 @@ private int nextDegree()
 
 /**
  * Prints statistics about node degree. The format of the output is specified
- * by {@value PAR_METHOD}. See also the rest of the configuration parameters.
+ * by {@value #PAR_METHOD}. See also the rest of the configuration parameters.
  * @return always false
  */
 public boolean execute()

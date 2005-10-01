@@ -82,7 +82,7 @@ private static int F;
 * when necessary
 */
 private final static RandomAccessibleIterator rai =
-	new RandomAccessibleIterator(new ArrayList());
+	new RandomAccessibleIterator(new ArrayList<Node>());
 
 // =================== fields ==========================================
 // =====================================================================
@@ -92,14 +92,14 @@ private final static RandomAccessibleIterator rai =
 * If null, only subs is used. If not null, then subs will serve only
 * as background storage, and the communication graph will be defined by view
 */
-protected ArrayList view = null;
+protected ArrayList<Node> view = null;
 
-protected ArrayList subs = null;
+protected ArrayList<Node> subs = null;
 
-protected ArrayList unSubs = null;
+protected ArrayList<Node> unSubs = null;
 
 /** timestamps of unsubscriptions. If no timestamps are used, null */
-protected ArrayList unSubsDates = null;
+protected ArrayList<Integer> unSubsDates = null;
 
 
 // ====================== initialization ===============================
@@ -113,14 +113,17 @@ public SimpleLpbcast(String n) {
 	SimpleLpbcast.unSubsSize = Configuration.getInt(n+"."+PAR_UNSUBS);
 	SimpleLpbcast.unSubsTout=Configuration.getInt(n+"."+PAR_UNSUBSTOUT,-1);
 	SimpleLpbcast.F = Configuration.getInt(n+"."+PAR_F, 1);
-	subs = new ArrayList();
-	unSubs = new ArrayList();
-	if( SimpleLpbcast.unSubsTout > 0 ) unSubsDates = new ArrayList();
-	if( SimpleLpbcast.l > 0 ) view = new ArrayList();
+	subs = new ArrayList<Node>();
+	unSubs = new ArrayList<Node>();
+	if( SimpleLpbcast.unSubsTout > 0 ) unSubsDates = new ArrayList<Integer>();
+	if( SimpleLpbcast.l > 0 ) view = new ArrayList<Node>();
 }
 
 // ---------------------------------------------------------------------
 
+/**
+ * 
+ */
 public Object clone() throws CloneNotSupportedException {
 
 	SimpleLpbcast sn = (SimpleLpbcast)super.clone();
@@ -147,7 +150,7 @@ protected void send( Node thisNode, Node peerNode, int protocolID ) {
 	// handling unsubscriptions
 	for(int i=0; i<unSubs.size(); ++i)
 	{
-		Node unsub = (Node)unSubs.get(i);
+		Node unsub = unSubs.get(i);
 		peer.remove(unsub);
 		Integer tstamp =
 		   (unSubsDates==null ? null : (Integer)unSubsDates.get(i));
@@ -158,7 +161,7 @@ protected void send( Node thisNode, Node peerNode, int protocolID ) {
 	peer.addNeighbor(thisNode);
 	for(int i=0; i<subs.size(); ++i)
 	{
-		Node sub = (Node)subs.get(i);
+		Node sub = subs.get(i);
 		if( sub != peerNode ) peer.addNeighbor(sub);
 	}
 }
@@ -232,7 +235,7 @@ public static void unsubscribe( Node n, int protocolID ) {
 	int i=0;
 	for(; i<F && rai.hasNext(); ++i)
 	{
-		Node peerNode = (Node)SimpleLpbcast.rai.next();
+		Node peerNode = SimpleLpbcast.rai.next();
 		SimpleLpbcast peer = (SimpleLpbcast)
 		   	peerNode.getProtocol(protocolID);
 		
@@ -353,7 +356,7 @@ public void nextCycle( Node thisNode, int protocolID ) {
 		int i=0;
 		while( i<unSubsDates.size() )
 		{
-			int tstamp = ((Integer)unSubsDates.get(i)).intValue();
+			int tstamp = unSubsDates.get(i).intValue();
 			if(CDState.getCycle()-tstamp>SimpleLpbcast.unSubsTout)
 			{
 				unSubs.remove(i);
@@ -368,7 +371,7 @@ public void nextCycle( Node thisNode, int protocolID ) {
 	int i=0;
 	for(; i<SimpleLpbcast.F && SimpleLpbcast.rai.hasNext(); ++i)
 	{
-		send( thisNode, (Node)SimpleLpbcast.rai.next(), protocolID );
+		send( thisNode, SimpleLpbcast.rai.next(), protocolID );
 	}
 	
 	if( i < SimpleLpbcast.F )
@@ -411,10 +414,10 @@ class RandomAccessibleIterator implements Iterator {
 /** points to the next possible element to return */
 private int i = 0;
 
-private List l = null;
+private List<Node> l = null;
 
 /** if not null, next returns this */
-private Object _next = null;
+private Node _next = null;
 
 // ===================== initialization ===============================
 // ====================================================================
@@ -423,14 +426,14 @@ private Object _next = null;
 /**
 * The list has to contain nodes.
 */
-public RandomAccessibleIterator(List l) {
+public RandomAccessibleIterator(List<Node> l) {
 	
 	reset(l);
 }
 
 // --------------------------------------------------------------------
 
-public void reset(List l) {
+public void reset(List<Node> l) {
 	
 	i = 0;
 	this.l = l;
@@ -457,11 +460,11 @@ public boolean hasNext() {
 
 // ---------------------------------------------------------------------
 
-public Object next() {
+public Node next() {
 	
 	if( _next != null )
 	{
-		Object tmp = _next;
+		Node tmp = _next;
 		_next = null;
 		return tmp;
 	}
@@ -471,7 +474,7 @@ public Object next() {
 	while( i < l.size() )
 	{
 		pos = CDState.r.nextInt(l.size()-i);
-		peer = (Node)l.get(i+pos);
+		peer = l.get(i+pos);
 		l.set(i+pos,l.get(i));
 		l.set(i,peer);
 		++i;

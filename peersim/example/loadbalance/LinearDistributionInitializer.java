@@ -22,19 +22,20 @@ import peersim.config.*;
 import peersim.core.*;
 import peersim.vector.SingleValue;
 
-public class LinearDistributionInitializer  implements Control {
+public class LinearDistributionInitializer implements Control
+{
 
-//--------------------------------------------------------------------------
-//Parameters
-//--------------------------------------------------------------------------
+// --------------------------------------------------------------------------
+// Parameters
+// --------------------------------------------------------------------------
 
-/** 
+/**
  * The upper bound of the values.
  * @config
  */
 private static final String PAR_MAX = "max";
 
-/** 
+/**
  * The lower bound of the values. Defaults to -max.
  * @config
  */
@@ -46,9 +47,9 @@ private static final String PAR_MIN = "min";
  */
 private static final String PAR_PROT = "protocol";
 
-//--------------------------------------------------------------------------
-//Fields
-//--------------------------------------------------------------------------
+// --------------------------------------------------------------------------
+// Fields
+// --------------------------------------------------------------------------
 
 private final double max;
 
@@ -56,33 +57,31 @@ private final double min;
 
 private final int protocolID;
 
-//--------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 // Initialization
-//--------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 
 public LinearDistributionInitializer(String prefix)
 {
-	max = Configuration.getDouble(prefix+"."+PAR_MAX);
-	min = Configuration.getDouble(prefix+"."+PAR_MIN,-max);
-	protocolID = Configuration.getPid(prefix+"."+PAR_PROT);
+	max = Configuration.getDouble(prefix + "." + PAR_MAX);
+	min = Configuration.getDouble(prefix + "." + PAR_MIN, -max);
+	protocolID = Configuration.getPid(prefix + "." + PAR_PROT);
 }
 
-//--------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 // Methods
-//--------------------------------------------------------------------------
-
+// --------------------------------------------------------------------------
 
 // Comment inherited from interface
-public boolean execute() {
-	double step = (max-min)/(Network.size()-1);
+public boolean execute()
+{
+	double step = (max - min) / (Network.size() - 1);
 	double sum = 0.0;
 	double tmp;
-	for(int i=0; i<Network.size(); ++i)
-	{
-		tmp = i*step+min;
+	for (int i = 0; i < Network.size(); ++i) {
+		tmp = i * step + min;
 		sum += tmp;
-		((SingleValue)Network.get(i).getProtocol(protocolID)
-			).setValue(tmp);
+		((SingleValue) Network.get(i).getProtocol(protocolID)).setValue(tmp);
 	}
 	return false;
 }

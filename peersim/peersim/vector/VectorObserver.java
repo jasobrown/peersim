@@ -18,8 +18,6 @@
 		
 package peersim.vector;
 
-import java.lang.reflect.*;
-import peersim.config.*;
 import peersim.core.*;
 import peersim.util.*;
 

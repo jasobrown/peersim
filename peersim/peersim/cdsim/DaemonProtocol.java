@@ -60,7 +60,7 @@ private static int step;
 // ==================================================================
 
 
-public DaemonProtocol(String s, Object obj)
+public DaemonProtocol(String s)
 {  
 	step = Configuration.getInt(s+"."+PAR_STEP,1);
 	

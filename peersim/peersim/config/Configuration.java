@@ -19,7 +19,6 @@
 package peersim.config;
 
 import java.lang.reflect.*;
-import java.math.*;
 import java.util.*;
 import org.lsmp.djep.groupJep.*;
 
@@ -220,15 +219,6 @@ import org.lsmp.djep.groupJep.*;
 */
 public class Configuration {
 
-//=================== constants =================================
-//===================================================================
-
-/* Constants used when reading integer (int, long) values */
-private static BigInteger maxlong = new BigInteger(""+ Long.MAX_VALUE);
-private static BigInteger minlong = new BigInteger(""+ Long.MIN_VALUE);
-private static BigInteger maxint = new BigInteger(""+ Integer.MAX_VALUE);
-private static BigInteger minint = new BigInteger(""+ Integer.MIN_VALUE);
-
 // =================== static fields =================================
 // ===================================================================
 
@@ -368,7 +358,7 @@ public static void setConfig( Properties p ) {
 	if (DEBUG_EXTENDED.equals(debug))
 	  debugLevel = DEBUG_CONTEXT;
 	else if (DEBUG_FULL.equals(debug)) {
-		Map map = new TreeMap();
+		Map<String,String> map = new TreeMap<String,String>();
 		Enumeration e = p.propertyNames();
 		while (e.hasMoreElements()) {
 			String name = (String) e.nextElement();
@@ -745,7 +735,7 @@ public static int getPid( String name, int pid ) {
  */
 public static int lookupPid( String protname ) {
 	
-	Integer ret = (Integer) protocols.get(protname); 
+	Integer ret = protocols.get(protname); 
 	if (ret == null) {
 		throw new MissingParameterException(PAR_PROT+"."+protname, 
 				"\nPossibly incorrect property: " +
@@ -989,7 +979,7 @@ public static Object[] getInstanceArray( String name ) {
  */
 public static String[] getNames( String name ) 
 {
-	ArrayList ll = new ArrayList();
+	ArrayList<String> ll = new ArrayList<String>();
 	final String pref = name+".";
 
 	Enumeration e = config.propertyNames();
@@ -998,7 +988,7 @@ public static String[] getNames( String name )
 		if (key.startsWith(pref) && key.indexOf(".", pref.length())<0)
 			ll.add(key);
 	}
-	String[] ret = (String[])ll.toArray(new String[ll.size()]);
+	String[] ret = ll.toArray(new String[ll.size()]);
 	return Configuration.order(ret,name);
 }
 
@@ -1147,9 +1137,9 @@ private static String[] letterPairs(String str)
  * @return an ArrayList of 2-character Strings. 
  * http://www.catalysoft.com/articles/StrikeAMatch.html
  */
-private static ArrayList wordLetterPairs(String str)
+private static ArrayList<String> wordLetterPairs(String str)
 {
-	ArrayList allPairs = new ArrayList();
+	ArrayList<String> allPairs = new ArrayList<String>();
 	// Tokenize the string and put the tokens/words into an array
 	String[] words = str.split("\\s");
 	// For each word

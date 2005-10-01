@@ -15,137 +15,150 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
+
 package example.loadbalance;
 
 import peersim.core.*;
 import peersim.config.FastConfig;
 
-public class AvgBalance extends BasicBalance {
+public class AvgBalance extends BasicBalance
+{
 
-    public static double average = 0.0;
-    public static boolean avg_done = false;
-    // ==================== initialization ================================
-    // ====================================================================
+public static double average = 0.0;
 
+public static boolean avg_done = false;
 
-    public AvgBalance(String prefix, Object obj) {
-	super(prefix, obj);
-    }
+// ==================== initialization ================================
+// ====================================================================
 
+public AvgBalance(String prefix)
+{
+	super(prefix);
+}
 
-    // ====================== methods =====================================
-    // ====================================================================
+// ====================== methods =====================================
+// ====================================================================
 
-    // Calculates the average; it's called once at starting.
-    private static void calculateAVG(int protocolID) {
+// Calculates the average; it's called once at starting.
+private static void calculateAVG(int protocolID)
+{
 	int len = Network.size();
 	double sum = 0.0;
-	for (int i = 0; i < len; i++)
-	    {
-		AvgBalance protocol =
-		    (AvgBalance)Network.get(i).getProtocol(protocolID);
+	for (int i = 0; i < len; i++) {
+		AvgBalance protocol = (AvgBalance) Network.get(i).getProtocol(protocolID);
 		double value = protocol.getValue();
-       		sum += value;
-		
-	    }
+		sum += value;
+
+	}
 	average = sum / len;
 	avg_done = true;
-    }
+}
 
-    /** Disables a node, shrinking the topology.
-    */
-    protected static void suspend( Node node ) {
+/**
+ * Disables a node, shrinking the topology.
+ */
+protected static void suspend(Node node)
+{
 	node.setFailState(Fallible.DOWN);
-    }
+}
 
-    // --------------------------------------------------------------------
+// --------------------------------------------------------------------
 
-    /**
-     * Using a {@link Linkable} protocol choses a neighbor and performs a
-     * variance reduction step.
-     */
-    public void nextCycle( Node node, int protocolID ) {
+/**
+ * Using a {@link Linkable} protocol choses a neighbor and performs a
+ * variance reduction step.
+ */
+public void nextCycle(Node node, int protocolID)
+{
 	// Do that only once
-	if (avg_done == false) {    
-	    calculateAVG(protocolID);
-	    System.out.println("AVG only once "+average);
+	if (avg_done == false) {
+		calculateAVG(protocolID);
+		System.out.println("AVG only once " + average);
 	}
 
-	if( Math.abs(value-average) < 1 ) {
+	if (Math.abs(value - average) < 1) {
 		AvgBalance.suspend(node); // switch off node
 		return;
 	}
-	
-	if (quota == 0 ) return; // skip this node if it has no quota
-	
+
+	if (quota == 0)
+		return; // skip this node if it has no quota
+
 	Node n = null;
-	if (value < average ) {
-	    n = getOverloadedPeer(node, protocolID);
-	    if (n != null) { doTransfer((AvgBalance)n.getProtocol(protocolID)); } 
+	if (value < average) {
+		n = getOverloadedPeer(node, protocolID);
+		if (n != null) {
+			doTransfer((AvgBalance) n.getProtocol(protocolID));
+		}
+	} else {
+		n = getUnderloadedPeer(node, protocolID);
+		if (n != null) {
+			doTransfer((AvgBalance) n.getProtocol(protocolID));
+		}
 	}
-	else {
-	    n = getUnderloadedPeer(node, protocolID);
-	    if (n != null) { doTransfer((AvgBalance)n.getProtocol(protocolID)); } 
-	} 
-	
-       	if( Math.abs(value-average) < 1 ) AvgBalance.suspend(node);
+
+	if (Math.abs(value - average) < 1)
+		AvgBalance.suspend(node);
 	if (n != null) {
-	if( Math.abs( ((AvgBalance)n.getProtocol(protocolID)).value-average) < 1 ) AvgBalance.suspend(n);
+		if (Math.abs(((AvgBalance) n.getProtocol(protocolID)).value - average) < 1)
+			AvgBalance.suspend(n);
 	}
-    }
+}
 
-    private Node getOverloadedPeer(Node node, int protocolID) {
+private Node getOverloadedPeer(Node node, int protocolID)
+{
 	int linkableID = FastConfig.getLinkable(protocolID);
-	Linkable linkable = (Linkable) node.getProtocol( linkableID );
-	
-	AvgBalance neighbor=null;
+	Linkable linkable = (Linkable) node.getProtocol(linkableID);
+
 	Node neighborNode = null;
 	double maxdiff = 0.0;
-	for(int i = 0; i < linkable.degree(); ++i)
-	    {
+	for (int i = 0; i < linkable.degree(); ++i) {
 		Node peer = linkable.getNeighbor(i);
-		// XXX quick and dirty handling of failure
-		if(!peer.isUp()) continue;
-		AvgBalance n = (AvgBalance)peer.getProtocol(protocolID);
-		if(n.quota==0) continue;
-		if(value >= average && n.value >= average) continue;
-		if(value <= average && n.value <= average) continue;
-		double d = Math.abs(value-n.value); 
-		if( d > maxdiff )
-		    {
-			neighbor = n;
+		// Failure handling
+		if (!peer.isUp())
+			continue;
+		AvgBalance n = (AvgBalance) peer.getProtocol(protocolID);
+		if (n.quota == 0)
+			continue;
+		if (value >= average && n.value >= average)
+			continue;
+		if (value <= average && n.value <= average)
+			continue;
+		double d = Math.abs(value - n.value);
+		if (d > maxdiff) {
 			neighborNode = peer;
 			maxdiff = d;
-		    }
-	    }
+		}
+	}
 	return neighborNode;
-    } 
+}
 
-    private Node getUnderloadedPeer(Node node, int protocolID) {
+private Node getUnderloadedPeer(Node node, int protocolID)
+{
 	int linkableID = FastConfig.getLinkable(protocolID);
-	Linkable linkable = (Linkable) node.getProtocol( linkableID );
-	
-	AvgBalance neighbor=null;
+	Linkable linkable = (Linkable) node.getProtocol(linkableID);
+
 	Node neighborNode = null;
 	double maxdiff = 0.0;
-	for(int i = 0; i < linkable.degree(); ++i)
-	    {
+	for (int i = 0; i < linkable.degree(); ++i) {
 		Node peer = linkable.getNeighbor(i);
-		// XXX quick and dirty handling of failure
-		if(!peer.isUp()) continue;
-		AvgBalance n = (AvgBalance)peer.getProtocol(protocolID);
-		if(n.quota==0) continue;
-		if(value >= average && n.value >= average) continue;
-		if(value <= average && n.value <= average) continue;
-		double d = Math.abs(value-n.value); 
-		if( d < maxdiff )
-		    {
-			neighbor = n;
+		// Failure handling
+		if (!peer.isUp())
+			continue;
+		AvgBalance n = (AvgBalance) peer.getProtocol(protocolID);
+		if (n.quota == 0)
+			continue;
+		if (value >= average && n.value >= average)
+			continue;
+		if (value <= average && n.value <= average)
+			continue;
+		double d = Math.abs(value - n.value);
+		if (d < maxdiff) {
 			neighborNode = peer;
 			maxdiff = d;
-		    }
-	    }
+		}
+	}
 	return neighborNode;
-    } 
+}
 
 }

@@ -21,20 +21,16 @@ package example.loadbalance;
 import peersim.config.*;
 import peersim.core.*;
 
-/** This class restores the quota value at each node in the topology in order
-*   to make the next cycle feasible. 
-*/
-public class ResetQuota implements Control {
-
-//--------------------------------------------------------------------------
-//Parameters
-//--------------------------------------------------------------------------
-
-/** 
- * The load at the peak node. 
- * @config
+/**
+ * This class restores the quota value at each node in the topology in
+ * order to make the next cycle feasible.
  */
-private static final String PAR_VALUE = "value";
+public class ResetQuota implements Control
+{
+
+// --------------------------------------------------------------------------
+// Parameters
+// --------------------------------------------------------------------------
 
 /**
  * The protocol to operate on.
@@ -42,35 +38,31 @@ private static final String PAR_VALUE = "value";
  */
 private static final String PAR_PROT = "protocol";
 
-//--------------------------------------------------------------------------
-//Fields
-//--------------------------------------------------------------------------
-
-/** Load value */
-private final double value;
+// --------------------------------------------------------------------------
+// Fields
+// --------------------------------------------------------------------------
 
 /** Value obtained from config property {@link #PAR_PROT}. */
 private final int protocolID;
 
-//--------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 // Initialization
-//--------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 
 public ResetQuota(String prefix)
 {
-	value = Configuration.getDouble(prefix+"."+PAR_VALUE);
-	protocolID = Configuration.getPid(prefix+"."+PAR_PROT);
+	protocolID = Configuration.getPid(prefix + "." + PAR_PROT);
 }
 
-//--------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 // Methods
-//--------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 
 // Comment inherited from interface
-public boolean execute() {
-	for(int i=0; i<Network.size(); ++i)
-	{
-		((BasicBalance)Network.get(i).getProtocol(protocolID)).resetQuota();
+public boolean execute()
+{
+	for (int i = 0; i < Network.size(); ++i) {
+		((BasicBalance) Network.get(i).getProtocol(protocolID)).resetQuota();
 	}
 
 	return false;

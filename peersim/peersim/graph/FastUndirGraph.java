@@ -56,7 +56,7 @@ protected void initGraph()
 	triangle = new BitSet[max];
 	for (int i=0; i<max; ++i)
 	{
-		in[i] = new ArrayList();
+		in[i] = new ArrayList<Integer>();
 		triangle[i] = new BitSet(i);
 	}
 

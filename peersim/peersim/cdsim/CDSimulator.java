@@ -28,15 +28,15 @@ import peersim.core.*;
 * For a cycle driven simulation 
 * the configuration has to describe a set of {@link CDProtocol}s, and their
 * ordering, a set of {@link Control}s and their ordering and a set of
-* initializers and their ordering. See parameters {@value PAR_INIT},
-* {@value PAR_CTRL}.
+* initializers and their ordering. See parameters {@value #PAR_INIT},
+* {@value #PAR_CTRL}.
 * <p>
 * One experiment run by {@link #nextExperiment} works as follows.
 * First the initializers are run in the specified order, then the following
-* is iterated {@value PAR_CYCLES} times:
-* If {@value PAR_NOMAIN} is specified, then simply the controls specified
+* is iterated {@value #PAR_CYCLES} times:
+* If {@value #PAR_NOMAIN} is specified, then simply the controls specified
 * in the configuration are run in the specified order.
-* If {@value PAR_NOMAIN} is not specified, then the controls in the
+* If {@value #PAR_NOMAIN} is not specified, then the controls in the
 * configuration are run in the specified order, followed by the
 * execution of {@link FullNextCycle}.
 * <p>

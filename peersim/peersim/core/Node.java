@@ -61,7 +61,7 @@ public void setIndex(int index);
 public int getIndex();
 
 /**
- * We include this to change the access right to public and to get rid if the
+ * We include this to change the access right to public and to get rid of the
  * <code>throws</code> clause. 
  */
 public Object clone();

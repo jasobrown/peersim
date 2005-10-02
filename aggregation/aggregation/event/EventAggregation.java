@@ -79,9 +79,11 @@ public EventAggregation(String prefix)
 	initSchedule();
 }
 
-public Object clone() throws CloneNotSupportedException
+public Object clone()
 {
-	EventAggregation ev = (EventAggregation) super.clone();
+	EventAggregation ev = null;
+	try { ev = (EventAggregation) super.clone(); }
+	catch( CloneNotSupportedException e ) {} // never happens
 	ev.initSchedule();
 	return ev;
 }

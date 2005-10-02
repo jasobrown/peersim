@@ -113,13 +113,6 @@ public MaliciousSecureAverageAP(String prefix)
 	p.fixed = (double) Configuration.getDouble(prefix+"."+PAR_FIXED, 0);
 }
 
-public Object clone() throws CloneNotSupportedException
-{
-	MaliciousSecureAverageAP mha = 
-		(MaliciousSecureAverageAP) super.clone();
-	return mha;
-}
-
 //--------------------------------------------------------------------------
 // Methods
 //--------------------------------------------------------------------------

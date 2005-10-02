@@ -134,9 +134,11 @@ public HistoryUndirected(String prefix)
  * Creates the tables containing the initiated and received history.
  * The sizes are cloned by the original object.
  */
-public Object clone() throws CloneNotSupportedException
+public Object clone()
 {
-	HistoryDirected h = (HistoryDirected) super.clone();
+	HistoryDirected h = null;
+	try { h =(HistoryDirected) super.clone(); }
+	catch( CloneNotSupportedException e ) {} // never happens
 	h.snodes = new Node[snodes.length];
 	h.svalues = new double[snodes.length];
 	h.scycles = new int[snodes.length];

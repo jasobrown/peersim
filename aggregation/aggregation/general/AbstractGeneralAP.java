@@ -123,9 +123,11 @@ public AbstractGeneralAP(String prefix)
  * Clone an existing instance. The clone is considered 
  * new, so it cannot partecipate in the aggregation protocol.
  */
-public Object clone() throws CloneNotSupportedException
+public Object clone()
 {
-	AbstractGeneralAP ap = (AbstractGeneralAP) super.clone();
+	AbstractGeneralAP ap = null;
+	try { ap = (AbstractGeneralAP) super.clone(); }
+	catch( CloneNotSupportedException e ) {} // never happens
 	ap.isNew = true;
 	return ap;
 }

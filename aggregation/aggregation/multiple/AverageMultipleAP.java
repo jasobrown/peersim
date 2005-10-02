@@ -153,9 +153,11 @@ public AverageMultipleAP(String prefix)
  * Clone an existing instance. The clone is considered 
  * new, so it cannot partecipate in the aggregation protocol.
  */
-public Object clone() throws CloneNotSupportedException
+public Object clone()
 {
-	AverageMultipleAP ap = (AverageMultipleAP) super.clone();
+	AverageMultipleAP ap = null;
+	try { ap = (AverageMultipleAP) super.clone(); }
+	catch( CloneNotSupportedException e ) {} // never happens
 	ap.values = new double[values.length];
 	ap.isNew = false;
 	ap.last = -1;

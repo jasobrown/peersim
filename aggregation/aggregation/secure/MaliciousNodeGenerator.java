@@ -109,24 +109,17 @@ public boolean execute()
 	    " is not malicious");
 	    
 	/* Substitute benign protocol instances with malicious ones */
-	try {
-		for (int i=0; i < malicious; i++) {
-			boolean stop = false;
-			do {
-				int k = CommonState.r.nextInt(Network.size());
-				ModifiableNode node = (ModifiableNode) Network.get(k);
-				Protocol prot = node.getProtocol(protocolID);
-				if (!(prot instanceof MaliciousProtocol)) {
-					node.setProtocol(protocolID, (Protocol) prototype.clone());
-					stop = true;
-				}
-			} while (!stop);
-		}
-	} catch (CloneNotSupportedException e)
-	{
-		// this should never happen unless a node implementation
-		// throws it explicitly (but why would it?)
-		throw new Error(""+e);
+	for (int i=0; i < malicious; i++) {
+		boolean stop = false;
+		do {
+			int k = CommonState.r.nextInt(Network.size());
+			ModifiableNode node = (ModifiableNode) Network.get(k);
+			Protocol prot = node.getProtocol(protocolID);
+			if (!(prot instanceof MaliciousProtocol)) {
+				node.setProtocol(protocolID, (Protocol) prototype.clone());
+				stop = true;
+			}
+		} while (!stop);
 	}
 
 	return false;

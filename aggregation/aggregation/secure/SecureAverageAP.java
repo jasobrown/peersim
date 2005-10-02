@@ -91,14 +91,6 @@ public SecureAverageAP(String prefix)
   sad.hid  = Configuration.getPid(prefix+"."+PAR_HID);
 }
 
-
-public Object clone() throws CloneNotSupportedException
-{
-	SecureAverageAP clone = (SecureAverageAP) super.clone();
-	clone.sad = sad;
-	return clone;
-}
-
 //--------------------------------------------------------------------------
 // Methods
 //--------------------------------------------------------------------------

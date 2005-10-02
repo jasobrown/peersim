@@ -108,12 +108,12 @@ private Set set;
 public ProofBlacklist(String prefix)
 {
 	/* Read parameters */
-  maxttl = (byte) Configuration.getInt(prefix+"."+PAR_MAXTTL);
-  ttls = new Integer[maxttl];
-  for (int i=0; i < maxttl; i++) {
-  	ttls[i] = new Integer(i);
-  }
-  size = Configuration.getInt(prefix+"."+PAR_SIZE);
+	maxttl = (byte) Configuration.getInt(prefix+"."+PAR_MAXTTL);
+	ttls = new Integer[maxttl];
+	for (int i=0; i < maxttl; i++) {
+		ttls[i] = new Integer(i);
+	}
+	size = Configuration.getInt(prefix+"."+PAR_SIZE);
 	maxforwarded = Configuration.getInt(prefix+"."+PAR_FORWARDED, size);
 	forward = new Node[size]; // XXX
 
@@ -128,9 +128,11 @@ public ProofBlacklist(String prefix)
 //--------------------------------------------------------------------------
 
 //Comment inherited from interface
-public Object clone() throws CloneNotSupportedException 
+public Object clone()
 {
-  ProofBlacklist bl = (ProofBlacklist) super.clone();
+	ProofBlacklist bl = null;
+	try { bl=(ProofBlacklist) super.clone(); }
+	catch( CloneNotSupportedException e ) {} // never happens
 	bl.map = new HashMap(size*2, 0.75f);
 	bl.set = bl.map.keySet();
 	return bl;
@@ -251,12 +253,12 @@ class BlacklistIterator implements Iterator {
 	int size;
 	Node[] list;
 
-  public void reset(Node[] list, int size)
-  {
-  	this.list = list;
-  	this.size = size;
+	public void reset(Node[] list, int size)
+	{
+		this.list = list;
+		this.size = size;
 		index = 0;
-  }
+	}
 
 	// Comment inherited from interface
 	public void remove()
@@ -274,7 +276,7 @@ class BlacklistIterator implements Iterator {
 	public Object next()
 	{
 		return forward[index++];
-  }
+	}
 }
 
 //--------------------------------------------------------------------------

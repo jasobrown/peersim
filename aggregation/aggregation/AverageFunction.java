@@ -49,16 +49,6 @@ public AverageFunction(String prefix)
 }
 
 //--------------------------------------------------------------------------
-
-/**
- * Clone the object.
- */
-public Object clone() throws CloneNotSupportedException 
-{
-	return super.clone();
-}
-
-//--------------------------------------------------------------------------
 // Methods
 //--------------------------------------------------------------------------
 

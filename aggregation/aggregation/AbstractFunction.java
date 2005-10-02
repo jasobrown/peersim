@@ -63,9 +63,11 @@ public AbstractFunction(String prefix)
 /**
  * Clones the object, by copying the value.
  */
-public Object clone() throws CloneNotSupportedException 
+public Object clone()
 {
-	AbstractFunction af = (AbstractFunction) super.clone();
+	AbstractFunction af = null;
+	try{ af = (AbstractFunction) super.clone(); }
+	catch( CloneNotSupportedException e ) {} // never happens
 	return af;
 }
 

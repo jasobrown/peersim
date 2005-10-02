@@ -30,7 +30,7 @@ public class NeighbourListGraph implements Graph, java.io.Serializable {
 // ===============================================================
 
 /** Contains the objects associated with the node indeces.*/
-private final Vector<Object> nodes;
+private final ArrayList<Object> nodes;
 
 /**
 * Contains the indices of the nodes. The vector "nodes" contains this
@@ -43,7 +43,7 @@ private final HashMap<Object,Integer> nodeindex;
 
 /** Contains sets of node indeces. If "nodes" is not null, indices are 
 * defined by "nodes", otherwise they correspond to 0,1,... */
-private final Vector<Set<Integer>> neighbors;
+private final ArrayList<Set<Integer>> neighbors;
 
 /** Indicates if the graph is directed. */
 private final boolean directed;
@@ -57,8 +57,8 @@ private final boolean directed;
 */
 public NeighbourListGraph( boolean directed ) {
 
-	nodes = new Vector<Object>(1000,1000);	
-	neighbors = new Vector<Set<Integer>>(1000,1000);
+	nodes = new ArrayList<Object>(1000);	
+	neighbors = new ArrayList<Set<Integer>>(1000);
 	nodeindex = new HashMap<Object,Integer>(1000);
 	this.directed = directed;
 }
@@ -74,7 +74,7 @@ public NeighbourListGraph( boolean directed ) {
 public NeighbourListGraph( int size, boolean directed ) {
 
 	nodes = null;
-	neighbors = new Vector<Set<Integer>>(size);
+	neighbors = new ArrayList<Set<Integer>>(size);
 	for(int i=0; i<size; ++i) neighbors.add(new HashSet<Integer>());
 	nodeindex = null;
 	this.directed = directed;

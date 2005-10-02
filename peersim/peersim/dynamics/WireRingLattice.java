@@ -22,7 +22,8 @@ import peersim.graph.*;
 import peersim.config.Configuration;
 
 /**
- * Takes a {@link Linkable} protocol and adds edges that define a ring lattice.
+ * Takes a {@link peersim.core.Linkable} protocol and adds edges that
+ * define a ring lattice.
  * Note that no connections are removed, they are only added. So it can be used
  * in combination with other initializers.
  * @see  GraphFactory#wireRingLattice

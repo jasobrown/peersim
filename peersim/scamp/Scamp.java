@@ -120,9 +120,11 @@ public Scamp(String n) {
 * The birthDate field will denote the birth of the clone, and not the
 * original birthDate.
 */
-public Object clone() throws CloneNotSupportedException {
+public Object clone() {
 
-	Scamp scamp = (Scamp) super.clone();
+	Scamp scamp = null;
+	try { scamp=(Scamp) super.clone(); }
+	catch( CloneNotSupportedException e ) {} // never happens
 	scamp.outView = (ArrayList)outView.clone();
 	scamp.inView = (ArrayList)inView.clone();
 	if( outViewDates != null )

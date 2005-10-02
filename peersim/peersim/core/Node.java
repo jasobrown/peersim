@@ -61,8 +61,9 @@ public void setIndex(int index);
 public int getIndex();
 
 /**
- * We have to include this to change the access right to public.
+ * We include this to change the access right to public and to get rid if the
+ * <code>throws</code> clause. 
  */
-public Object clone() throws CloneNotSupportedException;
+public Object clone();
 
 }

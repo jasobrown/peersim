@@ -124,9 +124,11 @@ public SimpleLpbcast(String n) {
 /**
  * 
  */
-public Object clone() throws CloneNotSupportedException {
+public Object clone() {
 
-	SimpleLpbcast sn = (SimpleLpbcast)super.clone();
+	SimpleLpbcast sn = null;
+	try { sn=(SimpleLpbcast)super.clone(); }
+	catch( CloneNotSupportedException e ) {} // never happens
 	sn.subs = (ArrayList)subs.clone();
 	sn.unSubs = (ArrayList)unSubs.clone();
 	if( SimpleLpbcast.unSubsTout > 0 )

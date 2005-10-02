@@ -56,12 +56,7 @@ public BasicBalance(String prefix)
 	quota = quota_value;
 }
 
-// Implements the Protocol interface
-public Object clone() throws CloneNotSupportedException
-{
-	BasicBalance af = (BasicBalance) super.clone();
-	return af;
-}
+// clone is inherited
 
 // --------------------------------------------------------------------------
 // Methods

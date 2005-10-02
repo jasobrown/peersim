@@ -38,7 +38,7 @@ public InetNodeProtocol(String prefix)
 	isroot = false;
 }
 
-public Object clone() throws CloneNotSupportedException
+public Object clone()
 {
 	InetNodeProtocol af = (InetNodeProtocol) super.clone();
 	af.isroot = this.isroot;

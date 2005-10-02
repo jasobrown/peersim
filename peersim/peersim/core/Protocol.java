@@ -19,7 +19,7 @@
 package peersim.core;
 
 /**
- * Generic tag interface to identify protocols.
+ * Interface to identify protocols.
  * 
  * @author Alberto Montresor
  * @version $Revision$
@@ -34,6 +34,6 @@ public interface Protocol extends Cloneable
  * used only to construct the prototype. Initialization can be done
  * via {@link Control}s.
  */
-public Object clone() throws CloneNotSupportedException;
+public Object clone();
 
 }

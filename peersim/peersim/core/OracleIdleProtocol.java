@@ -36,7 +36,7 @@ public OracleIdleProtocol(String prefix) {}
 // --------------------------------------------------------------------
 
 /** Returns <tt>this</tt> to maximize memory saving. It contains no fields.*/
-public Object clone() throws CloneNotSupportedException { return this; }
+public Object clone() { return this; }
 
 
 // ===================== public methods ===============================

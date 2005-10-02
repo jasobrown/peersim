@@ -66,9 +66,11 @@ public IdleProtocol(String s)
 
 //--------------------------------------------------------------------------
 
-public Object clone() throws CloneNotSupportedException
+public Object clone()
 {
-	IdleProtocol ip = (IdleProtocol) super.clone();
+	IdleProtocol ip = null;
+	try { ip = (IdleProtocol) super.clone(); }
+	catch( CloneNotSupportedException e ) {} // never happens
 	ip.neighbors = new Node[neighbors.length];
 	System.arraycopy(neighbors, 0, ip.neighbors, 0, len);
 	ip.len = len;

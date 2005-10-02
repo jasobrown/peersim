@@ -75,9 +75,11 @@ public DaemonProtocol(String s)
 
 // ------------------------------------------------------------------
 
-public Object clone() throws CloneNotSupportedException {
+public Object clone() {
 
-	DaemonProtocol ip = (DaemonProtocol)super.clone();
+	DaemonProtocol ip = null;
+	try { ip=(DaemonProtocol)super.clone(); }
+	catch( CloneNotSupportedException e ) {} // never happens
 	return ip;
 }
 

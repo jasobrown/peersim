@@ -120,19 +120,12 @@ public static void reset() {
 
 	// cloning the nodes
 	if(len > 0 )
-	try
 	{
 		for(int i=0; i<len; ++i)
 		{
 			node[i] = (Node)prototype.clone();
 			node[i].setIndex(i);
 		}
-	}
-	catch(CloneNotSupportedException e)
-	{
-		// this should never happen unless a node implementation
-		// throws it explicitly (but why would it?)
-		throw new Error(""+e);
 	}
 }
 

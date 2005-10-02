@@ -55,9 +55,12 @@ public SingleValueHolder(String prefix)
 /**
  * Clones the value holder.
  */
-public Object clone() throws CloneNotSupportedException
+public Object clone()
 {
-	return super.clone();
+	SingleValueHolder svh=null;
+	try { svh=(SingleValueHolder)super.clone(); }
+	catch( CloneNotSupportedException e ) {} // never happens
+	return svh;
 }
 
 //--------------------------------------------------------------------------

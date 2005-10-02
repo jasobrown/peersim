@@ -35,13 +35,6 @@ public static final int CUTOFF=10;
 
 public Test(String n) { super(n); }
 
-// ---------------------------------------------------------------------
-
-public Object clone() throws CloneNotSupportedException {
-
-	return super.clone();
-}
-
 
 // ====================== Linkable implementation =====================
 // ====================================================================

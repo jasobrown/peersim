@@ -80,9 +80,11 @@ public SimpleNewscast(String n) {
 
 // ---------------------------------------------------------------------
 
-public Object clone() throws CloneNotSupportedException {
+public Object clone() {
 
-	SimpleNewscast sn = (SimpleNewscast)super.clone();
+	SimpleNewscast sn=null;
+	try { sn=(SimpleNewscast)super.clone(); }
+	catch(CloneNotSupportedException e) {}
 	sn.cache = new Node[cache.length];
 	sn.tstamps = new int[tstamps.length];
 	System.arraycopy(cache, 0, sn.cache, 0, cache.length);

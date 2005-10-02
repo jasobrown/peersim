@@ -20,7 +20,7 @@ package peersim.vector;
 
 
 /**
- * for testing the vector package.
+ * Dor testing the vector package.
  */
 public class TestVectors extends SingleValueHolder
 {
@@ -48,16 +48,6 @@ protected long lvalue;
  * Calls super constructor.
  */
 public TestVectors(String prefix) { super(prefix); }
-
-//--------------------------------------------------------------------------
-
-/**
- * Clones the value holder.
- */
-public Object clone() throws CloneNotSupportedException
-{
-	return super.clone();
-}
 
 //--------------------------------------------------------------------------
 //methods

@@ -69,9 +69,11 @@ public GeneralNode(String prefix) {
 
 // -----------------------------------------------------------------
 
-public Object clone() throws CloneNotSupportedException {
+public Object clone() {
 	
-	GeneralNode result = (GeneralNode)super.clone();
+	GeneralNode result = null;
+	try { result=(GeneralNode)super.clone(); }
+	catch( CloneNotSupportedException e ) {} // never happens
 	result.protocol = new Protocol[protocol.length];
 	CommonState.setNode(result);
 	for(int i=0; i<protocol.length; ++i) {

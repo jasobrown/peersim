@@ -144,14 +144,7 @@ public OscillatingNetwork(String prefix)
 protected void add(int n)
 {
 	for (int i = 0; i < n; ++i) {
-		Node newnode = null;
-		try {
-			newnode = (Node) Network.prototype.clone();
-		} catch (CloneNotSupportedException e) {
-			// this is fatal but should never happen because nodes
-			// are cloneable
-			throw new Error(e + "");
-		}
+		Node newnode = (Node) Network.prototype.clone();
 		for (int j = 0; j < inits.length; ++j) {
 			inits[j].initialize(newnode);
 		}

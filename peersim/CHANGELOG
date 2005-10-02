@@ -1,3 +1,10 @@
+MJ 02/10/05
+- Another things where we break backwards compatibility: we got rid of
+  ColneNotSupportedException in all clonings, so you'll have to slightly
+  modify your implementations to catch any exceptions thrown by the superclass
+  inside the method. This exception was annoying because there is no way it
+  can be thrown anyway.
+
 AM 02/10/05
 - Implemented a rounding mechanism in Integers to avoid rounding
   errors.

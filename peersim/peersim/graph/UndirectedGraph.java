@@ -25,7 +25,9 @@ import java.util.*;
 * by making its edges bidirectional. The graph to be made undirected
 * is passed to the constructor. Only the reference is stored so
 * if the directed graph changes later, the undirected version will
-* follow that change. However, getNeigbours has O(n) time complexity.
+* follow that change. However, {@link #getNeighbours} has O(n) time complexity
+* (in other words, too slow for large graphs).
+* @see ConstUndirGraph
 */
 public class UndirectedGraph implements Graph {
 
@@ -102,6 +104,7 @@ public boolean directed() { return false; }
 
 // --------------------------------------------------------------------
 
+/** not supported */
 public boolean setEdge( int i, int j ) {
 	
 	throw new UnsupportedOperationException();
@@ -109,6 +112,7 @@ public boolean setEdge( int i, int j ) {
 
 // ---------------------------------------------------------------
 
+/** not supported */
 public boolean clearEdge( int i, int j ) {
 	
 	throw new UnsupportedOperationException();
@@ -122,11 +126,11 @@ public int degree(int i) {
 }
 
 // --------------------------------------------------------------------
-
+/*
 public static void main( String[] args ) {
 
 	
-	Graph net = null /* some graph to test should be put here */;	
+	Graph net = null;	
 	UndirectedGraph ug = new UndirectedGraph(net);
 	for(int i=0; i<net.size(); ++i)
 		System.err.println(i+" "+net.getNeighbours(i));
@@ -142,6 +146,7 @@ public static void main( String[] args ) {
 
 	GraphIO.writeGML(net,System.out);
 }
+*/
 }
 
 

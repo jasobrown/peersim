@@ -22,7 +22,9 @@ import java.util.*;
 
 /**
 * Implements a graph which uses the neighbour list representation.
-* No multiple edges are allowed.
+* No multiple edges are allowed. The implementation also supports the
+* growing of the graph. This is very useful when the number of nodes is
+* not known in advance or when we construct a graph reading a file.
 */
 public class NeighbourListGraph implements Graph, java.io.Serializable {
 
@@ -52,7 +54,8 @@ private final boolean directed;
 // ===============================================================
 
 /**
-* Constructs an empty graph.
+* Constructs an empty graph. That is, the graph has zero nodes, but any
+* number of nodes and edges can be added later.
 * @param directed if true the graph will be directed
 */
 public NeighbourListGraph( boolean directed ) {
@@ -68,7 +71,7 @@ public NeighbourListGraph( boolean directed ) {
 /**
 * Constructs a graph with a fixed size without edges. If the graph is
 * constructed this way, it is not possible to associate objects to nodes,
-* nore it is possible to grow the graph using {@link #addNode}.
+* nor it is possible to grow the graph using {@link #addNode}.
 * @param directed if true the graph will be directed
 */
 public NeighbourListGraph( int size, boolean directed ) {
@@ -141,6 +144,8 @@ public Collection<Integer> getNeighbours(int i) {
 
 // ---------------------------------------------------------------
 
+/** If the graph was gradually grown using {@link #addNode}, returns the
+* object associated with the node, otherwise null */
 public Object getNode(int i) { return (nodes==null?null:nodes.get(i)); }
 	
 // ---------------------------------------------------------------

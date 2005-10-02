@@ -93,7 +93,7 @@ public static Graph wireWS( Graph g, int k, double p, Random r ) {
 * (edge targets) are chosen randomly without replacement from the nodes of the
 * graph other than the source node (ie no loop edge is added).
 * If k is larger than N-1 (where N is the number of nodes) then k is set to
-* be N-1 and a complete graph is returned. No loop edges are generated.
+* be N-1 and a complete graph is returned.
 * @param g the graph to be wired
 * @param k samples to be drawn for each node
 * @param r source of randomness
@@ -148,7 +148,7 @@ public static Graph wireStar( Graph g ) {
 * In general, node i has links to i*k+1,...,i*k+k.
 * @param g the graph to be wired
 * @param k the number of outgoing links of nodes in the tree (except
-* leafes that have zero out-links, and exactly one node that might have
+* leaves that have zero out-links, and exactly one node that might have
 * less than k).
 * @return returns g for convinience
 */
@@ -210,9 +210,10 @@ http://arxiv.org/pdf/cond-mat/0408391</a>. In both cases, the number of the
 * initial set of nodes is the same as the degree parameter, and no links are
 * added. The first added node is connected to all of the initial nodes,
 * and after that the BA model is used normally.
-* @param k the numbre of edges that are generated for each new node, also
+* @param k the number of edges that are generated for each new node, also
 * the number of initial nodes (that have no adges).
 * @param r the randomness to be used
+* @return returns g for convinience
 */
 public static Graph wireScaleFreeBA( Graph g, int k, Random r ) {
 
@@ -258,22 +259,22 @@ public static Graph wireScaleFreeBA( Graph g, int k, Random r ) {
 }
 
 // -------------------------------------------------------------------
-
+/*
 public static void main(String[] pars) {
 	
 	int n = Integer.parseInt(pars[0]);
 	//int k = Integer.parseInt(pars[1]);
 	Graph g = new BitMatrixGraph(n);
-	/*
-	wireWS(g,20,.1,new Random());
-	GraphIO.writeChaco(new UndirectedGraph(g),System.out);
-	*/
+	
+	//wireWS(g,20,.1,new Random());
+	//GraphIO.writeChaco(new UndirectedGraph(g),System.out);
+	
 	//wireScaleFreeBA(g,3,new Random());
 	//wireKOut(g,k,new Random());
 	//wireRegRootedTree(g,k);
 	wireHypercube(g);
 	GraphIO.writeNeighborList(g,System.out);
 }
-
+*/
 }
 

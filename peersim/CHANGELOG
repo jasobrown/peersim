@@ -4,6 +4,8 @@ MJ 02/10/05
   modify your implementations to catch any exceptions thrown by the superclass
   inside the method. This exception was annoying because there is no way it
   can be thrown anyway.
+- Cleaned up the graph package documentation, and fixed a bug in
+  SubGraphEdges.degree.
 
 AM 02/10/05
 - Implemented a rounding mechanism in Integers to avoid rounding

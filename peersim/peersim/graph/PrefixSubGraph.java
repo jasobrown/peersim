@@ -23,7 +23,11 @@ import java.util.*;
 /**
 * This class is an adaptor for representing special subgraphs of any graph.
 * It can represent the subgraphs spanned by the nodes 0,...,i where
-* i is less than or equal to n, the size of the original graph.
+* i is less than or equal to n-1, the last node of the original graph.
+* The underlying graph is stored by reference. This means that if the
+* graph changes, then these changes will be reflected by this class as well.
+* Besides, the size of the prefix can be changed at will at any time
+* using {@link #setSize}.
 */
 public class PrefixSubGraph implements Graph {
 
@@ -71,11 +75,9 @@ public Collection<Integer> getNeighbours(int i) {
 	if( i<0 || i>=prefSize ) throw new IndexOutOfBoundsException();
 	
 	List<Integer> result = new LinkedList<Integer>();
-	Iterator it = g.getNeighbours(i).iterator();
-	while(it.hasNext())
+	for(Integer j:g.getNeighbours(i))
 	{
-		Integer in = (Integer)it.next();
-		if( in.intValue() < prefSize ) result.add(in);
+		if( j < prefSize ) result.add(j);
 	}
 
 	return Collections.unmodifiableCollection(result);
@@ -103,11 +105,6 @@ public Object getEdge(int i, int j) {
 
 // --------------------------------------------------------------------
 
-/**
-* Returns the original size of the graph, not the subgraph. This is to
-* maintain the specification of the Graph interface. (Note that this
-* subgraph still contains all nodes a=only removes edges.)
-*/
 public int size() { return prefSize; }
 
 // --------------------------------------------------------------------
@@ -116,6 +113,7 @@ public boolean directed() { return g.directed(); }
 
 // --------------------------------------------------------------------
 
+/** not supported */
 public boolean setEdge( int i, int j ) {
 	
 	throw new UnsupportedOperationException();
@@ -123,6 +121,7 @@ public boolean setEdge( int i, int j ) {
 
 // ---------------------------------------------------------------
 
+/** not supported */
 public boolean clearEdge( int i, int j ) {
 	
 	throw new UnsupportedOperationException();

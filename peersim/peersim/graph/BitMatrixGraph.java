@@ -45,9 +45,7 @@ private final boolean directed;
 */
 public BitMatrixGraph( int n ) {
 
-	sets = new ArrayList<BitSet>(n);
-	for(int i=0; i<n; ++i) sets.add(new BitSet());
-	this.directed = true;
+	this(n,true);
 }
 
 // ---------------------------------------------------------------

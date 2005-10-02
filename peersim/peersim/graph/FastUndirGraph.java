@@ -25,12 +25,12 @@ package peersim.graph;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
-import java.util.Iterator;
 
 /**
-* Speeds up {@link ConstUndirGraph#isEdge} by storing the links in a matrix.
-* Its memory consumptions is huge but it's much faster if the isEdge method
-* of the original graph is slow.
+* Speeds up {@link ConstUndirGraph#isEdge} by storing the links in an
+* adjecency matrix (in fact in a triangle).
+* Its memory consumption is huge but it's much faster if the isEdge method
+* of the original underlying graph is slow.
 */
 public class FastUndirGraph extends ConstUndirGraph
 {
@@ -42,6 +42,7 @@ private BitSet[] triangle;
 // =================================================================
 
 
+/** Calls super constructor */
 public FastUndirGraph(Graph graph)
 {
 	super(graph);
@@ -51,7 +52,6 @@ public FastUndirGraph(Graph graph)
 
 protected void initGraph()
 {
-	
 	final int max = g.size();
 	triangle = new BitSet[max];
 	for (int i=0; i<max; ++i)
@@ -62,13 +62,11 @@ protected void initGraph()
 
 	for(int i=0; i<max; ++i)
 	{
-		Collection out = g.getNeighbours(i);
-		Iterator it = out.iterator();
-		while( it.hasNext() )
+		for(Integer out:g.getNeighbours(i))
 		{
-			int j = ((Integer)it.next()).intValue();
+			int j=out.intValue();
 			if( ! g.isEdge(j,i) )
-				in[j].add(new Integer(i));
+				in[j].add(i);
 			// But always add the link to the triangle
 			if (i>j) // make sure i>j
 				triangle[i].set(j);

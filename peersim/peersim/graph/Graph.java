@@ -39,8 +39,10 @@ public interface Graph {
 	boolean isEdge(int i, int j);
 
 	/**
-	* Returns an unmodifyable collection view to all outgoing edges from
-	* i. The objects are of type Integer.
+	* Returns a collection view to all outgoing edges from
+	* i. The collection should ideally be unmodifiable.
+	* In any case, modifying the returned collection is not safe and
+	* may result in unspecified behavior.
 	*/
 	Collection<Integer> getNeighbours(int i);
 

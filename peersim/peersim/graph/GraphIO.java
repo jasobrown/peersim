@@ -25,7 +25,7 @@ import java.io.*;
 * Implenments static methods to load and write graphs.
 */
 public class GraphIO {
-protected GraphIO() {}
+private GraphIO() {}
 
 
 // ================== public static methods =========================

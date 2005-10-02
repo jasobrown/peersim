@@ -29,8 +29,9 @@ import java.util.*;
 * passed to the constructor changes over time then
 * methods {@link #getNeighbours(int)} and {@link #degree(int)}
 * become inconsistent (but only those).
-* The upside of this inconvinience is that getNeighbours will have
+* The upside of this inconvinience is that {@link #getNeighbours} will have
 * constant time complexity.
+* @see UndirectedGraph
 */
 public class ConstUndirGraph implements Graph {
 
@@ -46,7 +47,12 @@ protected final List<Integer>[] in;
 // ====================== public constructors ===================
 // ==============================================================
 
-
+/**
+* Initializatio based on given graph. Stores the graph and if necessary
+* (if the graph is directed) searches for the incoming edges and stores
+* them too. The given graph is stored by reference (not cloned) so it should
+* not be modified while this object is in use.
+*/
 public ConstUndirGraph( Graph g ) {
 
 	this.g = g;
@@ -64,19 +70,16 @@ public ConstUndirGraph( Graph g ) {
 	
 // --------------------------------------------------------------
 
+/** Finds and stores incoming edges */
 protected void initGraph() {
 
 	final int max = g.size();
 	for(int i=0; i<max; ++i) in[i] = new ArrayList<Integer>();
 	for(int i=0; i<max; ++i)
 	{
-		Integer thisNode = i;
-		Collection out = g.getNeighbours(i);
-		Iterator it = out.iterator();
-		while( it.hasNext() )
+		for(Integer j:g.getNeighbours(i))
 		{
-			int j = ((Integer)it.next()).intValue();
-			if( ! g.isEdge(j,i) ) in[j].add(thisNode);
+			if( ! g.isEdge(j,i) ) in[j].add(i);
 		}
 	}
 }
@@ -107,6 +110,7 @@ public Collection<Integer> getNeighbours(int i) {
 
 // ---------------------------------------------------------------
 
+/** Returns the node from the underlying graph */
 public Object getNode(int i) { return g.getNode(i); }
 	
 // ---------------------------------------------------------------
@@ -132,6 +136,7 @@ public boolean directed() { return false; }
 
 // --------------------------------------------------------------------
 
+/** not supported */
 public boolean setEdge( int i, int j ) {
 	
 	throw new UnsupportedOperationException();
@@ -139,6 +144,7 @@ public boolean setEdge( int i, int j ) {
 
 // ---------------------------------------------------------------
 
+/** not supported */
 public boolean clearEdge( int i, int j ) {
 	
 	throw new UnsupportedOperationException();
@@ -149,7 +155,7 @@ public boolean clearEdge( int i, int j ) {
 public int degree(int i) { return g.degree(i)+(in==null?0:in[i].size()); }
 
 // ---------------------------------------------------------------
-
+/*
 public static void main( String[] args ) {
 
 	Graph net = new BitMatrixGraph(20);
@@ -174,5 +180,6 @@ public static void main( String[] args ) {
 	GraphIO.writeUCINET_DL(net,System.out);
 	GraphIO.writeUCINET_DL(ug,System.out);
 }
+*/
 }
 

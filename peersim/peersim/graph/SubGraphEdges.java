@@ -22,11 +22,13 @@ import java.util.*;
 
 /**
 * This class is an adaptor for representing subgraphs of any graph.
-* The node set will remain the same as for the original graph however, only
-* the edges are removed which have one of our ends outside the subgraph.
-* This is to keep the contract of the original graph interface which
-* says that the nodes are indexed with 0,...,size-1, and we don't reindex
-* the nodes. The function size() return the original size accordingly.
+* The subgraph is defined the following way.
+* The subgraph always contains all the nodes of the original underlying
+* graph. However, it is possible to remove edges by flagging nodes as
+* removed, in which case
+* the edges that have at least one end on those nodes are removed.
+* If the underlying graph changes after initialization, this class follows
+* the change.
 */
 public class SubGraphEdges implements Graph {
 
@@ -38,8 +40,6 @@ public class SubGraphEdges implements Graph {
 private final Graph g;
 
 private final BitSet nodes;
-
-private int nodesSize = 0; // since 1.4 there is cardinality for bitsets
 
 
 // ====================== public constructors ===================
@@ -73,11 +73,9 @@ public Collection<Integer> getNeighbours(int i) {
 	List<Integer> result = new LinkedList<Integer>();
 	if( nodes.get(i) )
 	{
-		Iterator it = g.getNeighbours(i).iterator();
-		while(it.hasNext())
+		for(Integer in:g.getNeighbours(i))
 		{
-			Integer in = (Integer)it.next();
-			if( nodes.get( in.intValue() ) ) result.add(in);
+			if( nodes.get(in) ) result.add(in);
 		}
 	}
 
@@ -102,11 +100,6 @@ public Object getEdge(int i, int j) {
 
 // --------------------------------------------------------------------
 
-/**
-* Returns the original size of the graph, not the subgraph. This is to
-* maintain the specification of the Graph interface. (Note that this
-* subgraph still contains all nodes a=only removes edges.)
-*/
 public int size() { return g.size(); }
 
 // --------------------------------------------------------------------
@@ -115,6 +108,7 @@ public boolean directed() { return g.directed(); }
 
 // --------------------------------------------------------------------
 
+/** not supported */
 public boolean setEdge( int i, int j ) {
 	
 	throw new UnsupportedOperationException();
@@ -122,6 +116,7 @@ public boolean setEdge( int i, int j ) {
 
 // ---------------------------------------------------------------
 
+/** not supported */
 public boolean clearEdge( int i, int j ) {
 	
 	throw new UnsupportedOperationException();
@@ -131,8 +126,15 @@ public boolean clearEdge( int i, int j ) {
 
 public int degree(int i) {
 
-	if( nodes.get(i) ) return g.degree(i);
-	else return 0;
+	int degree=0;
+	if( nodes.get(i) )
+	{
+		for(Integer in:g.getNeighbours(i))
+		{
+			if( nodes.get(in) ) degree++;
+		}
+	}
+	return degree;
 }
 
 
@@ -144,7 +146,7 @@ public int degree(int i) {
 * This function returns the size of the subgraph, ie the number of nodes
 * in the subgraph.
 */
-public int subGraphSize() { return nodesSize; }
+public int subGraphSize() { return nodes.cardinality(); }
 
 // --------------------------------------------------------------------
 
@@ -156,7 +158,6 @@ public boolean removeNode(int i) {
 	
 	boolean was = nodes.get(i);
 	nodes.clear(i);
-	if( was ) --nodesSize;
 	return was;
 }
 
@@ -170,7 +171,6 @@ public boolean addNode(int i) {
 	
 	boolean was = nodes.get(i);
 	nodes.set(i);
-	if( !was ) ++nodesSize;
 	return was;
 }
 }

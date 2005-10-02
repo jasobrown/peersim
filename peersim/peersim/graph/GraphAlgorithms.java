@@ -23,13 +23,14 @@ import java.util.*;
 /**
 * Implements graph algorithms. The current implementation is NOT thread
 * safe. Some algorithms are not static, many times the result of an
-* algorithm can be read from fileds of the GraphAlgorithm object.
+* algorithm can be read from non-static fields.
 */
 public class GraphAlgorithms {
 
 // =================== public fields ==================================
 // ====================================================================
 
+/** output of some algorithms is passed here */
 public int[] root = null;
 private Stack<Integer> stack = new Stack<Integer>();
 private int counter=0;
@@ -40,12 +41,13 @@ public final static int WHITE=0;
 public final static int GREY=1;
 public final static int BLACK=2;
 
-/** working area for the dfs algorithm */
+/** output of some algorithms is passed here */
 public int[] color = null;
 
-/** working variable for the dfs algorithm */
+/** output of some algorithms is passed here */
 public Set<Integer> cluster = null;
 
+/** output of some algorithms is passed here */
 public int[] d = null;
 
 // =================== private methods ================================
@@ -177,7 +179,8 @@ private void tarjanVisit(int i) {
 
 /** Returns the weakly connected cluster indexes with size as a value.
 * Cluster membership can be seen from the content of the array {@link #color};
-* each node has the cluster index as color.
+* each node has the cluster index as color. The cluster indexes carry no
+* information; we guarantee only that different clusters have different indexes.
 */
 public Map weaklyConnectedClusters( Graph g ) {
 
@@ -220,9 +223,8 @@ public Map weaklyConnectedClusters( Graph g ) {
 // --------------------------------------------------------------------
 
 /**
-* In <code>d[j]</code> returns the length of the shortest path between
+* In <code>{@link #d}[j]</code> returns the length of the shortest path between
 * i and j. The value -1 indicates that j is not accessible from i.
-* @see #d
 */
 public void dist( Graph g, int i ) {
 
@@ -274,9 +276,12 @@ public static double clustering( Graph g, int i ) {
 /**
 * Performs anti-entropy epidemic multicasting from node 0.
 * As a result the number of nodes that have been reached in cycle i
-* is put into b[i]. The number of cycles performed is determined by b.length.
+* is put into <code>b[i]</code>.
+* The number of cycles performed is determined by <code>b.length</code>.
 * In each cycle each node contacts a random neighbour and exchanges
-* information. The simulation is generational.
+* information. The simulation is generational: when a node contacts a neighbor
+* in cycle i, it sees their state as in cycle i-1, besides, all nodes update
+* their state at the same time point, sycnhronously.
 */
 public static void multicast( Graph g, int[] b, Random r ) {
 
@@ -322,12 +327,13 @@ public static void multicast( Graph g, int[] b, Random r ) {
 /**
 * Performs flooding from given node.
 * As a result the number of nodes that have been reached in step i
-* is put into b[i]. In other words, b[i] contains the number of nodes
-* that can be reached by exactly i steps, and always b[0]=1.
-* In fact, b[i] is the number of nodes that are of at most distance i from
-* the starting node.
-* If the maximal distance from k is lower than b.length, then the remaining
-* elements of b are zero.
+* is put into <code>b[i]</code>. In other words, <code>b[i]</code>
+* contains the number of nodes
+* that can be reached by exactly i steps, and always <code>b[0]=1</code>.
+* In fact, <code>b[i]</code> is the number of nodes that are of at most
+* distance i from the starting node.
+* If the maximal distance from k is lower than <code>b.length</code>,
+* then the remaining elements of b are zero.
 */
 public void flooding( Graph g, int[] b, int k ) {
 

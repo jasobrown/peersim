@@ -23,6 +23,9 @@ import org.lsmp.djep.groupJep.interfaces.*;
 class Integers extends Group implements IntegralDomainI,HasDivI,
 	OrderedSetI,HasModI,HasPowerI {
 	
+
+	private static final BigDecimal half = new BigDecimal(0.5);
+
 	/**
 	 * Operations on the reals (Implemented as BigInteger).
 	 */
@@ -87,7 +90,7 @@ class Integers extends Group implements IntegralDomainI,HasDivI,
 
 	public Number valueOf(String str) {
 		BigDecimal bd = new BigDecimal(str);
-		//return bd.round(MathContext.UNLIMITED);
+		bd = bd.add(half);
 		return bd.toBigInteger();
 	}
 	

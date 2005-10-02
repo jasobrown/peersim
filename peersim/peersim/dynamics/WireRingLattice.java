@@ -19,7 +19,6 @@
 package peersim.dynamics;
 
 import peersim.graph.*;
-import peersim.core.*;
 import peersim.config.Configuration;
 
 /**

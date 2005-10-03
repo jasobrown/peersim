@@ -97,7 +97,7 @@ protected long next;
 // ==================================================================
 
 
-/** Reads configuration parameters from the components defined by
+/** Reads configuration parameters from the component defined by
 * <code>prefix</code>. {@value PAR_STEP} defaults to 1.
 */
 public Scheduler(String prefix) {
@@ -107,7 +107,7 @@ public Scheduler(String prefix) {
 
 // ------------------------------------------------------------------
 
-/** Reads configuration parameters from the components defined by
+/** Reads configuration parameters from the component defined by
 * <code>prefix</code>. If useDefault is false, then at least parameter
 * {@value PAR_STEP} must be explicitly defined. Otherwise {@value PAR_STEP}
 * defaults to 1.

@@ -37,6 +37,8 @@ import peersim.config.Configuration;
 * Alternatively, if <tt>at</tt> is defined, then the schedule will be a single
 * time point. If FINAL is
 * defined, it is also added to the set of active time points.
+* It refers to the time after the simulation has finished (see
+* {@link CommonState#getPhase}).
 */
 public class Scheduler {
 
@@ -52,7 +54,7 @@ public class Scheduler {
 private static final String PAR_STEP = "step";
 
 /** 
-* Defaults to -1.
+* Defaults to -1. That is, defaults to be ineffective.
 * @config
 */
 private static final String PAR_AT = "at";
@@ -71,10 +73,11 @@ private static final String PAR_FROM = "from";
 private static final String PAR_UNTIL = "until";
 
 /**
-* Defines if component is active after the last cycle has finished.
-* Note that the index of last cycle is not know in advance because other
-* components can stop the simulation at any time.
+* Defines if component is active after the simulation has finished.
+* Note that the exact time the simulation finishes is not know in advance
+* because other components can stop the simulation at any time.
 * By default not set.
+* @see CommonState#getPhase
 * @config
 */
 private static final String PAR_FINAL = "FINAL";
@@ -94,6 +97,9 @@ protected long next;
 // ==================================================================
 
 
+/** Reads configuration parameters from the components defined by
+* <code>prefix</code>. {@value PAR_STEP} defaults to 1.
+*/
 public Scheduler(String prefix) {
 	
 	this(prefix, true);
@@ -101,6 +107,11 @@ public Scheduler(String prefix) {
 
 // ------------------------------------------------------------------
 
+/** Reads configuration parameters from the components defined by
+* <code>prefix</code>. If useDefault is false, then at least parameter
+* {@value PAR_STEP} must be explicitly defined. Otherwise {@value PAR_STEP}
+* defaults to 1.
+*/
 public Scheduler(String prefix, boolean useDefault)
 {
 	long at = Configuration.getLong(prefix+"."+PAR_AT,-1);
@@ -128,7 +139,7 @@ public Scheduler(String prefix, boolean useDefault)
 // ===================== public methods ==============================
 // ===================================================================
 
-
+/** true if given time point is covered by this scheduler */
 public boolean active(long time) {
 	
 	if( time < from || time >= until ) return false;
@@ -137,21 +148,18 @@ public boolean active(long time) {
 
 // -------------------------------------------------------------------
 
+/** true if current time point is covered by this scheduler */
 public boolean active() {
 	
 	return active( CommonState.getTime() );
 }
-
-// -------------------------------------------------------------------
-
-public boolean fin() { return fin; }
 
 //-------------------------------------------------------------------
 
 /**
 * Returns the next time point. If the returned value is negative, there are
 * no more time points. As a side effect, it also updates the next time point,
-* so repreated calls to this method return the scheduled times.
+* so repeated calls to this method return the scheduled times.
 */
 public long getNext()
 {
@@ -160,8 +168,6 @@ public long getNext()
 	if( next >= until ) next = -1;
 	return ret;
 }
-
-//-------------------------------------------------------------------
 
 }
 

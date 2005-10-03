@@ -21,7 +21,8 @@ package peersim.core;
 import peersim.config.Configuration;
 
 /**
- * A protocol that does nothing. It is useful to model a static link-structure
+ * A protocol that stores links. It does nothing apart from that.
+ * It is useful to model a static link-structure
  * (topology). The only function of this protocol is to serve as a source of
  * neighborhood information for other protocols.
  */
@@ -92,6 +93,8 @@ public boolean contains(Node n)
 
 // --------------------------------------------------------------------------
 
+/** Adds given node if it is not already in the network. There is no limit
+* to the number of nodes that can be added. */
 public boolean addNeighbor(Node n)
 {
 	for (int i = 0; i < len; i++) {
@@ -112,9 +115,6 @@ public boolean addNeighbor(Node n)
 
 public Node getNeighbor(int i)
 {
-	// XXX why don't you like the IndexOutOfBandException?
-	// that's the standard java way of handling this, even
-	// in containers.
 	return neighbors[i];
 }
 

@@ -21,7 +21,7 @@ package peersim.core;
 
 /**
 * Instances of classes implementing this interface
-* can (have to) maintain a fail state, ie information about the availability
+* maintain a fail state, ie information about the availability
 * of the object.
 */
 public interface Fallible {
@@ -36,7 +36,7 @@ public interface Fallible {
 	* Fail state indicating that the object is dead and recovery is
 	* not possible. When this state is set, it is a good idea to make sure
 	* that the state of the object becomes such that any attempt to
-	* operate on it causes an visible error of some kind.
+	* operate on it causes a visible error of some kind.
 	*/
 	public int DEAD = 1;
 
@@ -60,7 +60,8 @@ public interface Fallible {
 
 	/**
 	* Convenience method to check if the node is up and running
-	* @return getFailState()==OK 
+	* @return must return true if and only if
+	* <code>getFailState()==OK</code>
 	*/
 	public boolean isUp();
 }

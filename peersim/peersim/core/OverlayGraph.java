@@ -24,12 +24,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
-* This class is an adaptor which makes a protocol on our overlay network
+* This class is an adaptor which makes a {@link Linkable} protocol layer
 * look like a graph. It is useful because it allows the application of many
 * graph algorithms and graph topology initialization methods.
-* It stores the reference of the overlay network only so it follows the
-* changes in it. However, if the nodes are reshuffled in the overlay network's
-* internal representation, or if the node list changes,
+* If the overlay network changes after creating this object, the changes
+* will be reflected. However, if the nodes are reshuffled (see
+* {@link Network#shuffle}), or if the node list changes (addition/removal),
 * then the behaviour becomes unspecified.
 *
 * The indices of nodes are from 0 to Network.size()-1.
@@ -100,7 +100,7 @@ public boolean isEdge(int i, int j) {
 // ---------------------------------------------------------------
 
 /**
-* Returns those neighbors that are up. IF node i is not up, it returns
+* Returns those neighbors that are up. If node i is not up, it returns
 * an empty list.
 */
 public Collection<Integer> getNeighbours(int i) {
@@ -121,33 +121,35 @@ public Collection<Integer> getNeighbours(int i) {
 
 // ---------------------------------------------------------------
 
+/** Returns <code>Network.node[i]</code> */
 public Object getNode(int i) { return Network.node[i]; }
 	
 // ---------------------------------------------------------------
 
 /**
-* If there is an (i,j) edge, returns that, otherwise if there is a (j,i)
-* edge, returns that, otherwise returns null.
+* Returns null always
 */
 public Object getEdge(int i, int j) { return null; }
 
 // ---------------------------------------------------------------
 
+/** Returns <code>Network.size()</code> */
 public int size() { return Network.size(); }
 
 // --------------------------------------------------------------------
 	
+/** Returns always true */
 public boolean directed() { return true; }
 
 // --------------------------------------------------------------------
 
 /**
-* In some cases this behaves strangely. Namely, when node i or j is in a non-OK
-* fail state but is not dead (eg it can be down temporarily).
+* Sets given edge.
+* In some cases this behaves strangely. Namely, when node i or j is not up,
+* but is not dead (eg it can be down temporarily).
 * In such situations the relevant link is made, but afterwards
 * getEdge(i,j) will NOT return true, only when the fail state has changed back
-* to OK. This method is used normally by initializers when each node is in
-* the OK state.
+* to OK.
 *
 * <p>Conecptually one can think of it as a succesful operation which is
 * immediately overruled by the dynamics of the underlying overlay network.
@@ -172,6 +174,7 @@ public boolean setEdge( int i, int j ) {
 
 // ---------------------------------------------------------------
 
+/** Not supported */
 public boolean clearEdge( int i, int j ) {
 	
 	throw new UnsupportedOperationException();

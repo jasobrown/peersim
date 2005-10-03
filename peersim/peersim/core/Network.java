@@ -22,18 +22,22 @@ import peersim.config.Configuration;
 
 /**
 * This class forms the basic framework of all simulations.
-* This is completely static which is based on the assumption that we
+* This is a static singleton which is based on the assumption that we
 * will simulate only one overlay network at a time.
 * This allows us to reduce memory usage in many cases by allowing all the
 * components to directly reach the fields of this class without having to store
 * a reference.
-* The overlay network is a set of nodes imlpemented line an array list for the
+* <p>
+* The network is a set of nodes implemented via an array list for the
 * sake of efficiency.
 * Each node has an array of protocols. The protocols within a node can
 * interact directly as defined by their implementation, and can be imagined as
-* processes running in a common local environment.
-* The set of objects (processes) at a given position of this array form an
-* overlay network.
+* processes running in a common local environment (ie the node).
+* This class is called a "network" because, although it is only a set of nodes,
+* in most simulations there is at least one {@link Linkable} protocol that
+* defines connections between nodes. In fact, such a {@link Linkable} protocol
+* layer can be accessed through a {@link peersim.graph.Graph} view
+* using {@link OverlayGraph}.
 */
 public class Network {
 
@@ -50,9 +54,13 @@ public class Network {
 private static final String PAR_NODE = "overlay.node";
 
 /**
-* This config property defines the maximal size of the overlay network
-* during the whole simulation. Allows for optimalization. If not set
+* This config property defines the initial capacity of the overlay network.
+* See also {@link #getCapacity}.
+* If not set
 * then {@value #PAR_SIZE} will be used.
+* In the case of scenarios when the network needs to grow, setting this to
+* the maximal expected size of the network avoids reallocation of memory
+* during the growth of the network.
 * @config
 */
 private static final String PAR_MAXSIZE = "overlay.maxSize";
@@ -83,7 +91,8 @@ private static int len;
 
 /**
 * The prototype node which is used to populate the simulation via cloning.
-* Initializers will set the properties of the node if necessary.
+* After all the nodes have been cloned, {@link Control} components can be
+* applied to perform any further initialization.
 */
 public static Node prototype = null;
 
@@ -92,6 +101,10 @@ public static Node prototype = null;
 // =================================================================
 
 
+/**
+* Reads configuration parameters, constructs the prototype node, and
+* populates the network by cloning the prototype.
+*/
 public static void reset() {
 
 	len = Configuration.getInt(PAR_SIZE);
@@ -135,7 +148,7 @@ private Network() {}
 // =============== public methods ===================================
 // ==================================================================
 
-
+/** Number of nodes currently in the network */
 public static int size() { return len; }
 
 // ------------------------------------------------------------------
@@ -161,8 +174,8 @@ public static void setCapacity(int newSize) {
 // ------------------------------------------------------------------
 
 /**
-* Returns the maximal number of nodes that can be stored without increasing
-* the storage capacity.
+* Returns the maximal number of nodes that can be stored without reallocating
+* the underlying array to increase capcity.
 */
 public static int getCapacity() { return node.length; }
 
@@ -199,9 +212,6 @@ public static Node get( int index ) {
 /**
 * The node at the end of the list is removed. Returns the removed node.
 * It also sets the fail state of the node to {@link Fallible#DEAD}.
-* This is because
-* the rest of the network should not sense this removed node as alive
-* anymore as it is not part of the node set.
 */
 public static Node remove() {
 	
@@ -217,9 +227,6 @@ public static Node remove() {
 /**
 * The node with the given index is removed. Returns the removed node.
 * It also sets the fail state of the node to {@link Fallible#DEAD}.
-* This is because
-* the rest of the network should not sense this removed node as alive
-* anymore as it is not part of the node set.
 * <p>Look out: the index of the other nodes will not change (the right
 * hand side of the list is not shifted to the left) except that of the last
 * node. Only the
@@ -235,9 +242,7 @@ public static Node remove(int i) {
 // ------------------------------------------------------------------
 
 /**
-* Swaps the two nodes at the given indeces. This is useful as a building
-* block for shuffling the array. shuffling is necessary because removal
-* of random elements is not supported, only the removal of the last element.
+* Swaps the two nodes at the given indeces.
 */
 public static void swap(int i, int j) {
 	
@@ -251,7 +256,7 @@ public static void swap(int i, int j) {
 // ------------------------------------------------------------------
 
 /**
-* Shuffles the node array taking into account the index fields of nodes.
+* Shuffles the node array. The index of each node is updated accordingly.
 */
 public static void shuffle() {
 	

@@ -348,7 +348,7 @@ public static void nextExperiment()
 	CommonState.setPhase(CommonState.POST_SIMULATION);
 	for(int j=0; j<controls.length; ++j)
 	{
-		if( ctrlSchedules[j].fin() ) controls[j].execute();
+		if( ctrlSchedules[j].fin ) controls[j].execute();
 	}
 }
 

@@ -1,3 +1,7 @@
+MJ 03/10/05
+- Cleanup of core package docs
+- Addition of ID to Node interface (long requested feature)
+
 MJ 02/10/05
 - Another things where we break backwards compatibility: we got rid of
   ColneNotSupportedException in all clonings, so you'll have to slightly

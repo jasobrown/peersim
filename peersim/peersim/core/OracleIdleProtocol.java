@@ -31,6 +31,7 @@ public class OracleIdleProtocol implements Protocol, Linkable {
 // ===================================================================
 
 
+/** Does nothing */
 public OracleIdleProtocol(String prefix) {}
 
 // --------------------------------------------------------------------
@@ -43,7 +44,9 @@ public Object clone() { return this; }
 // ====================================================================
 
 
-/** This is an expensive operation here, should not be used at all */
+/** This is an expensive operation, should not be used at all.
+* It returns false only if the given node is not in the current network.
+*/
 public boolean contains(Node n) {
 
 	final int len = Network.size();

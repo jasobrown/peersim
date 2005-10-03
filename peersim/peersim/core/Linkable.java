@@ -25,13 +25,16 @@ package peersim.core;
 * The interface is similar to one of a container (containing neighbors),
 * only the types of the contained elements have to be {@link Node}.
 * The neighbor collection is defined in a random access list style, but
-* it must follow the contract of a set.
+* it must follow the contract of a set too (elements must be unique).
 * <p>
 * Also note that there is no possibility to remove elements from the
 * neighbor set. This is because removal is usually costly and it does not make
-* sense in the context of our overlay network simulation framework,
-* where this interface is used. Therefore it would only put an unnecessary
-* burden on implementors.
+* sense in the context of our applications,
+* where this interface is used for 1) initialization and 2)
+* providing an interface for other protocols for accessing the neighbor list.
+* Protocols that manage links remove, refresh, etc their link set internally
+* or through custom methods.
+* Therefore it would only put an unnecessary burden on implementors.
 */
 public interface Linkable extends Cleanable {
  

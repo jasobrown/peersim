@@ -22,14 +22,17 @@ import  peersim.util.ExtendedRandom;
 import  peersim.config.Configuration;
 
 /**
- * This is the common state of the simulation all objects see. It's purpose is
+ * This is the common state of the simulation all objects see.
+ * Static singleton. One of its purposes is
  * simplification of parameter structures and increasing efficiency by putting
- * state information here instead of passing parameters. Fully static class, a
- * singleton.
+ * state information here instead of passing parameters.
  *<p>
- * The set methods should not be used by applications, they are for system
- * components. Ideally, they should not be visible, but due to the lack of
- * flexibility in java access rights, we are forced to make them visible.
+ * <em>The set methods should not be used by applications</em>,
+ * they are for system
+ * components. Use them only if you know exactly what you are doing, eg
+ * if you are so advanced that you can write your own simulation engine.
+ * Ideally, they should not be visible, but due to the lack of more
+ * flexibility in java access rights, we are forced to make them public.
  */
 public class CommonState
 {
@@ -37,7 +40,19 @@ public class CommonState
 //======================= constants ===============================
 //=================================================================
 
+/**
+* Constant that can be used as a value of simulation phase.
+* It means that the simulation has finished.
+* @see #getPhase
+*/
 public static final int POST_SIMULATION = 1;
+
+/**
+* Constant that can be used as a value of simulation phase.
+* It means that the simulation phase information has not been (unknown).
+* @see #getPhase
+*/
+public static final int PHASE_UNKNOWN = 0;
 
 // ======================= fields ==================================
 // =================================================================
@@ -110,6 +125,10 @@ static {
 		Configuration.getLong(PAR_SEED,System.currentTimeMillis());
 	r = new ExtendedRandom(seed);
 }
+
+
+/** Does nothing. To avoid construction but allow extension. */
+protected CommonState() {}
 
 // ======================= methods =================================
 // =================================================================
@@ -185,9 +204,10 @@ public static void setEndTime(long t)
 //-----------------------------------------------------------------
 
 /**
- * Returns the phase within a time step. Currently the following phases are
+ * Returns the simulation phase. Currently the following phases are
  * understood.
  * <ul>
+ * <li>{@link #PHASE_UNKNOWN} phase is unknown</li>
  * <li>{@link #POST_SIMULATION} the simulation is completed</li>
  * </ul>
  */
@@ -243,13 +263,14 @@ public static void setNode(Node n)
 
 //-----------------------------------------------------------------
 
+/*
 public static void main(String pars[]) {
 	
 	setEndTime(Long.parseLong(pars[0]));
 	setTime(Long.parseLong(pars[1]));
 	System.err.println(getTime()+" "+getIntTime());
 }
-
+*/
 }
 
 

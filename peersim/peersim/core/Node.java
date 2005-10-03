@@ -47,7 +47,9 @@ public int protocolSize();
 
 /**
  * Sets the index of this node in the internal representation of the node list.
- * Applications should not use this method. Using this mehtod will result in
+ * Applications should not use this method. It is defined as public simply
+ * because it is not possible to define it otherwise.
+ * Using this mehtod will result in
  * undefined behvior. It is provided for the core system.
  */
 public void setIndex(int index);
@@ -55,13 +57,24 @@ public void setIndex(int index);
 /**
  * Returns the index of this node. It is such that
  * <code>Network.get(n.getIndex())</code> returns n. This index can
- * change during a simulation, it is not a fixed id.
+ * change during a simulation, it is not a fixed id. If you need that, use
+ * {@link #getID}.
  * @see Network#get
  */
 public int getIndex();
 
 /**
- * We include this to change the access right to public and to get rid of the
+* Returns the unique ID of the node. It is guaranteed that the ID is unique
+* during the entire simulation, that is, there will be no different Node
+* objects with the same ID in the system during one invocation of the JVM.
+* Preferably nodes
+* should implement <code>hashCode()</code> based on this ID. 
+*/
+public long getID();
+
+/**
+ * Clones the node. It is defined as part of the interface
+ * to change the access right to public and to get rid of the
  * <code>throws</code> clause. 
  */
 public Object clone();

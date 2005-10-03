@@ -21,11 +21,8 @@ package peersim.core;
 import peersim.config.*;
 
 /**
-* Class that represents one node with a network address.
-* An {@link Network} is made of a set of nodes.
-* The functionality of this class is thin: it must be able to represent
-* failure states and store a list of protocols.
-* It is the protocols that do the interesting job.
+* This is the default {@link Node} class that is used to compose the
+* {@link Network}.
 */
 public class GeneralNode implements Node {
 
@@ -33,26 +30,42 @@ public class GeneralNode implements Node {
 // ================= fields ========================================
 // =================================================================
 
+/** used to generate unique id-s */
+private static long counterID = 0;
+
 /**
-* The protocols composing this node.
+* The protocols on this node.
 */
 protected Protocol[] protocol = null;
 
 /**
-* This package private field tells the index of this node in the node
-* list of the {@link Network}. This is necessary to allow
+* The current index of this node in the node
+* list of the {@link Network}. It can change any time.
+* This is necessary to allow
 * the implementation of efficient graph algorithms.
 */
-protected int index;
+private int index;
 
 /**
 * The fail state of the node.
 */
 protected int failstate = Fallible.OK;
 
+/**
+* The id of the node. It should be final, however it can't be final because
+* clone must be able to set it.
+*/
+private long ID;
+
 // ================ constructor and initialization =================
 // =================================================================
 
+/** Used to construct the prototype node. This class currently does not
+* have specific configuration parameters and so the parameter
+* <code>prefix</code> is not used. It reads the protocol components
+* (components that have type {@value #PAR_PROT}) from
+* the configuration.
+*/
 public GeneralNode(String prefix) {
 	
 	String[] names = Configuration.getNames(PAR_PROT);
@@ -64,7 +77,8 @@ public GeneralNode(String prefix) {
 			Configuration.getInstance(names[i]);
 		protocol[i] = p; 
 	}
-}		
+	ID=nextID();
+}
 
 
 // -----------------------------------------------------------------
@@ -80,9 +94,17 @@ public Object clone() {
 		CommonState.setPid(i);
 		result.protocol[i] = (Protocol)protocol[i].clone();
 	}
+	result.ID=nextID();
 	return result;
 }
 
+// -----------------------------------------------------------------
+
+/** returns the next unique ID */
+private long nextID() {
+
+	return counterID++;
+}
 
 // =============== public methods ==================================
 // =================================================================
@@ -140,16 +162,29 @@ public void setIndex(int index) { this.index = index; }
 	
 //------------------------------------------------------------------
 
+/**
+* Returns the ID of this node. The ID-s are generated using a counter
+* (ie they are not random).
+*/
+public long getID() { return ID; }
+
+//------------------------------------------------------------------
+
 public String toString() 
 {
 	StringBuffer buffer = new StringBuffer();
-	buffer.append("index: "+index+"\n");
+	buffer.append("ID: "+ID+" index: "+index+"\n");
 	for(int i=0; i<protocol.length; ++i)
 	{
 		buffer.append("protocol["+i+"]="+protocol[i]+"\n");
 	}
 	return buffer.toString();
 }
+
+//------------------------------------------------------------------
+
+/** Implemented as <code>(int)getID()</code>. */
+public int hashCode() { return (int)getID(); }
 
 }
 

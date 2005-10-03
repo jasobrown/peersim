@@ -31,8 +31,6 @@ public class ModifiableNode extends GeneralNode
 
 /**
  * Invokes the super constructor.
- * 
- * @param prefix
  */
 public ModifiableNode(String prefix)
 {

@@ -24,7 +24,6 @@ package peersim.graph;
 
 import java.util.ArrayList;
 import java.util.BitSet;
-import java.util.Collection;
 
 /**
 * Speeds up {@link ConstUndirGraph#isEdge} by storing the links in an

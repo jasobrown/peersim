@@ -35,7 +35,7 @@ public static final String PAR_PROT = "protocol";
 
 /**
  * Returns the i-th protocol in this node. If i is not a valid protocol id
- * (negative or larger than or equal to the number of protocols), then throws
+ * (negative or larger than or equal to the number of protocols), then it throws
  * IndexOutOfBoundsException.
  */
 public Protocol getProtocol(int i);
@@ -49,8 +49,8 @@ public int protocolSize();
  * Sets the index of this node in the internal representation of the node list.
  * Applications should not use this method. It is defined as public simply
  * because it is not possible to define it otherwise.
- * Using this mehtod will result in
- * undefined behvior. It is provided for the core system.
+ * Using this method will result in
+ * undefined behavior. It is provided for the core system.
  */
 public void setIndex(int index);
 

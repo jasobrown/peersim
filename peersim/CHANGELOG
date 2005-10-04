@@ -1,3 +1,6 @@
+AM 04/10/05
+- Small changes in the documentation, to adapt to the new doclet.
+
 MJ 03/10/05
 - Cleanup of core package docs
 - Addition of ID to Node interface (long requested feature)

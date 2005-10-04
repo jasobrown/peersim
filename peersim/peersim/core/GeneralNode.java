@@ -63,7 +63,7 @@ private long ID;
 /** Used to construct the prototype node. This class currently does not
 * have specific configuration parameters and so the parameter
 * <code>prefix</code> is not used. It reads the protocol components
-* (components that have type {@value #PAR_PROT}) from
+* (components that have type {@value peersim.core.Node#PAR_PROT}) from
 * the configuration.
 */
 public GeneralNode(String prefix) {

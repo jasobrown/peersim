@@ -57,7 +57,7 @@ private static final String PAR_TYPE = "type";
 //Fields
 //--------------------------------------------------------------------------
 
-/** {@link #PAR_SIZESTATS} */
+/** {@link #PAR_STATS} */
 private final boolean sizestats;
 
 /** {@link #PAR_TYPE} */

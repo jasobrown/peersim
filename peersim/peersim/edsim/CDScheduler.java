@@ -32,8 +32,10 @@ import peersim.dynamics.NodeInitializer;
 * consequtive executions (see {@link NextCycleEvent}).
 *
 * <p>All {@link CDProtocol} specifications in the configuration need to
-* contain a {@link Scheduler} specification at least for the step size (see
-* {@link Scheduler}). This value is used as a cycle length.
+* contain a {@link Scheduler} specification at least for the step size
+* (see config parameter {@value peersim.core.Scheduler#PAR_STEP} of
+* {@link Scheduler}). This value is used as the cycle length for the
+* corresponding protocol.
 *@see NextCycleEvent
 */
 public class CDScheduler implements Control, NodeInitializer {

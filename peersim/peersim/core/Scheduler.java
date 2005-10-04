@@ -51,7 +51,7 @@ public class Scheduler {
 * Defaults to 1.
 * @config
 */
-private static final String PAR_STEP = "step";
+public static final String PAR_STEP = "step";
 
 /** 
 * Defaults to -1. That is, defaults to be ineffective.

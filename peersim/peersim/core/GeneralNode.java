@@ -31,7 +31,7 @@ public class GeneralNode implements Node {
 // =================================================================
 
 /** used to generate unique id-s */
-private static long counterID = 0;
+private static long counterID = -1;
 
 /**
 * The protocols on this node.

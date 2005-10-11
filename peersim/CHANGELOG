@@ -1,3 +1,9 @@
+SV 11/10/05
+- Changed initial value of GeneralNode.counterID from 0 to -1, so that the
+  prototype node gets ID -1, and the normal nodes get IDs 0, 1, 2, ...
+  Note that the API does not constrain this sequence, and could change
+  any time in the future.
+
 AM 04/10/05
 - Small changes in the documentation, to adapt to the new doclet.
 

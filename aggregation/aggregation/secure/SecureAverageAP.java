@@ -20,7 +20,6 @@ package aggregation.secure;
 
 import aggregation.general.*;
 import peersim.core.*;
-import peersim.util.*;
 import peersim.config.*;
 import peersim.cdsim.CDState;
 
@@ -80,7 +79,6 @@ protected SecureAverageData sad;
 
 /**
  * @param prefix
- * @param obj
  */
 public SecureAverageAP(String prefix)
 {
@@ -202,7 +200,6 @@ private static Node[] array = null;
  *  the blacklist containing the nodes that should not be
  *  selected
  * 	
- * @return
  */
 protected Node selectNeighbor(Node node, Blacklist blacklist)
 {

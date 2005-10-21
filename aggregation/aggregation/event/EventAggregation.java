@@ -22,7 +22,6 @@ import peersim.config.*;
 import peersim.core.*;
 import peersim.vector.*;
 import peersim.edsim.*;
-import peersim.util.*;
 import peersim.transport.*;
 
 

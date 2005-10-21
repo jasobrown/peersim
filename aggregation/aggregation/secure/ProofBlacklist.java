@@ -20,7 +20,6 @@ package aggregation.secure;
 
 import peersim.cdsim.*;
 import peersim.core.*;
-import peersim.util.*;
 import peersim.config.*;
 import java.util.*;
 

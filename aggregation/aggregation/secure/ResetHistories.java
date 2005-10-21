@@ -20,7 +20,6 @@ package aggregation.secure;
 
 import peersim.core.*;
 import peersim.config.*;
-import peersim.dynamics.*;
 
 /**
  * This {@link Control} object is used to periodically reset the history

@@ -20,7 +20,6 @@ package aggregation;
 
 import peersim.config.*;
 import peersim.core.*;
-import peersim.util.*;
 
 /**
  * This class implements the max/min aggregation functions through an
@@ -43,8 +42,6 @@ extends AbstractFunction
  * this protocol and the Linkable protocol used for communication.
  * 
  * @param prefix string prefix for config properties
- * @param obj configuration object, containing the protocol identifier 
- *  for this protocol.
  */
 public MaxFunction(String prefix)
 {

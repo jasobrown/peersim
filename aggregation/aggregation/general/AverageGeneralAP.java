@@ -19,7 +19,6 @@
 package aggregation.general;
 
 import peersim.core.*;
-import peersim.util.*;
 
 /**
  * Implements the average function. By extending AbstractGeneralAP,

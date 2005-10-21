@@ -68,7 +68,6 @@ public void addInitiated(Node destination, double value, int cycle);
  * 
  * @param rnode
  * @param hid
- * @return
  */
 public Node[] checkRandomNode(Node rnode, int hid);
 

@@ -19,7 +19,6 @@
 package aggregation.multiple;
 
 import peersim.core.*;
-import peersim.reports.*;
 import peersim.util.*;
 import peersim.config.*;
 import peersim.cdsim.CDState;

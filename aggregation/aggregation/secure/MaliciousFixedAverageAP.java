@@ -19,7 +19,6 @@
 package aggregation.secure;
 
 import aggregation.general.*;
-import peersim.util.*;
 import peersim.core.*;
 import peersim.config.*;
 

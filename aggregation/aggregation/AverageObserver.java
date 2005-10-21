@@ -18,11 +18,10 @@
 
 package aggregation;
 
-import peersim.core.*;
-import peersim.vector.*;
-import peersim.reports.*;
 import peersim.config.*;
+import peersim.core.*;
 import peersim.util.*;
+import peersim.vector.*;
 
 /**
  * Print statistics for an average aggregation computation.

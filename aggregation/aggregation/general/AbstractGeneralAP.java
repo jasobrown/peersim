@@ -21,7 +21,6 @@ package aggregation.general;
 import peersim.core.*;
 import peersim.cdsim.*;
 import peersim.config.*;
-import peersim.util.*;
 
 /**
  * Abstract class to be implemented by aggregation functions. Its task

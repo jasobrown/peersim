@@ -20,7 +20,6 @@ package aggregation.secure;
 
 import aggregation.general.*;
 import peersim.core.*;
-import peersim.util.*;
 import peersim.config.*;
 import peersim.cdsim.CDState;
 
@@ -101,7 +100,6 @@ private ProtocolData p;
 
 /**
  * @param prefix
- * @param obj
  */
 public MaliciousSecureAverageAP(String prefix)
 {

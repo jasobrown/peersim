@@ -19,7 +19,6 @@
 package aggregation.multiple;
 
 import peersim.core.*;
-import peersim.util.*;
 import peersim.config.*;
 import peersim.cdsim.*;
 
@@ -274,7 +273,7 @@ public void nextCycle(Node node, int pid)
  * 
  * @param initiator the node that initiated the exchange
  * @param receiver the node that received the exchange invitation
- * @param value the value sent by the initiator
+ * @param rvalue the value sent by the initiator
  * @param index the identifier of the concurrent aggregation protocol
  */
 public void deliverRequest(Node initiator, Node receiver, double rvalue, int index)
@@ -306,7 +305,7 @@ public void deliverRequest(Node initiator, Node receiver, double rvalue, int ind
  * 
  * @param initiator the node that initiated the exchange
  * @param receiver the node that received the exchange invitation
- * @param value the value sent by the receiver
+ * @param rvalue the value sent by the receiver
  * @param index the identifier of the concurrent aggregation protocol
  */
 public void deliverResponse(Node initiator, Node receiver, double rvalue, int index)

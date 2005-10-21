@@ -18,9 +18,8 @@
 
 package aggregation;
 
-import peersim.core.*;
-import peersim.util.*;
 import peersim.config.*;
+import peersim.core.*;
 
 /**
  * This class implements the average aggregation functions through an

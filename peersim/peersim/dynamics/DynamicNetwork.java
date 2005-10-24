@@ -165,7 +165,7 @@ public DynamicNetwork(String prefix)
 	Object[] tmp = Configuration.getInstanceArray(prefix + "." + PAR_INIT);
 	inits = new NodeInitializer[tmp.length];
 	for (int i = 0; i < tmp.length; ++i) {
-		System.out.println("Inits " + tmp[i]);
+		//System.out.println("Inits " + tmp[i]);
 		inits[i] = (NodeInitializer) tmp[i];
 	}
 	maxsize=Configuration.getInt(prefix+"."+PAR_MAX,Network.getCapacity());

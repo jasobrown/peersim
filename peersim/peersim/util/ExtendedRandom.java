@@ -26,8 +26,17 @@ import java.lang.Math;
  */
 public class ExtendedRandom extends Random {
 
-/** Calls super constructor */
-public ExtendedRandom(long seed) { super(seed); }
+private long lastSeed;
+
+// -------------------------------------------------------------------------
+
+/** Calls super constructor. Also stores the seed to be returned by
+{@link #getLastSeed}. */
+public ExtendedRandom(long seed) {
+
+	super(seed);
+	lastSeed = seed;
+}
 
 // -------------------------------------------------------------------------
 
@@ -80,6 +89,24 @@ public long nextLong(long n) {
 	
 	return val;
 }
+
+// -------------------------------------------------------------------------
+
+/** Sets random seed. Calls super method but also stores the seed to be
+returned by {@link #getLastSeed}. */
+public void setSeed( long seed ) {
+	
+	super.setSeed(seed);
+	lastSeed = seed;
+}
+
+// -------------------------------------------------------------------------
+
+/**
+* Returns the last random seed that was set explicitly. Either at
+* construction time or through {@link #setSeed}.
+*/
+public long getLastSeed() { return lastSeed; }
 
 // -------------------------------------------------------------------------
 

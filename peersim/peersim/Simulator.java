@@ -20,6 +20,7 @@ package peersim;
 
 import peersim.config.*;
 import peersim.core.*;
+import peersim.util.ExtendedRandom;
 import peersim.edsim.EDSimulator;
 import peersim.cdsim.CDSimulator;
 
@@ -149,8 +150,15 @@ public static void main(String[] args)
 
 		for(int k=0; k<exps; ++k)
 		{
+			if( k>0 )
+			{
+				long seed = CommonState.r.nextLong();
+				CommonState.r = new ExtendedRandom(seed);
+			}
 			System.err.print("Simulator: starting experiment "+k);
 			System.err.println(" invoking "+simName[SIMID]);
+			System.err.println("Random seed: "+
+				CommonState.r.getLastSeed());
 			System.out.println("\n\n");
 			
 			// XXX could be done through reflection, but

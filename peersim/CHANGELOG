@@ -1,3 +1,8 @@
+MJ 24/10/05
+- Random seed is now explicitly set and printed to stderr before all
+  experiments when using Simulator, also for simulation.experiments>1.
+- Removed a forgotten debug println from DynamicNetwork.
+
 SV 11/10/05
 - Changed initial value of GeneralNode.counterID from 0 to -1, so that the
   prototype node gets ID -1, and the normal nodes get IDs 0, 1, 2, ...

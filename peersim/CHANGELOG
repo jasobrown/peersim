@@ -1,3 +1,19 @@
+AM 24/10/05
+- Re-implemented the RangeSimulator, now moved to its own package
+  peersim.rangesim. Now, each experiment is run in a separate
+  jvm, to avoid to break the contract that peersim parameters cannot
+  be changed during the life of a JFM execution. 
+- Added a mechanism to detect multiple bracket blocks referring to the
+  same property (something you get when you comment a property definition
+  without commenting the associated bracket block)
+- Added a configurable logging support Peersim. Very simple for now,
+  with two implementations: a DefaultLogger, that replicates the
+  original behavior of Peersim; a RangeLogger, that replicates the
+  behavior of the original RangeSimulator (by adding the value
+  of range variables to the printed lines).
+- Now, all reports use Log to print their data, with the execptions
+  of GraphStats.
+
 MJ 24/10/05
 - Random seed is now explicitly set and printed to stderr before all
   experiments when using Simulator, also for simulation.experiments>1.

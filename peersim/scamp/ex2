@@ -23,18 +23,18 @@ protocol.0.c 0
 #protocol.0.leaseTimeout 100
 #protocol.0.indirectionTTL 10
 
-control.0 DynamicNetwork
-control.0.add 500
-control.0.step 2
-control.0.until 20
-control.0.init.0 scamp.Subscribe
-control.0.init.0.protocol 0
+control.d0 DynamicNetwork
+control.d0.add 500
+control.d0.step 2
+control.d0.until 20
+control.d0.init.0 scamp.Subscribe
+control.d0.init.0.protocol 0
 
-control.1 scamp.Unsubscribe
-control.1.add -100
-control.1.step 1
-control.1.from 10
-control.1.protocol 0
+control.d1 scamp.Unsubscribe
+control.d1.add -100
+control.d1.step 1
+control.d1.from 10
+control.d1.protocol 0
 
 control.o0 peersim.reports.DegreeStats
 control.o0.protocol 0

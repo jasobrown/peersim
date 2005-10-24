@@ -18,6 +18,7 @@ doc:
 		peersim.graph \
 		peersim.util \
 		peersim.reports \
+		peersim.rangesim \
 		peersim.dynamics \
 		peersim.vector \
 		example.loadbalance \
@@ -39,6 +40,7 @@ docnew:
 		peersim.graph \
 		peersim.util \
 		peersim.reports \
+		peersim.rangesim \
 		peersim.dynamics \
 		peersim.vector \
 		example.loadbalance \

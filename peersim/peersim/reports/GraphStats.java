@@ -18,9 +18,10 @@
 		
 package peersim.reports;
 
-import peersim.config.Configuration;
-import peersim.graph.GraphAlgorithms;
-import peersim.util.IncrementalStats;
+import peersim.config.*;
+import peersim.core.*;
+import peersim.graph.*;
+import peersim.util.*;
 
 /**
 * Prints reports on the graph like average clustering and average path length,
@@ -93,7 +94,7 @@ public GraphStats(String name) {
 */
 public boolean execute() {
 	
-	System.out.print(name+": ");
+	Log.print(name, "");
 	
 	IncrementalStats stats = new IncrementalStats();
 	updateGraph();
@@ -106,7 +107,7 @@ public boolean execute() {
 		{
 			stats.add(GraphAlgorithms.clustering(g,i));
 		}
-		System.out.print(stats.getAverage()+" ");
+		Log.print0(name, stats.getAverage()+" ");
 	}
 	
 	if( nl != 0 )
@@ -122,10 +123,10 @@ public boolean execute() {
 				stats.add(ga.d[j]);
 			}
 		}
-		System.out.print(stats.getAverage()+" ");
+		Log.print0(name, stats.getAverage()+" ");
 	}
 	
-	System.out.println();
+	Log.print0(name, "\n");
 	return false;
 }
 

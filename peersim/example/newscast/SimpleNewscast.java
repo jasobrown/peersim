@@ -208,11 +208,7 @@ protected void merge(Node thisNode, SimpleNewscast peer, Node peerNode )
 			SimpleNewscast.tn[i] = null;
 		}
 	}
-	// if(testNode==null)testNode=peerNode;
-	// if(peerNode==testNode) System.out.println(CommonState.getTime());
 }
-
-// private static Node testNode=null;
 
 // --------------------------------------------------------------------
 

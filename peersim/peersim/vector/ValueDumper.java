@@ -97,19 +97,24 @@ public ValueDumper(String prefix) {
 public boolean execute() {
 try
 {
-	System.out.print(prefix + ": ");
 	// initialize output streams
 	PrintStream pstr = System.out;
 	if (baseName != null)
 	{
 		String filename = fng.nextCounterName();
-		System.out.println("writing "+filename);
+		Log.println(prefix, "writing "+filename);
 		pstr = new PrintStream(new FileOutputStream(filename));
+		for (int i = 0; i < Network.size(); ++i)
+		{
+			pstr.println(getter.get(i));
+		}
 	}
-	else	System.out.println();
-	for (int i = 0; i < Network.size(); ++i)
-	{
-		pstr.println(getter.get(i));
+	else {
+		Log.println(prefix, "");
+		for (int i = 0; i < Network.size(); ++i)
+		{
+			Log.print0(prefix, getter.get(i)+"\n");
+		}
 	}
 }
 catch (IOException e)

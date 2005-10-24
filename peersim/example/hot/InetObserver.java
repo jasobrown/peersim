@@ -1,15 +1,11 @@
 
 package example.hot;
 
-import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.Iterator;
+import java.io.*;
+import java.util.*;
 
-import peersim.config.Configuration;
-import peersim.core.Control;
-import peersim.core.Node;
-import peersim.core.OverlayGraph;
+import peersim.config.*;
+import peersim.core.*;
 
 public class InetObserver implements Control
 {
@@ -66,14 +62,14 @@ public InetObserver(String prefix)
 
 	try {
 		graph_fileout = new PrintWriter(new FileWriter(graph_filename));
-		System.out.println(prefix + " filename: " + graph_filename + " selected");
+		Log.println(prefix, " filename: " + graph_filename + " selected");
 	} catch (Exception e) {
 		;
 	}
 
 	try {
 		dg_fileout = new PrintWriter(new FileWriter(dg_filename));
-		System.out.println(prefix + " filename: " + dg_filename + " selected");
+		Log.println(prefix, " filename: " + dg_filename + " selected");
 	} catch (Exception e) {
 		;
 	}
@@ -88,12 +84,12 @@ public boolean execute()
 	if (rcheck) {
 		RobustnessEvaluator rev = new RobustnessEvaluator(ogr);
 
-		System.out.println("Metric 1 : " + rev.getMetric1());
+		Log.println("Metric 1 : ", ""+rev.getMetric1());
 
-		System.out.println("Metric 2: ");
+		Log.println("Metric 2: ", "");
 		long[] m2res = rev.getMetric2();
 		for (int i = 0; i < m2res.length; i++) {
-			System.out.println(i + " " + m2res[i]);
+			Log.print0("Metric 2", i + " " + m2res[i] + "\n");
 		}
 	}
 
@@ -163,13 +159,12 @@ private void dgDistribToFile(peersim.graph.Graph g)
 			// do not count index 0: 'cos the leafs degree is clearly 0!
 			for (int i = 0; i < dgprob.length; i++) {
 				double k = (double) i / size;
-				// System.out.println(k+" "+dgprob[i]);
 				dg_fileout.println(k + " " + dgprob[i]);
 			}
 			dg_fileout.close();
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println(e);
+			System.err.println(e);
 		}
 	}
 }

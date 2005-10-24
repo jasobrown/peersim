@@ -987,12 +987,12 @@ public static String[] getNames( String name )
  * of the original array.
  * Parameter PAR_INCLUDE+"."+type, or if not present, PAR_ORDER+"."+type
  * is read from the
- * configuration. If non of them are defined then the order is identical to
+ * configuration. If none of them are defined then the order is identical to
  * that of <code>names</code>. Otherwise the configuration entry must contain
  * entries
  * from <code>names</code>. It is assumed that the entries in
  * <code>names</code> contain only word characters (alphanumeric
- * and underscore '_'. The order configuration entry thus cintains a list
+ * and underscore '_'. The order configuration entry thus contains a list
  * of entries from <code>names</code> separated by any non-word characters.
  * <p>
  * It is not required that all entries are listed.

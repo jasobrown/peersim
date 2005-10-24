@@ -119,16 +119,14 @@ public boolean execute()
 		// agavg = protocol.getAVGLoad();
 	}
 
-	Log.println(name, CommonState.getTime() + " " + // current time (cycle)
-			stats.getAverage() + " " + stats.getMax() + " " + stats.getMin() + " " +
-			// sum/len + " " + // average
-			// max + " " +
-			// min + " " +
+	Log.println(name, 
+			CommonState.getTime() + " " +
+			stats.getAverage() + " " + 
+			stats.getMax() + " " + 
+			stats.getMin() + " " +
 			count_zero + " " + // number of zero value node
 			count_avg + " " + // number of correct avg nodes
 			stats.getVar()
-	// target_node_load
-			// agavg
 			);
 	stats.reset();
 	return false;

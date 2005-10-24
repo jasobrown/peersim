@@ -10,12 +10,10 @@ package example.hot;
  * 
  * @author giampa
  */
-import java.util.Random;
-import java.util.HashSet;
-import java.util.Set;
-import peersim.graph.Graph;
-import peersim.graph.GraphAlgorithms;
-import peersim.core.Node;
+import java.util.*;
+
+import peersim.core.*;
+import peersim.graph.*;
 
 public class RobustnessEvaluator
 {
@@ -75,7 +73,7 @@ public int[] computeStamps(Graph g)
 	GraphAlgorithms gal = new GraphAlgorithms();
 	while (residualPairs > 0) {
 		if ((time % 10) == 0)
-			System.out.print(".");
+			Log.print0("", ".");
 		int i = lcg.nextInt(g.size());
 		if (alreadyRemoved[i])
 			continue;

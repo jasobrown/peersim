@@ -17,7 +17,7 @@ random.seed 1234569890
 simulation.cycles 1000
 
 # if set then in each cycle the nodes will be visited in a random order
-simulation.shuffle
+control.shuffle Shuffle
 
 # this defines the initial size of the overlay network. This many nodes will
 # be generaqted during initialization
@@ -46,38 +46,38 @@ protocol.0.unSubsTout 50
 # that define a regualr random directed graph. This make sense if we want to
 # start up a simulation with a large network with an already existing topology
 # random in this case.
-init.0 peersim.init.WireRegularRandom
+init.0 peersim.init.WireKOut
 # the number of random edges that will be added to each node
-init.0.degree 20
+init.0.k 20
 # this is the protocol ID of the lpbcast protocol, which we want to initialize
 init.0.protocol 0
 
 # This defines dynamism, by adding new nodes.
-dynamics.0 peersim.dynamics.GrowingNetwork
-dynamics.0.add 100
-dynamics.0.step 1
-dynamics.0.until 10
+control.dyn0 peersim.dynamics.GrowingNetwork
+control.dyn0.add 100
+control.dyn0.step 1
+control.dyn0.until 10
 # this is the class that initializes the newly added nodes. In this case,
 # each new node will get a single random contact node.
-dynamics.0.init.0 peersim.init.WireRegularRandom
-dynamics.0.init.0.protocol 0
-dynamics.0.init.0.degree 1
+control.dyn0.init.0 peersim.init.WireKOut
+control.dyn0.init.0.protocol 0
+control.dyn0.init.0.degree 1
 
 # Class that removes nodes before the specified cycles. The removed node
 # will politely unsubscribe. If failure has to be modelled, the plain
 # GrowingNetwork class should be used which brings nodes down without any
 # action
-dynamics.1 lpbcast.Unsubscribe
-dynamics.1.add -100
-dynamics.1.step 1
-dynamics.1.from 1
-dynamics.1.until 1
-dynamics.1.protocol 0
+control.dyn1 lpbcast.Unsubscribe
+control.dyn1.add -100
+control.dyn1.step 1
+control.dyn1.from 1
+control.dyn1.until 1
+control.dyn1.protocol 0
 
 # this will print statistics about the degree of the nodes (size of out-view)
 # the numbers printed are min, max, number of nodes, avg, std.
-observer.0 peersim.reports.DegreeStats
-observer.0.protocol 0
+control.obs0 peersim.reports.DegreeStats
+control.obs0.protocol 0
 
 # prints connectivity information in the form of {x1=y1,...,xn=yn}
 # where the n is the number of weakly connected clusters, and the numbers
@@ -85,25 +85,25 @@ observer.0.protocol 0
 # do with strong connectivity. It is true that the graph is strongly connected
 # if and only if n=1 and x1=1. If x1 != 1, then there are more strongly
 # connected clusters.
-observer.1 peersim.reports.ConnectivityObserver
-observer.1.protocol 0
+control.obs1 peersim.reports.ConnectivityObserver
+control.obs1.protocol 0
 
 # prints the graph at the end of the simulation in UCINET DL format
-observer.2 peersim.reports.GraphPrinter
-observer.2.protocol 0
+control.obs2 peersim.reports.GraphPrinter
+control.obs2.protocol 0
 
 # This observer will print the accessible nodes with incresing minimal
 # distances from several nodes. It prints lines in the form
 # a_0 a_1 ... a_maxd where ai is the number of nodes which have minimal distance
 # i from the node. Thus a_1 is the number of neighbors for example.
-observer.3 peersim.reports.BallExpansion
-observer.3.protocol 0
+control.obs3 peersim.reports.BallExpansion
+control.obs3.protocol 0
 # maxd will determine the number of numbers printed in each line
-observer.3.maxd 5
+control.obs3.maxd 5
 # if this is set, then the directionality is ignored in the graph
 # this consumes more memory, care should be taken
-observer.3.undir
+control.obs3.undir
 # the number of nodes to analize (number of lines). 
-observer.3.n 10
+control.obs3.n 10
 
 

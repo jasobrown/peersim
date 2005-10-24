@@ -86,7 +86,7 @@ public boolean execute()
 	if( n <= 1 ) return false;
 	updateGraph();
 	
-	System.out.println(name + ":");
+	Log.println(name, "");
 	
 	final int size = Network.size();
 	final int steps = 50;
@@ -113,8 +113,8 @@ public boolean execute()
 		if( j+1 < n ) Network.shuffle();
 	}
 	for (int i = 0; i < steps; ++i) {
-		System.out.println(maxClust[i].getAverage() + " "
-				+ clustNum[i].getAverage());
+		Log.print0(name, maxClust[i].getAverage() + " "
+				+ clustNum[i].getAverage()+ "\n");
 	}
 	return false;
 }

@@ -6,15 +6,11 @@
 
 package example.hot;
 
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.*;
 
-import peersim.config.Configuration;
-import peersim.core.CommonState;
-import peersim.core.Control;
-import peersim.core.Network;
-import peersim.core.Node;
-import peersim.graph.Graph;
+import peersim.config.*;
+import peersim.core.*;
+import peersim.graph.*;
 
 /**
  * This intialization class collects the simulation parameters from the
@@ -74,11 +70,11 @@ public InetInitializer(String prefix)
 public boolean execute()
 {
 	Random rnd = CommonState.r;
-	System.out.println(DEBUG_STRING + "size: " + Network.size() + " outdegree: "
+	Log.println(DEBUG_STRING, "size: " + Network.size() + " outdegree: "
 			+ d);
 
 	// build outdegree roots
-	System.out.println(DEBUG_STRING + "Generating " + d
+	Log.println(DEBUG_STRING, "Generating " + d
 			+ " root(s), means out degree " + d + "...");
 	for (int i = 0; i < d; ++i) {
 		Node n = Network.get(i);
@@ -100,13 +96,12 @@ public boolean execute()
 			} else {
 				prot.y = maxcoord / 2 - (rnd.nextDouble() * 0.1);
 			}
-			System.out.println("root coord: " + prot.x + " " + prot.y);
+			Log.println("root coord: ", prot.x + " " + prot.y);
 		}
 	}
 
 	// Set coordinates x,y and set indegree 0
-	System.out
-			.println(DEBUG_STRING + "Generating random cordinates for nodes...");
+	Log.println(DEBUG_STRING, "Generating random cordinates for nodes...");
 	for (int i = d; i < Network.size(); i++) {
 		Node n = Network.get(i);
 		InetNodeProtocol prot = (InetNodeProtocol) n.getProtocol(pid);
@@ -134,7 +129,7 @@ public static void wireHOTOverlay(Graph g, int outDegree, double alfa)
 	// Connect the roots in a ring if needed (thus, if there are more than 1
 	// root nodes.
 	if (outDegree > 1) {
-		System.out.println(DEBUG_STRING + "Putting roots in a ring...");
+		Log.println(DEBUG_STRING, "Putting roots in a ring...");
 		for (int i = 0; i < outDegree; i++) {
 			Node n = (Node) g.getNode(i);
 			((InetNodeProtocol) n.getProtocol(pid)).in_degree++;
@@ -154,7 +149,6 @@ public static void wireHOTOverlay(Graph g, int outDegree, double alfa)
 
 	// for all the nodes other than root(s), connect them!
 	for (int i = outDegree; i < Network.size(); ++i) {
-		// System.out.println(DEBUG_STRING+"Inserting node "+i);
 		Node n = (Node) g.getNode(i);
 		InetNodeProtocol prot = (InetNodeProtocol) n.getProtocol(pid);
 
@@ -167,18 +161,14 @@ public static void wireHOTOverlay(Graph g, int outDegree, double alfa)
 		double min = Double.POSITIVE_INFINITY;
 		if (outDegree > 1) {
 			int candidates[] = getParents(g, pid, i, outDegree, alfa);
-			// System.out.print(DEBUG_STRING+"setting node "+i+" pointing to
-			// nodes: ");
 			for (int s = 0; s < candidates.length; s++) {
 				g.setEdge(i, candidates[s]);
 				Node nd = (Node) g.getNode(candidates[s]);
 				InetNodeProtocol prot_parent = (InetNodeProtocol) nd.getProtocol(pid);
 				prot_parent.in_degree++;
-				// System.out.print(i+", ");
 			}
 			// sets hop
 			prot.hops = minHop(g, candidates, pid) + 1;
-			// System.out.println();
 		} else { // degree 1:
 			for (int j = 0; j < i; j++) {
 				Node parent = (Node) g.getNode(j);
@@ -193,9 +183,6 @@ public static void wireHOTOverlay(Graph g, int outDegree, double alfa)
 			prot.hops = ((InetNodeProtocol) candidate.getProtocol(pid)).hops + 1;
 			g.setEdge(i, candidate_index);
 			((InetNodeProtocol) candidate.getProtocol(pid)).in_degree++;
-			// System.out.println(DEBUG_STRING+"setting node "+i+" pointing
-			// to
-			// node "+candidate_index+" with value: "+min);
 		}
 	}
 }

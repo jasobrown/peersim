@@ -18,9 +18,10 @@
 
 package peersim.reports;
 
-import peersim.config.Configuration;
-import peersim.graph.GraphAlgorithms;
-import peersim.util.IncrementalStats;
+import peersim.config.*;
+import peersim.core.*;
+import peersim.graph.*;
+import peersim.util.*;
 
 /**
  * Control to observe the clustering coefficient.
@@ -73,7 +74,7 @@ public boolean execute()
 	for (int i = 0; i < n && i < g.size(); ++i) {
 		stats.add(GraphAlgorithms.clustering(g, i));
 	}
-	System.out.println(name + ": " + stats);
+	Log.println(name, stats.toString());
 	return false;
 }
 

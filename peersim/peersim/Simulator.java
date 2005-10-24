@@ -18,11 +18,13 @@
 
 package peersim;
 
+import java.io.*;
+
+import peersim.cdsim.*;
 import peersim.config.*;
 import peersim.core.*;
-import peersim.util.ExtendedRandom;
-import peersim.edsim.EDSimulator;
-import peersim.cdsim.CDSimulator;
+import peersim.edsim.*;
+import peersim.util.*;
 
 
 /**
@@ -69,8 +71,20 @@ protected static final String[] simName = {
  * Defaults to 1.
  * @config
  */
-protected static final String PAR_EXPS = "simulation.experiments";
+public static final String PAR_EXPS = "simulation.experiments";
 	
+/**
+ * If present, this parameter activates the redirection of standard
+ * out to a specific PrintStream that tags each line with a standard
+ * char used to distinguish stderr from stdout. This parameter is used 
+ * by the RangeSimulator to divide a unique stream (as provided by
+ * the subprocess execution in Java) into two separated streams.
+ * Not defined by default (and shouldn't be used for normal 
+ * simulations).
+ * @config
+ */
+public static final String PAR_REDIRECT = "simulation.redirect";
+
 // ========================== methods ===================================
 // ======================================================================
 
@@ -136,6 +150,13 @@ public static void main(String[] args)
 	System.err.println("Simulator: loading configuration");
 	Configuration.setConfig( new ParsedProperties(args) );
 
+	// Check for redirection
+	if (Configuration.contains(PAR_REDIRECT)) {
+		PrintStream out = new PrintStream(
+				new TaggedOutputStream(System.out));
+		System.setOut(out);
+	}
+	
 	int exps = Configuration.getInt(PAR_EXPS,1);
 
 	final int SIMID = getSimID();

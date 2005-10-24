@@ -93,6 +93,9 @@ public static void reset(int size, boolean symm)
  */
 public static int getLatency(int sender, int receiver) 
 {
+	if (sender == receiver)
+		return 0;
+	// XXX There should be the possibility to fix the delay.
 	if (symm) {
 		// Symmetric network
 		if (sender < receiver) {

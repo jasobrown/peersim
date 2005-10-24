@@ -20,13 +20,8 @@ package peersim.core;
 
 import peersim.config.*;
 
-/**
- * This utility class must be used by observers to report their data.
- *
- * @author Alberto Montresor
- * @version $Revision$
- */
-public class Log
+
+public class DefaultLogger implements Logger
 {
 
 //--------------------------------------------------------------------------
@@ -34,77 +29,78 @@ public class Log
 //--------------------------------------------------------------------------
 
 /**
- * If specified, this parameter specifies the logging class to be used.
- * If absent, {@link peersim.core.Log} is used. 
+ * If this parameter is defined, the current time is added at the beginning
+ * of each line; the format is "TIME t ", where t is the current time
+ * as returned by {@link CommonState#getTime()}.
  * @config
  */
-public static final String PAR_LOG = "log";
+protected static final String PAR_TIME = "time";
 
 //--------------------------------------------------------------------------
-//Static fields
+//Fields
 //--------------------------------------------------------------------------
 
-/** The actual logging facilities to be used */
-private static Logger logger;
+/** If true, the current time is printed on each line */
+protected final boolean logtime;
 
 //--------------------------------------------------------------------------
-//Static initializer
+//Initialization
 //--------------------------------------------------------------------------
 
-static {
-	try {
-		logger = (Logger) Configuration.getInstance(PAR_LOG);
-	} catch (MissingParameterException e) {
-		logger = new DefaultLogger(PAR_LOG);
+/** */
+public DefaultLogger(String name)
+{
+	logtime = Configuration.contains(name + "." + PAR_TIME);
+}
+
+//--------------------------------------------------------------------------
+//Methods
+//--------------------------------------------------------------------------
+
+/**
+ * Print the string prefixed by the log identifier, and then
+ * terminates the line. If parameter {@value #PAR_TIME} is 
+ * defined, prints also the current time.
+ * 
+ * @param logId the log identifier
+ * @param s the string to be printed
+ */
+public void println(String logId, String s)
+{
+	System.out.print(logId + ": ");
+	if (logtime) {
+		System.out.print("TIME " + CommonState.getTime() + " ");
 	}
+	System.out.println(s);
 }
-  
-
-//--------------------------------------------------------------------------
-//Class methods
-//--------------------------------------------------------------------------
 
 /**
- * Prints the string <code>s</code> in the log stream specified 
- * by the identifier, and then terminates the line. The current 
- * logger free to modify the actual string that is printed, 
- * for example inserting the log identifier or other strings.
+ * Print the string prefixed by the log identifier. If parameter
+ * {@value #PAR_TIME} is defined, prints also the current
+ * time.
  * 
  * @param logId the log identifier
  * @param s the string to be printed
  */
-public static void println(String logId, String s)
+public void print(String logId, String s)
 {
-	logger.println(logId, s);
+	System.out.print(logId + ": ");
+	if (logtime) {
+		System.out.print("TIME " + CommonState.getTime() + " ");
+	}
+	System.out.print(s);
 }
 
 /**
- * Prints the string <code>s</code> in the log stream specified 
- * by the identifier. The current logger is free to modify 
- * the actual string that is printed, for example inserting the 
- * log identifier or other strings.
+ * Print the string without modification. 
  * 
  * @param logId the log identifier
  * @param s the string to be printed
  */
-public static void print(String logId, String s)
+public void print0(String logId, String s)
 {
-	logger.print(logId, s);
+	System.out.print(s);
 }
 
-/**
- * Prints the string <code>s</code> in the log stream specified 
- * by the identifier. The current logger is supposed to
- * print the string "as it is", without additions or modifications.
- * Note: the 0 stands for "zero-modification".
- * 
- * @param logId the log identifier
- * @param s the string to be printed
- */
-public static void print0(String logId, String s)
-{
-	logger.print0(logId, s);
-}
 
 }
-

@@ -112,10 +112,9 @@ public boolean execute()
 	} catch (IOException e) {
 	}
 	E2ENetwork.reset(size, true);
-	System.out.println(size);
+	System.err.println("KingParser: read " + size + " entries");
 	try {
 		do {
-			// System.out.println(line);
 			StringTokenizer tok = new StringTokenizer(line, ", ");
 			int n1 = Integer.parseInt(tok.nextToken()) - 1;
 			int n2 = Integer.parseInt(tok.nextToken()) - 1;

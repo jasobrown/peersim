@@ -22,7 +22,7 @@ import java.util.*;
 
 /**
  * This utility class can be used to parse range expressions. In particular,
- * it is used by {@link peersim.RangeSimulator} to express ranges for
+ * it is used by {@link peersim.rangesim.RangeSimulator} to express ranges for
  * configuration properties.
  * <p>
  * The language for range expression is the following: 
@@ -40,7 +40,7 @@ import java.util.*;
  * </pre>
  * corresponds to 5 (single value), 9-10-11 (range between 9 and 11,
  * default increment 1), 13-15-17 (range between 13 and 17, specified
- * range 2, 32-64-128 (range between 32 and 128, multiplicative range 2).
+ * step 2, 32-64-128 (range between 32 and 128, multiplicative step 2).
  * 
  * @author Alberto Montresor
  * @version $Revision$

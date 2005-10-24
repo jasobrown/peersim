@@ -84,7 +84,8 @@ private int units;
  */
 private Node[][] events;
 
-
+/** The prefix of this control */
+private final String prefix;
 
 //---------------------------------------------------------------------
 //Initialization
@@ -95,6 +96,7 @@ private Node[][] events;
  */
 public AvailabilityTraceDynamics(String prefix)
 {
+	this.prefix = prefix;
 	filename = Configuration.getString(prefix+"."+PAR_FILE);
 	cycleLength = Configuration.getInt(prefix+"."+PAR_CYCLE);
 	units = Configuration.getInt(prefix+"."+PAR_UNITS, 1000);
@@ -221,7 +223,7 @@ public boolean execute()
 		}
 	}
 	size += up - down;
-	System.out.println("TraceDynamics" + 
+	Log.println(prefix,  
 			" TIME " + CDState.getCycle() +
 			" EPOCH " + CDState.getCycle()/30 +
 			" SIZE " + size +

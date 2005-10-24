@@ -18,7 +18,9 @@
 		
 package peersim.util;
 
-import java.io.PrintStream;
+import java.io.*;
+
+import peersim.core.*;
 
 //XXX This implementation is very restricted, to be made more flexible
 // using hashtables.
@@ -197,7 +199,8 @@ public void printAll( PrintStream out ) {
 // ---------------------------------------------------------------------
 
 /**
-* Prints current frequency information. Prints a separate line for
+* Prints current frequency information on the specified PrintStream. 
+* Prints a separate line for
 * all values that have a number of occurrences different from zero using the 
 * format
 * <pre>
@@ -211,6 +214,25 @@ public void print( PrintStream out ) {
 		if(freq[i]!=0) out.println(i+" "+freq[i]);
 	}
 }
+
+//---------------------------------------------------------------------
+
+/**
+* Prints current frequency information on the specified logId. Prints a 
+* separate line for all values that have a number of occurrences different 
+* from zero using the format
+* <pre>
+* value occurences
+* </pre>
+*/
+public void print(String logId) {
+
+	for(int i=0; i<freq.length; ++i)
+	{
+		if(freq[i]!=0) Log.print0(logId, i+" "+freq[i]+"\n");
+	}
+}
+
 
 // ---------------------------------------------------------------------
 

@@ -130,7 +130,7 @@ public boolean execute() {
 	if( cos > 1 ) cos=1;
 	if( cos < -1 ) cos = -1;
 	
-	Log.println(name, cos + " "
+	Log.println(name,cos + " "
 			+ Math.sqrt(sqrsum1) + " " + Math.sqrt(sqrsum2) + " "
 			+ Math.acos(cos));
 	return false;

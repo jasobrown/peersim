@@ -111,7 +111,7 @@ public static ExtendedRandom r = null;
 * If it is not specified the current time is used.
 * @config
 */
-private static final String PAR_SEED = "random.seed";
+public static final String PAR_SEED = "random.seed";
 
 
 /**

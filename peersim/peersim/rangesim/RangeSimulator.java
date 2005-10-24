@@ -231,18 +231,35 @@ public static void doExperiments(Properties properties, String[] args)
 	list.add(javapath);
 	list.add("-cp");
 	list.add(classpath);
+	
+	// Add the jvm options
 	for (int i=0; i < jvmoptions.length; i++)
 		list.add(jvmoptions[i]);
+	
+	// The class to be run in the forked JVM
 	list.add("peersim.Simulator");
+	
+	// Parameters specified on the command line
 	for (int i=0; i < args.length; i++)
 		list.add(args[i]);
-	list.add(Simulator.PAR_REDIRECT);	
-	// Multiple experiments with the same value are managed here.
+	
+	// Activate redirection to separate stdout from stdeer
+	list.add(Simulator.PAR_REDIRECT);
+	
+	// Since multiple experiments are managed here, the value
+	// of standard variable for multiple experiments is changed to 1
 	list.add(Simulator.PAR_EXPS+"=1");
+	
+	// Create a placeholder for the seed
+	int startseed = list.size();
+	list.add("");
+	
+	// Create a placeholder for the logging prefix
 	list.add(Log.PAR_LOG + "=RangeLogger");
 	int startlog = list.size();
 	list.add("");
 	
+	// Create placeholders for the range parameters
 	int startpar = list.size();
 	for (int i=0; i < values.length; i++)
 		list.add("");
@@ -259,7 +276,7 @@ public static void doExperiments(Properties properties, String[] args)
 			list.set(startpar + j, pars[j] + "=" + values[j][idx[j]]);
 		}
 
-		// Configure the log
+		// Fill the log placeholder
 		StringBuffer log = new StringBuffer();
 		for (int j = 0; j < pars.length; j++) {
 			log.append(pars[j]);
@@ -267,8 +284,11 @@ public static void doExperiments(Properties properties, String[] args)
 			log.append(values[j][idx[j]]);
 			log.append(" ");
 		}
-
 		list.set(startlog, Log.PAR_LOG + "." + RangeLogger.PAR_PREFIX+"="+log);
+
+		// Fill the seed place holder
+		long seed = CommonState.r.nextLong();
+		list.set(startseed, CommonState.PAR_SEED+"="+seed);
 
 		Process p = null;
 		try {

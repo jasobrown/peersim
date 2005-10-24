@@ -93,6 +93,10 @@ public boolean execute()
 	int count_zero = 0;
 	int count_avg = 0;
 
+	if (show_values == 1) {
+		Log.print(name, "");
+	}
+
 	// target_node_load = targetp.getLocalLoad();
 	/* Compute max, min, average */
 	for (int i = 0; i < len; i++) {
@@ -108,7 +112,7 @@ public boolean execute()
 		}
 		// shows the values of load at each node:
 		if (show_values == 1) {
-			System.out.print(value + ":");
+			Log.print0(name, value + ":");
 		}
 		sum += value;
 		if (value > max)
@@ -118,7 +122,10 @@ public boolean execute()
 
 		// agavg = protocol.getAVGLoad();
 	}
-
+	if (show_values == 1) {
+		Log.print0(name, "\n");
+	}
+	
 	Log.println(name, 
 			CommonState.getTime() + " " +
 			stats.getAverage() + " " + 

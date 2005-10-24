@@ -1,6 +1,7 @@
 MJ 24/10/05
 - Random seed is now explicitly set and printed to stderr before all
   experiments when using Simulator, also for simulation.experiments>1.
+  (thanks to Simon Patarin for pointing me to this issue)
 - Removed a forgotten debug println from DynamicNetwork.
 
 SV 11/10/05

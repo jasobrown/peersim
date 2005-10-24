@@ -35,7 +35,8 @@ public class Log
 
 /**
  * If specified, this parameter specifies the logging class to be used.
- * If absent, {@link peersim.core.Log} is used. 
+ * The logging class must implement interface {@link peersim.core.Logger}.
+ * If absent, {@link peersim.core.DefaultLogger} is used. 
  * @config
  */
 public static final String PAR_LOG = "log";

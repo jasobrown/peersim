@@ -255,10 +255,10 @@ public static void doExperiments(Properties properties, String[] args)
 	list.add("");
 	
 	// Create a placeholder for the logging prefix
-	list.add(Log.PAR_LOG + "=RangeLogger");
+/*	list.add(Log.PAR_LOG + "=RangeLogger");
 	int startlog = list.size();
 	list.add("");
-	
+*/	
 	// Create placeholders for the range parameters
 	int startpar = list.size();
 	for (int i=0; i < values.length; i++)
@@ -277,7 +277,7 @@ public static void doExperiments(Properties properties, String[] args)
 		}
 
 		// Fill the log placeholder
-		StringBuffer log = new StringBuffer();
+/*		StringBuffer log = new StringBuffer();
 		for (int j = 0; j < pars.length; j++) {
 			log.append(pars[j]);
 			log.append(" ");
@@ -285,7 +285,7 @@ public static void doExperiments(Properties properties, String[] args)
 			log.append(" ");
 		}
 		list.set(startlog, Log.PAR_LOG + "." + RangeLogger.PAR_PREFIX+"="+log);
-
+*/
 		// Fill the seed place holder
 		long seed = CommonState.r.nextLong();
 		list.set(startseed, CommonState.PAR_SEED+"="+seed);

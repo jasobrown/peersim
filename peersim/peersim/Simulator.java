@@ -74,16 +74,13 @@ protected static final String[] simName = {
 public static final String PAR_EXPS = "simulation.experiments";
 	
 /**
- * If present, this parameter activates the redirection of standard
- * out to a specific PrintStream that tags each line with a standard
- * char used to distinguish stderr from stdout. This parameter is used 
- * by the RangeSimulator to divide a unique stream (as provided by
- * the subprocess execution in Java) into two separated streams.
- * Not defined by default (and shouldn't be used for normal 
- * simulations).
+ * If present, this parameter activates the redirection of the standard
+ * output to a given PrintStream.
+ * This comes useful for processing the output of the simulation from
+ * within the simulator.
  * @config
  */
-public static final String PAR_REDIRECT = "simulation.redirect";
+public static final String PAR_REDIRECT = "simulation.stdout";
 
 // ========================== methods ===================================
 // ======================================================================
@@ -150,12 +147,9 @@ public static void main(String[] args)
 	System.err.println("Simulator: loading configuration");
 	Configuration.setConfig( new ParsedProperties(args) );
 
-	// Check for redirection
-	if (Configuration.contains(PAR_REDIRECT)) {
-		PrintStream out = new PrintStream(
-				new TaggedOutputStream(System.out));
-		System.setOut(out);
-	}
+	PrintStream newout =
+		(PrintStream)Configuration.getInstance(PAR_REDIRECT,System.out);
+	if(newout!=System.out) System.setOut(newout);
 	
 	int exps = Configuration.getInt(PAR_EXPS,1);
 

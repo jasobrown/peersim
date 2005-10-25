@@ -73,7 +73,7 @@ public int[] computeStamps(Graph g)
 	GraphAlgorithms gal = new GraphAlgorithms();
 	while (residualPairs > 0) {
 		if ((time % 10) == 0)
-			Log.print0("", ".");
+			System.out.print(".");
 		int i = lcg.nextInt(g.size());
 		if (alreadyRemoved[i])
 			continue;

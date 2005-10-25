@@ -118,7 +118,7 @@ public boolean execute()
 	}
 
 	/* Printing statistics */
-	Log.println(name, " " + time + " " + // current time (cycle)
+	System.out.println(name+": " + time + " " + // current time (cycle)
 			sd + " " + // standard deviation
 			sd / initsd + " " + // standard deviation reduction
 			average + " " + // Average of averages

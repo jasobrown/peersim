@@ -168,18 +168,18 @@ public boolean execute()
 		IncrementalStats stats = new IncrementalStats();
 		for (int i = 0; i < nn; ++i)
 			stats.add(nextDegree());
-		Log.println(name, stats.toString());
+		System.out.println(name + ": " + stats);
 	} else if (method.equals("freq")) {
 		IncrementalFreq stats = new IncrementalFreq();
 		for (int i = 0; i < nn; ++i)
 			stats.add(nextDegree());
-		stats.print(name);
-		Log.print0(name, "\n\n\n");
+		stats.print(System.out);
+		System.out.println("\n\n");
 	} else if (method.equals("list")) {
-		Log.print(name, "");
+		System.out.print(name + ": ");
 		for (int i = 0; i < nn; ++i)
-			Log.print0(name, nextDegree() + " ");
-		Log.print0(name, "\n");
+			System.out.print(nextDegree() + " ");
+		System.out.println();
 	}
 	return false;
 }

@@ -76,7 +76,7 @@ public boolean execute()
 	}
 
 	/* Printing statistics */
-	Log.println(name, stats.toString());
+	System.out.println(name+": "+stats);
 	return false;
 }
 

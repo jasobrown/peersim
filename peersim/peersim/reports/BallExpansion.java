@@ -110,7 +110,7 @@ public BallExpansion(String name)
 public boolean execute()
 {
 	updateGraph();
-	Log.print(name, "");
+	System.out.print(name + ": ");
 	rp.reset(g.size());
 	if (stats) {
 		IncrementalStats is = new IncrementalStats();
@@ -121,16 +121,16 @@ public boolean execute()
 				is.add(j, b[j++]);
 			}
 		}
-		Log.print0(name, is+"\n");
+		System.out.println(is);
 	} else {
-		Log.print0(name, "\n");
+		System.out.println();
 		for (int i = 0; i < n && i < g.size(); ++i) {
 			ga.flooding(g, b, rp.next());
 			int j = 0;
 			while (j < b.length && b[j] > 0) {
-				Log.print0(name, b[j++] + " ");
+				System.out.print(b[j++] + " ");
 			}
-			Log.print0(name, "\n");
+			System.out.println();
 		}
 	}
 	return false;

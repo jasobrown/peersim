@@ -1,3 +1,9 @@
+MJ 25/10/05
+- Reverted back to System.out for logging, and instead added a way
+  of redirecting stdout to a custom PrintStream class, that can
+  process the output (property "simulation.stdout" can define a PrintStream
+  class for Simulator).
+
 AM 24/10/05
 - Re-implemented the RangeSimulator, now moved to its own package
   peersim.rangesim. Now, each experiment is run in a separate

@@ -72,7 +72,7 @@ public boolean execute() {
 		stats.add( v.doubleValue() );
 	}
 	
-	Log.println(prefix, stats.toString());	
+	System.out.println(prefix+": "+stats);	
 
 	return false;
 }

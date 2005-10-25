@@ -223,7 +223,7 @@ public boolean execute()
 		}
 	}
 	size += up - down;
-	Log.println(prefix,  
+	System.out.println(prefix+": "+  
 			" TIME " + CDState.getCycle() +
 			" EPOCH " + CDState.getCycle()/30 +
 			" SIZE " + size +

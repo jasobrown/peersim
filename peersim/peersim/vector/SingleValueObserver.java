@@ -113,7 +113,7 @@ public boolean execute()
 	}
 
 	/* Printing statistics */
-	Log.println(name, stats.toString());
+	System.out.println(name+": "+stats);
 
 	/* Terminate if accuracy target is reached */
 	return (stats.getStD()<=accuracy && CommonState.getTime()>0);

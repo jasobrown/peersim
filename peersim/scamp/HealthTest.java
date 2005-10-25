@@ -18,8 +18,8 @@
 		
 package scamp;
 
-import peersim.config.*;
-import peersim.core.*;
+import peersim.config.Configuration;
+import peersim.core.Control;
 
 /**
  */
@@ -58,7 +58,7 @@ public HealthTest(String name) {
 
 public boolean execute() {
 	
-	Log.println(name, Scamp.test(protocolID));
+	System.out.println(name+": "+Scamp.test(protocolID));
 
 	return false;
 }

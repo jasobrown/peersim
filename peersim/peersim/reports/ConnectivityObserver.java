@@ -18,11 +18,10 @@
 
 package peersim.reports;
 
-import java.util.*;
-
-import peersim.config.*;
-import peersim.core.*;
-import peersim.util.*;
+import java.util.Iterator;
+import java.util.Map;
+import peersim.config.Configuration;
+import peersim.util.IncrementalStats;
 
 /**
  * Reports statistics about connectivity properties of the network, such as
@@ -111,14 +110,14 @@ public boolean execute()
 		"Unsupported connted cluster type '"+type+"'");
 
 	if (!sizestats) {
-		Log.println(name, clst.toString());
+		System.out.println(name + ": " + clst);
 	} else {
 		IncrementalStats stats = new IncrementalStats();
 		Iterator it = clst.values().iterator();
 		while (it.hasNext()) {
 			stats.add(((Integer) it.next()).intValue());
 		}
-		Log.println(name, stats.toString());
+		System.out.println(name + ": " + stats);
 	}
 	return false;
 }

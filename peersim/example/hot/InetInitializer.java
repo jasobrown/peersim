@@ -70,11 +70,11 @@ public InetInitializer(String prefix)
 public boolean execute()
 {
 	Random rnd = CommonState.r;
-	Log.println(DEBUG_STRING, "size: " + Network.size() + " outdegree: "
-			+ d);
+	System.err.println(DEBUG_STRING+
+		"size: " + Network.size() + " outdegree: "+ d);
 
 	// build outdegree roots
-	Log.println(DEBUG_STRING, "Generating " + d
+	System.err.println(DEBUG_STRING+ "Generating " + d
 			+ " root(s), means out degree " + d + "...");
 	for (int i = 0; i < d; ++i) {
 		Node n = Network.get(i);
@@ -87,21 +87,23 @@ public boolean execute()
 			prot.y = maxcoord / 2;
 		} else { // more than one root
 			if (rnd.nextBoolean()) {
-				prot.x = maxcoord / 2 + (rnd.nextDouble() * 0.1);
+				prot.x=maxcoord / 2 + (rnd.nextDouble() * 0.1);
 			} else {
-				prot.x = maxcoord / 2 - (rnd.nextDouble() * 0.1);
+				prot.x=maxcoord / 2 - (rnd.nextDouble() * 0.1);
 			}
 			if (rnd.nextBoolean()) {
-				prot.y = maxcoord / 2 + (rnd.nextDouble() * 0.1);
+				prot.y=maxcoord / 2 + (rnd.nextDouble() * 0.1);
 			} else {
-				prot.y = maxcoord / 2 - (rnd.nextDouble() * 0.1);
+				prot.y=maxcoord / 2 - (rnd.nextDouble() * 0.1);
 			}
-			Log.println("root coord: ", prot.x + " " + prot.y);
+			System.err.println(DEBUG_STRING
+				+"root coord: "+ prot.x + " " + prot.y);
 		}
 	}
 
 	// Set coordinates x,y and set indegree 0
-	Log.println(DEBUG_STRING, "Generating random cordinates for nodes...");
+	System.err.println(DEBUG_STRING+
+		"Generating random cordinates for nodes...");
 	for (int i = d; i < Network.size(); i++) {
 		Node n = Network.get(i);
 		InetNodeProtocol prot = (InetNodeProtocol) n.getProtocol(pid);
@@ -129,7 +131,7 @@ public static void wireHOTOverlay(Graph g, int outDegree, double alfa)
 	// Connect the roots in a ring if needed (thus, if there are more than 1
 	// root nodes.
 	if (outDegree > 1) {
-		Log.println(DEBUG_STRING, "Putting roots in a ring...");
+		System.err.println(DEBUG_STRING+"Putting roots in a ring...");
 		for (int i = 0; i < outDegree; i++) {
 			Node n = (Node) g.getNode(i);
 			((InetNodeProtocol) n.getProtocol(pid)).in_degree++;

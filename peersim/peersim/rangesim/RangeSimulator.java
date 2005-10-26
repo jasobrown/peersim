@@ -244,7 +244,7 @@ public static void doExperiments(Properties properties, String[] args)
 		list.add(args[i]);
 	
 	// Activate redirection to separate stdout from stdeer
-	list.add(Simulator.PAR_REDIRECT);
+	list.add(Simulator.PAR_REDIRECT+"="+TaggedOutputStream.class.getCanonicalName());
 	
 	// Since multiple experiments are managed here, the value
 	// of standard variable for multiple experiments is changed to 1
@@ -254,11 +254,6 @@ public static void doExperiments(Properties properties, String[] args)
 	int startseed = list.size();
 	list.add("");
 	
-	// Create a placeholder for the logging prefix
-/*	list.add(Log.PAR_LOG + "=RangeLogger");
-	int startlog = list.size();
-	list.add("");
-*/	
 	// Create placeholders for the range parameters
 	int startpar = list.size();
 	for (int i=0; i < values.length; i++)
@@ -277,15 +272,14 @@ public static void doExperiments(Properties properties, String[] args)
 		}
 
 		// Fill the log placeholder
-/*		StringBuffer log = new StringBuffer();
+		StringBuffer log = new StringBuffer();
 		for (int j = 0; j < pars.length; j++) {
 			log.append(pars[j]);
 			log.append(" ");
 			log.append(values[j][idx[j]]);
 			log.append(" ");
 		}
-		list.set(startlog, Log.PAR_LOG + "." + RangeLogger.PAR_PREFIX+"="+log);
-*/
+
 		// Fill the seed place holder
 		long seed = CommonState.r.nextLong();
 		list.set(startseed, CommonState.PAR_SEED+"="+seed);
@@ -315,7 +309,11 @@ public static void doExperiments(Properties properties, String[] args)
 				System.err.println(line);
 			} else {
 				line = line.substring(0, line.length()-1);
-				System.out.println(line);
+				String[] parts = line.split(": ");
+				if (parts.length == 2) 
+					System.out.println(parts[0]+": " + log.toString() + parts[1]);
+				else
+					System.out.println(line);
 			}
 		}
 

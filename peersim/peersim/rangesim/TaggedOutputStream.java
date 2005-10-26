@@ -16,7 +16,7 @@
  *
  */
 
-package peersim.util;
+package peersim.rangesim;
 
 import java.io.*;
 
@@ -31,7 +31,7 @@ import java.io.*;
  * @author Alberto Montresor
  * @version $Revision$
  */
-public class TaggedOutputStream extends BufferedOutputStream
+public class TaggedOutputStream extends PrintStream
 {
 
 
@@ -44,39 +44,45 @@ public static final int TAG = 1;
  * Creates a tagged output stream that prints the tagged
  * output on the specified stream.
  */
-public TaggedOutputStream(OutputStream out)
+public TaggedOutputStream(String prefix)
 {
-	super(out);
+	super(System.out);
 }
 
-/**
- * Creates a tagged output stream that prints the tagged
- * output on the specified stream.
- */
-public TaggedOutputStream(OutputStream out, int size)
-{
-	super(out, size);
-}
 
 // Comment inherited from interface
 @Override
-public synchronized void write(byte[] b, int off, int len) throws IOException
+public synchronized void write(byte[] b, int off, int len)
 {
 	int last = off+len;
-	for (int i=off; i < last; i++) {
-		if (b[i] == '\n')
-			out.write(TAG);
-		out.write(b[i]);
+	try {
+		for (int i=off; i < last; i++) {
+			if (b[i] == '\n')
+				out.write(TAG);
+			out.write(b[i]);
+		}
+	} catch (IOException e) {
+		// Should never be thrown, because the underlying stream is
+		// a PrintStream; anyway, to be sure, we set the error flag
+		// in this stream.
+		setError();
 	}
 }
 
 // Comment inherited from interface
 @Override
-public synchronized void write(int b) throws IOException
+public synchronized void write(int b)
 {
-	if (b == '\n')
-		out.write(TAG);
-	out.write(b);
+	try {
+		if (b == '\n')
+			out.write(TAG);
+	  out.write(b);
+	} catch (IOException e) {
+		// Should never be thrown, because the underlying stream is
+		// a PrintStream; anyway, to be sure, we set the error flag
+		// in this stream.
+		setError();
+	}
 }
 
 }

@@ -74,29 +74,24 @@ public InetObserver(String prefix)
 // Control interface method.
 public boolean execute()
 {
-	try
-	{
-		OverlayGraph ogr = new OverlayGraph(pid);
-		System.out.println(prefix+": writing to files "
-				+ graph_filename + "and "+dg_filename);
-		graphToFile(ogr);
-		dgDistribToFile(ogr);
-		if (rcheck) {
-			RobustnessEvaluator rev = new RobustnessEvaluator(ogr);
-	
-			System.out.println("Metric 1 "+rev.getMetric1());
-	
-			long[] m2res = rev.getMetric2();
-			for (int i = 0; i < m2res.length; i++) {
-				System.out.println(
-				"Metric 2 "+ i + " " + m2res[i]);
-			}
-		}
+	OverlayGraph ogr = new OverlayGraph(pid);
+	System.out.println(prefix+": writing to files "
+			+ graph_filename + "and "+dg_filename);
+	graphToFile(ogr);
+	dgDistribToFile(ogr);
+	if (rcheck) {
+		RobustnessEvaluator rev = new RobustnessEvaluator(ogr);
 
-		return false;
-	} catch (IOException e) {
-		throw new RuntimeException(e);
+		System.out.println("Metric 1 "+rev.getMetric1());
+
+		long[] m2res = rev.getMetric2();
+		for (int i = 0; i < m2res.length; i++) {
+			System.out.println(
+			"Metric 2 "+ i + " " + m2res[i]);
+		}
 	}
+
+	return false;
 }
 
 /**
@@ -105,7 +100,7 @@ public boolean execute()
  * @param g
  *          current graph
  */
-private void graphToFile(peersim.graph.Graph g) throws IOException
+private void graphToFile(peersim.graph.Graph g)
 {
 	// Starts from 1 because for sure node 0 is a root
 	for (int i = 1; i < g.size(); i++) {
@@ -135,7 +130,7 @@ private void graphToFile(peersim.graph.Graph g) throws IOException
  * @param g
  *          current graph
  */
-private void dgDistribToFile(peersim.graph.Graph g) throws IOException
+private void dgDistribToFile(peersim.graph.Graph g)
 {
 	int size = g.size();
 	int[] dgfrq = new int[size];

@@ -1,3 +1,8 @@
+AM 26/10/05
+- Fixed the RangeSimulator
+- Removed some unused IOException (and catch blocks) in 
+  example.hot.InetObserver.
+
 MJ 25/10/05
 - Reverted back to System.out for logging, and instead added a way
   of redirecting stdout to a custom PrintStream class, that can

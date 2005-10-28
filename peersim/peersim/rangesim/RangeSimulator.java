@@ -245,7 +245,8 @@ public static void doExperiments(Properties properties, String[] args)
 	
 	// Activate redirection to separate stdout from stdeer
 	list.add(Simulator.PAR_REDIRECT+"="+TaggedOutputStream.class.getCanonicalName());
-	
+	int startlog = list.size();
+	list.add(""); 
 	// Since multiple experiments are managed here, the value
 	// of standard variable for multiple experiments is changed to 1
 	list.add(Simulator.PAR_EXPS+"=1");
@@ -279,6 +280,8 @@ public static void doExperiments(Properties properties, String[] args)
 			log.append(values[j][idx[j]]);
 			log.append(" ");
 		}
+		list.set(startlog, Simulator.PAR_REDIRECT+"."+
+				TaggedOutputStream.PAR_RANGES+"="+log);
 
 		// Fill the seed place holder
 		long seed = CommonState.r.nextLong();
@@ -304,16 +307,16 @@ public static void doExperiments(Properties properties, String[] args)
 				.getInputStream()));
 		String line;
 		while ((line = toprint.readLine()) != null) {
-			int last = line.charAt(line.length()-1);
-			if (last != TaggedOutputStream.TAG) {
-				System.err.println(line);
+			if (line.length() == 0) {
+				System.out.println();
 			} else {
-				line = line.substring(0, line.length()-1);
-				String[] parts = line.split(": ");
-				if (parts.length == 2) 
-					System.out.println(parts[0]+": " + log.toString() + parts[1]);
-				else
+				int last = line.charAt(line.length()-1);
+				if (last != TaggedOutputStream.TAG) {
+					System.err.println(line);
+				} else {
+					line = line.substring(0, line.length()-1);
 					System.out.println(line);
+				}
 			}
 		}
 

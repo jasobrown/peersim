@@ -118,6 +118,9 @@ private static String[][] values;
 /** The jvm options to be used when creating jvms */
 private static String[] jvmoptions;
 
+/** The current process that is executed */
+static Process p;
+
 
 // --------------------------------------------------------------------------
 // Methods
@@ -149,17 +152,24 @@ throws IOException
 	// Parse range parameters
 	parseRanges();
 
+	// Shutdown thread management
+	Thread t = new ShutdownThread();
+	Runtime.getRuntime().addShutdownHook(t);
+
 	// Executes experiments; report short messages about exceptions that are
 	// handled by the configuration mechanism.
 	try {
 		doExperiments(properties, argv);
 	} catch (MissingParameterException e) {
+		Runtime.getRuntime().removeShutdownHook(t);
 		System.err.println(e + "");
 		System.exit(1);
 	} catch (IllegalParameterException e) {
+		Runtime.getRuntime().removeShutdownHook(t);
 		System.err.println(e + "");
 		System.exit(1);
 	}
+	Runtime.getRuntime().removeShutdownHook(t);
 	System.exit(0);
 }
 
@@ -222,6 +232,7 @@ private static void nextValues(int[] idx, String[][] values)
 public static void doExperiments(Properties properties, String[] args)
 		throws IOException
 {
+
 	// Configure the java parameter for exception
 	String filesep = System.getProperty("file.separator");
 	String classpath = System.getProperty("java.class.path");
@@ -287,7 +298,7 @@ public static void doExperiments(Properties properties, String[] args)
 		long seed = CommonState.r.nextLong();
 		list.set(startseed, CommonState.PAR_SEED+"="+seed);
 
-		Process p = null;
+		
 		try {
 			ProcessBuilder pb = new ProcessBuilder(list.toArray(newargs));
 			pb.redirectErrorStream(true);
@@ -319,6 +330,7 @@ public static void doExperiments(Properties properties, String[] args)
 				}
 			}
 		}
+		p = null;
 
 		// Increment values
 		nextValues(idx, values);
@@ -332,6 +344,31 @@ private static void usage()
 {
 	System.err.println("Usage:");
 	System.err.println("  peersim.RangeSimulator <configfile> <property>*");
+}
+
+//--------------------------------------------------------------------
+
+}
+
+/**
+ * This thread is used to kill a child process in the case of an abnormal
+ * termination of the RangeSimulator (for example, due to a signal).
+ *
+ * @author Alberto Montresor
+ * @version $Revision$
+ */
+class ShutdownThread extends Thread
+{
+
+/**
+ * Kill the child process.
+ */
+public void run()
+{
+	System.err.println("Terminating simulation.");
+	if (RangeSimulator.p != null) {
+		RangeSimulator.p.destroy();
+	}
 }
 
 }

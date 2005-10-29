@@ -1,3 +1,8 @@
+AM 29/10/05
+- Improved the RangeSimulator with a mechanism to kill the
+  child process if the RangeSimulator is killed by an
+  external signal.
+
 AM 28/10/05
 - Slightly changed the structure of RangeSimulator, to offer a
   feature (printing of time) that I was using in the previous

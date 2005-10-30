@@ -44,7 +44,7 @@ public class GraphStats extends GraphObserver {
 * Defaults to zero.
 * @config
 */
-private final String PAR_NL = "nl";
+private static final String PAR_NL = "nl";
 
 /** 
 * The number of nodes to use to sample
@@ -55,7 +55,7 @@ private final String PAR_NL = "nl";
 * Defaults to zero.
 * @config
 */
-private final String PAR_NC = "nc";
+private static final String PAR_NC = "nc";
 
 private final int nc;
 

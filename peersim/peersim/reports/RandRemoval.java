@@ -47,7 +47,7 @@ public class RandRemoval extends GraphObserver
  * effect <em>the overlay will be shuffled</em>. Defaults to 1.
  * @config
  */
-private final String PAR_N = "n";
+private static final String PAR_N = "n";
 
 private final int n;
 

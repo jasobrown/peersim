@@ -48,21 +48,21 @@ public class BallExpansion extends GraphObserver
  * network is growing.
  * @config
  */
-private final String PAR_MAXD = "maxd";
+private static final String PAR_MAXD = "maxd";
 
 /**
  * The number of nodes to print info about.
  * Defaults to 1000.
  * @config
  */
-private final String PAR_N = "n";
+private static final String PAR_N = "n";
 
 /**
  * If defined, statistics are printed instead over the minimal path lengths. Not
  * defined by default.
  * @config
  */
-private final String PAR_STATS = "stats";
+private static final String PAR_STATS = "stats";
 
 private final int maxd;
 

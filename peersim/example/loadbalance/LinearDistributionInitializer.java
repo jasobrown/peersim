@@ -40,21 +40,21 @@ public class LinearDistributionInitializer implements Control {
      * 
      * @config
      */
-    private final String PAR_MAX = "max";
+    private static final String PAR_MAX = "max";
 
     /**
      * The lower bound of the values. Defaults to -max.
      * 
      * @config
      */
-    private final String PAR_MIN = "min";
+    private static final String PAR_MIN = "min";
 
     /**
      * The protocol to operate on.
      * 
      * @config
      */
-    private final String PAR_PROT = "protocol";
+    private static final String PAR_PROT = "protocol";
 
     // --------------------------------------------------------------------------
     // Fields

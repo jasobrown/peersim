@@ -39,28 +39,28 @@ public class InetObserver implements Control {
      * 
      * @config
      */
-    private final String PAR_PROT = "protocol";
+    private static final String PAR_PROT = "protocol";
 
     /**
      * The file to print out the topology relations.
      * 
      * @config
      */
-    private final String PAR_GRAPH_FILENAME = "graph_file";
+    private static final String PAR_GRAPH_FILENAME = "graph_file";
 
     /**
      * The file to print out the graph out-degree distribution.
      * 
      * @config
      */
-    private final String PAR_GRAPH_DEGREE_FILENAME = "graph_degree";
+    private static final String PAR_GRAPH_DEGREE_FILENAME = "graph_degree";
 
     /**
      * The parameter flag to check for robustness.
      * 
      * @config
      */
-    private final String PAR_ROBUSTNESS = "robustness";
+    private static final String PAR_ROBUSTNESS = "robustness";
 
     // --------------------------------------------------------------------------
     // Fields

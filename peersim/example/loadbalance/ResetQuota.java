@@ -37,7 +37,7 @@ public class ResetQuota implements Control {
      * 
      * @config
      */
-    private final String PAR_PROT = "protocol";
+    private static final String PAR_PROT = "protocol";
 
     // --------------------------------------------------------------------------
     // Fields

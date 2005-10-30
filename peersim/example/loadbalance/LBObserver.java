@@ -40,14 +40,14 @@ public class LBObserver implements Control {
      * 
      * @config
      */
-    private final String PAR_PROT = "protocol";
+    private static final String PAR_PROT = "protocol";
 
     /**
      * If defined, print the load value. The default is false.
      * 
      * @config
      */
-    private final String PAR_SHOW_VALUES = "show_values";
+    private static final String PAR_SHOW_VALUES = "show_values";
 
     // --------------------------------------------------------------------------
     // Fields

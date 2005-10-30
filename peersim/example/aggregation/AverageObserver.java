@@ -43,14 +43,14 @@ public class AverageObserver implements Control {
      * 
      * @config
      */
-    private final String PAR_ACCURACY = "accuracy";
+    private static final String PAR_ACCURACY = "accuracy";
 
     /**
      * The protocol to operate on.
      * 
      * @config
      */
-    private final String PAR_PROT = "protocol";
+    private static final String PAR_PROT = "protocol";
 
     // /////////////////////////////////////////////////////////////////////
     // Fields

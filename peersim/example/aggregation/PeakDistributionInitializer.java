@@ -41,14 +41,14 @@ public class PeakDistributionInitializer implements Control {
      * 
      * @config
      */
-    private final String PAR_VALUE = "value";
+    private static final String PAR_VALUE = "value";
 
     /**
      * The protocol to operate on.
      * 
      * @config
      */
-    private final String PAR_PROT = "protocol";
+    private static final String PAR_PROT = "protocol";
 
     // --------------------------------------------------------------------------
     // Fields

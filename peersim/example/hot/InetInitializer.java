@@ -55,14 +55,14 @@ public class InetInitializer implements Control {
      * 
      * @config
      */
-    private final String PAR_OUTDEGREE = "d";
+    private static final String PAR_OUTDEGREE = "d";
 
     /**
      * Maximum x/y coordinate. All the nodes are on a square region.
      * 
      * @config
      */
-    private final String PAR_MAX_COORD = "max_coord";
+    private static final String PAR_MAX_COORD = "max_coord";
 
     // --------------------------------------------------------------------------
     // Fields

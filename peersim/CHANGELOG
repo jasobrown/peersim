@@ -1,3 +1,9 @@
+MJ 30/10/05
+- I hope this is the last change that breaks exisiting config files:
+  I replaced the "overlay.*" parameters by "network.*". Overlay was
+  plainly misleading and since we broke so many things already, I chose not to
+  complicate the code with handling obsolate names.
+
 GJ 29/10/05
 - Updated example package.
 - Added example package documentation.

@@ -51,7 +51,7 @@ public class Network {
 * set, then {@link GeneralNode} will be used.
 * @config
 */
-private static final String PAR_NODE = "overlay.node";
+private static final String PAR_NODE = "network.node";
 
 /**
 * This config property defines the initial capacity of the overlay network.
@@ -63,14 +63,14 @@ private static final String PAR_NODE = "overlay.node";
 * during the growth of the network.
 * @config
 */
-private static final String PAR_MAXSIZE = "overlay.maxSize";
+private static final String PAR_MAXSIZE = "network.maxSize";
 
 /**
 * This config property defines the initial size of the overlay network.
 * This property is required.
 * @config
 */
-private static final String PAR_SIZE = "overlay.size";
+private static final String PAR_SIZE = "network.size";
 
 /**
 * The node array. This is not a private array which is not nice but

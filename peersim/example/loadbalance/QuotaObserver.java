@@ -56,9 +56,7 @@ public class QuotaObserver implements Control {
 
     /**
      * This object keeps track of the values injected and produces statistics.
-     * More details in:
-     * 
-     * @see peersim.util.IncrementalStats .
+     * More details in: {@link peersim.util.IncrementalStats}.
      */
     private IncrementalStats stats;
 
@@ -71,7 +69,7 @@ public class QuotaObserver implements Control {
      * Standard constructor that reads the configuration parameters. Invoked by
      * the simulation engine.
      * 
-     * @param prefix
+     * @param name
      *            the configuration prefix for this class.
      */
     public QuotaObserver(String name) {

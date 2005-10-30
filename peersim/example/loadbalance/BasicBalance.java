@@ -28,7 +28,7 @@ import peersim.cdsim.CDProtocol;
  * <p>
  * This class implements a (simple) load balancing strategy: each node selects
  * its most "distant" neighbor in terms of load difference and exchanges with it
- * an amount of load not exceeding the {@link PAR_QUOTA} parameter.
+ * an amount of load not exceeding the {@link #PAR_QUOTA} parameter.
  * </p>
  * <p>
  * The class subclasses {@link peersim.vector.SingleValueHolder} in order to be
@@ -47,7 +47,7 @@ public class BasicBalance extends SingleValueHolder implements CDProtocol {
      * 
      * @config
      */
-    private static final String PAR_QUOTA = "quota";
+    protected static final String PAR_QUOTA = "quota";
 
     // --------------------------------------------------------------------------
     // Fields

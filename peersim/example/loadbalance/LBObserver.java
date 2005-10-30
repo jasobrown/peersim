@@ -70,7 +70,7 @@ public class LBObserver implements Control {
 
     /**
      * This object keeps track of the values injected and produces statistics.
-     * More details in: {@see peersim.util.IncrementalStats} .
+     * More details in: {@link peersim.util.IncrementalStats} .
      */
     private IncrementalStats stats = null;
 

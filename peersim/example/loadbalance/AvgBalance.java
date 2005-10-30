@@ -30,7 +30,7 @@ import peersim.config.FastConfig;
  * neighbor.
  * </p>
  * <p>
- * The load exchanged is limited by the {@link PAR_QUOTA} parameter. The class
+ * The load exchanged is limited by the {@link #PAR_QUOTA} parameter. The class
  * subclasses {@link peersim.vector.SingleValueHolder} in order to be type
  * compatible with its observers and initializers object companions.
  * </p>
@@ -42,7 +42,7 @@ import peersim.config.FastConfig;
 public class AvgBalance extends BasicBalance {
     /**
      * The overall system average load. It is computed once by
-     * {@link calculateAVG()} method.
+     * {@link #calculateAVG(int)} method.
      */
     public static double average = 0.0;
 

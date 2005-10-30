@@ -1,3 +1,10 @@
+MJ 29/10/05
+- Fixed some small bugs related to running multiple experiments. Now
+  the initialization of the new network is done properly, and memory is
+  released as early as possible when a new experiment is started.
+  Now onKill is called also on protocols that implement it, when removing
+  the old network.
+
 AM 29/10/05
 - Improved the RangeSimulator with a mechanism to kill the
   child process if the RangeSimulator is killed by an

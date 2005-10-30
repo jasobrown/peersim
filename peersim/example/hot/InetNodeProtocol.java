@@ -38,19 +38,4 @@ public InetNodeProtocol(String prefix)
 	isroot = false;
 }
 
-public Object clone()
-{
-	InetNodeProtocol af = (InetNodeProtocol) super.clone();
-	af.isroot = this.isroot;
-	af.x = this.x;
-	af.y = this.y;
-	af.in_degree = this.in_degree;
-	af.hops = this.hops;
-	return af;
-}
-
-public void nextCycle(peersim.core.Node node, int protocolID)
-{
-}
-
 }

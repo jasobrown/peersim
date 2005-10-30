@@ -331,6 +331,10 @@ public static void nextExperiment()
 
 	// initialization
 	System.err.println("EDSimulator: resetting");
+	controls = null;
+	ctrlSchedules = null;
+	heap = new Heap();
+	nextlog = 0;
 	Network.reset();
 	System.err.println("EDSimulator: running initializers");
 	CommonState.setTime(0); // needed here

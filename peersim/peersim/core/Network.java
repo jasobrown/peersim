@@ -107,10 +107,16 @@ public static Node prototype = null;
 */
 public static void reset() {
 
+	if( prototype != null )
+	{
+		// not first experiment
+		while( len>0 ) remove(); // this is to call onKill on all nodes
+		prototype = null;
+		node = null;
+	}
+	
 	len = Configuration.getInt(PAR_SIZE);
-
 	int maxlen = Configuration.getInt(PAR_MAXSIZE,len);
-
 	if( maxlen < len ) throw new IllegalArgumentException(
 			PAR_MAXSIZE+" is less than "+PAR_SIZE);
 

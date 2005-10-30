@@ -36,7 +36,7 @@ public class Clustering extends GraphObserver
  * The number of nodes to collect info about. Defaults to the size of the graph.
  * @config
  */
-private static final String PAR_N = "n";
+private final String PAR_N = "n";
 
 private final int n;
 

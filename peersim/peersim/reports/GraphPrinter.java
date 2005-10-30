@@ -41,7 +41,7 @@ public class GraphPrinter extends GraphObserver {
 * If not given, the graph is dumped on the standard output.
 * @config
 */
-private static final String PAR_BASENAME = "outf";
+private final String PAR_BASENAME = "outf";
 
 /**
 * The name for the format of the output. Defaults to "neighborlist",
@@ -56,7 +56,7 @@ private static final String PAR_BASENAME = "outf";
 * @see GraphIO#writeNetmeter
 * @config
 */
-private static final String PAR_FORMAT = "format";
+private final String PAR_FORMAT = "format";
 
 private final String baseName;
 

@@ -39,7 +39,7 @@ public class ConnectivityObserver extends GraphObserver
  * list of clusters. Not set by default.
  * @config
  */
-private static final String PAR_STATS = "stats";
+private final String PAR_STATS = "stats";
 
 /**
  * Defines the types of connected clusters to discover.
@@ -51,7 +51,7 @@ private static final String PAR_STATS = "stats";
  * Defaults to "wcc".
  * @config
  */
-private static final String PAR_TYPE = "type";
+private final String PAR_TYPE = "type";
 
 //--------------------------------------------------------------------------
 //Fields

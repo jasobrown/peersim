@@ -22,68 +22,85 @@ import peersim.config.*;
 import peersim.core.*;
 import peersim.vector.SingleValue;
 
-public class LinearDistributionInitializer implements Control
-{
-
-// --------------------------------------------------------------------------
-// Parameters
-// --------------------------------------------------------------------------
-
 /**
- * The upper bound of the values.
- * @config
+ * This class provides a simple linear distribution in a bounded interval
+ * defined by {@link #PAR_MIN} and {@link #PAR_MAX} parameters. It is assumed
+ * that the network nodes comply to the {@link peersim.vector.SingleValue}
+ * interface.
+ * 
  */
-private static final String PAR_MAX = "max";
+public class LinearDistributionInitializer implements Control {
 
-/**
- * The lower bound of the values. Defaults to -max.
- * @config
- */
-private static final String PAR_MIN = "min";
+    // --------------------------------------------------------------------------
+    // Parameters
+    // --------------------------------------------------------------------------
 
-/**
- * The protocol to operate on.
- * @config
- */
-private static final String PAR_PROT = "protocol";
+    /**
+     * The upper bound of the values.
+     * 
+     * @config
+     */
+    private final String PAR_MAX = "max";
 
-// --------------------------------------------------------------------------
-// Fields
-// --------------------------------------------------------------------------
+    /**
+     * The lower bound of the values. Defaults to -max.
+     * 
+     * @config
+     */
+    private final String PAR_MIN = "min";
 
-private final double max;
+    /**
+     * The protocol to operate on.
+     * 
+     * @config
+     */
+    private final String PAR_PROT = "protocol";
 
-private final double min;
+    // --------------------------------------------------------------------------
+    // Fields
+    // --------------------------------------------------------------------------
+    
+    /** Maximum interval value, obtained from config property {@link #PAR_MAX}. */
+    private final double max;
 
-private final int protocolID;
+    /** Manimum interval value, obtained from config property {@link #PAR_MIN}. */
+    private final double min;
 
-// --------------------------------------------------------------------------
-// Initialization
-// --------------------------------------------------------------------------
+    /** Protocol identifier, obtained from config property {@link #PAR_PROT}. */
+    private final int protocolID;
 
-public LinearDistributionInitializer(String prefix)
-{
-	max = Configuration.getDouble(prefix + "." + PAR_MAX);
-	min = Configuration.getDouble(prefix + "." + PAR_MIN, -max);
-	protocolID = Configuration.getPid(prefix + "." + PAR_PROT);
-}
+    // --------------------------------------------------------------------------
+    // Initialization
+    // --------------------------------------------------------------------------
+    /**
+     * Standard constructor that reads the configuration parameters. Invoked by
+     * the simulation engine.
+     * 
+     * @param prefix
+     *            the configuration prefix for this class.
+     */
+    public LinearDistributionInitializer(String prefix) {
+        max = Configuration.getDouble(prefix + "." + PAR_MAX);
+        min = Configuration.getDouble(prefix + "." + PAR_MIN, -max);
+        protocolID = Configuration.getPid(prefix + "." + PAR_PROT);
+    }
 
-// --------------------------------------------------------------------------
-// Methods
-// --------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
+    // Methods
+    // --------------------------------------------------------------------------
 
-// Comment inherited from interface
-public boolean execute()
-{
-	double step = (max - min) / (Network.size() - 1);
-	double sum = 0.0;
-	double tmp;
-	for (int i = 0; i < Network.size(); ++i) {
-		tmp = i * step + min;
-		sum += tmp;
-		((SingleValue) Network.get(i).getProtocol(protocolID)).setValue(tmp);
-	}
-	return false;
-}
+    // Comment inherited from interface
+    public boolean execute() {
+        double step = (max - min) / (Network.size() - 1);
+        double sum = 0.0;
+        double tmp;
+        for (int i = 0; i < Network.size(); ++i) {
+            tmp = i * step + min;
+            sum += tmp;
+            ((SingleValue) Network.get(i).getProtocol(protocolID))
+                    .setValue(tmp);
+        }
+        return false;
+    }
 
 }

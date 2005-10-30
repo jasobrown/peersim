@@ -22,62 +22,80 @@ import peersim.config.*;
 import peersim.core.*;
 import peersim.util.*;
 
-public class QuotaObserver implements Control
-{
-
-// //////////////////////////////////////////////////////////////////////////
-// Constants
-// //////////////////////////////////////////////////////////////////////////
-
 /**
- * The protocol to operate on.
- * @config
+ * This class prints statistics about the actual quota consumptions. It is
+ * assumed that the network nodes are instancies of the
+ * {@link example.loadbalance.BasicBalance} class.
+ * 
  */
-private static final String PAR_PROT = "protocol";
+public class QuotaObserver implements Control {
 
-// //////////////////////////////////////////////////////////////////////////
-// Fields
-// //////////////////////////////////////////////////////////////////////////
+    // //////////////////////////////////////////////////////////////////////////
+    // Constants
+    // //////////////////////////////////////////////////////////////////////////
 
-/** The name of this observer in the configuration */
-private final String name;
+    /**
+     * The protocol to operate on.
+     * 
+     * @config
+     */
+    private final String PAR_PROT = "protocol";
 
-/** Protocol identifier */
-private final int pid;
+    // //////////////////////////////////////////////////////////////////////////
+    // Fields
+    // //////////////////////////////////////////////////////////////////////////
 
-private IncrementalStats stats;
+    /**
+     * The name of this observer in the configuration file. Initialized by the
+     * constructor parameter.
+     */
+    private final String name;
 
-// //////////////////////////////////////////////////////////////////////////
-// Constructor
-// //////////////////////////////////////////////////////////////////////////
+    /** Protocol identifier, obtained from config property {@link #PAR_PROT}. */
+    private final int pid;
 
-/**
- * Creates a new observer using clear()
- */
-public QuotaObserver(String name)
-{
-	this.name = name;
-	pid = Configuration.getPid(name + "." + PAR_PROT);
-	stats = new IncrementalStats();
-}
+    /**
+     * This object keeps track of the values injected and produces statistics.
+     * More details in:
+     * 
+     * @see peersim.util.IncrementalStats .
+     */
+    private IncrementalStats stats;
 
-// //////////////////////////////////////////////////////////////////////////
-// Methods
-// //////////////////////////////////////////////////////////////////////////
+    // //////////////////////////////////////////////////////////////////////////
+    // Constructor
+    // //////////////////////////////////////////////////////////////////////////
 
-// Comment inherited from interface
-public boolean execute()
-{
+    
+    /**
+     * Standard constructor that reads the configuration parameters. Invoked by
+     * the simulation engine.
+     * 
+     * @param prefix
+     *            the configuration prefix for this class.
+     */
+    public QuotaObserver(String name) {
+        this.name = name;
+        pid = Configuration.getPid(name + "." + PAR_PROT);
+        stats = new IncrementalStats();
+    }
 
-	/* Compute max, min, average */
-	for (int i = 0; i < Network.size(); i++) {
-		BasicBalance protocol = (BasicBalance) Network.get(i).getProtocol(pid);
-		stats.add(protocol.quota);
-	}
+    // //////////////////////////////////////////////////////////////////////////
+    // Methods
+    // //////////////////////////////////////////////////////////////////////////
 
-	/* Printing statistics */
-	System.out.println(name+": "+stats);
-	return false;
-}
+    // Comment inherited from interface
+    public boolean execute() {
+        /* Compute max, min, average */
+        for (int i = 0; i < Network.size(); i++) {
+            BasicBalance protocol = (BasicBalance) Network.get(i).getProtocol(
+                    pid);
+            stats.add(protocol.quota);
+        }
+
+        /* Printing statistics */
+        System.out.println(name + ": " + stats);
+        return false;
+    }
 
 }

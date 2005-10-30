@@ -23,71 +23,72 @@ import peersim.core.*;
 import peersim.vector.SingleValue;
 
 /**
- * Initialize an aggregation protocol using a peak distribution.
+ * Initialize an aggregation protocol using a peak distribution; only one peak
+ * is allowed. However, any protocol implementing
+ * {@link peersim.vector.SingleValue} can be initialized by this component.
  * 
  * @author Alberto Montresor
  * @version $Revision$
  */
-public class PeakDistributionInitializer implements Control
-{
+public class PeakDistributionInitializer implements Control {
 
-// --------------------------------------------------------------------------
-// Constants
-// --------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
+    // Constants
+    // --------------------------------------------------------------------------
 
-/**
- * The load at the peak node.
- * @config
- */
-private static final String PAR_VALUE = "value";
+    /**
+     * The load at the peak node.
+     * 
+     * @config
+     */
+    private final String PAR_VALUE = "value";
 
-/**
- * The protocol to operate on.
- * @config
- */
-private static final String PAR_PROT = "protocol";
+    /**
+     * The protocol to operate on.
+     * 
+     * @config
+     */
+    private final String PAR_PROT = "protocol";
 
-// --------------------------------------------------------------------------
-// Fields
-// --------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
+    // Fields
+    // --------------------------------------------------------------------------
 
-/** Value at the peak node */
-private final double value;
+    /** Value at the peak node; obtained from config property {@link #PAR_VALUE}. */
+    private final double value;
 
-/** Protocol identifier */
-private final int pid;
+    /** Protocol identifier; obtained from config property {@link #PAR_PROT}. */
+    private final int pid;
 
-// --------------------------------------------------------------------------
-// Constructor
-// --------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
+    // Constructor
+    // --------------------------------------------------------------------------
 
-/**
- * Read parameters.
- */
-public PeakDistributionInitializer(String prefix)
-{
-	value = Configuration.getDouble(prefix + "." + PAR_VALUE);
-	pid = Configuration.getPid(prefix + "." + PAR_PROT);
-}
+    /**
+     * Creates a new instance and read parameters from the config file.
+     */
+    public PeakDistributionInitializer(String prefix) {
+        value = Configuration.getDouble(prefix + "." + PAR_VALUE);
+        pid = Configuration.getPid(prefix + "." + PAR_PROT);
+    }
 
-// --------------------------------------------------------------------------
-// Methods
-// --------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
+    // Methods
+    // --------------------------------------------------------------------------
 
-// Comment inherited from interface
-public boolean execute()
-{
-	System.err.println("Restarting: " + Network.size());
-	for (int i = 0; i < Network.size(); i++) {
-		SingleValue prot = (SingleValue) Network.get(i).getProtocol(pid);
-		prot.setValue(0);
-	}
-	SingleValue prot = (SingleValue) Network.get(0).getProtocol(pid);
-	prot.setValue(value);
+    // Comment inherited from interface
+    public boolean execute() {
+        System.err.println("Restarting: " + Network.size());
+        for (int i = 0; i < Network.size(); i++) {
+            SingleValue prot = (SingleValue) Network.get(i).getProtocol(pid);
+            prot.setValue(0);
+        }
+        SingleValue prot = (SingleValue) Network.get(0).getProtocol(pid);
+        prot.setValue(value);
 
-	return false;
-}
+        return false;
+    }
 
-// --------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
 }

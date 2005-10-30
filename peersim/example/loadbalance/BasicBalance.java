@@ -24,105 +24,134 @@ import peersim.core.*;
 import peersim.vector.SingleValueHolder;
 import peersim.cdsim.CDProtocol;
 
-public class BasicBalance extends SingleValueHolder implements CDProtocol
-{
-
-// --------------------------------------------------------------------------
-// Parameters
-// --------------------------------------------------------------------------
-
 /**
- * Initial quota. Defaults to 1.
- * @config
+ * <p>
+ * This class implements a (simple) load balancing strategy: each node selects
+ * its most "distant" neighbor in terms of load difference and exchanges with it
+ * an amount of load not exceeding the {@link PAR_QUOTA} parameter.
+ * </p>
+ * <p>
+ * The class subclasses {@link peersim.vector.SingleValueHolder} in order to be
+ * type compatible with its observers and initializers object companions.
+ * </p>
+ * 
  */
-private static final String PAR_QUOTA = "quota";
+public class BasicBalance extends SingleValueHolder implements CDProtocol {
 
-// --------------------------------------------------------------------------
-// Fields
-// --------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
+    // Parameters
+    // --------------------------------------------------------------------------
 
-private final double quota_value; // original quota value taken from
+    /**
+     * Initial quota. Defaults to 1.
+     * 
+     * @config
+     */
+    private static final String PAR_QUOTA = "quota";
 
-protected double quota; // current cycle quota
+    // --------------------------------------------------------------------------
+    // Fields
+    // --------------------------------------------------------------------------
 
-// --------------------------------------------------------------------------
-// Initialization
-// --------------------------------------------------------------------------
-public BasicBalance(String prefix)
-{
-	super(prefix);
-	// get quota value from the config file. Default 1.
-	quota_value = (Configuration.getInt(prefix + "." + PAR_QUOTA, 1));
-	quota = quota_value;
-}
+    /** Quota amount. Obtained from config property {@link #PAR_QUOTA}. */
+    private final double quota_value;
 
-// clone is inherited
+    protected double quota; // current cycle quota
 
-// --------------------------------------------------------------------------
-// Methods
-// --------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
+    // Initialization
+    // --------------------------------------------------------------------------
+    /**
+     * Standard constructor that reads the configuration parameters. Invoked by
+     * the simulation engine.
+     * 
+     * @param prefix
+     *            the configuration prefix for this class.
+     */
+    public BasicBalance(String prefix) {
+        super(prefix);
+        // get quota value from the config file. Default 1.
+        quota_value = (Configuration.getInt(prefix + "." + PAR_QUOTA, 1));
+        quota = quota_value;
+    }
 
-// Resets the quota.
-protected void resetQuota()
-{
-	this.quota = quota_value;
-}
+    // The clone() method is inherited.
 
-// Implements CDProtocol interface
-public void nextCycle(Node node, int protocolID)
-{
-	int linkableID = FastConfig.getLinkable(protocolID);
-	Linkable linkable = (Linkable) node.getProtocol(linkableID);
-	if (this.quota == 0) {
-		return; // skip this node
-	}
-	// this takes the most distant neighbor based on local load
-	BasicBalance neighbor = null;
-	double maxdiff = 0;
-	for (int i = 0; i < linkable.degree(); ++i) {
-		Node peer = linkable.getNeighbor(i);
-		// The selected peer could be inactive
-		if (!peer.isUp())
-			continue;
-		BasicBalance n = (BasicBalance) peer.getProtocol(protocolID);
-		if (n.quota != 1.0)
-			continue;
-		double d = Math.abs(value - n.value);
-		if (d > maxdiff) {
-			neighbor = n;
-			maxdiff = d;
-		}
-	}
-	if (neighbor == null) {
-		return;
-	}
-	doTransfer(neighbor);
-}
+    // --------------------------------------------------------------------------
+    // Methods
+    // --------------------------------------------------------------------------
 
-/**
- * Performs the actual load exchange selecting to make a PUSH or PULL
- * approach. It affects the involved nodes quota.
- */
-protected void doTransfer(BasicBalance neighbor)
-{
-	double a1 = this.value;
-	double a2 = neighbor.value;
-	double maxTrans = Math.abs((a1 - a2) / 2);
-	double trans = Math.min(maxTrans, quota);
-	trans = Math.min(trans, neighbor.quota);
-	if (a1 <= a2) // PULL
-	{
-		a1 += trans;
-		a2 -= trans;
-	} else // PUSH
-	{
-		a1 -= trans;
-		a2 += trans;
-	}
-	this.value = a1;
-	this.quota -= trans;
-	neighbor.value = a2;
-	neighbor.quota -= trans;
-}
+    /** Resets the current node quota value. */
+    protected void resetQuota() {
+        this.quota = quota_value;
+    }
+
+    /**
+     * Using an underlying {@link Linkable} protocol choses a neighbor and
+     * performs a variance reduction step.
+     * 
+     * @param node
+     *            the node on which this component is run.
+     * @param protocolID
+     *            the id of this protocol in the protocol array.
+     */
+    public void nextCycle(Node node, int protocolID) {
+        int linkableID = FastConfig.getLinkable(protocolID);
+        Linkable linkable = (Linkable) node.getProtocol(linkableID);
+        if (this.quota == 0) {
+            return; // skip this node
+        }
+        // this takes the most distant neighbor based on local load
+        BasicBalance neighbor = null;
+        double maxdiff = 0;
+        for (int i = 0; i < linkable.degree(); ++i) {
+            Node peer = linkable.getNeighbor(i);
+            // The selected peer could be inactive
+            if (!peer.isUp())
+                continue;
+            BasicBalance n = (BasicBalance) peer.getProtocol(protocolID);
+            if (n.quota != 1.0)
+                continue;
+            double d = Math.abs(value - n.value);
+            if (d > maxdiff) {
+                neighbor = n;
+                maxdiff = d;
+            }
+        }
+        if (neighbor == null) {
+            return;
+        }
+        doTransfer(neighbor);
+    }
+
+    /**
+     * Performs the actual load exchange selecting to make a PUSH or PULL
+     * approach. It affects the involved nodes quota.
+     * 
+     * @param neighbor
+     *            the selected node to talk with. It is assumed that it is an
+     *            instance of the {@link example.loadbalance.BasicBalance}
+     *            class.
+     */
+    protected void doTransfer(BasicBalance neighbor) {
+        double a1 = this.value;
+        double a2 = neighbor.value;
+        double maxTrans = Math.abs((a1 - a2) / 2);
+        double trans = Math.min(maxTrans, quota);
+        trans = Math.min(trans, neighbor.quota);
+        if (a1 <= a2) // PULL phase
+        {
+            a1 += trans;
+            a2 -= trans;
+        } else // PUSH phase
+        {
+            a1 -= trans;
+            a2 += trans;
+        }
+        this.value = a1;
+        this.quota -= trans;
+        neighbor.value = a2;
+        neighbor.quota -= trans;
+    }
 
 }

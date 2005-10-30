@@ -1,3 +1,9 @@
+GJ 29/10/05
+- Updated example package.
+- Added example package documentation.
+- Small update in peersim.reports (static modifier removed from local config 
+  info variables).
+
 MJ 29/10/05
 - Fixed some small bugs related to running multiple experiments. Now
   the initialization of the new network is done properly, and memory is

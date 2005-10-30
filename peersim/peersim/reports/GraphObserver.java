@@ -39,20 +39,20 @@ public abstract class GraphObserver implements Control {
  * The protocol to operate on.
  * @config
  */
-private static final String PAR_PROT = "protocol";
+private final String PAR_PROT = "protocol";
 
 /**
  * If defined, the undirected version of the graph will be analized. Not defined
  * by default.
  * @config
  */
-protected static final String PAR_UNDIR = "undir";
+protected final String PAR_UNDIR = "undir";
 
 /**
 * Alias for {@value #PAR_UNDIR}.
 * @config
 */
-private static final String PAR_UNDIR_ALT = "undirected";
+private final String PAR_UNDIR_ALT = "undirected";
 
 /**
  * If defined, the undirected version of the graph will be stored using much
@@ -63,7 +63,7 @@ private static final String PAR_UNDIR_ALT = "undirected";
  * should be specified as a standalone property.
  * @config
  */
-private static final String PAR_FAST = "graphobserver.fast";
+private final String PAR_FAST = "graphobserver.fast";
 
 /** The name of this observer in the configuration */
 protected final String name;

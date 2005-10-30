@@ -21,144 +21,198 @@ package example.loadbalance;
 import peersim.core.*;
 import peersim.config.FastConfig;
 
-public class AvgBalance extends BasicBalance
-{
-
-public static double average = 0.0;
-
-public static boolean avg_done = false;
-
-// ==================== initialization ================================
-// ====================================================================
-
-public AvgBalance(String prefix)
-{
-	super(prefix);
-}
-
-// ====================== methods =====================================
-// ====================================================================
-
-// Calculates the average; it's called once at starting.
-private static void calculateAVG(int protocolID)
-{
-	int len = Network.size();
-	double sum = 0.0;
-	for (int i = 0; i < len; i++) {
-		AvgBalance protocol = (AvgBalance) Network.get(i).getProtocol(protocolID);
-		double value = protocol.getValue();
-		sum += value;
-
-	}
-	average = sum / len;
-	avg_done = true;
-}
-
 /**
- * Disables a node, shrinking the topology.
+ * <p>
+ * This class implements the advanced load balancing scheme: each node is aware
+ * of the average load of the system. If its load value is lower that the
+ * average, then it pull some load with its most loaded neighbor. Otherwise, if
+ * its load is higher than the average, it pushes some load to its least loaded
+ * neighbor.
+ * </p>
+ * <p>
+ * The load exchanged is limited by the {@link PAR_QUOTA} parameter. The class
+ * subclasses {@link peersim.vector.SingleValueHolder} in order to be type
+ * compatible with its observers and initializers object companions.
+ * </p>
+ * <p>
+ * As soon as a node is "balanced" (i.e., has the same load as the average
+ * value), it exits from the overlay shrinking the topology.
+ * </p>
  */
-protected static void suspend(Node node)
-{
-	node.setFailState(Fallible.DOWN);
-}
+public class AvgBalance extends BasicBalance {
+    /**
+     * The overall system average load. It is computed once by
+     * {@link calculateAVG()} method.
+     */
+    public static double average = 0.0;
 
-// --------------------------------------------------------------------
+    /**
+     * This flag indicates if the average value computation has been performed
+     * or not. Default is NO.
+     */
+    public static boolean avg_done = false;
 
-/**
- * Using a {@link Linkable} protocol choses a neighbor and performs a
- * variance reduction step.
- */
-public void nextCycle(Node node, int protocolID)
-{
-	// Do that only once
-	if (avg_done == false) {
-		calculateAVG(protocolID);
-		System.out.println("AVG only once " + average);
-	}
+    // ==================== initialization ================================
+    // ====================================================================
 
-	if (Math.abs(value - average) < 1) {
-		AvgBalance.suspend(node); // switch off node
-		return;
-	}
+    /**
+     * Creates a new {@link example.loadbalance.AvgBalance} protocol instance.
+     * Reads the configuration parameters invoking the subclass constructor.
+     * 
+     * @param prefix
+     *            The component prefix declared in the configuration file.
+     */
+    public AvgBalance(String prefix) {
+        super(prefix); // calls the BasicBalance constructor.
+    }
 
-	if (quota == 0)
-		return; // skip this node if it has no quota
+    // ====================== methods =====================================
+    // ====================================================================
 
-	Node n = null;
-	if (value < average) {
-		n = getOverloadedPeer(node, protocolID);
-		if (n != null) {
-			doTransfer((AvgBalance) n.getProtocol(protocolID));
-		}
-	} else {
-		n = getUnderloadedPeer(node, protocolID);
-		if (n != null) {
-			doTransfer((AvgBalance) n.getProtocol(protocolID));
-		}
-	}
+    /**
+     * Calculates the system average load. Stores the result in {@link average}
+     * static variable. It is run once by the first node scheduled.
+     * 
+     * @param protocolID
+     *            the current protocol identifier.
+     */
+    private static void calculateAVG(int protocolID) {
+        int len = Network.size();
+        double sum = 0.0;
+        for (int i = 0; i < len; i++) {
+            AvgBalance protocol = (AvgBalance) Network.get(i).getProtocol(
+                    protocolID);
+            double value = protocol.getValue();
+            sum += value;
 
-	if (Math.abs(value - average) < 1)
-		AvgBalance.suspend(node);
-	if (n != null) {
-		if (Math.abs(((AvgBalance) n.getProtocol(protocolID)).value - average) < 1)
-			AvgBalance.suspend(n);
-	}
-}
+        }
+        average = sum / len;
+        avg_done = true;
+    }
 
-private Node getOverloadedPeer(Node node, int protocolID)
-{
-	int linkableID = FastConfig.getLinkable(protocolID);
-	Linkable linkable = (Linkable) node.getProtocol(linkableID);
+    /**
+     * Let a node to exit from the network as soon as it has the required load
+     * (equal to the average).
+     * 
+     * @param node
+     *            the node to switch off.
+     */
+    protected static void suspend(Node node) {
+        node.setFailState(Fallible.DOWN);
+    }
 
-	Node neighborNode = null;
-	double maxdiff = 0.0;
-	for (int i = 0; i < linkable.degree(); ++i) {
-		Node peer = linkable.getNeighbor(i);
-		// Failure handling
-		if (!peer.isUp())
-			continue;
-		AvgBalance n = (AvgBalance) peer.getProtocol(protocolID);
-		if (n.quota == 0)
-			continue;
-		if (value >= average && n.value >= average)
-			continue;
-		if (value <= average && n.value <= average)
-			continue;
-		double d = Math.abs(value - n.value);
-		if (d > maxdiff) {
-			neighborNode = peer;
-			maxdiff = d;
-		}
-	}
-	return neighborNode;
-}
+    // --------------------------------------------------------------------
 
-private Node getUnderloadedPeer(Node node, int protocolID)
-{
-	int linkableID = FastConfig.getLinkable(protocolID);
-	Linkable linkable = (Linkable) node.getProtocol(linkableID);
+    // Inherited comments.
+    public void nextCycle(Node node, int protocolID) {
+        // Do that only once:
+        if (avg_done == false) {
+            calculateAVG(protocolID);
+            System.out.println("AVG only once " + average);
+        }
 
-	Node neighborNode = null;
-	double maxdiff = 0.0;
-	for (int i = 0; i < linkable.degree(); ++i) {
-		Node peer = linkable.getNeighbor(i);
-		// Failure handling
-		if (!peer.isUp())
-			continue;
-		AvgBalance n = (AvgBalance) peer.getProtocol(protocolID);
-		if (n.quota == 0)
-			continue;
-		if (value >= average && n.value >= average)
-			continue;
-		if (value <= average && n.value <= average)
-			continue;
-		double d = Math.abs(value - n.value);
-		if (d < maxdiff) {
-			neighborNode = peer;
-			maxdiff = d;
-		}
-	}
-	return neighborNode;
-}
+        if (Math.abs(value - average) < 1) {
+            AvgBalance.suspend(node); // switch off node
+            return;
+        }
+
+        if (quota == 0)
+            return; // skip this node if it has no quota
+
+        Node n = null;
+        if (value < average) {
+            n = getOverloadedPeer(node, protocolID);
+            if (n != null) {
+                doTransfer((AvgBalance) n.getProtocol(protocolID));
+            }
+        } else {
+            n = getUnderloadedPeer(node, protocolID);
+            if (n != null) {
+                doTransfer((AvgBalance) n.getProtocol(protocolID));
+            }
+        }
+
+        if (Math.abs(value - average) < 1)
+            AvgBalance.suspend(node);
+        if (n != null) {
+            if (Math.abs(((AvgBalance) n.getProtocol(protocolID)).value
+                    - average) < 1)
+                AvgBalance.suspend(n);
+        }
+    }
+
+    /**
+     * Provides the most loaded neighbor according to the current node load. The
+     * neighbors are estracted by the underlying {@link peersim.core.Linkable}
+     * implementing protocol.
+     * 
+     * @param node
+     *            the current invoking (running) node.
+     * @param protocolID
+     *            the current protocol identifier.
+     * @return the most loaded neighbor.
+     */
+    private Node getOverloadedPeer(Node node, int protocolID) {
+        int linkableID = FastConfig.getLinkable(protocolID);
+        Linkable linkable = (Linkable) node.getProtocol(linkableID);
+
+        Node neighborNode = null;
+        double maxdiff = 0.0;
+        for (int i = 0; i < linkable.degree(); ++i) {
+            Node peer = linkable.getNeighbor(i);
+            if (!peer.isUp()) // only if the neighbor is active
+                continue;
+            AvgBalance n = (AvgBalance) peer.getProtocol(protocolID);
+            if (n.quota == 0)
+                continue;
+            if (value >= average && n.value >= average)
+                continue;
+            if (value <= average && n.value <= average)
+                continue;
+            double d = Math.abs(value - n.value);
+            if (d > maxdiff) {
+                neighborNode = peer;
+                maxdiff = d;
+            }
+        }
+        return neighborNode;
+    }
+
+    /**
+     * Provides the least loaded neighbor according to the current node load.
+     * The neighbors are estracted by the underlying
+     * {@link peersim.core.Linkable} implementing protocol.
+     * 
+     * @param node
+     *            the current invoking (running) node.
+     * @param protocolID
+     *            the current protocol identifier.
+     * @return the least loaded neighbor.
+     */
+    private Node getUnderloadedPeer(Node node, int protocolID) {
+        int linkableID = FastConfig.getLinkable(protocolID);
+        Linkable linkable = (Linkable) node.getProtocol(linkableID);
+
+        Node neighborNode = null;
+        double maxdiff = 0.0;
+        for (int i = 0; i < linkable.degree(); ++i) {
+            Node peer = linkable.getNeighbor(i);
+            if (!peer.isUp()) // only if the neighbor is active
+                continue;
+            AvgBalance n = (AvgBalance) peer.getProtocol(protocolID);
+            if (n.quota == 0)
+                continue;
+            if (value >= average && n.value >= average)
+                continue;
+            if (value <= average && n.value <= average)
+                continue;
+            double d = Math.abs(value - n.value);
+            if (d < maxdiff) {
+                neighborNode = peer;
+                maxdiff = d;
+            }
+        }
+        return neighborNode;
+    }
 
 }

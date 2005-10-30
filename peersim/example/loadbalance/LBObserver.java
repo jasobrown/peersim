@@ -23,123 +23,131 @@ import peersim.core.*;
 import peersim.util.*;
 import peersim.vector.*;
 
-public class LBObserver implements Control
-{
-
-// --------------------------------------------------------------------------
-// Parameters
-// --------------------------------------------------------------------------
-
 /**
- * The protocol to operate on.
- * @config
+ * This class monitors the state of the load balancing process at each cycle. It
+ * is assumed that the network nodes comply to the
+ * {@link peersim.vector.SingleValue} interface.
+ * 
  */
-private static final String PAR_PROT = "protocol";
+public class LBObserver implements Control {
 
-/**
- * If defined, print the load value. The default is false.
- * @config
- */
-private static final String PAR_SHOW_VALUES = "show_values";
+    // --------------------------------------------------------------------------
+    // Parameters
+    // --------------------------------------------------------------------------
 
-// --------------------------------------------------------------------------
-// Fields
-// --------------------------------------------------------------------------
+    /**
+     * The protocol to operate on.
+     * 
+     * @config
+     */
+    private final String PAR_PROT = "protocol";
 
-/** The name of this observer in the configuration */
-private final String name;
+    /**
+     * If defined, print the load value. The default is false.
+     * 
+     * @config
+     */
+    private final String PAR_SHOW_VALUES = "show_values";
 
-/** Protocol identifier */
-private final int pid;
+    // --------------------------------------------------------------------------
+    // Fields
+    // --------------------------------------------------------------------------
 
-/** Flag to show or not the load values at each node. */
-private int show_values = 0;
+    /**
+     * The name of this observer in the configuration file. Initialized by the
+     * constructor parameter.
+     */
+    private final String name;
 
-private IncrementalStats stats = null;
+    /** Protocol identifier, obtained from config property {@link #PAR_PROT}. */
+    private final int pid;
 
-private final int len = Network.size();
+    /**
+     * Flag to show or not the load values at each node; obtained from config
+     * property {@link #PAR_SHOW_VALUES}.
+     */
+    private int show_values = 0;
 
-// --------------------------------------------------------------------------
-// Constructor
-// --------------------------------------------------------------------------
+    /**
+     * This object keeps track of the values injected and produces statistics.
+     * More details in: {@see peersim.util.IncrementalStats} .
+     */
+    private IncrementalStats stats = null;
 
-/**
- * Standard constructor that reads the configuration parameters. Invoked by
- * the simulation engine.
- * @param name
- *          the configuration prefix for this class
- */
-public LBObserver(String name)
-{
-	// Call the parent class (abstract class)
-	this.name = name;
-	// Other parameters from config file:
-	pid = Configuration.getPid(name + "." + PAR_PROT);
-	show_values = Configuration.getInt(name + "." + PAR_SHOW_VALUES, 0);
-	stats = new IncrementalStats();
-}
+    private final int len = Network.size();
 
-// --------------------------------------------------------------------------
-// Methods
-// --------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
+    // Constructor
+    // --------------------------------------------------------------------------
 
-// Returns always true!
-public boolean execute()
-{
-	// final int len = Network.size();
-	double sum = 0.0;
-	double max = Double.NEGATIVE_INFINITY;
-	double min = Double.POSITIVE_INFINITY;
-	int count_zero = 0;
-	int count_avg = 0;
+    /**
+     * Standard constructor that reads the configuration parameters. Invoked by
+     * the simulation engine.
+     * 
+     * @param name
+     *            the configuration prefix identifier for this class.
+     */
+    public LBObserver(String name) {
+        this.name = name;
+        // Other parameters from config file:
+        pid = Configuration.getPid(name + "." + PAR_PROT);
+        show_values = Configuration.getInt(name + "." + PAR_SHOW_VALUES, 0);
+        stats = new IncrementalStats();
+    }
 
-	if (show_values == 1) {
-		System.out.print(name+": ");
-	}
+    // --------------------------------------------------------------------------
+    // Methods
+    // --------------------------------------------------------------------------
 
-	// target_node_load = targetp.getLocalLoad();
-	/* Compute max, min, average */
-	for (int i = 0; i < len; i++) {
-		SingleValue prot=(SingleValue) Network.get(i).getProtocol(pid);
-		double value = prot.getValue();
-		stats.add(value);
+    // Inherits comments from the interface.
+    public boolean execute() {
+        StringBuffer buf = new StringBuffer();
+        double sum = 0.0;
+        double max = Double.NEGATIVE_INFINITY;
+        double min = Double.POSITIVE_INFINITY;
+        int count_zero = 0;
+        int count_avg = 0;
 
-		if (value == 0) {
-			count_zero++;
-		}
-		if (value == 2) {
-			count_avg++;
-		}
-		// shows the values of load at each node:
-		if (show_values == 1) {
-			System.out.print(value + ":");
-		}
-		sum += value;
-		if (value > max)
-			max = value;
-		if (value < min)
-			min = value;
+        if (show_values == 1) {
+            buf.append(name+": ");
+        }
 
-		// agavg = protocol.getAVGLoad();
-	}
-	if (show_values == 1) {
-		System.out.println();
-	}
-	
-	System.out.println(name+": "+
-			CommonState.getTime() + " " +
-			stats.getAverage() + " " + 
-			stats.getMax() + " " + 
-			stats.getMin() + " " +
-			count_zero + " " + // number of zero value node
-			count_avg + " " + // number of correct avg nodes
-			stats.getVar()
-			);
-	stats.reset();
-	return false;
+        /* Compute max, min, average */
+        for (int i = 0; i < len; i++) {
+            SingleValue prot = (SingleValue) Network.get(i).getProtocol(pid);
+            double value = prot.getValue();
+            stats.add(value);
 
-}
+            if (value == 0) {
+                count_zero++;
+            }
+            if (value == 2) {
+                count_avg++;
+            }
+            // shows the values of load at each node:
+            if (show_values == 1) {
+                buf.append(value+":");
+            }
+            sum += value;
+            if (value > max)
+                max = value;
+            if (value < min)
+                min = value;
 
-// --------------------------------------------------------------------------
+        }
+        if (show_values == 1) {
+            System.err.println(buf.toString());
+        }
+
+        System.out.println(name + ": " + CommonState.getTime() + " "
+                + stats.getAverage() + " " + stats.getMax() + " "
+                + stats.getMin() + " " + count_zero + " " + // number of zero
+                // value node
+                count_avg + " " + // number of correct avg nodes
+                stats.getVar());
+        stats.reset();
+        return false;
+
+    }
 
 }

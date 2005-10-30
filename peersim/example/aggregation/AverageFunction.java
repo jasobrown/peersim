@@ -24,46 +24,52 @@ import peersim.vector.SingleValueHolder;
 import peersim.cdsim.CDProtocol;
 
 /**
- * 
+ * This class provides an implementation for the averaging function in the
+ * aggregation framework. When a pair of nodes interact, their values are
+ * averaged. The class subclasses {@link peersim.vector.SingleValueHolder} in
+ * order to provide a consistent access to the averaging variable value.
  * 
  * @author Alberto Montresor
  * @version $Revision$
  */
-public class AverageFunction extends SingleValueHolder implements CDProtocol
-{
+public class AverageFunction extends SingleValueHolder implements CDProtocol {
+    /**
+     * Creates a new {@link example.aggregation.AverageFunction} protocol
+     * instance.
+     * 
+     * @param prefix
+     *            the component prefix declared in the configuration file.
+     */
+    public AverageFunction(String prefix) {
+        super(prefix);
+    }
 
-public AverageFunction(String prefix)
-{
-	super(prefix);
-}
+    /**
+     * Using an underlying {@link Linkable} protocol choses a neighbor and
+     * performs a variance reduction step.
+     * 
+     * @param node
+     *            the node on which this component is run.
+     * @param protocolID
+     *            the id of this protocol in the protocol array.
+     */
+    public void nextCycle(Node node, int protocolID) {
+        int linkableID = FastConfig.getLinkable(protocolID);
+        Linkable linkable = (Linkable) node.getProtocol(linkableID);
+        if (linkable.degree() > 0) {
+            Node peer = linkable.getNeighbor(CommonState.r.nextInt(linkable
+                    .degree()));
 
-/*
- * public Object clone() throws CloneNotSupportedException {
- * 
- * AverageFunction af = (AverageFunction)super.clone(); af.value = value;
- * return af; }
- */
+            // Failure handling
+            if (peer.getFailState() != Fallible.OK)
+                return;
 
-/**
- * Using a {@link Linkable} protocol choses a neighbor and performs a
- * variance reduction step.
- */
-public void nextCycle(Node node, int protocolID)
-{
-	int linkableID = FastConfig.getLinkable(protocolID);
-	Linkable linkable = (Linkable) node.getProtocol(linkableID);
-	if (linkable.degree() > 0) {
-		Node peer = linkable.getNeighbor(CommonState.r.nextInt(linkable.degree()));
-
-		// Failure handling
-		if (peer.getFailState() != Fallible.OK)
-			return;
-
-		AverageFunction neighbor = (AverageFunction) peer.getProtocol(protocolID);
-		double mean = (this.value + neighbor.value) / 2;
-		this.value = mean;
-		neighbor.value = mean;
-	}
-}
+            AverageFunction neighbor = (AverageFunction) peer
+                    .getProtocol(protocolID);
+            double mean = (this.value + neighbor.value) / 2;
+            this.value = mean;
+            neighbor.value = mean;
+        }
+    }
 
 }

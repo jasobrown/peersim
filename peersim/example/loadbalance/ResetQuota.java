@@ -22,50 +22,56 @@ import peersim.config.*;
 import peersim.core.*;
 
 /**
- * This class restores the quota value at each node in the topology in
- * order to make the next cycle feasible.
+ * This class restores the quota value at each node in the topology in order to
+ * be able to perform the next cycle. It is assumed that the network nodes are
+ * instancies of the {@link example.loadbalance.BasicBalance} class.
  */
-public class ResetQuota implements Control
-{
+public class ResetQuota implements Control {
 
-// --------------------------------------------------------------------------
-// Parameters
-// --------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
+    // Parameters
+    // --------------------------------------------------------------------------
 
-/**
- * The protocol to operate on.
- * @config
- */
-private static final String PAR_PROT = "protocol";
+    /**
+     * The protocol to operate on.
+     * 
+     * @config
+     */
+    private final String PAR_PROT = "protocol";
 
-// --------------------------------------------------------------------------
-// Fields
-// --------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
+    // Fields
+    // --------------------------------------------------------------------------
 
-/** Value obtained from config property {@link #PAR_PROT}. */
-private final int protocolID;
+    /** Value obtained from config property {@link #PAR_PROT}. */
+    private final int protocolID;
 
-// --------------------------------------------------------------------------
-// Initialization
-// --------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
+    // Initialization
+    // --------------------------------------------------------------------------
+    /**
+     * Standard constructor that reads the configuration parameters. Invoked by
+     * the simulation engine.
+     * 
+     * @param prefix
+     *            the configuration prefix for this class.
+     */
+    public ResetQuota(String prefix) {
+        protocolID = Configuration.getPid(prefix + "." + PAR_PROT);
+    }
 
-public ResetQuota(String prefix)
-{
-	protocolID = Configuration.getPid(prefix + "." + PAR_PROT);
-}
+    // --------------------------------------------------------------------------
+    // Methods
+    // --------------------------------------------------------------------------
 
-// --------------------------------------------------------------------------
-// Methods
-// --------------------------------------------------------------------------
+    // Comment inherited from interface
+    public boolean execute() {
+        for (int i = 0; i < Network.size(); ++i) {
+            ((BasicBalance) Network.get(i).getProtocol(protocolID))
+                    .resetQuota();
+        }
 
-// Comment inherited from interface
-public boolean execute()
-{
-	for (int i = 0; i < Network.size(); ++i) {
-		((BasicBalance) Network.get(i).getProtocol(protocolID)).resetQuota();
-	}
-
-	return false;
-}
+        return false;
+    }
 
 }

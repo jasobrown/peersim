@@ -37,7 +37,7 @@ public class DegreeStats extends GraphObserver
  * Defaults to full size of the graph.
  * @config
  */
-private static final String PAR_N = "n";
+private final String PAR_N = "n";
 
 /**
  * If defined, then the given number of nodes will be traced. That is, it is
@@ -46,7 +46,7 @@ private static final String PAR_N = "n";
  * default.
  * @config
  */
-private static final String PAR_TRACE = "trace";
+private final String PAR_TRACE = "trace";
 
 /**
  * Selects a method to use when printing results. Three methods are known:
@@ -56,7 +56,7 @@ private static final String PAR_TRACE = "trace";
  * Default is "stats".
  * @config
  */
-private static final String PAR_METHOD = "method";
+private final String PAR_METHOD = "method";
 
 /**
  * Selects the types of links to print information about. Three methods are
@@ -66,7 +66,7 @@ private static final String PAR_METHOD = "method";
  * to be unset (graph must be directed). Default is "live".
  * @config
  */
-private static final String PAR_TYPE = "linktype";
+private final String PAR_TYPE = "linktype";
 
 //--------------------------------------------------------------------------
 //Parameter

@@ -130,7 +130,6 @@ static Process p;
  * Main method of the system.
  */
 public static void main(String[] args)
-throws IOException
 {
 	// Check if there are no arguments or there is an explicit --help
 	// flag; if so, print the usage of the class
@@ -230,7 +229,6 @@ private static void nextValues(int[] idx, String[][] values)
 // --------------------------------------------------------------------
 
 public static void doExperiments(Properties properties, String[] args)
-		throws IOException
 {
 
 	// Configure the java parameter for exception
@@ -254,13 +252,14 @@ public static void doExperiments(Properties properties, String[] args)
 	for (int i=0; i < args.length; i++)
 		list.add(args[i]);
 	
-	// Activate redirection to separate stdout from stdeer
-	list.add(Simulator.PAR_REDIRECT+"="+TaggedOutputStream.class.getCanonicalName());
-	int startlog = list.size();
-	list.add(""); 
 	// Since multiple experiments are managed here, the value
 	// of standard variable for multiple experiments is changed to 1
 	list.add(Simulator.PAR_EXPS+"=1");
+
+	// Activate redirection to separate stdout from stderr
+	list.add(Simulator.PAR_REDIRECT+"="+TaggedOutputStream.class.getCanonicalName());
+	int startlog = list.size();
+	list.add(""); 
 	
 	// Create a placeholder for the seed
 	int startseed = list.size();
@@ -271,9 +270,6 @@ public static void doExperiments(Properties properties, String[] args)
 	for (int i=0; i < values.length; i++)
 		list.add("");
 		
-	// Prepare the argument array for process forking
-	String[] newargs = new String[list.size()];
-
 	// Execute with different values
 	int[] idx = new int[values.length]; // Initialized to 0
 	while (idx[0] < values[0].length) {
@@ -298,45 +294,86 @@ public static void doExperiments(Properties properties, String[] args)
 		long seed = CommonState.r.nextLong();
 		list.set(startseed, CommonState.PAR_SEED+"="+seed);
 
+		System.err.println("Experiment: " + log);
 		
-		try {
-			ProcessBuilder pb = new ProcessBuilder(list.toArray(newargs));
-			pb.redirectErrorStream(true);
-			p = pb.start();
-		} catch (IOException e1) {
-			try {
-				list.set(0, "java");
-				ProcessBuilder pb = new ProcessBuilder(list.toArray(newargs));
-				pb.redirectErrorStream(true);
-				p = pb.start();
-			} catch (IOException e2) {
-				System.err.println("Unable to launch a Java virtual machine");
-				System.exit(1);
-			}
-		}
-		BufferedReader toprint = new BufferedReader(new InputStreamReader(p
-				.getInputStream()));
-		String line;
-		while ((line = toprint.readLine()) != null) {
-			if (line.length() == 0) {
-				System.out.println();
-			} else {
-				int last = line.charAt(line.length()-1);
-				if (last != TaggedOutputStream.TAG) {
-					System.err.println(line);
-				} else {
-					line = line.substring(0, line.length()-1);
-					System.out.println(line);
-				}
-			}
-		}
-		p = null;
+		executeProcess(list);
 
 		// Increment values
 		nextValues(idx, values);
 	
 	}
 }
+
+//--------------------------------------------------------------------
+
+/**
+ * Execute the "command line" represented by this String list.
+ * The first argument is the process to be executed. We try
+ * to run the same JVM as the current one. If not possible,
+ * we use the first java command found in the path.
+ */
+private static void executeProcess(List<String> list)
+{
+	// Prepare the argument array for process forking
+	String[] newargs = new String[list.size()];
+
+	// Execute a new JVM
+	try {
+		ProcessBuilder pb = new ProcessBuilder(list.toArray(newargs));
+		pb.redirectErrorStream(true);
+		p = pb.start();
+	} catch (IOException e1) {
+		try {
+			list.set(0, "java");
+			ProcessBuilder pb = new ProcessBuilder(list.toArray(newargs));
+			pb.redirectErrorStream(true);
+			p = pb.start();
+		} catch (IOException e2) {
+			System.err.println("Unable to launch a Java virtual machine");
+			System.exit(1);
+		}
+	}
+
+	// Read the output from the process and redirect it to System.out
+	// and System.err.
+	BufferedReader toprint = new BufferedReader(new InputStreamReader(p
+			.getInputStream()));
+	String line;
+	while ((line = getLine(toprint)) != null) {
+		if (line.length() == 0) {
+			System.out.println();
+		} else {
+			int last = line.charAt(line.length()-1);
+			if (last != TaggedOutputStream.TAG) {
+				System.err.println(line);
+			} else {
+				line = line.substring(0, line.length()-1);
+				System.out.println(line);
+			}
+		}
+	}
+
+	// The static variable p (used also by ShutdownThread) is back to
+	// null - no process must be killed on shutdown.
+	p = null;
+
+}
+
+//--------------------------------------------------------------------
+
+private static String getLine(BufferedReader toprint)
+{
+	try {
+		return toprint.readLine();
+	} catch (IOException e) {
+		// If we get here, this means that the forked process has
+		// been killed by the shutdown thread. We just exit without
+	  // printing this exception.
+		System.exit(1);
+		return null; // Never reached, but needed.
+	}
+}
+
 
 // --------------------------------------------------------------------
 
@@ -353,9 +390,6 @@ private static void usage()
 /**
  * This thread is used to kill a child process in the case of an abnormal
  * termination of the RangeSimulator (for example, due to a signal).
- *
- * @author Alberto Montresor
- * @version $Revision$
  */
 class ShutdownThread extends Thread
 {
@@ -365,9 +399,10 @@ class ShutdownThread extends Thread
  */
 public void run()
 {
+	Process tokill = RangeSimulator.p;
 	System.err.println("Terminating simulation.");
-	if (RangeSimulator.p != null) {
-		RangeSimulator.p.destroy();
+	if (tokill != null) {
+		tokill.destroy();
 	}
 }
 

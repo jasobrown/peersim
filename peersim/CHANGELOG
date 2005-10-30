@@ -1,3 +1,8 @@
+AM 30/10/05
+- RangeSimulator, again. While testing, I discovered a race
+  condition that could generate an IOException. Detected and
+  ignored now. Also, refactored the code a bit.
+
 GJ 30/10/05
 - Small example package fix.
 
@@ -18,6 +23,7 @@ MJ 29/10/05
   Now onKill is called also on protocols that implement it, when removing
   the old network.
 
+>>>>>>> 1.144
 AM 29/10/05
 - Improved the RangeSimulator with a mechanism to kill the
   child process if the RangeSimulator is killed by an

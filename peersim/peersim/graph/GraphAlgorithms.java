@@ -157,9 +157,10 @@ private void tarjanVisit(int i) {
 		{
 			tarjanVisit(j);
 		}
-		if( color[j]>0 ) // inComponent is false
+		if( color[j]>0 && color[root[j]]<color[root[i]] )
+		// inComponent is false and have to update root
 		{
-			root[i] = (root[j]<root[i]?root[j]:root[i]);
+			root[i]=root[j];
 		}
 	}
 
@@ -169,6 +170,7 @@ private void tarjanVisit(int i) {
 		{
 			j=stack.pop();
 			color[j]=-color[j];
+			root[j]=i;
 		}
 		while(j!=i);
 	}
@@ -380,7 +382,6 @@ public Map tarjan( Graph g ) {
 	{
 		if( color[i]==WHITE ) tarjanVisit(i);
 	}
-	
 	for( int i=0; i<g.size(); ++i) color[i]=0;
 	for( int i=0; i<g.size(); ++i) color[root[i]]++;
 	Hashtable<Integer,Integer> ht = new Hashtable<Integer,Integer>();

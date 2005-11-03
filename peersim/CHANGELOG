@@ -1,3 +1,7 @@
+MJ 02/11/05
+- Fixed a bug in the Tarjan algorithm that detects strongly connected 
+  components.
+
 AM 30/10/05
 - RangeSimulator, again. While testing, I discovered a race
   condition that could generate an IOException. Detected and

@@ -43,7 +43,7 @@ public class LBObserver implements Control {
     private static final String PAR_PROT = "protocol";
 
     /**
-     * If defined, print the load value. The default is false.
+     * If defined, print the load value. Not defined by default.
      * 
      * @config
      */
@@ -66,7 +66,7 @@ public class LBObserver implements Control {
      * Flag to show or not the load values at each node; obtained from config
      * property {@link #PAR_SHOW_VALUES}.
      */
-    private int show_values = 0;
+    private boolean show_values;
 
     /**
      * This object keeps track of the values injected and produces statistics.
@@ -91,7 +91,7 @@ public class LBObserver implements Control {
         this.name = name;
         // Other parameters from config file:
         pid = Configuration.getPid(name + "." + PAR_PROT);
-        show_values = Configuration.getInt(name + "." + PAR_SHOW_VALUES, 0);
+        show_values = Configuration.contains(name + "." + PAR_SHOW_VALUES);
         stats = new IncrementalStats();
     }
 
@@ -108,7 +108,7 @@ public class LBObserver implements Control {
         int count_zero = 0;
         int count_avg = 0;
 
-        if (show_values == 1) {
+        if (show_values) {
             buf.append(name+": ");
         }
 
@@ -125,7 +125,7 @@ public class LBObserver implements Control {
                 count_avg++;
             }
             // shows the values of load at each node:
-            if (show_values == 1) {
+            if (show_values) {
                 buf.append(value+":");
             }
             sum += value;
@@ -135,7 +135,7 @@ public class LBObserver implements Control {
                 min = value;
 
         }
-        if (show_values == 1) {
+        if (show_values) {
             System.out.println(buf.toString());
         }
 

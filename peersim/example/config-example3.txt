@@ -19,7 +19,7 @@ protocol.1.quota 100
 # Monitors the load distribution convergence
 control.1 example.loadbalance.LBObserver
 control.1.protocol 1
-control.1.show_values 1
+control.1.show_values
 
 control.2 example.loadbalance.QuotaObserver
 control.2.protocol 1

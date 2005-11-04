@@ -1,3 +1,7 @@
+AM 04/11/05
+- Fixed a bug in Configuration (the class was uncorrectly
+  evaluating mixed integer-floating point expressions).
+
 MJ 04/11/05
 - Refreshed example.aggregation and related stuff. 
 - Refreshed example.loadbalance and related stuff. 

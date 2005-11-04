@@ -168,6 +168,15 @@ import org.lsmp.djep.groupJep.*;
   </pre>
   that results in A=7, B=3, C=4, D=1, E=2, F=2
 
+  <p>Expressions like "sub-expression op sub-expression" are 
+  computed based on the type of the sub-expressions. If both
+  sub-expressions are integer, the computation is done using
+  integer arithmetics and the result is an integer. So, for 
+  example, 5/2 returns 2. If one of the sub-expression is
+  floating point, the computation is based on floating-point
+  arithmetics (double precision) and the result is a 
+  floating point value. So, for example, 5.0/2 returns 2.5.
+
   <p>Expressions are parsed recursively. Note that no optimization is
   done, so expression F is evaluated three times here (due to the
   fact that appears twice in C and once in B). But since properties
@@ -468,7 +477,7 @@ public static int getInt( String name, int def ) {
 */
 public static int getInt( String name ) 
 {
-	Number ret = (Number) getValInteger(name, name, 0);
+	Number ret = getVal(name, name, 0);
 	debug(name, "" +ret);
 	return ret.intValue();
 }
@@ -502,7 +511,7 @@ public static long getLong( String name, long def ) {
 */
 public static long getLong( String name )
 {
-	Number ret = (Number) getValInteger(name, name, 0);
+	Number ret = getVal(name, name, 0);
 	debug(name, "" +ret);
 	return ret.longValue();
 }
@@ -536,9 +545,9 @@ public static double getDouble( String name, double def ) {
 */
 public static double getDouble( String name ) 
 {
-	double ret = getVal(name, name, 0); 
+	Number ret = getVal(name, name, 0); 
 	debug(name, "" +ret);
-	return ret;
+	return ret.doubleValue();
 }
 
 //-------------------------------------------------------------------
@@ -551,7 +560,7 @@ public static double getDouble( String name )
  * @param depth the depth reached so far
  * @return the evaluation of the expression associated to property  
  */
-private static double getVal(String initial, String property, int depth)
+private static Number getVal(String initial, String property, int depth)
 {
 	if (depth > maxdepth) {
 		throw new IllegalParameterException(initial, 
@@ -567,58 +576,19 @@ private static double getVal(String initial, String property, int depth)
 				getSimilarProperty(property));
 	}
 
-	org.nfunk.jep.JEP jep = new org.nfunk.jep.JEP();
+	GroupJep jep = new GroupJep(new Operators());
 	jep.setAllowUndeclared(true);
 	
 	jep.parseExpression(s);
 	String[] symbols = getSymbols(jep);
 	for (int i=0; i < symbols.length; i++) {
-		double d = getVal(initial, symbols[i], depth+1);
-		jep.addVariable(symbols[i], d);
-	}
-	
-	return jep.getValue();
-}
-
-//-------------------------------------------------------------------
-
-/**
- * Read numeric property values, parsing expression if necessary.
- * 
- * @param initial the property name that started this expression evaluation
- * @param property the current property name to be evaluated
- * @param depth the depth reached so far
- * @return the evaluation of the expression associated to property  
- */
-private static Object getValInteger(String initial, String property, int depth)
-{
-	if (depth > maxdepth) {
-		throw new IllegalParameterException(initial, 
-		"Probable recursive definition - exceeded maximum depth " + 
-		maxdepth);
-	}
-
-	String s = config.getProperty(property);
-	if (s == null || s.equals("")) {
-		throw new MissingParameterException(property, 
-				" when evaluating property " + initial +
-				"\nPossibly incorrect property: " +
-				getSimilarProperty(property));
-	}
-
-	GroupJep jep = new GroupJep(new Integers());
-	jep.setAllowUndeclared(true);
-	
-	jep.parseExpression(s);
-	String[] symbols = getSymbols(jep);
-	for (int i=0; i < symbols.length; i++) {
-		Object d = getValInteger(initial, symbols[i], depth+1);
+		Object d = getVal(initial, symbols[i], depth+1);
 		jep.addVariable(symbols[i], d);
 	}
 	Object ret = jep.getValueAsObject();
 	if (jep.hasError()) 
 		System.err.println(jep.getErrorInfo());
-	return ret;
+	return (Number) ret;
 }
 
 //-------------------------------------------------------------------
@@ -807,11 +777,24 @@ public static Class getClass(String name)
 		// Maybe there are multiple classes with the same
 		// non-qualified name.
 		String fullname = ClassFinder.getQualifiedName(classname);
-		if (fullname != null && fullname.indexOf(',') >= 0) {
-			throw new IllegalParameterException(name,
-			"The non-qualified class name " + classname + 
-			" corresponds to multiple fully-qualified classes: " +
-			fullname);
+		if (fullname != null) {
+			String[] names = fullname.split(",");
+			if (names.length > 1) {
+				for (int i=0; i < names.length; i++) {
+					for (int j=i+1; j < names.length; j++) {
+						if (names[i].equals(names[j])) {
+							throw new IllegalParameterException(name,
+									"The class " + names[i] + 
+									" appears more than once in the classpath; please check" +
+									" your classpath to avoid duplications.");
+						}
+					}
+				}
+				throw new IllegalParameterException(name, 
+						"The non-qualified class name " + classname + 
+						"corresponds to multiple fully-qualified classes:" + 
+						fullname);
+			}
 		}
 	}
 	if (c == null) {

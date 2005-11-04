@@ -88,38 +88,73 @@ private static void parseSingleItem(List<String> list, String item)
 
 private static void parseRangeItem(List<String> list, String start, String stop)
 {
-	double vstart;
-	double vstop;
-	double vinc;
-	boolean sum;
-	vstart = Double.parseDouble(start);
-	int pos = stop.indexOf("|*");
-	if (pos >= 0) {
-		// The string contains a multiplicative factor
-		vstop = Double.parseDouble(stop.substring(0, pos));
-		vinc = Double.parseDouble(stop.substring(pos + 2));
-		sum = false;
-	} else {
-		pos = stop.indexOf("|");
+  try {
+		long vstart;
+		long vstop;
+		long vinc;
+		boolean sum;
+		vstart = Long.parseLong(start);
+		int pos = stop.indexOf("|*");
 		if (pos >= 0) {
-			// The string contains an additive factor
-			vstop = Double.parseDouble(stop.substring(0, pos));
-			vinc = Double.parseDouble(stop.substring(pos + 1));
-			sum = true;
+			// The string contains a multiplicative factor
+			vstop = Long.parseLong(stop.substring(0, pos));
+			vinc = Long.parseLong(stop.substring(pos + 2));
+			sum = false;
 		} else {
-			// The string contains just the final value
-			vstop = Double.parseDouble(stop);
-			vinc = 1;
-			sum = true;
+			pos = stop.indexOf("|");
+			if (pos >= 0) {
+				// The string contains an additive factor
+				vstop = Long.parseLong(stop.substring(0, pos));
+				vinc = Long.parseLong(stop.substring(pos + 1));
+				sum = true;
+			} else {
+				// The string contains just the final value
+				vstop = Long.parseLong(stop);
+				vinc = 1;
+				sum = true;
+			}
 		}
-	}
-	if (sum) {
-		for (double i = vstart; i <= vstop; i += vinc)
-			list.add("" + i);
-	} else {
-		for (double i = vstart; i <= vstop; i *= vinc)
-			list.add("" + i);
-	}
+		if (sum) {
+			for (long i = vstart; i <= vstop; i += vinc)
+				list.add("" + i);
+		} else {
+			for (long i = vstart; i <= vstop; i *= vinc)
+				list.add("" + i);
+		}
+  } catch (NumberFormatException e) {
+		double vstart;
+		double vstop;
+		double vinc;
+		boolean sum;
+		vstart = Double.parseDouble(start);
+		int pos = stop.indexOf("|*");
+		if (pos >= 0) {
+			// The string contains a multiplicative factor
+			vstop = Double.parseDouble(stop.substring(0, pos));
+			vinc = Double.parseDouble(stop.substring(pos + 2));
+			sum = false;
+		} else {
+			pos = stop.indexOf("|");
+			if (pos >= 0) {
+				// The string contains an additive factor
+				vstop = Double.parseDouble(stop.substring(0, pos));
+				vinc = Double.parseDouble(stop.substring(pos + 1));
+				sum = true;
+			} else {
+				// The string contains just the final value
+				vstop = Double.parseDouble(stop);
+				vinc = 1;
+				sum = true;
+			}
+		}
+		if (sum) {
+			for (double i = vstart; i <= vstop; i += vinc)
+				list.add("" + i);
+		} else {
+			for (double i = vstart; i <= vstop; i *= vinc)
+				list.add("" + i);
+		}
+  }
 }
 
 /*

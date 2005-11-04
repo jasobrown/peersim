@@ -25,12 +25,15 @@ import peersim.core.*;
  * This class restores the quota value at each node in the topology in order to
  * be able to perform the next cycle. It is assumed that the network nodes are
  * instancies of the {@link example.loadbalance.BasicBalance} class.
+ *
+ * <p>Note that this control can be replaced by the library class
+ * {@link peersim.dynamics.MethodInvoker} by configuring method "resetQuota".
  */
 public class ResetQuota implements Control {
 
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     // Parameters
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     /**
      * The protocol to operate on.
@@ -39,16 +42,16 @@ public class ResetQuota implements Control {
      */
     private static final String PAR_PROT = "protocol";
 
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     // Fields
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     /** Value obtained from config property {@link #PAR_PROT}. */
     private final int protocolID;
 
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     // Initialization
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     /**
      * Standard constructor that reads the configuration parameters. Invoked by
      * the simulation engine.
@@ -60,9 +63,9 @@ public class ResetQuota implements Control {
         protocolID = Configuration.getPid(prefix + "." + PAR_PROT);
     }
 
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     // Methods
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     // Comment inherited from interface
     public boolean execute() {

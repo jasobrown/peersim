@@ -31,9 +31,9 @@ import peersim.vector.SingleValue;
  */
 public class LinearDistributionInitializer implements Control {
 
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     // Parameters
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     /**
      * The upper bound of the values.
@@ -56,22 +56,24 @@ public class LinearDistributionInitializer implements Control {
      */
     private static final String PAR_PROT = "protocol";
 
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     // Fields
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     
-    /** Maximum interval value, obtained from config property {@link #PAR_MAX}. */
+    /** Maximum interval value,
+    obtained from config property {@link #PAR_MAX}. */
     private final double max;
 
-    /** Manimum interval value, obtained from config property {@link #PAR_MIN}. */
+    /** Manimum interval value,
+    obtained from config property {@link #PAR_MIN}. */
     private final double min;
 
     /** Protocol identifier, obtained from config property {@link #PAR_PROT}. */
     private final int protocolID;
 
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     // Initialization
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     /**
      * Standard constructor that reads the configuration parameters. Invoked by
      * the simulation engine.
@@ -85,11 +87,14 @@ public class LinearDistributionInitializer implements Control {
         protocolID = Configuration.getPid(prefix + "." + PAR_PROT);
     }
 
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     // Methods
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
-    // Comment inherited from interface
+    /**
+    * This class provides a simple linear distribution in a bounded interval
+    * defined by parameters {@link #PAR_MIN} and {@link #PAR_MAX}.
+    */
     public boolean execute() {
         double step = (max - min) / (Network.size() - 1);
         double sum = 0.0;

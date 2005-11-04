@@ -38,9 +38,9 @@ import peersim.cdsim.CDProtocol;
  */
 public class BasicBalance extends SingleValueHolder implements CDProtocol {
 
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     // Parameters
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     /**
      * Initial quota. Defaults to 1.
@@ -49,18 +49,18 @@ public class BasicBalance extends SingleValueHolder implements CDProtocol {
      */
     protected static final String PAR_QUOTA = "quota";
 
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     // Fields
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     /** Quota amount. Obtained from config property {@link #PAR_QUOTA}. */
     private final double quota_value;
 
     protected double quota; // current cycle quota
 
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     // Initialization
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     /**
      * Standard constructor that reads the configuration parameters. Invoked by
      * the simulation engine.
@@ -77,9 +77,9 @@ public class BasicBalance extends SingleValueHolder implements CDProtocol {
 
     // The clone() method is inherited.
 
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     // Methods
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     /** Resets the current node quota value. */
     protected void resetQuota() {
@@ -99,7 +99,7 @@ public class BasicBalance extends SingleValueHolder implements CDProtocol {
         int linkableID = FastConfig.getLinkable(protocolID);
         Linkable linkable = (Linkable) node.getProtocol(linkableID);
         if (this.quota == 0) {
-            return; // skip this node
+            return; // quota is exceeded
         }
         // this takes the most distant neighbor based on local load
         BasicBalance neighbor = null;

@@ -1,22 +1,20 @@
 # PEERSIM EXAMPLE 3
-#random.seed 1234567890
+random.seed 1234567890
 simulation.cycles 200
 #control.0 peersim.cdsim.Shuffle
 
-overlay.size 250
-overlay.maxSize 250
+network.size 250
 
-# Comment the following 2 lines and uncomment the other next 2 to switch between
-# newscast or static topology:
+# Comment the following 2 lines and uncomment the other next to switch between
+# newscast and static topology:
 protocol.0 example.newscast.SimpleNewscast
 protocol.0.cache 20
 #protocol.0 peersim.core.IdleProtocol
-#protocol.0.capacity 20
 
 protocol.1 example.loadbalance.AvgBalance
 #protocol.1 example.loadbalance.BasicBalance
 protocol.1.linkable 0
-protocol.1.quota 1
+protocol.1.quota 100
 
 # Monitors the load distribution convergence
 control.1 example.loadbalance.LBObserver
@@ -26,24 +24,23 @@ control.1.show_values 1
 control.2 example.loadbalance.QuotaObserver
 control.2.protocol 1
 
-init.0 peersim.dynamics.WireKOut
-init.0.protocol 0
-init.0.k 20
+init.rnd WireKOut
+init.rnd.protocol 0
+init.rnd.k 20
 
-# UNCOMMENT THE FOLLOWING LINES TO GET A PEAK DISTRIBUTION
-#init.1 example.aggregation.PeakDistributionInitializer
-#init.1.value 10000
-#init.1.at 0
-#init.1.protocol 1
+init.peak example.aggregation.PeakDistributionInitializer
+init.peak.value 10000
+init.peak.protocol 1
 
-# UNCOMMENT THE FOLLOWING LINES TO GET A LINEAR DISTRIBUTION
-init.1 peersim.vector.LinearDistribution
-init.1.protocol 1
-init.1.max 100
-init.1.min 1
+init.lin LinearDistribution
+init.lin.protocol 1
+init.lin.max 100
+init.lin.min 1
+
+# you can replace peak by lin to run the linear initialization instead
+include.init rnd peak
 
 control.3 example.loadbalance.ResetQuota
 control.3.protocol 1
-control.3.value 1
 
 

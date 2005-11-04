@@ -91,7 +91,7 @@ public class AvgBalance extends BasicBalance {
     }
 
     /**
-     * Let a node to exit from the network as soon as it has the required load
+     * Let a node exit from the network as soon as it has the required load
      * (equal to the average).
      * 
      * @param node

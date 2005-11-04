@@ -31,9 +31,9 @@ import peersim.vector.*;
  */
 public class LBObserver implements Control {
 
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     // Parameters
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     /**
      * The protocol to operate on.
@@ -49,9 +49,9 @@ public class LBObserver implements Control {
      */
     private static final String PAR_SHOW_VALUES = "show_values";
 
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     // Fields
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     /**
      * The name of this observer in the configuration file. Initialized by the
@@ -76,9 +76,9 @@ public class LBObserver implements Control {
 
     private final int len = Network.size();
 
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     // Constructor
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     /**
      * Standard constructor that reads the configuration parameters. Invoked by
@@ -95,9 +95,9 @@ public class LBObserver implements Control {
         stats = new IncrementalStats();
     }
 
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     // Methods
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     // Inherits comments from the interface.
     public boolean execute() {
@@ -136,7 +136,7 @@ public class LBObserver implements Control {
 
         }
         if (show_values == 1) {
-            System.err.println(buf.toString());
+            System.out.println(buf.toString());
         }
 
         System.out.println(name + ": " + CommonState.getTime() + " "

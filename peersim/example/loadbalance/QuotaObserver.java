@@ -27,12 +27,16 @@ import peersim.util.*;
  * assumed that the network nodes are instancies of the
  * {@link example.loadbalance.BasicBalance} class.
  * 
+ * <p>Note that this observer can be replaced by a library class
+ * {@link peersim.vector.VectorObserver} the following way:
+ * class {@link BasicBalance} needs to implement a public method "getQuota",
+ * and this method needs to be configured as "getter".
  */
 public class QuotaObserver implements Control {
 
-    // //////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
     // Constants
-    // //////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
 
     /**
      * The protocol to operate on.
@@ -41,9 +45,9 @@ public class QuotaObserver implements Control {
      */
     private static final String PAR_PROT = "protocol";
 
-    // //////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
     // Fields
-    // //////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
 
     /**
      * The name of this observer in the configuration file. Initialized by the
@@ -54,15 +58,10 @@ public class QuotaObserver implements Control {
     /** Protocol identifier, obtained from config property {@link #PAR_PROT}. */
     private final int pid;
 
-    /**
-     * This object keeps track of the values injected and produces statistics.
-     * More details in: {@link peersim.util.IncrementalStats}.
-     */
-    private IncrementalStats stats;
 
-    // //////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
     // Constructor
-    // //////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
 
     
     /**
@@ -75,17 +74,16 @@ public class QuotaObserver implements Control {
     public QuotaObserver(String name) {
         this.name = name;
         pid = Configuration.getPid(name + "." + PAR_PROT);
-        stats = new IncrementalStats();
     }
 
-    // //////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
     // Methods
-    // //////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
 
     // Comment inherited from interface
     public boolean execute() {
-        /* Compute max, min, average */
-        for (int i = 0; i < Network.size(); i++) {
+        IncrementalStats stats = new IncrementalStats();
+	for (int i = 0; i < Network.size(); i++) {
             BasicBalance protocol = (BasicBalance) Network.get(i).getProtocol(
                     pid);
             stats.add(protocol.quota);
@@ -93,7 +91,7 @@ public class QuotaObserver implements Control {
 
         /* Printing statistics */
         System.out.println(name + ": " + stats);
-        return false;
+	return false;
     }
 
 }

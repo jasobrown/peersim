@@ -37,10 +37,10 @@ public class SimpleNewscast implements CDProtocol, Linkable
 // in the protocol array so its size is the maximum of the cache sizes
 
 /** Temp array for merging. Its size is the same as the cache size. */
-protected static Node[] tn;
+private static Node[] tn;
 
 /** Temp array for merging. Its size is the same as the cache size. */
-protected static int[] ts;
+private static int[] ts;
 
 /**
  * Cache size.
@@ -52,10 +52,10 @@ private static final String PAR_CACHE = "cache";
 // =====================================================================
 
 /** Neighbors currently in the cache */
-protected Node[] cache;
+private Node[] cache;
 
 /** Time stamps currently in the cache */
-protected int[] tstamps;
+private int[] tstamps;
 
 // ====================== initialization ===============================
 // =====================================================================
@@ -98,10 +98,10 @@ public Object clone()
  * reachable is found.
  * @return null if no accessible peers are found, the peer otherwise.
  */
-protected Node getPeer()
+private Node getPeer()
 {
 
-	final int d = _degree();
+	final int d = degree();
 	if (d == 0)
 		return null;
 	int index = CommonState.r.nextInt(d);
@@ -139,7 +139,7 @@ protected Node getPeer()
  * @param peerNode
  *          the node that hosts the peer newscast protocol instance
  */
-protected void merge(Node thisNode, SimpleNewscast peer, Node peerNode )
+private void merge(Node thisNode, SimpleNewscast peer, Node peerNode )
 {
 	int i1 = 0; /* Index first cache */
 	int i2 = 0; /* Index second cache */
@@ -147,8 +147,8 @@ protected void merge(Node thisNode, SimpleNewscast peer, Node peerNode )
 	boolean lastTieWinner = CommonState.r.nextBoolean();
 	int i = 1; // Index new cache. first element set in the end
 	// SimpleNewscast.tn[0] is always null. it's never written anywhere
-	final int d1 = _degree();
-	final int d2 = peer._degree();
+	final int d1 = degree();
+	final int d2 = peer.degree();
 	// cachesize is cache.length
 
 	// merging two arrays
@@ -212,30 +212,13 @@ protected void merge(Node thisNode, SimpleNewscast peer, Node peerNode )
 
 // --------------------------------------------------------------------
 
-protected static boolean contains(int size, Node peer)
+private static boolean contains(int size, Node peer)
 {
 	for (int i = 0; i < size; i++) {
 		if (SimpleNewscast.tn[i] == peer)
 			return true;
 	}
 	return false;
-}
-
-// --------------------------------------------------------------------
-
-/**
- * Normally it does the same as {@link #degree}. It is necessary to allow
- * other implementations of {@link #degree} in extending classes which fool
- * the system into thinking that the graph is different from what it is.
- * Methods of this class should use this as degree.
- */
-protected int _degree()
-{
-
-	int len = cache.length - 1;
-	while (len >= 0 && cache[len] == null)
-		len--;
-	return len + 1;
 }
 
 // ====================== Linkable implementation =====================
@@ -349,7 +332,7 @@ public String toString()
 
 	StringBuffer sb = new StringBuffer();
 
-	for (int i = 0; i < _degree(); ++i) {
+	for (int i = 0; i < degree(); ++i) {
 		sb.append(" (" + cache[i].getIndex() + "," + tstamps[i] + ")");
 	}
 	return sb.toString();

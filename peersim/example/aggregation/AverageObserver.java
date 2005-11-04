@@ -21,11 +21,11 @@ package example.aggregation;
 import peersim.config.*;
 import peersim.core.*;
 import peersim.vector.*;
+import peersim.util.IncrementalStats;
 
 /**
  * Print statistics for an average aggregation computation. Statistics printed
- * are: standard deviation, standard deviation reduction,
- * average/maximum/minimum of averages, and actual size.
+ * are defined by {@link IncrementalStats#toString}
  * 
  * @author Alberto Montresor
  * @version $Revision$
@@ -71,15 +71,13 @@ public class AverageObserver implements Control {
     /** Protocol identifier; obtained from config property {@link #PAR_PROT}. */
     private final int pid;
 
-    /** Initial standard deviation */
-    private double initsd = -1.0;
 
     // /////////////////////////////////////////////////////////////////////
     // Constructor
     // /////////////////////////////////////////////////////////////////////
 
     /**
-     * Creates a new observer using clear()
+     * Creates a new observer reading configuration parameters.
      */
     public AverageObserver(String name) {
         this.name = name;
@@ -91,51 +89,29 @@ public class AverageObserver implements Control {
     // Methods
     // /////////////////////////////////////////////////////////////////////
 
-    // Comment inherited from interface
+    /**
+    * Print statistics for an average aggregation computation.
+    * Statistics printed
+    * are defined by {@link IncrementalStats#toString}
+    * @return if the standard deviation is less than the given
+    * {@value PAR_ACCURACY}.
+    */
     public boolean execute() {
-        long time = peersim.core.CommonState.getTime();
-
-        /* Initialization */
-        final int len = Network.size();
-        double max = Double.NEGATIVE_INFINITY;
-        double min = Double.POSITIVE_INFINITY;
-        double sum = 0.0;
-        double sqrsum = 0.0;
-        int count = 0;
-
-        /* Compute max, min, average */
-        for (int i = 0; i < len; i++) {
-            SingleValue protocol = (SingleValue) Network.get(i)
+        
+	IncrementalStats is = new IncrementalStats();
+	
+	for (int i = 0; i < Network.size(); i++) {
+            
+	    SingleValue protocol = (SingleValue) Network.get(i)
                     .getProtocol(pid);
-            double value = protocol.getValue();
-            if (value > max)
-                max = value;
-            if (value < min)
-                min = value;
-            sum += value;
-            sqrsum += value * value;
-            count++;
-        }
-        double average = sum / count;
-        double sd = Math.sqrt((((double) count) / (count - 1))
-                * (sqrsum / count - average * average));
-        if (initsd < 0) {
-            initsd = sd;
+            is.add(protocol.getValue());
         }
 
         /* Printing statistics */
-        System.out.println(name + ": " + time + " " + // current time (cycle)
-                sd + " " + // standard deviation
-                sd / initsd + " " + // standard deviation reduction
-                average + " " + // Average of averages
-                max + " " + // Maximum of averages
-                min + " " + // Minimum of averages
-                count + " " + // Nodes with a value different from 0
-                len // actual size
-        );
+        System.out.println(name + ": " + is);
 
         /* Terminate if accuracy target is reached */
-        return (sd / initsd <= accuracy);
+        return ( is.getStD() <= accuracy);
     }
 
 }

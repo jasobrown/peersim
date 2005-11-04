@@ -24,7 +24,7 @@ import peersim.vector.SingleValue;
 
 /**
  * Initialize an aggregation protocol using a peak distribution; only one peak
- * is allowed. However, any protocol implementing
+ * is allowed. Note that any protocol implementing
  * {@link peersim.vector.SingleValue} can be initialized by this component.
  * 
  * @author Alberto Montresor
@@ -32,9 +32,9 @@ import peersim.vector.SingleValue;
  */
 public class PeakDistributionInitializer implements Control {
 
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     // Constants
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     /**
      * The load at the peak node.
@@ -50,19 +50,20 @@ public class PeakDistributionInitializer implements Control {
      */
     private static final String PAR_PROT = "protocol";
 
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     // Fields
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
-    /** Value at the peak node; obtained from config property {@link #PAR_VALUE}. */
+    /** Value at the peak node.
+    * Obtained from config property {@link #PAR_VALUE}. */
     private final double value;
 
     /** Protocol identifier; obtained from config property {@link #PAR_PROT}. */
     private final int pid;
 
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     // Constructor
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     /**
      * Creates a new instance and read parameters from the config file.
@@ -72,13 +73,16 @@ public class PeakDistributionInitializer implements Control {
         pid = Configuration.getPid(prefix + "." + PAR_PROT);
     }
 
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     // Methods
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
-    // Comment inherited from interface
+    /**
+    * Initialize an aggregation protocol using a peak distribution.
+    * That is, one node will get the peek value, the others zero.
+    * @return always false
+    */
     public boolean execute() {
-        System.err.println("Restarting: " + Network.size());
         for (int i = 0; i < Network.size(); i++) {
             SingleValue prot = (SingleValue) Network.get(i).getProtocol(pid);
             prot.setValue(0);
@@ -88,7 +92,4 @@ public class PeakDistributionInitializer implements Control {
 
         return false;
     }
-
-    // --------------------------------------------------------------------------
-
 }

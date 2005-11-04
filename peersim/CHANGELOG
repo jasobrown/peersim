@@ -1,3 +1,6 @@
+MJ 04/11/05
+- Refreshed example.aggregation and related stuff. 
+
 MJ 02/11/05
 - Fixed a bug in the Tarjan algorithm that detects strongly connected 
   components.

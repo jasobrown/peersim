@@ -26,8 +26,12 @@ import peersim.cdsim.CDProtocol;
 /**
  * This class provides an implementation for the averaging function in the
  * aggregation framework. When a pair of nodes interact, their values are
- * averaged. The class subclasses {@link peersim.vector.SingleValueHolder} in
+ * averaged. The class subclasses {@link SingleValueHolder} in
  * order to provide a consistent access to the averaging variable value.
+ *
+ * Note that this class does not override the clone method, because it does
+ * not have any state other than what is inheritred from
+ * {@link SingleValueHolder}.
  * 
  * @author Alberto Montresor
  * @version $Revision$
@@ -61,7 +65,7 @@ public class AverageFunction extends SingleValueHolder implements CDProtocol {
                     .degree()));
 
             // Failure handling
-            if (peer.getFailState() != Fallible.OK)
+            if (!peer.isUp())
                 return;
 
             AverageFunction neighbor = (AverageFunction) peer

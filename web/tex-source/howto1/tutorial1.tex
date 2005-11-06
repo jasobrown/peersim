@@ -16,13 +16,15 @@ framework}
 
 \section{Introduction}
 
-\textbf{NOTE: This tutorial revision covers peersim release 0.5
+\textbf{NOTE: This tutorial revision covers peersim release 1.0
   topics.}\\
 
 
 \textbf{NOTE: if the reader is not a peersim newbie, she may be
   interested in which major changes have been introduced; a small, but
-  fast reference is provided in Appendix \ref{sec:Appendix-C-changes}.}\\
+  fast reference is provided in Appendix
+  \ref{sec:Appendix-C-changes}. For deeper details, check the peersim
+  CHANGELOG file.}\\
 
 
 This tutorial is aimed to give you a step by step guide to build from
@@ -33,8 +35,8 @@ this tutorial it supposed that you and/or your workstation have:
 \begin{itemize}
 \item knowledge of O.O. programming and Java language;
 \item a working Java compiler ( $\geq$ JDK 1.5.x);
-\item a 0.5 peersim release package or a working peersim source tree
-  (you can download it from sourceforge CVS);
+\item a 1.0 peersim release package or a working peersim source tree
+  (you can download it from sourceforg CVS);
 \item the Java Expression Parser version $\geq$ 2.3.0 (download it from: \url{http://www.singularsys.com/jep/});
 \item (suggested) gnuplot software. 
 \end{itemize}
@@ -43,8 +45,9 @@ The aim of this tutorial is to be
 as practical as possible; the goal is to give the reader the basics
 of peersim usage and the basics about howto write a simple component.
 This tutorial IS NOT exhaustive at all!\\
+
 Because of the spiritus of this tutorial,
-after a brief introduction to basic concepts, we will try to learn peersim 
+after a brief introduction to basic concepts, we will try to learn peersim
 and its basic components
 using a by example methodology.
 
@@ -57,8 +60,8 @@ using a by example methodology.
 One of the P2P system properties is that they can be extremely large
 scale (millions of nodes); another issue to deal with, is the high
 dynamism of such systems: nodes in the network join and leave continuously.
-Setting up a protocol experiments in a such simulated environment it's
-not an easy task at all.
+Setting up a protocol experiments in a such simulated environment it
+is not an easy task at all.
 
 Peersim has been developed to cope with these P2P properties and thus
 to reach extreme scalability and to support dynamism. In addition,
@@ -89,7 +92,7 @@ class. The general idea of the simulation model is:
 
 \begin{enumerate}
 \item choose a network size (number of nodes); 
-\item choose 1 or more protocol to experiment with and eventually initialize
+\item choose 1 or more protocol to experiment with and initialize
 the protocol(s); this step will build a topology on top of raw nodes
 inserted at the previous point;
 \item choose 1 or more \emph{Control}\footnote{The \emph{Control} is
@@ -103,7 +106,7 @@ network, update particular values inside protocols, ...);
 \end{enumerate}
 
 This is a very general model to give the reader an idea to start with,
-but it can be extremely more complex. 
+but the simulation scenario can be extremely more complex. 
 
 All the object created during the simulation are instances of classes
 that implements one or more well defined framework interfaces. The
@@ -157,8 +160,8 @@ concerning all the
 objects involved in the experiment. If no error occurs, the simulator
 loads and executes \emph{Control} type objects. A special
 \emph{Control} object (\emph{peersim.cdsim.FullNextCycle}) is
-dedicated to actually run the protocols
-From the developer point of view, it is important to note that the
+dedicated to actually run the protocols.
+From a developer point of view, it is important to note that the
 protocols creation process is based on \textbf{cloning}: only one instance
 of each protocol is actually forged (with the \textbf{new} statement)
 and then it is cloned to populate all the network. Thus the 
@@ -170,7 +173,7 @@ Each object in peersim (controls and protocols) is wrapped into
 simulation component. This approach leads to total freedom in the
 cycle execution. For example, it is possible to run a subset of
 protocols at the beginning, then some controls in between and finally
-the other protocols (o even a subset). This scenario is depicted in
+the other protocols (o even a subset). Such kind of scenario is depicted in
 Figure~\ref{obsfigure}. 
 
 The initialization phase is carried out by special \emph{Control}
@@ -191,8 +194,9 @@ is no \emph{Initializer} class in peersim
 %the execution order of these components and the cycle interval to
 %work in. For example, as depicted in Figure~\ref{obsfigure}, we can
 %choose to run one or more \emph{Control} object before and/or one
-5or more \emph{Control} objects after the \emph{Dynamics} object(s).
-%Nevertheless, also after the last cycle we can choose to run an \emph{Observer}
+%5or more \emph{Control} objects after the \emph{Dynamics} object(s).
+%Nevertheless, also after the last cycle we can choose to run an
+%  \emph{Observer}
 %to retreive a final snapshot.
 
 
@@ -208,16 +212,11 @@ is no \emph{Initializer} class in peersim
 \end{figure}
 
 
-%In the Figure\ref{obsfigure}, O1,2,3 are \emph{Observer} components
-%and D represents one or more \emph{Dynamics} objects. Please note
-%that before the first protocol run a first \emph{Dynamics} and \emph{Observer}
-%run is performed (depicted in the interval between init and cycle
-%0).
-
 When a \emph{Control} has to collect data, they are formatted and sent to
 standard output and can be easily redirected to a file to be collected
-for further work. When developing such a \emph{Control} class, a good
-rule is to print out data using the \emph{peersim.core.Log} static class.
+for further work. 
+%When developing such a \emph{Control} class, a good
+%rule is to print out data using the \emph{peersim.core.Log} static class.
 
 
 \subsection{The config file}
@@ -251,130 +250,142 @@ Looks easy!
 
 \footnotesize
 \begin{verbatim}
- 1  # PEERSIM EXAMPLE 1
- 2  # random.seed 1234567890
- 3  simulation.cycles 30
- 4  control.0 peersim.cdsim.Shuffle
- 5
- 6  overlay.size 50000
- 7  overlay.maxsize 100000
- 8 
- 9  protocol.0 peersim.core.IdleProtocol
- 10 protocol.0.degree 20
- 11
- 12 protocol.1 example.aggregation.AverageFunction
- 13 protocol.1.linkable 0
- 14
- 15 init.0 peersim.dynamics.WireKOut
- 16 init.0.protocol 0
- 17 init.0.k 20
- 18
- 19 init.1 peersim.vector.LinearDistribution
- 20 init.1.protocol 1
- 21 init.1.max 100
- 22 init.1.min 1
- 23
- 24 control.1 example.aggregation.AverageObserver
- 25 control.1.protocol 1
+1 # PEERSIM EXAMPLE 1
+2
+3 random.seed 1234567890
+4 simulation.cycles 30
+5
+6 control.shf peersim.cdsim.Shuffle
+7
+8 network.size 50000
+9  
+10 protocol.lnk peersim.core.IdleProtocol
+11
+12 protocol.avg example.aggregation.AverageFunction
+13 protocol.avg.linkable lnk
+14 
+15 init.rnd peersim.dynamics.WireKOut
+16 init.rnd.protocol lnk
+17 init.rnd.k 20
+18 
+19 init.peak example.aggregation.PeakDistributionInitializer
+20 init.peak.value 10000
+21 init.peak.protocol avg
+22
+23 init.lin peersim.vector.LinearDistribution
+24 init.lin.protocol avg
+25 init.lin.max 100
+26 init.lin.min 1
+27
+28 # you can change this to select the peak initializer instead
+29 include.init rnd lin
+30
+31 control.avgo example.aggregation.AverageObserver
+32 control.avgo.protocol avg
 \end{verbatim}
 \normalsize
 
 
-Lets comment the code line by line. The first thing to node are the
-key names: some of them are indexed and some other not (e.g. protocol.0.xxx
-versus simulation.$<$parameter$>$). That means the un-indexed keys refer
-to static simulation elements, in fact the simulation itself is one
-(is a singleton) and the same holds for the P2P network: only one network!
+Lets comment the code line by line. 
 
-Please note that from Peersim release 0.2 the component indexes in the
-configuration are no more restricted to numbers, but can be any
-user-readable string.
+The first things to note are the
+key names: some of them are referred to global properties, while some
+others refer to single component instancies. For example,
+\texttt{simulation.cycles} is global, but \texttt{protocol.lnk.xxx}
+defines parameter \textbf{xxx} of protocol \textbf{lnk}.
 
-For the other simulation components you can think about the existence
-of a dedicated array for each of their type (one for protocols, initializer,
-...); the \textsf{index} is the only reference to deal with them.
-So the key for indexed components can be (informally) expressed as:
+From the previous example, follows that each component instance has a
+human readable (e.g., a string) identifier, such as \texttt{lnk}. This
+identifier is resolved as an numering index identifier by the peersim
+engine, but the user does not have to deal with it. 
+
+A component such as a protocol or a control (or even an initializer
+which is a special control case), is declared by  the
+following syntax scheme:
 
 \footnotesize
 \begin{verbatim}
-<init | protocol | observer | dynamics> . index_number [. <parameter_name> ]
+<protocol | init| control> . string_id   full_path_classname
+\end{verbatim}
+\normalsize
+
+and its parameters (if any) follows this scheme:
+
+\footnotesize
+\begin{verbatim}
+<protocol | init| control> . string_id [. parameter_name ]
 \end{verbatim}
 \normalsize
 
 
 The final $<$parameter\_name$>$ is contained between {[}{]} to express
-that it is optional. This is the case when the element is declared.
-For example, at \textbf{line 9}, the first protocol chosen comes to life;
+that it is optional. 
+
+For example, at \textbf{line 10}, the first protocol chosen comes to life;
 the \textbf{key part} contains its type (or interface type) followed
 by the index and \textbf{the
 value} part contains the desired component class full package path
 (you have to check the javadoc files or the source tree to discover
-the correct package path). In the case of a component parameter declaration,
-the \textbf{key part} contains the parameter name and the \textbf{value
+the correct package path). In the case of a component parameter
+declaration (see \textbf{line 13},the \textbf{key part} contains the parameter name and the \textbf{value
 part} is simply the value desired (usually an integer or a float).
 
-At this point, should be clear that \textbf{from line 3 to line 7}
+From \textbf{line 3 to line 8}
 some global simulation properties are imposed; these are the total
 number of simulation cycles and the overlay network size. The
-\emph{Shuffle} control (\textbf{line} \textbf{4})
-is needed to shuffle the order in which the nodes are visited in each
-cycle. The parameter \texttt{overlay.maxsize} 
-(\textbf{line7}) sets an upper bound on the network size, but in this
-example it is useless (you can comment it out) and it is only present
-for sake of completeness (it will be useful next). 
+\emph{Shuffle} control (\textbf{line 6}) is something like a
+\emph{system control} needed to shuffle the order in which the nodes
+are visited in each 
+cycle. 
 
-From \textbf{line 9 to line 13}, two protocols are put in the arena.
+From \textbf{line 10 to line 13}, two protocols are put in the arena.
 The first one, \emph{peersim.core.IdleProtocol} does nothing. It is useful
 because of its ability to access to the topology, in fact it provides
 neighbour links to each node. This feature is present because \emph{IdleProtocol}
-is an implementation of the \emph{Linkable} interface. Next line declares
-the graph degree. 
+is an implementation of the \emph{Linkable} interface. 
 
-The second protocol (\texttt{protocol.1 aggregation.AverageFunction})
+The second protocol (\texttt{protocol.avg aggregation.AverageFunction})
 is the averaging flavor of aggregation. Its parameter (\texttt{linkable})
 is extremely important: it expresses the need to access the topology
 using not this protocol itself (aggregation), but with the
-linkable-implementing underlying protocol (the one the parameter index is
-referencing to). This is due to the structure
+linkable-implementing underlying protocol. This is due to the structure
 of aggregation: it does not implement the \emph{Linkable} interface,
 so it can not ``see'' the neighbor list by itself and it must use some other
-protocol in order to do that. The value of parameter linkable is the index
+protocol in order to do that. The value of parameter linkable is the identifier
 of a \emph{Linkable} interface implementing protocol (\emph{IdleProtocol}
 in the example). Clearly to know if a protocol can get access to the
 topology directly or not, you have to check the documentation (or source
 code).
 
-From \textbf{line 15 to line 22}, it is time to initialize all the
-components previously declared. Again, the initialization components
-are 2 and are indexed as usual. The first initializer 
-\texttt{peersim.init.WireKOut},
-imposes a node wiring (e.g., a topology). The nodes using the declared protocol are linked
+From \textbf{line 15 to line 26}, it is time to initialize all the
+components previously declared. The initialization components
+are three, but only two of them are actually used at the same
+time. The first initializer, \texttt{peersim.init. WireKOut},
+imposes a node wiring (e.g., a topology). The nodes using the declared
+protocol are linked
 randomly to each-other to form a random graph having the specified
-degree (\texttt{k}) parameter. Please note that this degree declaration is exactly
-the same of the previous (the one dedicated to the first protocol
-creation). 
+degree (\texttt{k}) parameter. 
 
-The second initializer task is to initialize the aggregation function
-value-field to be averaged. The initialization values follows a linear
-distribution fashion. The parameters declared are three: \texttt{protocol},
-\texttt{max}, \texttt{min}. Respectively, their meaning is:
+The second and third initializer task is to initialize the aggregation
+function value-field to be averaged. Respectively, The initialization
+values follows a peak and linear
+distribution fashion. Both initializers need a protocol identifier to
+refer to (\texttt{protocol} parameter) and initialization values
+ranges according to their functions (e.g., \texttt{max}, \texttt{min}
+parameters 
+for the \emph{PeakDistributionInitializer} and \texttt{value}
+parameter for \emph{LinearDistribution}). 
 
-\begin{itemize}
-\item a protocol to point to: the initializer needs a reference (or
-  index, as in the provided example)
-to a protocol extending \emph{aggregation.AbstractFunction} Class
-to get access to the value to be aggregated (averaged); it is clear
-that this protocol must be \emph{aggregation.AverageFunction} (index
-1);
-\item the maximum value in the linear distribution; 
-\item the minimum value in the linear distribution 
-\end{itemize}
+The chance to use the peak or linear distribution is given by the
+\texttt{include. init} directive (\textbf{line 29}) that selects which
+initializers are 
+allowed to run following the order in which they have been
+inserted. The same directive works also with protocols and controls.
 
-Finally at \textbf{line 24,25} the last component is declared: 
-\texttt{aggregation.average Observer}.
-Its only parameter used is \texttt{protocol} and clearly refers to the
+Finally at \textbf{line 31, 32} the last component is declared:
+\texttt{aggregation. AverageObserver}. Its only parameter used is \texttt{protocol} and clearly refers to the
 \emph{aggregation.AverageFunction} protocol type, so the parameter
-value is index 1 (in fact: \texttt{protocol.1 aggregation.AverageFunction}). 
+value is the \texttt{avg} string-id (means: \emph{aggregation.AverageFunction}). 
 
 Now you can try the example writing on a console the following line:
 
@@ -385,7 +396,7 @@ java -cp <class-path> peersim.Simulator example1.txt
 The class-path is mandatory only if the current system has not peersim
 classes in the shell CLASSPATH environment variable. To get the exact
 output that will follow, the reader should uncomment the parameter
-at \textbf{line 2}:
+at \textbf{line 3}:
 
 \begin{verbatim}
 random.seed 1234567890
@@ -400,61 +411,57 @@ NOTE: cut and paste the experiment:
 
 \tiny
 \begin{verbatim}
- Simulator: loading configuration
- ConfigProperties: File example/config-example1.txt loaded.
- Simulator: starting experiment 0 invoking peersim.cdsim.CDSimulator
- CDSimulator: resetting
- Network: no node defined, using GeneralNode
- CDSimulator: running initializers
- - Running initializer init.0: class peersim.dynamics.WireKOut
- - Running initializer init.1: class peersim.vector.LinearDistribution
- CDSimulator: loaded controls [control.0, control.1]
- CDSimulator: starting simulation
- observer.0 0 28.57969570575493 1.0 50.49999999999998 100.0 1.0 50000 50000
- Simulator: cycle 0 done
- observer.0 1 15.744375112466432 0.5508937280006126 50.500000000000185 99.64260285205704 1.993979879597592 50000 50000
- Simulator: cycle 1 done
- observer.0 2 8.77307045667709 0.3069686446980087 50.50000000000009 86.06868887377748 11.048700974019479 50000 50000
- Simulator: cycle 2 done
- observer.0 3 4.909681896225926 0.17178915922597776 50.499999999999794 74.03587220181905 22.769780085543115 50000 50000
- Simulator: cycle 3 done
- observer.0 4 2.7403309556342257 0.09588383948687113 50.500000000000426 65.43171163227953 33.427798365537626 50000 50000
- Simulator: cycle 4 done
- observer.0 5 1.538286672869342 0.053824459459153234 50.49999999999973 59.82515640226745 42.62594413722992 50000 50000
- Simulator: cycle 5 done
- observer.0 6 0.866397905938638 0.03031515502679675 50.50000000000007 55.26130498088358 45.94325388089578 50000 50000
- Simulator: cycle 6 done
- observer.0 7 0.485544546348093 0.016989143318636584 50.4999999999996 53.34350686753126 47.92146780934889 50000 50000
- Simulator: cycle 7 done
- observer.0 8 0.27325943590085566 0.009561313693267594 50.499999999999936 51.953084686348944 49.100818456230826 50000 50000
- Simulator: cycle 8 done
- observer.0 9 0.15407802503043988 0.005391170942362905 50.499999999999545 51.464657035213264 49.43879802069546 50000 50000
- Simulator: cycle 9 done
- observer.0 10 0.08620333588583261 0.0030162440067013846 50.500000000000156 51.099961126584006 49.98131655222747 50000 50000
- Simulator: cycle 10 done
- observer.0 11 0.04848730705794467 0.0016965648464962858 50.4999999999997 50.816956855036466 50.22577832539035 50000 50000
- Simulator: cycle 11 done
- observer.0 12 0.027214744249562235 9.522405182250473E-4 50.499999999999524 50.65301253758219 50.29955826845794 50000 50000
- Simulator: cycle 12 done
- observer.0 13 0.015246845383671713 5.334852246380476E-4 50.50000000000032 50.59479421528527 50.38736504947625 50000 50000
- Simulator: cycle 13 done
- observer.0 14 0.008587160488627146 3.004636780264248E-4 50.499999999999815 50.543660258997136 50.44122418780829 50000 50000
- Simulator: cycle 14 done
- observer.0 15 0.004850437249792671 1.697161964119851E-4 50.50000000000037 50.52544970665122 50.46753516145482 50000 50000
- Simulator: cycle 15 done
- observer.0 16 0.0027428141606463717 9.59707265215587E-5 50.50000000000047 50.515509548126744 50.48203242786418 50000 50000
- Simulator: cycle 16 done
- observer.0 17 0.001550607390364058 5.4255559832703925E-5 50.4999999999997 50.50982384430303 50.49003444731606 50000 50000
- Simulator: cycle 17 done
- observer.0 18 8.746858998689715E-4 3.0605150904137896E-5 50.5000000000003 50.50564226243819 50.495105203016905 50000 50000
- Simulator: cycle 18 done
+Simulator: loading configuration
+ConfigProperties: File example/config-example1.txt loaded.
+Simulator: starting experiment 0 invoking peersim.cdsim.CDSimulator
+Random seed: 1234567890
+CDSimulator: resetting
+Network: no node defined, using GeneralNode
+CDSimulator: running initializers
+- Running initializer init.rnd: class peersim.dynamics.WireKOut
+- Running initializer init.lin: class peersim.vector.LinearDistribution
+CDSimulator: loaded controls [control.avgo, control.shf]
+CDSimulator: starting simulation
+
+
+control.avgo: 0 1.0 100.0 50000 50.49999999999998 816.7990066335468 1 1
+CDSimulator: cycle 0 done
+control.avgo: 1 1.2970059401188023 99.38519770395408 50000 50.50000000000005 249.40673287686545 1 1
+control.avgo: 2 9.573571471429428 84.38874902498048 50000 50.500000000000085 77.89385877895182 1 1
+control.avgo: 3 23.860361582231647 71.93627224106982 50000 50.49999999999967 24.131366707228402 1 1
+control.avgo: 4 34.920915967147465 68.92828482118958 50000 50.49999999999994 7.702082905414273 1 1
+control.avgo: 5 42.37228198409946 59.94511004870823 50000 50.49999999999987 2.431356211088775 1 1
+control.avgo: 6 45.19621912151794 54.855516163070746 50000 50.499999999999844 0.7741451706754877 1 1
+control.avgo: 7 47.68716274528092 53.11433934745646 50000 50.49999999999949 0.24515365729069857 1 1
+control.avgo: 8 48.97706271318158 52.38916238021276 50000 50.50000000000026 0.07746523384731269 1 1
+control.avgo: 9 49.59674440194668 51.46963472637451 50000 50.49999999999937 0.024689348817011823 1 1
+control.avgo: 10 49.946490417215266 51.13343750384934 50000 50.50000000000048 0.007807022577928414 2 1
+control.avgo: 11 50.18143472395333 50.858337267869565 50000 50.49999999999982 0.002493501256296898 2 1
+control.avgo: 12 50.30454978101492 50.67203454827276 50000 50.500000000000206 7.90551008686205E-4 1 1
+control.avgo: 13 50.3981394834783 50.60093898689035 50000 50.49999999999967 2.518940347803474E-4 1 1
+control.avgo: 14 50.449347314832124 50.54962989951735 50000 50.5000000000003 8.071623184942779E-5 1 1
+control.avgo: 15 50.47368195506415 50.52608817343459 50000 50.49999999999999 2.566284350168338E-5 1 1
+control.avgo: 16 50.48510475374435 50.518871021756894 50000 50.50000000000012 8.191527862075119E-6 1 1
+control.avgo: 17 50.49082426764112 50.51000681641142 50000 50.49999999999945 2.570199757692886E-6 1 1
+control.avgo: 18 50.494810505765045 50.50556221303088 50000 50.5000000000003 8.197012224814065E-7 1 1
+control.avgo: 19 50.496876367842034 50.50296444951085 50000 50.499999999999524 2.640584231868471E-7 1 1
+control.avgo: 20 50.498457906558905 50.50182062146254 50000 50.500000000000334 8.565428611988968E-8 1 1
+control.avgo: 21 50.49905541635283 50.50096466374638 50000 50.49999999999974 2.721171621666857E-8 1 1
+control.avgo: 22 50.49946061473347 50.500553628252945 50000 50.49999999999975 8.590349265230611E-9 1 1
+control.avgo: 23 50.49972602272376 50.500315571370415 50000 50.5000000000004 2.6248542064007986E-9 2 1
+control.avgo: 24 50.4998450606816 50.50018053311878 50000 50.50000000000005 8.845012874999227E-10 1 1
+control.avgo: 25 50.499894793874255 50.500096923965216 50000 50.50000000000079 1.864501428663076E-10 1 2
+control.avgo: 26 50.4999267984512 50.500056126785694 50000 50.5000000000003 8.594896829690765E-11 1 1
+control.avgo: 27 50.49996613170552 50.50003198608762 50000 50.50000000000017 1.9554527178661528E-11 1 1
+control.avgo: 28 50.49997903068333 50.500019172164286 50000 50.499999999999766 3.274246411310768E-11 1 1
+control.avgo: 29 50.49998958653935 50.5000099409645 50000 50.50000000000045 0.0 1 1
 \end{verbatim}
 \normalsize
 
-The observer component produces many numbers, but looking at the 6th and
-7th data columns (respectively the maximum of averages and the minimum
+The observer component produces many numbers, but looking at the 3th and
+4th data columns (respectively the maximum of averages and the minimum
 of averages) it is easy to see how the variance decreases very quickly.
-At cycle 12 (look at the underlined data), quite all the nodes has
+At cycle 12, quite all the nodes has
 a very good approximation of the real average (50). Try to experiment
 with different numbers and then to change the init distribution (e.g.:
 using \texttt{aggregation.Peak DistributionInitializer}) and / or the
@@ -473,54 +480,66 @@ cutting out 500 nodes each time).
 
 \footnotesize
 \begin{verbatim}
- 1  simulation.cycles 30
- 2  control.0 peersim.cdsim.Shuffle
- 3
- 4  overlay.size 50000
- 5  overlay.maxsize 200000
- 6
- 7  protocol.0 example.newscast.SimpleNewscast
- 8  protocol.0.cache 20
- 9
- 10 protocol.1 example.aggregation.AverageFunction
- 11 protocol.1.linkable 0
- 12
- 13 init.0 peersim.dynamics.WireKOut
- 14 init.0.protocol 0
- 15 init.0.k 20
- 16 
- 17 #init.1 example.aggregation.PeakDistributionInitializer
- 18 #init.1.value 1
- 19 init.1 peersim.vector.LinearDistribution
- 20 init.1.protocol 1
- 21 init.1.max 100
- 22 init.1.min 1
- 23
- 24 control.1 example.aggregation.AverageObserver
- 25 control.1.protocol 1
- 26
- 27 control.2 peersim.dynamics.DynamicNetwork
- 28 control.2.add -500
- 29 control.2.minsize 4000
- 30 control.2.from 5
- 31 control.2.until 10
+1 # PEERSIM EXAMPLE 2
+2
+3 random.seed 1234567890
+4
+5 simulation.cycles 30
+6
+7 control.shf peersim.cdsim.Shuffle
+8
+9 network.size 50000
+10 
+11 protocol.lnk example.newscast.SimpleNewscast
+12 protocol.lnk.cache 20
+13
+14 protocol.avg example.aggregation.AverageFunction
+15 protocol.avg.linkable lnk
+16
+17 init.rnd peersim.dynamics.WireKOut
+18 init.rnd.protocol lnk
+19 init.rnd.k 20
+20
+21 init.pd example.aggregation.PeakDistributionInitializer
+22 init.pd.value 10000
+23 init.pd.protocol avg
+24
+25 init.ld peersim.vector.LinearDistribution
+26 init.ld.protocol 1
+27 init.ld.max 100
+28 init.ld.min 1
+29
+30 # you can change this to include the linear initializer instead
+31 include.init 0 1 
+32
+33 control.ao example.aggregation.AverageObserver
+34 control.ao.protocol avg
+35
+36 control.dnet peersim.dynamics.DynamicNetwork
+37 control.dnet.add -500
+38 #control.dnet.minsize 4000
+39 control.dnet.from 5
+40 control.net.until 10
 \end{verbatim}
 \normalsize
 
 The global parameters are the same as in the previous example; only
-new additions are discussed below. At \textbf{line 7-8} there is the
-\emph{Newscast} (what is newscast? see Appendix \ref{sec:Appendix-B-newscast}) 
+new additions are discussed below. At \textbf{line 11-12} there is the
+\emph{Newscast} (what is newscast? See Appendix \ref{sec:Appendix-B-newscast}) 
 component declaration with its 
 only parameter cache (please note: cache size should be at least as
-large as network \texttt{k} degree size). At \textbf{line 17-18} there is a different
-distribution type: \texttt{aggregation.PeakDistributionInitializer},
-but it is inactive. To switch it on, simply delete the preceding symbol
-\char`\"{}\#\char`\"{} and comment out the following 4 lines. The
+large as network \texttt{k} degree size). 
+The initializers section (at \textbf{lines 17-28}) is the same as in
+the previous example. However, here the peak distribution is
+selected. To change it and switching to the linear distribution,
+change the \texttt{include init} directive at \textbf{line 31}.
+
+The
 peak distribution initializes all nodes except one with 0 value and
-the node left takes the value declared in parameter value.
+the node left takes the value declared in the \texttt{value} parameter.
 
 From \textbf{line 27 to 32} is present the last new component: 
-\texttt{control.2
+\texttt{control.dnet
 peersim.dynamics.DynamicNetwork}. As stated previously, a \emph{Control}
 implementing object can be used to to change some other object
 properties; the change can be performed at each simulation cycle (default
@@ -528,7 +547,7 @@ behavior) or using a more sophisticated approach. The object chosen
 in the example deletes 500 nodes from the net at each time (well,
 it is not completely correct to talk about deletion in peersim vision,
 since the \emph{Linkable} interface does not support the delete
-operation; so it's better to think about \char`\"{}unlinking\char`\"{} 
+operation; so it is better to think about \char`\"{}unlinking\char`\"{} 
 nodes from the overlay). The parameters \texttt{add}, \texttt{minsize},
 \texttt{from} and \texttt{until} have respectively the following meaning:
 
@@ -567,8 +586,9 @@ MAG 2
 SIZE 2^MAG
 \end{verbatim}
 
-the variable SIZE will be auto-magically evaluated in number 4.\\
-Multiple expressions can be written in a tree-like fashion and they'll
+the variable SIZE will be auto-magically evaluated in number 4.
+
+Multiple expressions can be written in a tree-like fashion and they will
 be evaluated recursively (the CPU conscious users have to know that 
 no optimizations are performed and the same expression may be evaluated
 many times) as in the following code sample:
@@ -589,18 +609,17 @@ avoid them: if the recursion depth is grater than a configurable
 threshold parameter (set at 100 by default) an error message is
 printed and the simulator stops.
 
-For any kind of simulator object (e.g., for any prefix allowed in the
-configuration file),
+For any kind of simulator object (e.g., protocol, control and init),
 it is possible to specify an ordering scheme. The default one is given
-by the ``index''
-alphabetically order. 
-In fact, the object prefixes are
-not limited to numerical indexes, but they can be expressed by any 
-string, as follows:
+by the component ids
+alphabetically order.
+%In fact, the object prefixes are
+%not limited to numerical indexes, but they can be expressed by any 
+%string, as follows:
 
 \begin{verbatim}
 control.conn ConnectivityObserver
-control.0 Class1
+control.myClass Class1
 control.1 Class2
 \end{verbatim}
 
@@ -609,7 +628,7 @@ giving an item name list separated  by any non-word character
 (non alphanumeric or underscore) in the following directive:
 
 \begin{verbatim}
-order.observer 2 conn 0
+order.observer myClass conn 1
 \end{verbatim}
 
 If not all names appear in the list,
@@ -617,101 +636,98 @@ then the vacant objects will follow the default alphabetical order.
 For example:
 
 \begin{verbatim}
-order.observer 2
+order.observer myClass
 \end{verbatim}
 
 will produce the following order:
 
 \begin{center}
-$\langle$ \texttt{observer.2} ; \texttt{observer.0} ;
+$\langle$ \texttt{observer.myClass} ; \texttt{observer.1} ;
 \texttt{observer.conn} $\rangle$ 
 \end{center}
 
 Another available feature is to tell the simulator which items are
-allowed to run using the  following directive:
+allowed to run using the following directive:
 
 \begin{verbatim}
-include.control conn 2
+include.control conn myClass
 \end{verbatim}
 
-This will return \texttt{control.conn} and \texttt{control.2}.
+This will return \texttt{control.conn} and \texttt{control.myClass}.
 If the list is empty, then an empty ordering array will be
 generated; means that, in this case, no controls will run. 
-%Note that 
-%\texttt{include} is stronger than \texttt{order}
-%infact if the former is defined, then the latter is ignored.
 
-\subsubsection{A concrete example}
+%\subsubsection{A concrete example}
 
-To have a practical idea about how to use these new features, the following
-example is presented; it is a modified example2 version.
+%To have a practical idea about how to use these new features, the following
+%example is presented; it is a modified example2 version.
 
-\footnotesize
-\begin{verbatim}
+%\footnotesize
+%\begin{verbatim}
 
-1 #random.seed 1234567890
-2 simulation.cycles 30
-3 control.0 peersim.cdsim.Shuffle
-4
-5 # Imposes the correct protocol running order:
-6 order.protocol ncast avgagr
-7 include.control avgobs
-8 
-9 overlay.size 50000
-10 overlay.maxsize 200000
-11 
-12 protocol.ncast example.newscast.SimpleNewscast
-13 protocol.ncast.cache 20
-14
-15 protocol.avgagr example.aggregation.AverageFunction
-16 protocol.avgagr.linkable ncast
-17
-18 init.wrr peersim.vector.WireKOut
-18 init.wrr.protocol ncast
-20 init.wrr.k 20
-21
-22 # UNCOMMENT THE FOLLOWING LINES TO GET A LINEAR DISTRIBUTION
-23 init.ldistrib peersim.vector.LinearDistribution
-24 init.ldistrib.protocol avgagr
-25 init.ldistrib.max 100
-26 init.ldistrib.min 1
-27
-28 control.avgobs example.aggregation.AverageObserver
-29 control.avgobs.protocol avgagr
-30
-31 control.dnetwork peersim.dynamics.DynamicNetwork
-32 control.dnetwork.add -500
-33 control.dnetwork.minsize 4000
-34 control.dnetwork.from 5
-35 control.dnetwork.until 10
-\end{verbatim}
-\normalsize
+%1 #random.seed 1234567890
+%2 simulation.cycles 30
+%3 control.0 peersim.cdsim.Shuffle
+%4
+%5 # Imposes the correct protocol running order:
+%6 order.protocol ncast avgagr
+%7 include.control avgobs
+%8 
+%9 overlay.size 50000
+%10 overlay.maxsize 200000
+%11 
+%12 protocol.ncast example.newscast.SimpleNewscast
+%13 protocol.ncast.cache 20
+%14
+%15 protocol.avgagr example.aggregation.AverageFunction
+%16 protocol.avgagr.linkable ncast
+%17
+%18 init.wrr peersim.vector.WireKOut
+%18 init.wrr.protocol ncast
+%20 init.wrr.k 20
+%21
+%22 # UNCOMMENT THE FOLLOWING LINES TO GET A LINEAR DISTRIBUTION
+%23 init.ldistrib peersim.vector.LinearDistribution
+%24 init.ldistrib.protocol avgagr
+%25 init.ldistrib.max 100
+%26 init.ldistrib.min 1
+%27
+%28 control.avgobs example.aggregation.AverageObserver
+%29 control.avgobs.protocol avgagr
+%30
+%31 control.dnetwork peersim.dynamics.DynamicNetwork
+%32 control.dnetwork.add -500
+%33 control.dnetwork.minsize 4000
+%34 control.dnetwork.from 5
+%35 control.dnetwork.until 10
+%\end{verbatim}
+%\normalsize
 
-In this configuration file, the component indexes are no more used,
-but a string identifier is used instead. 
-Because of the chosen protocol symbol names (\texttt{ncast} and 
-\texttt{avgagr}),
-it is necessary to impose a different running order scheme to let
-newscast run first using (at \textbf{line 6}):
+%In this configuration file, the component indexes are no more used,
+%but a string identifier is used instead. 
+%Because of the chosen protocol symbol names (\texttt{ncast} and 
+%\texttt{avgagr}),
+%it is necessary to impose a different running order scheme to let
+%newscast run first using (at \textbf{line 6}):
+%
+%\begin{verbatim}
+%order.protocol ncast avgagr
+%\end{verbatim}
 
-\begin{verbatim}
-order.protocol ncast avgagr
-\end{verbatim}
+%In addition, a similar approach is used with the controls for
+%observing the simulation (at \textbf{line 7}):
 
-In addition, a similar approach is used with the controls for
-observing the simulation (at \textbf{line 7}):
+%\begin{verbatim}
+%include.control dnetwork
+%\end{verbatim}
 
-\begin{verbatim}
-include.control dnetwork
-\end{verbatim}
+%This allows only the \texttt{dnetwork} control to run. This approach
+%avoids the usage of error prone comments in the file to switch
+%components on or off.  
 
-This allows only the \texttt{dnetwork} control to run. This approach
-avoids the usage of error prone comments in the file to switch
-components on or off.  
+%\section{Writing a new protocol}%
 
-\section{Writing a new protocol}
-
-This section covers the description of how to write a new protocol. 
+%This section covers the description of how to write a new protocol. 
 
 
 \subsection{Which kind of protocol?}
@@ -787,26 +803,38 @@ subsections present code with comments and other deeper explanations.
 \footnotesize
 \begin{verbatim}
 package example.loadbalance;
- import peersim.config.Configuration;
- import peersim.config.FastConfig;
- import peersim.core.*;
- import peersim.vector.SingleValueHolder;
- import peersim.cdsim.CDProtocol;
 
- public class BasicBalance extends SingleValueHolder implements CDProtocol{
- // Fields:
- public static final String PAR_QUOTA = "quota"; // allowed config file parameter
- private final double quota_value; // original quota value taken from configuration
- 
- protected double quota; // current cycle quota
- 
- // Constructor:
- public BasicBalance(String prefix, Object obj) {
- 	super(prefix);
-  	// get quota value from the config file. Default 1.
- 	quota_value = (double)(Configuration.getInt(prefix+"."+PAR_QUOTA, 1));
- 	quota = quota_value;
- }
+import peersim.config.Configuration;
+import peersim.config.FastConfig;
+import peersim.core.*;
+import peersim.vector.SingleValueHolder;
+import peersim.cdsim.CDProtocol;
+
+public class BasicBalance extends SingleValueHolder implements CDProtocol {
+
+    // ------------------------------------------------------------------------
+    // Parameters
+    // ------------------------------------------------------------------------
+    protected static final String PAR_QUOTA = "quota";
+
+    // ------------------------------------------------------------------------
+    // Fields
+    // ------------------------------------------------------------------------
+
+    /** Quota amount. Obtained from config property {@link #PAR_QUOTA}. */
+    private final double quota_value;
+
+    protected double quota; // current cycle quota
+
+    // ------------------------------------------------------------------------
+    // Initialization
+    // ------------------------------------------------------------------------
+     public BasicBalance(String prefix) {
+        super(prefix);
+        // get quota value from the config file. Default 1.
+        quota_value = (Configuration.getInt(prefix + "." + PAR_QUOTA, 1));
+        quota = quota_value;
+    }
 \end{verbatim}
 \normalsize
 
@@ -820,10 +848,9 @@ solution to have a public standard access (getter and setter methods)
 to a single internal variable. In this example the variable holds the
 node actual load.  
 
-In the constructor signature, two parameters are present. The first
-one is a string corresponding to the configuration file protocol key
-(e.g.: \texttt{protocol.1} in the \emph{LoadBalance} protocol case), the second
-one is the own protocol id index casted in a \emph{Object} type.
+In the constructor signature, the string parameter 
+is a string corresponding to the configuration file component key
+(e.g.: \texttt{protocol.lb} in the \emph{LoadBalance} protocol case).
 
 \footnotesize
 \begin{verbatim}
@@ -836,58 +863,51 @@ one is the own protocol id index casted in a \emph{Object} type.
 
 The \emph{resetQuota()} method is called by a special control object at
 the cycle end. Clearly a suitable control entry should be present
-in the configuration file (such as: \texttt{control.0 loadbalance.ResetQuota}
-and \texttt{control.0.protocol protocol-index}). This method is not
+in the configuration file (such as: \texttt{control.rq loadbalance.ResetQuota}
+and \texttt{control.rq.protocol protocol-id}). This method is not
 mandatory, but it is much more software engineering oriented then a
-dirty variable access performed by the dynamics object.\\
+dirty variable access performed by the dynamics object.
 
 \footnotesize
 \begin{verbatim}
-public Object clone() throws CloneNotSupportedException {
- 	BasicBalance af = (BasicBalance)super.clone();
- 	return af;
- }
-
- // Implements CDProtocol interface
- public void nextCycle( Node node, int protocolID ) {
- 	int linkableID = FastConfig.getLinkable(protocolID);
- 	Linkable linkable = (Linkable) node.getProtocol( linkableID );
-	if (this.quota == 0) {
- 		return; // skip this node
- 	} 
- 	// this takes the most distant neighbor based on local load
- 	BasicBalance neighbor = null;
- 	double maxdiff = 0;
- 	for(int i = 0; i < linkable.degree() ; ++i)
- 	{
- 		Node peer = linkable.getNeighbor(i);
- 		// The selected peer could be inactive
- 		if(!peer.isUp()) continue; 
- 		BasicBalance n = (BasicBalance)peer.getProtocol(protocolID);
- 		if(n.quota!=1.0) continue;
- 		double d = Math.abs(value-n.value);
- 		if( d > maxdiff ) {
-			neighbor = n;
-			maxdiff = d;
-		}
-	}
- 	if( neighbor == null ) {
- 		return;
-	 }
- doTransfer(neighbor);
- }
+public void nextCycle(Node node, int protocolID) {
+        int linkableID = FastConfig.getLinkable(protocolID);
+        Linkable linkable = (Linkable) node.getProtocol(linkableID);
+        if (this.quota == 0) {
+            return; // quota is exceeded
+        }
+        // this takes the most distant neighbor based on local load
+        BasicBalance neighbor = null;
+        double maxdiff = 0;
+        for (int i = 0; i < linkable.degree(); ++i) {
+            Node peer = linkable.getNeighbor(i);
+            // The selected peer could be inactive
+            if (!peer.isUp())
+                continue;
+            BasicBalance n = (BasicBalance) peer.getProtocol(protocolID);
+            if (n.quota != 1.0)
+                continue;
+            double d = Math.abs(value - n.value);
+            if (d > maxdiff) {
+                neighbor = n;
+                maxdiff = d;
+            }
+        }
+        if (neighbor == null) {
+            return;
+        }
+        doTransfer(neighbor);
+    }
 \end{verbatim}
 \normalsize
 
-
-The first method is required by the \emph{Protocol} interface and basically
-calls the ancestor cloning method. So, nothing special here.
-
-The second one is required by \emph{CDProtocol} interface. It is the
+This method is required by the \emph{CDProtocol} interface. It is the
 behavior performed by the protocol. The arguments represent a reference
 to the node itself (the node on which the simulator is invoking the
-\emph{nextCycle()} method) and the index protocol identifier (the \emph{BasicBalance}
-protocol id in this case). First it has to get a reference (in indexed form) to
+\emph{nextCycle()} method) and the index protocol identifier (the
+\emph{BasicBalance} 
+internal protocol index in this case). First it has to get a reference
+(in indexed form) to 
 the \emph{Linkable} interface enabled protocol in the node protocol
 stack; as a remind, something implementing the \emph{Linkable} interface,
 is an entity capable of accessing the topology. Having this linkable
@@ -906,10 +926,10 @@ the protocol \texttt{linkable} parameter without direct user
 intervention. Then we can access the actual linkable object as shown
 in the second line.
 
-If the local quota is equal to 0, means that the node we have already
+If the local quota is equal to 0, the node have already
 spent its amount of network traffic, so it returns.
 
-To get the most distant node from the current one, a for loops on
+To get the most distant node from the current one, a for statement loops on
 all neighbor node load value; the number of neighbor is equal to the
 node degree (accessible thanks to \emph{Linkable} interface). To pick
 a node having a the \emph{Linkable} access:
@@ -930,36 +950,32 @@ step invoking the \emph{doTransfer()} method.
 
 \footnotesize
 \begin{verbatim}
- // Performs the actual load exchange selecting to make a PUSH or PULL approach.
- // It affects the involved nodes quota. 
- protected void doTransfer(BasicBalance neighbor) {
-     double a1 = this.value;
-     double a2 = neighbor.value;
-     double maxTrans = Math.abs((a1-a2)/2);
-     double trans = Math.min(maxTrans,quota);
-     trans = Math.min(trans, neighbor.quota);
- 
-     if( a1 <= a2 ) // PULL
-     {
-         a1+=trans;
-         a2-=trans;
-     }
-     else // PUSH
-     {
-         a1-=trans;
-         a2+=trans;
-     }
-     
-     this.value = a1;
-     this.quota -= trans;
-     neighbor.value = a2;
-     neighbor.quota -= trans; 
- }
+    protected void doTransfer(BasicBalance neighbor) {
+        double a1 = this.value;
+        double a2 = neighbor.value;
+        double maxTrans = Math.abs((a1 - a2) / 2);
+        double trans = Math.min(maxTrans, quota);
+        trans = Math.min(trans, neighbor.quota);
+        if (a1 <= a2) // PULL phase
+        {
+            a1 += trans;
+            a2 -= trans;
+        } else // PUSH phase
+        {
+            a1 -= trans;
+            a2 += trans;
+        }
+        this.value = a1;
+        this.quota -= trans;
+        neighbor.value = a2;
+        neighbor.quota -= trans;
+    }
 \end{verbatim}
 \normalsize
 
 
-The last method takes, as parameter, a reference to the picked neighbor.
+The \texttt{doTransfer()} method performs the actual load exchange
+among the current node and the neighbor expressed by the parameter.
 This is the place where it is time to decide to perform a pull or a
 push load balancing approach. To make this choice the local load value
 is compared with the neighbor load value. In case of a push choice,
@@ -976,35 +992,45 @@ amount. The quota value is decreased by the same amount at both nodes.
 
 \footnotesize
 \begin{verbatim}
- package loadbalance;
- 
- import peersim.config.*;
- import peersim.core.*;
- 
- public class ResetQuota implements Control {
- // Fields:
- public static final String PAR_VALUE = "value";
- 
- public static final String PAR_PROT = "protocol";
- 
- private final double value;
- private final int protocolID;
- 
- // Constructor:
- public ResetQuota(String prefix)
- {
-     value = Configuration.getDouble(prefix+"."+PAR_VALUE);
-     protocolID = Configuration.getPid(prefix+"."+PAR_PROT);
- }
- 
- // Dynamics interface method:
- public void execute() {
-     for(int i=0; i < Network.size(); ++i)
-     {
-         ((BasicBalance)Network.get(i).getProtocol(protocolID)).resetQuota();
-     }
-   }
- }
+package example.loadbalance;
+
+import peersim.config.*;
+import peersim.core.*;
+
+public class ResetQuota implements Control {
+
+    // ------------------------------------------------------------------------
+    // Parameters
+    // ------------------------------------------------------------------------
+    private static final String PAR_PROT = "protocol";
+
+    // ------------------------------------------------------------------------
+    // Fields
+    // ------------------------------------------------------------------------
+
+    /** Value obtained from config property {@link #PAR_PROT}. */
+    private final int protocolID;
+
+    // ------------------------------------------------------------------------
+    // Initialization
+    // ------------------------------------------------------------------------
+    public ResetQuota(String prefix) {
+        protocolID = Configuration.getPid(prefix + "." + PAR_PROT);
+    }
+
+    // ------------------------------------------------------------------------
+    // Methods
+    // ------------------------------------------------------------------------
+
+    public boolean execute() {
+        for (int i = 0; i < Network.size(); ++i) {
+            ((BasicBalance) Network.get(i).getProtocol(protocolID))
+                    .resetQuota();
+        }
+
+        return false;
+    }
+}
 \end{verbatim}
 \normalsize
 
@@ -1051,14 +1077,9 @@ neighbor view: an \emph{ArrayList} structure is fine.
 
 \footnotesize
 \begin{verbatim}
- protected ArrayList nView = null;
+ protected ArrayList nView = new ArrayList();
  // Constructor:
  
- public BasicBalance(String prefix, Object obj) {
-     ...
-     nView = new ArrayList();
-     ...
- }
  // Linkable interface implementation methods:
  public int degree() {
      return nView.size();
@@ -1111,39 +1132,57 @@ the topology shrinks as soon as the nodes reach the average load.
 
 \footnotesize
 \begin{verbatim}
- package loadbalance;
+package example.loadbalance;
 
- import peersim.core.*;
- import peersim.config.FastConfig;
- 
- public class AvgBalance extends BasicBalance {
- 
-     public static double average = 0.0;
-     public static boolean avg_done = false;
-     
-     // Costructor:
-     public AvgBalance(String prefix, Object obj) {
-         super(prefix, obj);
-     }
- 
-        // Method to simulate average function aggregation
-     private static void calculateAVG(int protocolID) {
-         int len = Network.size();
-         double sum = 0.0;
-         for (int i = 0; i < len; i++) {
-             AvgBalance protocol = (AvgBalance)Network.get(i).getProtocol(protocolID);
-             double value = protocol.getValue();
-             sum += value;
-         }
-         average = sum / len;
-         avg_done = true;
-     }
+import peersim.core.*;
+import peersim.config.FastConfig;
+
+public class AvgBalance extends BasicBalance {
+    /**
+     * The overall system average load. It is computed once by
+     * {@link #calculateAVG(int)} method.
+     */
+    public static double average = 0.0;
+
+    /**
+     * This flag indicates if the average value computation has been performed
+     * or not. Default is NO.
+     */
+    public static boolean avg_done = false;
+
+    // ==================== initialization ================================
+    // ====================================================================
+    public AvgBalance(String prefix) {
+        super(prefix); // calls the BasicBalance constructor.
+    }
+
+    // ====================== methods =====================================
+    // ====================================================================
+
+    /**
+     * Calculates the system average load. It is run once by the first
+     * node scheduled. 
+     */
+    private static void calculateAVG(int protocolID) {
+        int len = Network.size();
+        double sum = 0.0;
+        for (int i = 0; i < len; i++) {
+            AvgBalance protocol = (AvgBalance) Network.get(i).getProtocol(
+                    protocolID);
+            double value = protocol.getValue();
+            sum += value;
+
+        }
+        average = sum / len;
+        avg_done = true;
+    }
 \end{verbatim}
 \normalsize
 
 
 The first part is straightforward. Two global variables are defined:
-\emph{average}, and \emph{avg\_done}; the second is a flag used to be sure not to
+\emph{average}, and \emph{avg\_done}; the second is a flag used to be
+sure not to
 perform the calculation more than once. A different and much more
 elegant approach is to define the average calculation method inside
 a static constructor, but this solution is \textbf{wrong}! When the
@@ -1156,9 +1195,9 @@ node.
 
 \footnotesize
 \begin{verbatim}
-protected static void suspend( Node node ) {
-    node.setFailState(Fallible.DOWN); }
-}
+    protected static void suspend(Node node) {
+        node.setFailState(Fallible.DOWN);
+    }
 \end{verbatim}
 \normalsize
 
@@ -1167,37 +1206,42 @@ a node state from \emph{Fallible} interface.
 
 \footnotesize
 \begin{verbatim}
- // CDProtocol Interface implementation. Overrides the BasicBalance implementation:
-     public void nextCycle( Node node, int protocolID ) {
-         // Do that only once
-         if (avg_done == false) {
-             calculateAVG(protocolID);
-             System.out.println("AVG only once "+average);
-         }
-    
-         if( Math.abs(value-average) < 1 ) {
-             AvgBalance.suspend(node); // switch off node
-             return;
+    public void nextCycle(Node node, int protocolID) {
+        // Do that only once:
+        if (avg_done == false) {
+            calculateAVG(protocolID);
+            System.out.println("AVG only once " + average);
+        }
+
+        if (Math.abs(value - average) < 1) {
+            AvgBalance.suspend(node); // switch off node
+            return;
+        }
+
+        if (quota == 0)
+            return; // skip this node if it has no quota
+
+        Node n = null;
+        if (value < average) {
+            n = getOverloadedPeer(node, protocolID);
+            if (n != null) {
+                doTransfer((AvgBalance) n.getProtocol(protocolID));
             }
-     
-         if (quota == 0 ) return;
-     
-         Node n = null;
-         if (value < average ) {
-             n = getOverloadedPeer(node, protocolID);
-             if (n != null) { doTransfer((AvgBalance)n.getProtocol(protocolID)); } 
-         }
-         else {
-             n = getUnderloadedPeer(node, protocolID);
-             if (n != null) { doTransfer((AvgBalance)n.getProtocol(protocolID)); } 
-         } 
-     
-         if( Math.abs(value-average) < 1 ) AvgBalance.suspend(node);
-         if (n != null) {
-             if( Math.abs(((AvgBalance)n.getProtocol(protocolID)).value-average) < 1 ) 
-	            AvgBalance.suspend(n);
-         }
-     }
+        } else {
+            n = getUnderloadedPeer(node, protocolID);
+            if (n != null) {
+                doTransfer((AvgBalance) n.getProtocol(protocolID));
+            }
+        }
+
+        if (Math.abs(value - average) < 1)
+            AvgBalance.suspend(node);
+        if (n != null) {
+            if (Math.abs(((AvgBalance) n.getProtocol(protocolID)).value
+                    - average) < 1)
+                AvgBalance.suspend(n);
+        }
+    }
 \end{verbatim}
 \normalsize
 
@@ -1214,54 +1258,57 @@ get the most loaded or the least loaded neighbor and exchange.
 
 \footnotesize
 \begin{verbatim}
- private Node getOverloadedPeer(Node node, int protocolID) {
+    private Node getOverloadedPeer(Node node, int protocolID) {
         int linkableID = FastConfig.getLinkable(protocolID);
-	Linkable linkable = (Linkable) node.getProtocol( linkableID );
-	
-         AvgBalance neighbor=null;
-         Node neighborNode = null;
-         double maxdiff = 0.0;
-         for(int i = 0; i < linkable.degree(); ++i) {
-             Node peer = linkable.getNeighbor(i); 
-             if(!peer.isUp()) continue;
-             AvgBalance n = (AvgBalance)peer.getProtocol(protocolID);
-             if(n.quota==0) continue;
-             if(value >= average && n.value >= average) continue;
-             if(value <= average && n.value <= average) continue;
-             double d = Math.abs(value-n.value); 
-             if( d > maxdiff ) {
-                 neighbor = n;
-                 neighborNode = peer;
-                 maxdiff = d;
-             }
-         }
-         return neighborNode;
-     } 
- 
-     private Node getUnderloadedPeer(Node node, int protocolID) {
+        Linkable linkable = (Linkable) node.getProtocol(linkableID);
+
+        Node neighborNode = null;
+        double maxdiff = 0.0;
+        for (int i = 0; i < linkable.degree(); ++i) {
+            Node peer = linkable.getNeighbor(i);
+            if (!peer.isUp()) // only if the neighbor is active
+                continue;
+            AvgBalance n = (AvgBalance) peer.getProtocol(protocolID);
+            if (n.quota == 0)
+                continue;
+            if (value >= average && n.value >= average)
+                continue;
+            if (value <= average && n.value <= average)
+                continue;
+            double d = Math.abs(value - n.value);
+            if (d > maxdiff) {
+                neighborNode = peer;
+                maxdiff = d;
+            }
+        }
+        return neighborNode;
+    }
+
+    private Node getUnderloadedPeer(Node node, int protocolID) {
         int linkableID = FastConfig.getLinkable(protocolID);
-        Linkable linkable = (Linkable) node.getProtocol( linkableID );
-     
-         AvgBalance neighbor=null;
-         Node neighborNode = null;
-         double maxdiff = 0.0;
-         for(int i = 0; i < linkable.degree(); ++i) {
-             Node peer = linkable.getNeighbor(i);
-             if(!peer.isUp()) continue;
-             AvgBalance n = (AvgBalance)peer.getProtocol(protocolID);
-             if(n.quota==0) continue;
-             if(value >= average && n.value >= average) continue;
-             if(value <= average && n.value <= average) continue;
-             double d = Math.abs(value-n.value); 
-             if( d < maxdiff ) {
-                 neighbor = n;
-                 neighborNode = peer;
-                 maxdiff = d;
-             }
-         }
-         return neighborNode;
-     } 
- } // end of class
+        Linkable linkable = (Linkable) node.getProtocol(linkableID);
+
+        Node neighborNode = null;
+        double maxdiff = 0.0;
+        for (int i = 0; i < linkable.degree(); ++i) {
+            Node peer = linkable.getNeighbor(i);
+            if (!peer.isUp()) // only if the neighbor is active
+                continue;
+            AvgBalance n = (AvgBalance) peer.getProtocol(protocolID);
+            if (n.quota == 0)
+                continue;
+            if (value >= average && n.value >= average)
+                continue;
+            if (value <= average && n.value <= average)
+                continue;
+            double d = Math.abs(value - n.value);
+            if (d < maxdiff) {
+                neighborNode = peer;
+                maxdiff = d;
+            }
+        }
+        return neighborNode;
+    }
 \end{verbatim}
 \normalsize
 
@@ -1288,40 +1335,59 @@ is the following.
 
 \footnotesize
 \begin{verbatim}
- package loadbalance;
- 
- import peersim.core.*;
- import peersim.config.*;
- import peersim.util.*;
- 
- public class QuotaObserver implements Control {
- 
- public static final String PAR_PROT = "protocol";
- private final String name;   
- private final int pid;   // protocol id to monitor
- private IncrementalStats stats;   // object to compute statistics
- 
- // Constructor:
- public QuotaObserver(String name) {
-     this.name = name;
-     pid = Configuration.getPid(name + "." + PAR_PROT);
-     stats = new IncrementalStats();
- }
- 
- // Observer interface implementation:
- public boolean execute() {
-     for (int i = 0; i < Network.size(); i++) {
-         BasicBalance protocol =  (BasicBalance) Network.get(i).getProtocol(pid);
-         stats.add( protocol.quota );
-     }
-     System.out.println(name+": "+stats);
-     return false;
- }
- 
- } // end of class
+package example.loadbalance;
+
+import peersim.config.*;
+import peersim.core.*;
+import peersim.util.*;
+
+public class QuotaObserver implements Control {
+    /////////////////////////////////////////////////////////////////////////
+    // Constants
+    /////////////////////////////////////////////////////////////////////////
+    /**
+     * The protocol to operate on.
+     */
+    private static final String PAR_PROT = "protocol";
+
+    /////////////////////////////////////////////////////////////////////////
+    // Fields
+    /////////////////////////////////////////////////////////////////////////
+    /**
+     * The name of this observer in the configuration file.
+     */
+    private final String name;
+
+    /** Protocol identifier,*/
+    private final int pid;
+
+    /////////////////////////////////////////////////////////////////////////
+    // Constructor
+    /////////////////////////////////////////////////////////////////////////
+    public QuotaObserver(String name) {
+        this.name = name;
+        pid = Configuration.getPid(name + "." + PAR_PROT);
+    }
+
+    /////////////////////////////////////////////////////////////////////////
+    // Methods
+    /////////////////////////////////////////////////////////////////////////
+
+    public boolean execute() {
+        IncrementalStats stats = new IncrementalStats();
+        for (int i = 0; i < Network.size(); i++) {
+            BasicBalance protocol = (BasicBalance) Network.get(i).getProtocol(
+                    pid);
+            stats.add(protocol.quota);
+        }
+
+        /* Printing statistics */
+        System.out.println(name + ": " + stats);
+        return false;
+    }
+}
 \end{verbatim}
 \normalsize
-
 
 The idea is very simple: at each simulation cycle it collects all
 node values about quota and prints statistics on the console.
@@ -1378,8 +1444,8 @@ c. Suggested readings: "Large-Scale Newscast Computing on the Internet" \url{htt
 \section{\label{sec:Appendix-C-changes} Major peersim changes from
   previous release}
 
-Peersim release 0.5 represents a major change from the previous
-version. Due to strong refactoring, backward compatibility is broken. 
+Peersim release 1.0 represents a major change from the previous
+versions. Due to strong refactoring, backward compatibility is broken. 
 The following is a list of the major changes from the previous
 release. This list is given in order to provide the reader a fast reference to
 port previously developed components to the new simulator release.
@@ -1399,7 +1465,8 @@ port previously developed components to the new simulator release.
 \item No more \emph{CommonRandom}, now use the static field \textbf{r}
   in \emph{CommonState}.
 
-\item No more \emph{peersim.util.Log}, now it is in \textbf{peersim.core.Log}.
+\item No more \emph{peersim.util.Log} class. Use standard console
+  output or standard error output to print out data.
 
 \item No more \emph{simulation.shuffle} parameter, shuffling can now be
   added by the control \textbf{cdsim.Shuffle}.
@@ -1408,23 +1475,23 @@ port previously developed components to the new simulator release.
   \textbf{k}.
 
 \item Refactored \emph{Wire*} controls. They have a common superclass now and
-  the \emph{NodeInitializer} implementations were separated into separate classes
-  (\emph{RandNI} and \emph{StarNI}).
+  the \emph{NodeInitializer} implementations were separated into
+  separate classes (\emph{RandNI} and \emph{StarNI}).
 
 \item No more \emph{peersim.dynamics.WireRegularRandom}, now is
   textbf{peersim.vector.WireKOut}. 
 
-\item In all classes that used it, now \texttt{undir} and \texttt{undirected} are both
-  accepted as equivalent parameters.
+\item In all classes that used it, now \texttt{undir} and
+  \texttt{undirected} are both accepted as equivalent parameters.
 
-\item The \emph{Wire*} classes now have a public \texttt{Graph} field that can be used to
-  initialize arbitrary graphs (see JavaDocs of WireGraph).
+\item The \emph{Wire*} classes now have a public \texttt{Graph} field
+  that can be used to initialize arbitrary graphs (see JavaDocs of WireGraph).
 
 \item Introduced \textbf{MethodInvoker} control. It invokes a void
   method on a specified protocol.
 
-\item Implemented the Tarjan algorithm to detect the strongly connected components
-  in GraphAlgorithms.
+\item Implemented the Tarjan algorithm to detect the strongly
+  connected components in GraphAlgorithms.
 
 \item Added \textbf{peersim.dynamics.WireRegRootedTree} that can wire
   a regular rooted tree.

@@ -27,16 +27,17 @@ import peersim.util.*;
  * assumed that the network nodes are instancies of the
  * {@link example.loadbalance.BasicBalance} class.
  * 
- * <p>Note that this observer can be replaced by a library class
- * {@link peersim.vector.VectorObserver} the following way:
- * class {@link BasicBalance} needs to implement a public method "getQuota",
- * and this method needs to be configured as "getter".
+ * <p>
+ * Note that this observer can be replaced by a library class
+ * {@link peersim.vector.VectorObserver} the following way: class
+ * {@link BasicBalance} needs to implement a public method "getQuota", and this
+ * method needs to be configured as "getter".
  */
 public class QuotaObserver implements Control {
 
-    /////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////
     // Constants
-    /////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////
 
     /**
      * The protocol to operate on.
@@ -45,9 +46,9 @@ public class QuotaObserver implements Control {
      */
     private static final String PAR_PROT = "protocol";
 
-    /////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////
     // Fields
-    /////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////
 
     /**
      * The name of this observer in the configuration file. Initialized by the
@@ -58,12 +59,10 @@ public class QuotaObserver implements Control {
     /** Protocol identifier, obtained from config property {@link #PAR_PROT}. */
     private final int pid;
 
-
-    /////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////
     // Constructor
-    /////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////
 
-    
     /**
      * Standard constructor that reads the configuration parameters. Invoked by
      * the simulation engine.
@@ -76,22 +75,24 @@ public class QuotaObserver implements Control {
         pid = Configuration.getPid(name + "." + PAR_PROT);
     }
 
-    /////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////
     // Methods
-    /////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////
 
     // Comment inherited from interface
     public boolean execute() {
         IncrementalStats stats = new IncrementalStats();
-	for (int i = 0; i < Network.size(); i++) {
+        long time = peersim.core.CommonState.getTime();
+
+        for (int i = 0; i < Network.size(); i++) {
             BasicBalance protocol = (BasicBalance) Network.get(i).getProtocol(
                     pid);
             stats.add(protocol.quota);
         }
 
         /* Printing statistics */
-        System.out.println(name + ": " + stats);
-	return false;
+        System.out.println(name + ": " + time + " " + stats);
+        return false;
     }
 
 }

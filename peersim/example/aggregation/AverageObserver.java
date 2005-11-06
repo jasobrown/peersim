@@ -71,7 +71,6 @@ public class AverageObserver implements Control {
     /** Protocol identifier; obtained from config property {@link #PAR_PROT}. */
     private final int pid;
 
-
     // /////////////////////////////////////////////////////////////////////
     // Constructor
     // /////////////////////////////////////////////////////////////////////
@@ -90,28 +89,28 @@ public class AverageObserver implements Control {
     // /////////////////////////////////////////////////////////////////////
 
     /**
-    * Print statistics for an average aggregation computation.
-    * Statistics printed
-    * are defined by {@link IncrementalStats#toString}
-    * @return if the standard deviation is less than the given
-    * {@value #PAR_ACCURACY}.
-    */
+     * Print statistics for an average aggregation computation. Statistics
+     * printed are defined by {@link IncrementalStats#toString}
+     * 
+     * @return if the standard deviation is less than the given
+     *         {@value #PAR_ACCURACY}.
+     */
     public boolean execute() {
-        
-	IncrementalStats is = new IncrementalStats();
-	
-	for (int i = 0; i < Network.size(); i++) {
-            
-	    SingleValue protocol = (SingleValue) Network.get(i)
+        long time = peersim.core.CommonState.getTime();
+
+        IncrementalStats is = new IncrementalStats();
+
+        for (int i = 0; i < Network.size(); i++) {
+
+            SingleValue protocol = (SingleValue) Network.get(i)
                     .getProtocol(pid);
             is.add(protocol.getValue());
         }
 
         /* Printing statistics */
-        System.out.println(name + ": " + is);
+        System.out.println(name + ": " + time + " " + is);
 
         /* Terminate if accuracy target is reached */
-        return ( is.getStD() <= accuracy);
+        return (is.getStD() <= accuracy);
     }
-
 }

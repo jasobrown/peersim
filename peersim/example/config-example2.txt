@@ -14,28 +14,28 @@ protocol.lnk.cache 20
 protocol.avg example.aggregation.AverageFunction
 protocol.avg.linkable lnk
 
-init.0 WireKOut
-init.0.protocol lnk
-init.0.k 20
+init.rnd peersim.dynamics.WireKOut
+init.rnd.protocol lnk
+init.rnd.k 20
 
-init.1 example.aggregation.PeakDistributionInitializer
-init.1.value 10000
-init.1.protocol avg
+init.pk example.aggregation.PeakDistributionInitializer
+init.pk.value 10000
+init.pk.protocol avg
 
-init.2 LinearDistribution
-init.2.protocol 1
-init.2.max 100
-init.2.min 1
+init.ld peersim.vector.LinearDistribution
+init.ld.protocol 1
+init.ld.max 100
+init.ld.min 1
 
 # you can change this to include the linear initializer instead
-include.init 0 1 
+include.init rnd pk 
 
-control.1 example.aggregation.AverageObserver
-control.1.protocol avg
+control.ao example.aggregation.AverageObserver
+control.ao.protocol avg
 
-control.2 DynamicNetwork
-control.2.add -500
-#control.2.minsize 4000
-control.2.from 5
-control.2.until 10
+control.dnet peersim.dynamics.DynamicNetwork
+control.dnet.add -500
+#control.dnet.minsize 4000
+control.dnet.from 5
+control.dnet.until 10
  

@@ -80,11 +80,13 @@ private static final String PAR_ARG = "arg";
 /**
 * The class that has the method we want to use. Defaults to
 * {@link GraphFactory}.
+* @config
 */
 private static final String PAR_CLASS = "class";
 
 /**
 * The name of the method for wiring the graph. Defaults to <code>wire</code>.
+* @config
 */
 private static final String PAR_METHOD = "method";
 

@@ -3,16 +3,16 @@
 random.seed 1234567890
 simulation.cycles 30
 
-control.shf peersim.cdsim.Shuffle
+control.shf Shuffle
 
 network.size 50000
  
-protocol.lnk peersim.core.IdleProtocol
+protocol.lnk IdleProtocol
 
 protocol.avg example.aggregation.AverageFunction
 protocol.avg.linkable lnk
  
-init.rnd peersim.dynamics.WireKOut
+init.rnd WireKOut
 init.rnd.protocol lnk
 init.rnd.k 20
 
@@ -20,7 +20,7 @@ init.peak example.aggregation.PeakDistributionInitializer
 init.peak.value 10000
 init.peak.protocol avg
 
-init.lin peersim.vector.LinearDistribution
+init.lin LinearDistribution
 init.lin.protocol avg
 init.lin.max 100
 init.lin.min 1

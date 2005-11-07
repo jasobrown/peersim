@@ -1,7 +1,7 @@
 # PEERSIM EXAMPLE 3
 random.seed 1234567890
 simulation.cycles 200
-#control.shf peersim.cdsim.Shuffle
+#control.shf Shuffle
 
 network.size 250
 
@@ -27,7 +27,7 @@ control.lbo.show_values
 control.qo example.loadbalance.QuotaObserver
 control.qo.protocol basicbal
 
-init.rnd peersim.dynamics.WireKOut
+init.rnd WireKOut
 init.rnd.protocol ncast
 init.rnd.k 20
 
@@ -37,7 +37,7 @@ init.peak.value 10000
 init.peak.protocol basicbal
 
 # if you change balancing algorithm remember to change the protocol parameter value
-init.lin peersim.vector.LinearDistribution
+init.lin LinearDistribution
 init.lin.protocol basicbal
 init.lin.max 100
 init.lin.min 1

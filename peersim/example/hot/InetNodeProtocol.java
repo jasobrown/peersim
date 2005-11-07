@@ -28,15 +28,12 @@ import peersim.core.IdleProtocol;
  */
 public class InetNodeProtocol extends IdleProtocol {
 
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     // Fields
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     /** 2d coordinates components. */
     public double x, y;
-
-    /** In-bound degree. */
-    public int in_degree;
 
     /** Hop distance from the ROOT node. */
     public int hops;
@@ -44,9 +41,9 @@ public class InetNodeProtocol extends IdleProtocol {
     /** If the current node is a root or not. */
     public boolean isroot;
 
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     // Constructor
-    // --------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     /**
      * Standard constructor that reads the configuration parameters. Invoked by
@@ -57,7 +54,6 @@ public class InetNodeProtocol extends IdleProtocol {
      */
     public InetNodeProtocol(String prefix) {
         super(prefix);
-        in_degree = 0;
         hops = 0;
         isroot = false;
     }

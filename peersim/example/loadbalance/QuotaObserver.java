@@ -24,7 +24,7 @@ import peersim.util.*;
 
 /**
  * This class prints statistics about the actual quota consumptions. It is
- * assumed that the network nodes are instancies of the
+ * assumed that the network nodes are instances of the
  * {@link example.loadbalance.BasicBalance} class.
  * 
  * <p>

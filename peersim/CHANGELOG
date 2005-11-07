@@ -1,3 +1,6 @@
+MJ 07/11/05
+- Initial (unfinished) refactoring of examples.hot. To be completed soon.
+
 GJ 06/11/05
 - Added printing of timestamp too in AverageObserver and QuotaObserver.
 - Refreshed config files.

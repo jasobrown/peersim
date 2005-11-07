@@ -90,7 +90,8 @@ public class AverageObserver implements Control {
 
     /**
      * Print statistics for an average aggregation computation. Statistics
-     * printed are defined by {@link IncrementalStats#toString}
+     * printed are defined by {@link IncrementalStats#toString}. The current
+     * timestamp is also printed as a first field.
      * 
      * @return if the standard deviation is less than the given
      *         {@value #PAR_ACCURACY}.

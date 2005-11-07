@@ -1,5 +1,5 @@
 GJ 06/11/05
-- AverageObserver and QuotaObserver fix.
+- Added printing of timestamp too in AverageObserver and QuotaObserver.
 - Refreshed config files.
 
 AM 04/11/05

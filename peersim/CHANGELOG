@@ -1,3 +1,7 @@
+AM 08/11/05
+- Fixed a bug in ClassFinder (a problem with file separator in 
+  Windows). 
+
 MJ 07/11/05
 - Initial (unfinished) refactoring of examples.hot. To be completed soon.
 

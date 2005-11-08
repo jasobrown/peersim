@@ -19,7 +19,6 @@
 package example.hot;
 
 import java.io.*;
-import java.util.*;
 
 import peersim.config.*;
 import peersim.core.*;

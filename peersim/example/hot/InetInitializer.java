@@ -82,7 +82,7 @@ public class InetInitializer implements Control {
     public boolean execute() {
         // Set the root: the index 0 node by default.
         Node n = Network.get(0);
-        InetCoordinatesProtocol prot = (InetCoordinatesProtocol) n
+        InetCoordinates prot = (InetCoordinates) n
                 .getProtocol(pid);
         prot.setX(0.5);
         prot.setY(0.5);
@@ -90,7 +90,7 @@ public class InetInitializer implements Control {
         // Set coordinates x,y
         for (int i = 1; i < Network.size(); i++) {
             n = Network.get(i);
-            prot = (InetCoordinatesProtocol) n.getProtocol(pid);
+            prot = (InetCoordinates) n.getProtocol(pid);
             prot.setX(CommonState.r.nextDouble());
             prot.setY(CommonState.r.nextDouble());
         }

@@ -33,7 +33,7 @@ import peersim.core.Protocol;
  * 
  * @author Gian Paolo Jesi
  */
-public class InetCoordinatesProtocol implements Protocol {
+public class InetCoordinates implements Protocol {
 
     // ------------------------------------------------------------------------
     // Fields
@@ -54,15 +54,15 @@ public class InetCoordinatesProtocol implements Protocol {
      * @param prefix
      *            the configuration prefix for this class.
      */
-    public InetCoordinatesProtocol(String prefix) {
+    public InetCoordinates(String prefix) {
         /* Un-initialized coordinates defaults to -1. */
         x = y = -1;
     }
 
     public Object clone() {
-        InetCoordinatesProtocol inp = null;
+        InetCoordinates inp = null;
         try {
-            inp = (InetCoordinatesProtocol) super.clone();
+            inp = (InetCoordinates) super.clone();
         } catch (CloneNotSupportedException e) {
         } // never happens
         return inp;

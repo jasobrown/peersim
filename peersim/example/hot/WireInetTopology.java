@@ -128,13 +128,13 @@ public class WireInetTopology extends WireGraph {
      * @return the distance value.
      */
     private static double distance(Node new_node, Node old_node, int coordPid) {
-        double x1 = ((InetCoordinatesProtocol) new_node.getProtocol(coordPid))
+        double x1 = ((InetCoordinates) new_node.getProtocol(coordPid))
                 .getX();
-        double x2 = ((InetCoordinatesProtocol) old_node.getProtocol(coordPid))
+        double x2 = ((InetCoordinates) old_node.getProtocol(coordPid))
                 .getX();
-        double y1 = ((InetCoordinatesProtocol) new_node.getProtocol(coordPid))
+        double y1 = ((InetCoordinates) new_node.getProtocol(coordPid))
                 .getY();
-        double y2 = ((InetCoordinatesProtocol) old_node.getProtocol(coordPid))
+        double y2 = ((InetCoordinates) old_node.getProtocol(coordPid))
                 .getY();
         if (x1 == -1 | x2 == -1 | y1 == -1 | y2 == -1)
             throw new RuntimeException(

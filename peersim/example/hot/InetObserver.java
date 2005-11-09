@@ -131,15 +131,15 @@ public class InetObserver extends GraphObserver {
     private static void graphToFile(Graph g, PrintStream ps, int coordPid) {
         for (int i = 1; i < g.size(); i++) {
             Node current = (Node) g.getNode(i);
-            double x_to = ((InetCoordinatesProtocol) current
+            double x_to = ((InetCoordinates) current
                     .getProtocol(coordPid)).getX();
-            double y_to = ((InetCoordinatesProtocol) current
+            double y_to = ((InetCoordinates) current
                     .getProtocol(coordPid)).getY();
             for (int index : g.getNeighbours(i)) {
                 Node n = (Node) g.getNode(index);
-                double x_from = ((InetCoordinatesProtocol) n
+                double x_from = ((InetCoordinates) n
                         .getProtocol(coordPid)).getX();
-                double y_from = ((InetCoordinatesProtocol) n
+                double y_from = ((InetCoordinates) n
                         .getProtocol(coordPid)).getY();
                 ps.println(x_from + " " + y_from);
                 ps.println(x_to + " " + y_to);

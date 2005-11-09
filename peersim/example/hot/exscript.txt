@@ -6,7 +6,7 @@ network.size 10000
 
 protocol.link IdleProtocol
 
-protocol.coord example.hot.InetCoordinatesProtocol
+protocol.coord example.hot.InetCoordinates
 
 init.0 example.hot.InetInitializer
 init.0.protocol coord

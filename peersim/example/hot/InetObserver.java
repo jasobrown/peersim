@@ -18,71 +18,62 @@
 
 package example.hot;
 
-import java.io.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 
-import peersim.config.*;
-import peersim.core.*;
+import peersim.config.Configuration;
+import peersim.core.Node;
+import peersim.graph.Graph;
+import peersim.reports.GraphObserver;
+import peersim.util.FileNameGenerator;
 
 /**
- * This class prints to dinstinct files both the topology wiring (with a Gnuplot
- * complaint syntax) and the out-degree distribution. In addition, it can trigger
- * a topology check performed by a {@link RobustnessEvaluator} class object.
+ * This class prints to files the topology wiring using a Gnuplot friendly
+ * syntax. Uses the {@link peersim.graph.Graph} interface to visit the topology.
+ * 
+ * @author Gian Paolo Jesi
  */
-public class InetObserver implements Control {
+public class InetObserver extends GraphObserver {
     // ------------------------------------------------------------------------
     // Parameters
     // ------------------------------------------------------------------------
 
     /**
-     * The protocol to operate on.
+     * The filename base to print out the topology relations.
      * 
      * @config
      */
-    private static final String PAR_PROT = "protocol";
+    private static final String PAR_FILENAME_BASE = "file_base";
 
     /**
-     * The file to print out the topology relations.
+     * The coordinate protocol to look at.
      * 
      * @config
      */
-    private static final String PAR_GRAPH_FILENAME = "graph_file";
-
-    /**
-     * The parameter flag to check for robustness.
-     * 
-     * @config
-     */
-    private static final String PAR_ROBUSTNESS = "robustness";
+    private static final String PAR_COORDINATES_PROT = "coord_protocol";
 
     // ------------------------------------------------------------------------
     // Fields
     // ------------------------------------------------------------------------
 
     /**
-     * The name of this observer in the configuration file. Initialized by the
-     * constructor parameter.
-     */
-    private final String prefix;
-
-    /** Protocol identifier, obtained from config property {@link #PAR_PROT}. */
-    private final int pid;
-
-    /**
-     * Printer for the graph topology dump. Gnuplot plottable syntax.
-     */
-    private final PrintWriter graph_fileout;
-
-    /**
      * Topology filename. Obtained from config property
-     * {@link #PAR_GRAPH_FILENAME}.
+     * {@link #PAR_FILENAME_BASE}.
      */
     private final String graph_filename;
 
     /**
-     * Flag to perform or not the robustness test with a
-     * {@link RobustnessEvaluator} object.
+     * Utility class to generate incremental indexed filenames from a common
+     * base given by {@link #graph_filename}.
      */
-    private final boolean rcheck;
+    private final FileNameGenerator fng;
+
+    /**
+     * Coordinate protocol identifier. Obtained from config property
+     * {@link #PAR_COORDINATES_PROT}.
+     */
+    private final int coordPid;
 
     // ------------------------------------------------------------------------
     // Constructor
@@ -95,58 +86,65 @@ public class InetObserver implements Control {
      *            the configuration prefix for this class.
      */
     public InetObserver(String prefix) {
-        this.prefix = prefix;
-        pid = Configuration.getPid(prefix + "." + PAR_PROT);
+        super(prefix);
+        coordPid = Configuration.getPid(prefix + "." + PAR_COORDINATES_PROT);
         graph_filename = Configuration.getString(prefix + "."
-                + PAR_GRAPH_FILENAME, "graph.dat");
-        rcheck = Configuration.contains(prefix + "." + PAR_ROBUSTNESS);
-
-        try {
-            graph_fileout = new PrintWriter(new FileWriter(graph_filename));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+                + PAR_FILENAME_BASE, "graph_dump");
+        fng = new FileNameGenerator(graph_filename, ".dat");
     }
 
     // Control interface method.
     public boolean execute() {
-        OverlayGraph ogr = new OverlayGraph(pid);
-        System.out.println(prefix + ": writing to file " + graph_filename);
-        graphToFile(ogr);
-        if (rcheck) {
-            RobustnessEvaluator rev = new RobustnessEvaluator(ogr);
+        try {
+            updateGraph();
 
-            System.out.println("Metric 1 " + rev.getMetric1());
+            System.out.print(name + ": ");
 
-            long[] m2res = rev.getMetric2();
-            for (int i = 0; i < m2res.length; i++) {
-                System.out.println("Metric 2 " + i + " " + m2res[i]);
-            }
+            // initialize output streams
+            String fname = fng.nextCounterName();
+            FileOutputStream fos = new FileOutputStream(fname);
+            System.out.println("Writing to file " + fname);
+            PrintStream pstr = new PrintStream(fos);
+
+            // dump topology:
+            graphToFile(g, pstr, coordPid);
+
+            fos.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
         return false;
     }
 
     /**
-     * Prints out data to plot the topology using gnuplot a gnuplot style
+     * Utility method: prints out data to plot the topology using gnuplot a
+     * gnuplot style.
      * 
      * @param g
-     *            current graph
+     *            current graph.
+     * @param ps
+     *            a {@link java.io.PrintStream} object to write to.
+     * @param coordPid
+     *            coordinate protocol identifier.
      */
-    private void graphToFile(peersim.graph.Graph g) {
-        for (int i = 0; i < g.size(); i++) {
+    private static void graphToFile(Graph g, PrintStream ps, int coordPid) {
+        for (int i = 1; i < g.size(); i++) {
             Node current = (Node) g.getNode(i);
-            double x_to = ((InetNodeProtocol) current.getProtocol(pid)).x;
-            double y_to = ((InetNodeProtocol) current.getProtocol(pid)).y;
-            for(int index:g.getNeighbours(i)) {
+            double x_to = ((InetCoordinatesProtocol) current
+                    .getProtocol(coordPid)).getX();
+            double y_to = ((InetCoordinatesProtocol) current
+                    .getProtocol(coordPid)).getY();
+            for (int index : g.getNeighbours(i)) {
                 Node n = (Node) g.getNode(index);
-                double x_from = ((InetNodeProtocol) n.getProtocol(pid)).x;
-                double y_from = ((InetNodeProtocol) n.getProtocol(pid)).y;
-                graph_fileout.println(x_from + " " + y_from);
-                graph_fileout.println(x_to + " " + y_to);
-                graph_fileout.println();
+                double x_from = ((InetCoordinatesProtocol) n
+                        .getProtocol(coordPid)).getX();
+                double y_from = ((InetCoordinatesProtocol) n
+                        .getProtocol(coordPid)).getY();
+                ps.println(x_from + " " + y_from);
+                ps.println(x_to + " " + y_to);
+                ps.println();
             }
         }
-        graph_fileout.close();
     }
 }

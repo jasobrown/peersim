@@ -1,24 +1,33 @@
 # Complex Network file:
-random.seed 1234567890
+#random.seed 1234567890
 simulation.cycles 1
 
-overlay.size 10000
+network.size 10000
 
-protocol.0 example.hot.InetNodeProtocol
+protocol.link IdleProtocol
+
+protocol.coord example.hot.InetCoordinatesProtocol
 
 init.0 example.hot.InetInitializer
-init.0.protocol 0
+init.0.protocol coord
 
-init.1 peersim.dynamics.WireByMethod
-init.1.protocol 0
-init.1.class example.hot.InetInitializer
-init.1.method wireHOTOverlay
-init.1.arg1 1 # d
-init.1.arg2 4 # alfa , default 0.5   
+init.1 example.hot.WireInetTopology
+init.1.protocol link #the linkable to be wired
+init.1.coord_protocol coord
+init.1.alpha 4
 
-control.0 example.hot.InetObserver
-control.0.protocol 0
-#control.0.graph_file ./graph.dat
-#control.0.graph_degree ./degree_graph.dat
-#control.0.robustness
-control.0.at 0
+control.io example.hot.InetObserver
+control.io.protocol link
+control.io.coord_protocol coord
+control.io.file_base graph
+
+control.rro RandRemoval
+control.rro.protocol link
+control.rro.n 2
+
+control.degree DegreeStats
+control.degree.protocol link
+control.degree.undir
+control.degree.method freq
+
+include.control io degree

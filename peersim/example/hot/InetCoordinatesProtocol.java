@@ -18,45 +18,70 @@
 
 package example.hot;
 
-import peersim.core.IdleProtocol;
+import peersim.core.Protocol;
 
 /**
+ * <p>
  * This class does nothing. It is simply a container inside each node to collect
- * some useful data such as coordinates, hop count and degree count.
+ * peer coordinates.
+ * </p>
+ * <p>
+ * The actual "who knows whom" relation (the topology) container is decoupled
+ * from the HOT package. It is maintained by any {@link Linkable} implementing
+ * protocol declared in the config file.
+ * </p>
  * 
  * @author Gian Paolo Jesi
  */
-public class InetNodeProtocol extends IdleProtocol {
+public class InetCoordinatesProtocol implements Protocol {
 
     // ------------------------------------------------------------------------
     // Fields
     // ------------------------------------------------------------------------
 
     /** 2d coordinates components. */
-    public double x, y;
-
-    /** Hop distance from the ROOT node. */
-    public int hops;
-
-    /** If the current node is a root or not. */
-    public boolean isroot;
+    private double x, y;
 
     // ------------------------------------------------------------------------
     // Constructor
     // ------------------------------------------------------------------------
-
     /**
      * Standard constructor that reads the configuration parameters. Invoked by
-     * the simulation engine.
+     * the simulation engine. By default, all the coordinates components are set
+     * to -1 value. The {@link InetInitializer} class provides a coordinates
+     * initialization.
      * 
      * @param prefix
      *            the configuration prefix for this class.
      */
-    public InetNodeProtocol(String prefix) {
-        super(prefix);
-        hops = 0;
-        isroot = false;
+    public InetCoordinatesProtocol(String prefix) {
+        /* Un-initialized coordinates defaults to -1. */
+        x = y = -1;
     }
 
+    public Object clone() {
+        InetCoordinatesProtocol inp = null;
+        try {
+            inp = (InetCoordinatesProtocol) super.clone();
+        } catch (CloneNotSupportedException e) {
+        } // never happens
+        return inp;
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
 
 }

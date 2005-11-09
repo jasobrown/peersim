@@ -1,3 +1,9 @@
+GJ 9/11/05
+- Refactored hot example package. Many features (e.g.,in-degree) are now 
+  obtained using standard peersim components. See the config-file.
+- Any Linkable protocol can be initialized by the HOT topology.
+- RobustenessEvaluator removed, use RandRemoval instead.
+
 AM 08/11/05
 - Fixed a bug in ClassFinder (a problem with file separator in 
   Windows). 

@@ -76,11 +76,6 @@ public class WireInetTopology extends WireGraph {
         coordPid = Configuration.getPid(prefix + "." + PAR_COORDINATES_PROT);
     }
 
-    @Override
-    public void wire(Graph g) {
-        wire(g, alpha);
-    }
-
     /**
      * Performs the actual wiring. It is a static factory method. Being static,
      * it can also be invoked by a {@link peersim.dynamics.WireByMethod}
@@ -88,10 +83,8 @@ public class WireInetTopology extends WireGraph {
      * 
      * @param g
      *            a {@link peersim.graph.Graph} interface object to work on.
-     * @param alfa
-     *            a parameter that affects the distance importance.
      */
-    public void wire(Graph g, double alfa) {
+    public void wire(Graph g) {
         /** Contains the distance in hops from the root node for each node. */
         int[] hops = new int[Network.size()];
         // connect all the nodes other than roots
@@ -108,7 +101,7 @@ public class WireInetTopology extends WireGraph {
                 double jHopDistance = hops[j];
 
                 double value = jHopDistance
-                        + (alfa * distance(n, parent, coordPid));
+                        + (alpha * distance(n, parent, coordPid));
                 if (value < min) {
                     // candidate = parent; // best parent node to connect to
                     min = value;

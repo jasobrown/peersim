@@ -110,7 +110,7 @@ public class BasicBalance extends SingleValueHolder implements CDProtocol {
             if (!peer.isUp())
                 continue;
             BasicBalance n = (BasicBalance) peer.getProtocol(protocolID);
-            if (n.quota != 1.0)
+            if (n.quota == 0.0)
                 continue;
             double d = Math.abs(value - n.value);
             if (d > maxdiff) {

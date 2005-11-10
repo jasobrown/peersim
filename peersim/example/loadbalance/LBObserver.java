@@ -102,11 +102,7 @@ public class LBObserver implements Control {
     // Inherits comments from the interface.
     public boolean execute() {
         StringBuffer buf = new StringBuffer();
-        double sum = 0.0;
-        double max = Double.NEGATIVE_INFINITY;
-        double min = Double.POSITIVE_INFINITY;
         int count_zero = 0;
-        int count_avg = 0;
 
         if (show_values) {
             buf.append(name+": ");
@@ -121,19 +117,11 @@ public class LBObserver implements Control {
             if (value == 0) {
                 count_zero++;
             }
-            if (value == 2) {
-                count_avg++;
-            }
             // shows the values of load at each node:
             if (show_values) {
                 buf.append(value+":");
             }
-            sum += value;
-            if (value > max)
-                max = value;
-            if (value < min)
-                min = value;
-
+            
         }
         if (show_values) {
             System.out.println(buf.toString());
@@ -141,9 +129,7 @@ public class LBObserver implements Control {
 
         System.out.println(name + ": " + CommonState.getTime() + " "
                 + stats.getAverage() + " " + stats.getMax() + " "
-                + stats.getMin() + " " + count_zero + " " + // number of zero
-                // value node
-                count_avg + " " + // number of correct avg nodes
+                + stats.getMin() + " " + count_zero + " " + // number of zero value node
                 stats.getVar());
         stats.reset();
         return false;

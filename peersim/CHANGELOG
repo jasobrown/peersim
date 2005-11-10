@@ -1,3 +1,7 @@
+GJ 10/11/05
+- Fixed a bug in BasicBalance: did not work it quota != 0
+- Refreshed LBObsever.
+
 GJ 9/11/05
 - Refactored hot example package. Many features (e.g.,in-degree) are now 
   obtained using standard peersim components. See the config-file.

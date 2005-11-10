@@ -27,7 +27,8 @@ import peersim.core.Protocol;
  * </p>
  * <p>
  * The actual "who knows whom" relation (the topology) container is decoupled
- * from the HOT package. It is maintained by any {@link Linkable} implementing
+ * from the HOT package. It is maintained by any {@link peersim.core.Linkable} 
+ * implementing
  * protocol declared in the config file.
  * </p>
  * 

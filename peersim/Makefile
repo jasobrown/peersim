@@ -1,4 +1,4 @@
-VER=0.4
+VER=1.0
 
 .PHONY: all clean doc release
 
@@ -8,23 +8,25 @@ clean:
 	rm -f `find -name "*.class"`
 doc:
 	rm -rf doc/*
-	javadoc -classpath .:jep-2.3.0.jar:djep-1.0.0.jar -d doc \
+	javadoc -overview overview.html -classpath .:jep-2.3.0.jar:djep-1.0.0.jar -d doc \
+                -group "Peersim" "peersim*" \
+                -group "Examples" "example.*" \
 		peersim \
-		peersim.edsim \
-		peersim.transport \
-		peersim.core \
 		peersim.cdsim \
 		peersim.config \
-		peersim.graph \
-		peersim.util \
-		peersim.reports \
-		peersim.rangesim \
+		peersim.core \
 		peersim.dynamics \
+		peersim.edsim \
+		peersim.graph \
+		peersim.rangesim \
+		peersim.reports \
+		peersim.transport \
+		peersim.util \
 		peersim.vector \
-		example.loadbalance \
-		example.newscast \
 		example.aggregation \
-		example.hot 
+		example.loadbalance \
+		example.hot \
+		example.newscast 
 
 docnew:
 	rm -rf doc/*
@@ -32,27 +34,27 @@ docnew:
                 -group "Peersim" "peersim*" \
                 -group "Examples" "example.*" \
 		peersim \
-		peersim.edsim \
-		peersim.transport \
-		peersim.core \
 		peersim.cdsim \
 		peersim.config \
-		peersim.graph \
-		peersim.util \
-		peersim.reports \
-		peersim.rangesim \
+		peersim.core \
 		peersim.dynamics \
+		peersim.edsim \
+		peersim.graph \
+		peersim.rangesim \
+		peersim.reports \
+		peersim.transport \
+		peersim.util \
 		peersim.vector \
-		example.loadbalance \
-		example.newscast \
 		example.aggregation \
-		example.hot 
+		example.loadbalance \
+		example.hot \
+		example.newscast 
 
-release: all doc
+release: clean all docnew
 	rm -fr peersim-$(VER)
 	mkdir peersim-$(VER)
 	mv doc peersim-$(VER)
-	cp README CHANGELOG build.xml peersim-$(VER)
+	cp README CHANGELOG RELEASE-NOTES build.xml peersim-$(VER)
 	mkdir peersim-$(VER)/example
 	cp example/*.txt peersim-$(VER)/example
 	mkdir peersim-$(VER)/src

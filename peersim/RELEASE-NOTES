@@ -1,6 +1,6 @@
 Release notes for Peersim 1.0
 
-The release of Peersim 1.0 is a major milestone in the development of 
+The release of version 1.0 is a major milestone in the development of 
 Peersim. Many useful features have been added, listed below in the 
 "notable new features" section. But most importantly, we decided to take 
 the  opportunity to fix some small design issues in both the API and the
@@ -28,7 +28,7 @@ Changes breaking backward compatibility:
   overlay.maxSize -> network.maxSize
 - Renamed a very popular class: now WireRegularRandom is WireKOut, which
   is the correct name for it. In the past it caused lots of confusion, we
-  finally got rid of the bogous name.
+  finally got rid of the bogus name.
 - Renamed very popular parameters: instead of "degree", now every Wire* 
   class uses "k".
 - GrowingNetwork is gone. Its functionality is provided by 
@@ -38,11 +38,14 @@ Changes breaking backward compatibility:
   added by the control cdsim.Shuffle. This way the time within the cycle and
   the schedule of the shuffling is as flexible as for any other control.
 - CommonRandom is gone, look for field "r" in CommonState
-- Classes to be created through the Configuration.getInstance() mechanism
-  MUST have a constructor accepting a single String parameter; constructors
+- Classes to be created through the Configuration.getInstance(String) 
+  mechanism MUST have a constructor accepting a single String parameter; constructors
   with a String,Object pair of parameters are not accepted any more.
+  On the same subject, note that now in method getInstance(String,Object),
+  the second argument is the default object which is returned if the
+  configuration parameter defined by the string is not present.
 - The vector package has been refactored to make it generic; now it is able
-  to initialize/modify/observer any vector of protocols that have getter and
+  to initialize/modify/observe any vector of protocols that have getter and
   setter methods; these protocols are not required to implement the 
   SingleValue interface, although the latter is still there for backward 
   compatibility and methods double getValue()/setValue(double) are the 
@@ -64,15 +67,15 @@ Some of most notable new features:
 - Refactored the cycle-based simulation engine so that it now only loads and 
   executes controls; calling the protocols is done by a control too. By default
   the old config files work. However, this modification makes it possible
-  to totaly freely order the controls and the execution of a cycle, and
+  to totally freely order the controls and the execution of a cycle, and
   (with the help of NextCycle) it is possible to run only a subset of the
   protocols, some controls in between and then some other subset. These
   features however will be used only for hacking...
-- Refactored and throughly tested the event-based simulator. The API
+- Refactored and thoroughly tested the event-based simulator. The API
   description is ok, but still there is no tutorial for it. We plan
   to release something for it later (note the genericity of the
-  definition of "later" ;-)
-- Node are associated with numeric identifiers that can be obtained
+  term "later" ;-)
+- Nodes are associated with unique numeric identifiers that can be obtained
   through Node.getID()
 - Random seed is now explicitly set and printed to stderr before all
   experiments when using Simulator, also for simulation.experiments>1.

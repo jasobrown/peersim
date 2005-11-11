@@ -152,7 +152,9 @@ throws IOException
   	
     String entry = entries.nextElement().toString();
     if( entry.endsWith( ".class" ) ) {
-      String className = classname( entry );
+    	// File names in ZIP archives (so, also in JARs) are separated by
+    	// forward slashes '/', independently from the architecture.
+      String className = classname( entry, "/" ); 
       String shortName = getShortName( className );
       if (map.containsKey(shortName)) {
       	map.put(shortName, map.get(shortName)+","+className);
@@ -177,7 +179,8 @@ private static void findClassInPathDir( Map<String,String> map, String
 	throws IOException
 {
   String[] list = pathFile.list();
-
+  String filesep = System.getProperty( "file.separator");
+  
   for( int i = 0; i < list.length; i++ ) {
     File file = new File( pathFile, list[i] );
     if( file.isDirectory() ) {
@@ -185,7 +188,7 @@ private static void findClassInPathDir( Map<String,String> map, String
     }
 	  else if ( file.exists() && (file.length() != 0) && list[i].endsWith( ".class" ) ) {
 	    String classFile = file.toString().substring( pathElement.length());
-	    String className = classname( classFile );
+	    String className = classname( classFile, filesep );
       String shortName = getShortName( className );
       if (map.containsKey(shortName)) {
       	map.put(shortName, map.get(shortName)+","+className);
@@ -197,11 +200,11 @@ private static void findClassInPathDir( Map<String,String> map, String
 }
 
 /**
- * Translates a class file name in a class name.
+ * Translates a class file name in a class name using
+ * the specified file separator.
  */
-private static String classname(String classFile)
+private static String classname(String classFile, String filesep)
 { 
-  String filesep = System.getProperty( "file.separator");
   return classFile.replace( filesep, "." ).substring( 0, classFile.length() - ".class".length() ); 
 }
 

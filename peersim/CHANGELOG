@@ -3,6 +3,12 @@ VERSION 1.0 RELEASED
 ------------------------------------------------------------------
 ------------------------------------------------------------------
 
+AM 11/11/2005
+- Fixed a bug identified by Gian Paolo, using his suggestion; 
+  the unqualified classname search in jar files was not working 
+  under Windows, because files in Jar files are '/'-separated, 
+  independently from the platform.
+
 GJ 10/11/05
 - Fixed a bug in BasicBalance: did not work it quota != 0
 - Refreshed LBObsever.

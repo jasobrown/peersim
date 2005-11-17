@@ -28,7 +28,7 @@ framework</H1>
 <DIV>
 
 <P ALIGN="CENTER"><STRONG>Gian Paolo Jesi (jesi@cs.unibo.it)</STRONG></P>
-<P ALIGN="CENTER"><STRONG>November 10, 2005</STRONG></P>
+<P ALIGN="CENTER"><STRONG>November 16, 2005</STRONG></P>
 </DIV>
 
 <P>
@@ -153,7 +153,7 @@ the protocol(s); this step will build a topology on top of raw nodes
 inserted at the previous point;
 </LI>
 <LI>choose 1 or more <I>Control</I><A NAME="tex2html3"
-  HREF="#foot353"><SUP>1</SUP></A> object to monitor the properties
+  HREF="#foot369"><SUP>1</SUP></A> object to monitor the properties
   you are interested in and to modify or perturb some parameter during
   the simulation execution (e.g.: the size of th
 network, update particular values inside protocols, ...); 
@@ -175,7 +175,7 @@ Table&nbsp;<A HREF="#t:psim_classes">1</A>.
 <P>
 <A NAME="table1"></A>
 <BR><P></P>
-<DIV ALIGN="CENTER"><A NAME="355"></A>
+<DIV ALIGN="CENTER"><A NAME="371"></A>
 <TABLE>
 <CAPTION><STRONG>Table 1:</STRONG>
 Suggested peersim subset of classes or
@@ -256,11 +256,11 @@ talk about <I>Initializer</I> objects just to remark their function and
 to distinguish them from ordinary <I>Control</I> objects, however there
 is no <I>Initializer</I> class in peersim
 <A NAME="tex2html5"
-  HREF="#foot356"><SUP>2</SUP></A>.
+  HREF="#foot372"><SUP>2</SUP></A>.
 
 <P>
 
-<DIV ALIGN="CENTER"><A NAME="obsfigure"></A><A NAME="357"></A>
+<DIV ALIGN="CENTER"><A NAME="obsfigure"></A><A NAME="373"></A>
 <TABLE>
 <CAPTION ALIGN="BOTTOM"><STRONG>Figure 1:</STRONG>
 Controls and protocols scheduling. The ``C'' letters indicate
@@ -503,9 +503,6 @@ on top of the configuration file. This parameter is very useful to
 replicate exactly the experiment results based on (pseudo) random
 behavior. The experiment output is (some initialization strings may
 be different):
-
-<P>
-NOTE: cut and paste the experiment: 
 
 <P>
 <PRE>
@@ -805,8 +802,17 @@ generated; means that, in this case, no controls will run.
 
 <P>
 
-<H2><A NAME="SECTION00027000000000000000">
-2.7 Which kind of protocol?</A>
+<H1><A NAME="SECTION00030000000000000000">
+3 Writing a new protocol</A>
+</H1>
+
+<P>
+This section covers the description of how to write a new protocol. 
+
+<P>
+
+<H2><A NAME="SECTION00031000000000000000">
+3.1 Which kind of protocol?</A>
 </H2>
 
 <P>
@@ -830,8 +836,8 @@ other components to get access to this feature (e.g.: <I>Newscast</I> or
 
 <P>
 
-<H2><A NAME="SECTION00028000000000000000">
-2.8 Needed components</A>
+<H2><A NAME="SECTION00032000000000000000">
+3.2 Needed components</A>
 </H2>
 
 <P>
@@ -898,8 +904,8 @@ subsections present code with comments and other deeper explanations.
 
 <P>
 
-<H2><A NAME="SECTION00029000000000000000">
-2.9 The core load balancing class</A>
+<H2><A NAME="SECTION00033000000000000000">
+3.3 The core load balancing class</A>
 </H2>
 
 <P>
@@ -986,7 +992,7 @@ public void nextCycle(Node node, int protocolID) {
             if (!peer.isUp())
                 continue;
             BasicBalance n = (BasicBalance) peer.getProtocol(protocolID);
-            if (n.quota != 1.0)
+            if (n.quota == 0.0)
                 continue;
             double d = Math.abs(value - n.value);
             if (d &gt; maxdiff) {
@@ -1094,8 +1100,8 @@ amount. The quota value is decreased by the same amount at both nodes.
 
 <P>
 
-<H2><A NAME="SECTION000210000000000000000">
-2.10 Load balancing control class code</A>
+<H2><A NAME="SECTION00034000000000000000">
+3.4 Load balancing control class code</A>
 </H2>
 
 <P>
@@ -1154,8 +1160,8 @@ facility according to the consistency of the simulation itself.
 
 <P>
 
-<H2><A NAME="SECTION000211000000000000000">
-2.11 Implementing the Linkable interface</A>
+<H2><A NAME="SECTION00035000000000000000">
+3.5 Implementing the Linkable interface</A>
 </H2>
 
 <P>
@@ -1226,8 +1232,8 @@ size of each view is typically quite small).
 
 <P>
 
-<H1><A NAME="SECTION00030000000000000000">
-3 A second new protocol</A>
+<H1><A NAME="SECTION00040000000000000000">
+4 A second new protocol</A>
 </H1>
 
 <P>
@@ -1431,8 +1437,8 @@ are straightforward and very similar, but are shown for completeness.
 
 <P>
 
-<H1><A NAME="SECTION00040000000000000000">
-4 Evaluating the protocols</A>
+<H1><A NAME="SECTION00050000000000000000">
+5 Evaluating the protocols</A>
 </H1>
 
 <P>
@@ -1513,7 +1519,7 @@ node values about quota and prints statistics on the console.
 
 <P>
 
-<H1><A NAME="SECTION00050000000000000000"></A><A NAME="sec:Appendix-A-aggregation"></A>
+<H1><A NAME="SECTION00060000000000000000"></A><A NAME="sec:Appendix-A-aggregation"></A>
 <BR>
 A. A few words about
 Aggregation
@@ -1542,7 +1548,7 @@ Suggested readings: project BISON publication page <TT><A NAME="tex2html9"
 
 <P>
 
-<H1><A NAME="SECTION00060000000000000000"></A><A NAME="sec:Appendix-B-newscast"></A>
+<H1><A NAME="SECTION00070000000000000000"></A><A NAME="sec:Appendix-B-newscast"></A>
 <BR>
 B. A few words about Newscast
 </H1>
@@ -1578,7 +1584,7 @@ c. Suggested readings: "Large-Scale Newscast Computing on the Internet" <TT><A N
 
 <P>
 
-<H1><A NAME="SECTION00070000000000000000"></A><A NAME="sec:Appendix-C-changes"></A>
+<H1><A NAME="SECTION00080000000000000000"></A><A NAME="sec:Appendix-C-changes"></A>
 <BR>
 C.  Major peersim changes from
   previous release
@@ -1586,102 +1592,201 @@ C.  Major peersim changes from
 
 <P>
 Peersim release 1.0 represents a major change from the previous
-versions. Due to strong refactoring, backward compatibility is broken. 
+versions. 
+Many useful features have been added, listed below in
+Section&nbsp;<A HREF="#s:new_features">C.2</A>.    
+Due to strong refactoring, backward compatibility is broken and also
+some configuration parameters has ben changed. 
 The following is a list of the major changes from the previous
 release. This list is given in order to provide the reader a fast reference to
 port previously developed components to the new simulator release.
 
 <P>
 
+<H2><A NAME="SECTION00081000000000000000"></A>
+<A NAME="s:comp_change"></A>
+<BR>
+C..1 Backward compatibility changes
+</H2>
+
+<P>
+
 <UL>
-<LI>No more <I>Observer</I> and <I>Dynamics</I> interfaces. Use
-  <B>Control</B> instead.
+<LI>Peersim now contains <B>Java 1.5 features</B>, so you MUST use
+  the JDK 1.5 to run it. 
 
 <P>
 </LI>
-<LI>All cycle driven stuff is now in <I>cdsim</I> package; the Scheduler is
-    now model independent.
+<LI>The observer and dynamic distinction is gone. It was pretty artificial:
+  both of them had access to the entire network, and nothing prevented
+  an observer to modify the network or a dynamics to observe it. So,
+  now all observer/dynamics classes have to implement the 
+  <I>peersim.core.Control</I> interface, which contains only an
+  <TT>execute()</TT> 
+  method. In the configuration file, the <TT>dynamics.</TT> and
+  <TT>observer.</TT> 
+  prefixes have been substituted by the unique <TT>control.</TT> prefix. 
 
 <P>
 </LI>
-<LI><I>CommonState</I> has now a companion class called
-  <B>CDState</B>. The former is common to all simulation components,
-  while the latter is common to all cycle driven components.
+<LI>The following parameters names have been changed:
+<BR>  <TT>overlay.node</TT> <IMG
+ WIDTH="22" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
+ SRC="img9.png"
+ ALT="$\to$"> <TT>network.node</TT>
+<BR>  <TT>overlay.size</TT> <IMG
+ WIDTH="22" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
+ SRC="img9.png"
+ ALT="$\to$"> <TT>network.size</TT>
+<BR>  <TT>overlay.maxSize</TT> <IMG
+ WIDTH="22" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
+ SRC="img9.png"
+ ALT="$\to$"> <TT>network.maxSize</TT>
 
 <P>
 </LI>
-<LI>No more <I>CommonRandom</I>, now use the static field <B>r</B>
-  in <I>CommonState</I>.
+<LI>Renamed a very popular class: now <I>WireRegularRandom</I> is
+  <I>WireKOut</I>, which 
+  is the correct name for it. In the past it caused lots of confusion, we
+  finally got rid of the bogus name.
 
 <P>
 </LI>
-<LI>No more <I>peersim.util.Log</I> class. Use standard console
-  output or standard error output to print out data.
+<LI>Renamed very popular parameters: instead of <TT>degree</TT>, now
+  every <I>Wire*</I>  
+  class uses <TT>k</TT>.
 
 <P>
 </LI>
-<LI>No more <I>simulation.shuffle</I> parameter, shuffling can now be
-  added by the control <B>cdsim.Shuffle</B>.
+<LI><I>GrowingNetwork</I> is gone. Its functionality is provided by 
+  <I>DynamicNetwork</I>. A small change though: config par
+  <TT>percentage</TT> is no longer  
+  supported, but you can set -1<IMG
+ WIDTH="18" HEIGHT="31" ALIGN="MIDDLE" BORDER="0"
+ SRC="img3.png"
+ ALT="$&lt;$">add<IMG
+ WIDTH="18" HEIGHT="31" ALIGN="MIDDLE" BORDER="0"
+ SRC="img3.png"
+ ALT="$&lt;$">1 which is taken as proportion.
 
 <P>
 </LI>
-<LI>The very popular parameter <TT>degree</TT> is renamed in
-  <B>k</B>.
+<LI>Removed the <TT>simulation.shuffle</TT> parameter, shuffling can now be
+  added by the control <I>peersim.cdsim.Shuffle</I>. This way the time
+  within the cycle and 
+  the schedule of the shuffling is as flexible as for any other control.
 
 <P>
 </LI>
-<LI>Refactored <I>Wire*</I> controls. They have a common superclass now and
-  the <I>NodeInitializer</I> implementations were separated into
-  separate classes (<I>RandNI</I> and <I>StarNI</I>).
+<LI><I>CommonRandom</I> is gone, look for field <I>r</I> in
+  <I>CommonState</I>.
 
 <P>
 </LI>
-<LI>No more <I>peersim.dynamics.WireRegularRandom</I>, now is
-  textbfpeersim.vector.WireKOut. 
+<LI>Classes to be created through the
+  <I>Configuration.getInstance(String)</I>  
+  mechanism MUST have a constructor accepting a single String
+  parameter; constructors 
+  with a String,Object pair of parameters are not accepted any more.
+  On the same subject, note that now in method
+  <I>getInstance(String,Object)</I>, 
+  the second argument is the default object which is returned if the
+  configuration parameter defined by the string is not present.
 
 <P>
 </LI>
-<LI>In all classes that used it, now <TT>undir</TT> and
-  <TT>undirected</TT> are both accepted as equivalent parameters.
+<LI>The <I>vector</I> package has been refactored to make it
+  generic; now it is able 
+  to initialize/modify/observe any vector of protocols that have getter and
+  setter methods; these protocols are not required to implement the 
+  <I>SingleValue</I> interface, although the latter is still there for
+  backward  
+  compatibility and methods double
+  <I>getValue()</I>/<I>setValue(double)</I> are the  
+  default getter/setter.
 
 <P>
 </LI>
-<LI>The <I>Wire*</I> classes now have a public <TT>Graph</TT> field
-  that can be used to initialize arbitrary graphs (see JavaDocs of WireGraph).
-
-<P>
-</LI>
-<LI>Introduced <B>MethodInvoker</B> control. It invokes a void
-  method on a specified protocol.
-
-<P>
-</LI>
-<LI>Implemented the Tarjan algorithm to detect the strongly
-  connected components in GraphAlgorithms.
-
-<P>
-</LI>
-<LI>Added <B>peersim.dynamics.WireRegRootedTree</B> that can wire
-  a regular rooted tree.
-
-<P>
-</LI>
-<LI>No more <I>GrowingNetwork</I>, now <I>DynamicNetwork</I>
-  provides its features. 
-
-<P>
-</LI>
-<LI>Added <B>peersim.dynamics.WireByMethod</B>: it takes a
-  Linkable protocol and adds connections using an arbitrary
-  user defined (static) method. 
-
-<P>
+<LI>We got rid of <I>CloneNotSupportedException</I> in all clonings,
+  so you will have 
+  to slightly modify your implementations to catch any exceptions thrown by 
+  the superclass inside the method. This exception was annoying because 
+  there is no way it can be thrown anyway.
 </LI>
 </UL> 
 
 <P>
 
-<H1><A NAME="SECTION00080000000000000000">
+<H2><A NAME="SECTION00082000000000000000"></A>
+<A NAME="s:new_features"></A>
+<BR>
+C..2 New features in brief
+</H2>
+
+<P>
+
+<UL>
+<LI>We modified the standard doclet in order to show an additional 
+  ``Parameters'' section in the API documentation, which lists all the
+  configuration parameters of the class, simplifying the reading of
+  the documentation. Note, however, that due to the Sun License, 
+  the new doclet <B>cannot be redistributed</B>; so if you try to compile
+  your own documentation of Peersim, you may have several warnings
+  from javadoc related to parameters.
+
+<P>
+</LI>
+<LI>Refactored the cycle-based simulation engine so that it now only
+  loads and  
+  executes controls; calling the protocols is done by a control too. By default
+  the old config files work. However, this modification makes it possible
+  to totally freely order the controls and the execution of a cycle, and
+  (with the help of NextCycle) it is possible to run only a subset of the
+  protocols, some controls in between and then some other subset. These
+  features however will be used only for hacking ...
+
+<P>
+</LI>
+<LI>Refactored and thoroughly tested the event-based simulator. The API
+  description is ok, but still there is no tutorial for it. We plan
+  to release something for it later (note the genericity of the
+  term "later" ;-)
+
+<P>
+</LI>
+<LI>Nodes are associated with unique numeric identifiers that can be obtained
+  through <I>Node.getID()</I>
+
+<P>
+</LI>
+<LI>Random seed is now explicitly set and printed to stderr before all
+  experiments when using Simulator, also for
+  <TT>simulation.experiments</TT> <IMG
+ WIDTH="18" HEIGHT="31" ALIGN="MIDDLE" BORDER="0"
+ SRC="img4.png"
+ ALT="$&gt;$"> 1.
+
+<P>
+</LI>
+<LI>Expression parsing has been cleaned up. Now, expression composed by
+  all integer values are evaluated using integer arithmetics (e.g.,
+  5/2 is equal to 2); while expressions containing at least one floating
+  point value are evaluated using floating point arithmetics (e.g.,
+  5/2.0 is equal to 2.5).
+
+<P>
+</LI>
+<LI>Several new functionalities have been added to the
+  <I>peersim.dynamics</I> 
+  and <I>peersim.reports</I> packages; please refer to the API documentation.
+
+<P>
+</LI>
+</UL>
+
+<P>
+
+<H1><A NAME="SECTION00090000000000000000">
 About this document ...</A>
 </H1>
  <STRONG>PeerSim HOWTO: build a new protocol for the peersim simulation
@@ -1698,19 +1803,19 @@ Copyright &#169; 1997, 1998, 1999,
 Mathematics Department, Macquarie University, Sydney.
 <P>
 The command line arguments were: <BR>
- <STRONG>latex2html</STRONG> <TT>-t 'Peersim HOWTO 1' -split 0 -nonavigation -noaddress -show_section_numbers tutorial1.tex</TT>
+ <STRONG>latex2html</STRONG> <TT>-t 'Peersim HOWTO 1' -split 0 -nonavigation -noaddress -show_section_number tutorial1.tex</TT>
 <P>
-The translation was initiated by Gian Paolo Jesi on 2005-11-10
+The translation was initiated by Gian Paolo Jesi on 2005-11-17
 <BR><HR><H4>Footnotes</H4>
 <DL>
-<DT><A NAME="foot353">...Control</A><A
+<DT><A NAME="foot369">...Control</A><A
  HREF="tutorial1.html#tex2html3"><SUP>1</SUP></A></DT>
 <DD>The <I>Control</I> is
   the unified interface that substitutes the old <I>Observer</I> and
   <I>Dynamics</I> interfaces.
 
 </DD>
-<DT><A NAME="foot356">... peersim</A><A
+<DT><A NAME="foot372">... peersim</A><A
  HREF="tutorial1.html#tex2html5"><SUP>2</SUP></A></DT>
 <DD>Class
   <I>Initializer</I> was available in early peersim releases, but

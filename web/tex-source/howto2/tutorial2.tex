@@ -4,9 +4,13 @@
 \usepackage{url}
 \usepackage{graphicx}
 
+\newcommand{\id}[1]{{\scshape\small #1}}
+\newcommand{\psim}{\id{Peersim}}
+
 \title{PeerSim HOWTO 2: build a topology generator}
 
 \author{Gian Paolo Jesi (jesi@cs.unibo.it)}
+\date{November 16, 2005}
 
 \begin{document}
 
@@ -14,28 +18,31 @@
 
 \section{Introduction}
 
-This tutorial teaches you how to build from scratch a new peersim
-( peersim project page: \url{http://sourceforge.net/projects/peersim}
+\textbf{NOTE: This tutorial revision covers \psim~release 1.0
+  topics.}\\
+
+This tutorial teaches you how to build from scratch a new \psim~
+( \psim~ project page: \url{http://sourceforge.net/projects/peersim}
 ) topology generator. In order to understand this tutorial, the reader
-is encouraged to start reading the first peersim tutorial 
+is encouraged to start reading the first \psim~ tutorial 
 (\url{http://peersim. sourceforge.net/peersim_HOWTO.html}) 
 to have an idea of the basic concepts that will not be discussed any
 further in this document. 
 
 The aim of this tutorial is to be as practical as possible; the goal
 is to give the reader ideas about technical or intermediate level
-features of peersim and to encourage him/her to experiment further.
+features of \psim~ and to encourage him/her to experiment further.
 The full source code discussed in this document is available via CVS
-at peersim project page in the \emph{peersim.example.hot} class package.
+at \psim~ project page in the \emph{peersim.example.hot} class package.
 
 
 \section{What is a topology?}
 
-The network abstraction in peersim is a (sometimes huge) array of
+The network abstraction in \psim~ is a (sometimes huge) array of
 \emph{Node} structures (interfaces); because of the size of the network
 and to overcome scalability problems, usually in large P2P networks
 each node knows about the existence of a very small subset of other
-nodes (ex: order of $\log(N)$ where $N$ is the whole network size). Thus
+nodes (e.g., order of $\log(N)$ where $N$ is the whole network size). Thus
 each node has a short list of other node references, usually called
 ``neighbors'', build accordingly to some kind of strategy
 or rule. 
@@ -88,17 +95,18 @@ the geometric distance influence;
 \end{itemize}
 
 After having chosen a node $x(j)$, we set $W(x(i)) = W(x(j))+1$ . At
-the end we obtain a tree rooted in $x(0)$.
+the end we obtain a tree rooted in $x(0)$. This topology implies that
+every node (except the root) has an out-degree of exactly one link.
 
-We have extended this model to improve robustness allowing every node
-to have exactly $d$ outbound neighbors instead of only one. This means
-that, at the time of joining the network, each node should have at
-least $d$ candidates to be selected as neighbors. To achieve this property,
-as a first step we select at random exactly $d$ root nodes and we connect
-them together in a ring fashion (a doubly linked list). In this way
-each ordinary node has at least $d$ nodes (the $d$ roots) to choose from
-in order to select its neighbors. In other words, each node has to
-select the best $d$ nodes that minimize the function above. 
+%We have extended this model to improve robustness allowing every node
+%to have exactly $d$ outbound neighbors instead of only one. This means
+%that, at the time of joining the network, each node should have at
+%least $d$ candidates to be selected as neighbors. To achieve this property,
+%as a first step we select at random exactly $d$ root nodes and we connect
+%them together in a ring fashion (a doubly linked list). In this way
+%each ordinary node has at least $d$ nodes (the $d$ roots) to choose from
+%in order to select its neighbors. In other words, each node has to
+%select the best $d$ nodes that minimize the function above. 
 
 To get further details about this model, we suggest the following
 readings:
@@ -121,42 +129,66 @@ Relationships of the Internet Topology''\\
 
 The model should generate a topology that exhibits a power-law bound
 on the in-degree sequence of nodes; but, as stated in the second
-previously listed paper, this power-law prediction is not true.
+previously listed paper, this power-law prediction is not true. In fact
+this preferential attachment model does not generate always such an
+in-degree sequence 
+distribution, but for some parameter values it shows a power-law like
+behaviour. 
 
 \section{What we need to code}
+\label{s:coding}
 
-Our aim is to have a component able to produce the desired topology
-according to the $\alpha$ and $d$ parameters. We are not interested
+Our aim is to write a standard \psim~component able to produce the
+desired topology according to the $\alpha$ parameter. Apart from the
+$\alpha$ parameter, the algorithm relies also on how the nodes are
+distributed in the squared area. We choose to initialize their
+2d-coordinates using a uniformly random distribution.
+
+We are not interested
 in building the topology in a set of steps over time: we want
-something like an initializer that arranges the wiring from scratch in
+something like a topology initializer that arranges the wiring from scratch in
 one step.
 
-In order to obtain this behavior, we need to write the following
-Java classes:  
+In order to build the desired topology, we need to extend or implement
+the following classes/interfaces:  
 
 \begin{itemize}
 
-\item the protocol class: the protocol itself does nothing because 
-we want something that auto-magically builds this topology model from 
-a raw list of unconnected nodes. This class is a sort of structure to
-collect some needed values, such as the node space coordinates, the
-hop distance, the in-degree counter and so on.  
+\item the \emph{Protocol} class: the protocol itself does nothing; we
+  need a place to store some informations, such as the coordinates.
 The reader can think to this class as ``glue code''.
  
-\item a \emph{Control} class to initialize coordinates and to wire nodes
-  according to the rules described in Section~\ref{sec:rule}. The
-  wiring mechanism is based on a peersim feature
-  (\emph{peersim.dynamics.WireByMethod} class) that makes the creation of
-  factories out of any static method, a straightforward
-  process. However we can consider this component as the topology
-  factory class. 
+\item the \emph{Control} interface: we need several \emph{Control}
+  implementing classes in order to perform the following task:
 
-\item a \emph{Control} to monitor and collect statistics about the
-  generated topology. It has to to print to file the coordinates (in
-  order to visualize the topology) and to collect statistics about the
+\begin{itemize}
+
+\item Initialize the 2d-coordinates for each node and select an
+  initial root node.
+
+\item An observer is needed to print the topology to a file (e.g., to
+  visualize the generated graph using GnuPlot).
+
+\item An observer can be used to collect statistics about the
   in-degree distribution.
 
+\item Another observer can test the topology robustness to random node
+  failures.
+
 \end{itemize}
+
+\item A class dedicated to the actual node wiring process according to
+  the rules described in Section~\ref{sec:rule}. It can be considered
+  as a \emph{factory} component.
+
+\end{itemize}
+
+As we will see in next sections, some of the classes we intend to code
+are not needed. \psim~standard components can be used instead. It is
+important to decouple carefully all the tasks we intend to accomplish in
+order to figure out if there are ``common patterns'' that are already
+available and ready to use.
+
 
 \section{Code writing}
 
@@ -166,413 +198,424 @@ As we stated so far, the protocol code is minimal:
 
 \footnotesize
 \begin{verbatim}
- import peersim.core.IdleProtocol;
- 
- public class InetNodeProtocol extends IdleProtocol {
-     // coordinates in space:
-     public double x;
-     public double y;
-     
-     public int in_degree;
-     public int hops;
-     public boolean isroot;
-    
-     /** Creates a new instance of hotNodeProtocol */
-     public InetNodeProtocol(String prefix, Object obj) {
-    super(prefix);
-         in_degree = 0;
-         hops = 0;
-         isroot = false;
-     }
-     
-     public Object clone() throws CloneNotSupportedException {
-         InetNodeProtocol af = (InetNodeProtocol) super.clone();
-         ...
-         return af;
-     }
-    
-     public void nextCycle(peersim.core.Node, int protocolID) {
-     }
+package example.hot;
 
+import peersim.core.Protocol;
+
+public class InetCoordinates implements Protocol {
+
+    // ------------------------------------------------------------------------
+    // Fields
+    // ------------------------------------------------------------------------
+    /** 2d coordinates components. */
+    private double x, y;
+
+    // ------------------------------------------------------------------------
+    // Constructor
+    // ------------------------------------------------------------------------
+    public InetCoordinates(String prefix) {
+        /* Un-initialized coordinates defaults to -1. */
+        x = y = -1;
+    }
+
+    public Object clone() {
+        InetCoordinates inp = null;
+        try {
+            inp = (InetCoordinates) super.clone();
+        } catch (CloneNotSupportedException e) {
+        } // never happens
+        return inp;
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
+}
 \end{verbatim}
 \normalsize
 
-The \emph{nextCycle()} method is empty, so it is presence is completely 
-optional. The class is basically a structure encapsulated in an
-object. Another solution could be to define a specialized sub-class of
-\emph{peersim.core.GeneralNode} in which the variables can be stored
+The actual ``who knows whom'' relation (the topology) container is decoupled
+from this class. Any standard \psim~component implementing the
+\emph{Linkable} interface can be used (see the configuration file in
+Section~\ref{s:experiments}). 
+
+The class is basically a structure encapsulated in an
+object to hold the $x$ and $y$ coordinate components. Another solution
+could be to define a specialized sub-class of 
+\emph{peersim.core.GeneralNode} in which the coordinate be stored
 and then use \emph{peersim.core.IdleProtocol} to handle the nodes
 ``who knows whom'' relations. Both the approaches are identical in
 practice, it is just a developer choice. The reader can implement this
 second suggestion just for exercise.
 
+The \emph{clone()} method must be redefined according to the
+\emph{Protocol} class contract. It does not have to do much: there
+are only primitive types that are cloned by default.
 
-\subsection{The factory class}
+The coordinates components are not public and can be accessed by their
+getter/setter methods.
 
-The factory first work is to initialize the structure hold in the
-protocol class. Basically, it has to assign random coordinates to
-nodes, to reset the hop count and to mark nodes as non-root.
-
-From the outside (means from the peersim configuration file) only two 
-main parameters are required: the \emph{Linkable} enabled protocol to
-initialize and the outbound degree $d$. the $\alpha$ parameter is
-handled elsewhere, we will see later how and where it is managed. 
-The constructor method 
-takes care of collecting these parameters or to set up the corresponding 
-default values.
+\subsection{Initialization class}
+\label{s:init}
 
 \footnotesize
 \begin{verbatim}
+package example.hot;
+
+import peersim.config.Configuration;
+import peersim.core.CommonState;
+import peersim.core.Control;
+import peersim.core.Network;
+import peersim.core.Node;
+
 public class InetInitializer implements Control {
-     /** 
-      * String name of the parameter that defines the protocol to initialize.
-     * Parameter read will has the full name
-     * <tt>prefix+"."+PAR_PROT</tt>
+    // ------------------------------------------------------------------------
+    // Parameters
+    // ------------------------------------------------------------------------
+    private static final String PAR_PROT = "protocol";
+
+    // ------------------------------------------------------------------------
+    // Fields
+    // ------------------------------------------------------------------------
+    /** Protocol identifier, obtained from config property {@link #PAR_PROT}. */
+    private static int pid;
+
+    // ------------------------------------------------------------------------
+    // Constructor
+    // ------------------------------------------------------------------------
+    public InetInitializer(String prefix) {
+        pid = Configuration.getPid(prefix + "." + PAR_PROT);
+    }
+
+    // ------------------------------------------------------------------------
+    // Methods
+    // ------------------------------------------------------------------------
+    /**
+     * Initialize the node coordinates. The first node in the {@link Network} is
+     * the root node by default and it is located in the middle (the center of
+     * the square) of the surface area.
      */
-     public static final String PAR_PROT = "protocol";
- 
-     /**
-      * String name of the parameter about the out degree value.
-     */
-     public static final String PAR_OUTDEGREE = "d";
-     
-     /**
-      * String name of the parameter used as a maximum x or y coordinate. All the 
-      * nodes are on a square region.
-     */
-     public static final String PAR_MAX_COORD = "max_coord";
-    
-     ....
-     
-     /** Creates a new instance of InetInitializer */
-     public InetInitializer(String prefix) {
-         // super(prefix);
-         pid = Configuration.getPid(prefix+"."+PAR_PROT);
-         d = Configuration.getInt(prefix+"."+PAR_OUTDEGREE);
-         
-         maxcoord = Configuration.getDouble(prefix + "." + PAR_MAX_COORD, 1.0);
-     }
-}
-\end{verbatim}
-\normalsize
-     
-The class implements the \emph{Control} interface and thus the
-\emph{execute()} method is mandatory. Here, the actual node initialization
-is performed.
+    public boolean execute() {
+        // Set the root: the index 0 node by default.
+        Node n = Network.get(0);
+        InetCoordinates prot = (InetCoordinates) n
+                .getProtocol(pid);
+        prot.setX(0.5);
+        prot.setY(0.5);
 
-The next step regards the tree root(s) election. If there is only a
-single root, its coordinates are centered in the square (default edge
-size: 1.0), otherwise
-random coordinates are assigned (as for any ordinary node).
-
-\footnotesize 
-\begin{verbatim}
- public boolean execute() {
-        Random rnd = CommonState.r;
-        System.out.println(DEBUG_STRING + "size: " + Network.size()
-                + " outdegree: " + d);
-
-        // build outdegree roots
-        System.out.println(DEBUG_STRING + "Generating " + d
-                + " root(s), means out degree " + d + "...");
-        for (int i = 0; i < d; ++i) {
-            Node n = (Node) Network.get(i);
-            InetNodeProtocol prot = (InetNodeProtocol) n.getProtocol(pid);
-            prot.isroot = true;
-            prot.hops = 0;
-            prot.in_degree = 0;
-            if (d == 1) {
-                prot.x = maxcoord / 2;
-                prot.y = maxcoord / 2;
-            } else { // more than one root
-                if (rnd.nextBoolean()) {
-                    prot.x = maxcoord / 2 + (rnd.nextDouble() * 0.1);
-                } else {
-                    prot.x = maxcoord / 2 - (rnd.nextDouble() * 0.1);
-                }
-                if (rnd.nextBoolean()) {
-                    prot.y = maxcoord / 2 + (rnd.nextDouble() * 0.1);
-                } else {
-                    prot.y = maxcoord / 2 - (rnd.nextDouble() * 0.1);
-                }
-                System.out.println("root coord: " + prot.x + " " + prot.y);
-            }
-        }
-
-        // Set coordinates x,y and set indegree 0
-        System.out.println(DEBUG_STRING
-                + "Generating random cordinates for nodes...");
-        for (int i = d; i < Network.size(); i++) {
-            Node n = (Node) Network.get(i);
-            InetNodeProtocol prot = (InetNodeProtocol) n.getProtocol(pid);
-            if (maxcoord == 1.0) {
-                prot.x = rnd.nextDouble();
-                prot.y = rnd.nextDouble();
-            } else {
-                prot.x = rnd.nextInt((int) maxcoord);
-                prot.y = rnd.nextInt((int) maxcoord);
-            }
-            prot.in_degree = 0;
+        // Set coordinates x,y
+        for (int i = 1; i < Network.size(); i++) {
+            n = Network.get(i);
+            prot = (InetCoordinates) n.getProtocol(pid);
+            prot.setX(CommonState.r.nextDouble());
+            prot.setY(CommonState.r.nextDouble());
         }
         return false;
     }
+
+}
 \end{verbatim}
 \normalsize
 
-The actual factory is responsible of the wiring process. The factory pattern
-is obtained using the \emph{peersim.dynamics.WireByMethod} class. This
-peersim feature allows to specify, in the config file, a class to be used
-as an \emph{indirect factory} and one of its method. The specified
-method has some constraints: it has to be static and its first
-argument must be a \emph{Graph} type. The \emph{Graph} interface is
-very useful in peersim because it let the developer to access to the node
-topology with a graph-like abstraction and to apply graph algorithms
-(many algorithms can be found in \emph{peersim.graphGraphAlgorithms}
-class).
+The initialization class has to implement the \emph{Control} interface
+and its only method: \emph{execute()}. 
+The constructor reads the only parameter (\texttt{protocol}) from 
+the configuration
+file. It declares the protocol holding the coordinates.
 
-Other parameters can be declared for the static method with the
-parameter \texttt{arg} followed by a index number starting from 1 (the
-argument 0 is by default the graph object). A working setup can be
-the following:
+The class is very simple, it
+has to generate uniformly random numbers for each node coordinate
+components ($x$ and $y$). The only exception is the root node that, by
+default, is the index 0 node. Its coordinate is forced to be $(0.5,
+0.5)$. This particular choice is to generate nice looking graphs when
+it is time to plot them.
+
+To generate random number, the static field \texttt{r} of
+\emph{CommonState} is used.
+
+\subsection{The factory class}
+\label{s:factory}
+
+The factory class uses the features of a standard \psim~component:
+\emph{peersim.dynamics.WireGraph} (it is a \emph{Control}
+instance). The overlay is wired using the 
+\emph{Graph} API methods; the wiring logic has to be in the
+\emph{wire()} method that is called by the superclass.
+
+The class has to read from the configuration file both the $\alpha$
+value parameter (\texttt{alpha} in the config file) and the coordinate
+container protocol identifier (\texttt{coord\_protocol} in the config
+file). This
+is done in the class constructor. The other parameter, \texttt{protocol}
+is inherited by the superclass: it is the \emph{Linkable}
+implementing protocol identifier.
+
+The \emph{wire()} method contains the wiring rules described in
+Section~\ref{sec:rule}.
+
+To keep track of the hop distances, a network sized integer array is
+used. Each index $i$ slot value corresponds to the $node_{i}$ hop distance from the
+root.
+
+By default, the wiring process considers the index 0 node as the root.
+
+A static utility method, \emph{distance()}, gives the Euclidean
+distance between two nodes.
+
 
 \footnotesize
 \begin{verbatim}
-init.1 WireByMethod
-init.1.class example.hot.InetInitializer
-init.1.method wireHOTOverlay
-init.1.arg1 2 # d
-init.1.arg2 0.5 # alfa , default 0.5 
-\end{verbatim}
-\normalsize
+package example.hot;
 
-Our class implements the actual factory method in
-\emph{wireHOTOverlay()}, however by default \emph{WireByMethod} invokes
-a plain \emph{wire()} method (that is also present and simply calls
-our specialized one). The parameters are the degree $d$
-and the $\alpha$ value. Here, in fact, is where the $\alpha$ parameter
-come into play.
+import peersim.config.Configuration;
+import peersim.core.Linkable;
+import peersim.core.Network;
+import peersim.core.Node;
+import peersim.dynamics.WireGraph;
+import peersim.graph.Graph;
 
-If there are more than one root node, the factory  
-joins them together in a ring (connections are non oriented). As an exercise, 
-the reader can change this choice implementing something else (ex: putting 
-the root nodes in a fully connected topology or a random graph or
-whatever).
+public class WireInetTopology extends WireGraph {
+    // ------------------------------------------------------------------------
+    // Parameters
+    // ------------------------------------------------------------------------
+    private static final String PAR_ALPHA = "alpha";
 
-Then, the wiring process does the following: for each node $n$ other than
-root(s), it takes exactly $d$ nodes that minimizes the formula (see
-Section \ref{sec:rule} and connects node $n$ those $d$ nodes.
+    private static final String PAR_COORDINATES_PROT = "coord_protocol";
 
-\footnotesize
-\begin{verbatim}
-public static void wireHOTOverlay(Graph g, int outDegree, double alfa) {
-        // Connect the roots in a ring if needed (thus, if there are more than 1
-        // root nodes.
-        if (outDegree > 1) {
-            System.out.println(DEBUG_STRING + "Putting roots in a ring...");
-            for (int i = 0; i < outDegree; i++) {
-                Node n = (Node) g.getNode(i);
-                ((InetNodeProtocol) n.getProtocol(pid)).in_degree++;
-                n = (Node) g.getNode(i + 1);
-                ((InetNodeProtocol) n.getProtocol(pid)).in_degree++;
+    // --------------------------------------------------------------------------
+    // Fields
+    // --------------------------------------------------------------------------
+    /* A parameter that affects the distance importance. */
+    private final double alpha;
 
-                g.setEdge(i, i + 1);
-                g.setEdge(i + 1, i);
-            }
-            Node n = (Node) g.getNode(0);
-            ((InetNodeProtocol) n.getProtocol(pid)).in_degree++;
-            n = (Node) g.getNode(outDegree);
-            ((InetNodeProtocol) n.getProtocol(pid)).in_degree++;
-            g.setEdge(0, outDegree);
-            g.setEdge(outDegree, 0);
-        }
+    /** Coordinate protocol pid. */
+    private final int coordPid;
 
-        // for all the nodes other than root(s), connect them!
-        for (int i = outDegree; i < Network.size(); ++i) {
+    // --------------------------------------------------------------------------
+    // Initialization
+    // --------------------------------------------------------------------------
+    public WireInetTopology(String prefix) {
+        super(prefix);
+        alpha = Configuration.getDouble(prefix + "." + PAR_ALPHA, 0.5);
+        coordPid = Configuration.getPid(prefix + "." + PAR_COORDINATES_PROT);
+    }
+
+    /**
+     * Performs the actual wiring. 
+     * @param g
+     *            a {@link peersim.graph.Graph} interface object to work on.
+     */
+    public void wire(Graph g) {
+        /** Contains the distance in hops from the root node for each node. */
+        int[] hops = new int[Network.size()];
+        // connect all the nodes other than roots
+        for (int i = 1; i < Network.size(); ++i) {
             Node n = (Node) g.getNode(i);
-            InetNodeProtocol prot = (InetNodeProtocol) n.getProtocol(pid);
 
-            prot.isroot = false;
-
-            Node candidate = null;
+            // Look for a suitable parent node between those allready part of
+            // the overlay topology: alias FIND THE MINIMUM!
+            // Node candidate = null;
             int candidate_index = 0;
             double min = Double.POSITIVE_INFINITY;
-            if (outDegree > 1) {
-                int candidates[] = getParents(g, pid, i, outDegree, alfa);
-                for (int s = 0; s < candidates.length; s++) {
-                    g.setEdge(i, candidates[s]);
-                    Node nd = (Node) g.getNode(candidates[s]);
-                    InetNodeProtocol prot_parent = (InetNodeProtocol) nd
-                            .getProtocol(pid);
-                    prot_parent.in_degree++;
+            for (int j = 0; j < i; j++) {
+                Node parent = (Node) g.getNode(j);
+                double jHopDistance = hops[j];
+
+                double value = jHopDistance
+                        + (alpha * distance(n, parent, coordPid));
+                if (value < min) {
+                    // candidate = parent; // best parent node to connect to
+                    min = value;
+                    candidate_index = j;
                 }
-                // sets hop
-                prot.hops = minHop(g, candidates, pid) + 1;
-            } else { // degree 1:
-                for (int j = 0; j < i; j++) {
-                    Node parent = (Node) g.getNode(j);
-                    double value = hops(parent, pid)
-                            + (alfa * distance(n, parent, pid));
-                    if (value < min) {
-                        candidate = parent; // best parent node to connect to
-                        min = value;
-                        candidate_index = j;
-                    }
-                }
-                prot.hops = ((InetNodeProtocol) candidate.getProtocol(pid)).hops + 1;
-                g.setEdge(i, candidate_index);
-                ((InetNodeProtocol) candidate.getProtocol(pid)).in_degree++;
             }
+
+            hops[i] = hops[candidate_index] + 1;
+            g.setEdge(i, candidate_index);
         }
     }
+
+    private static double distance(Node new_node, Node old_node, int coordPid) {
+        double x1 = ((InetCoordinates) new_node.getProtocol(coordPid))
+                .getX();
+        double x2 = ((InetCoordinates) old_node.getProtocol(coordPid))
+                .getX();
+        double y1 = ((InetCoordinates) new_node.getProtocol(coordPid))
+                .getY();
+        double y2 = ((InetCoordinates) old_node.getProtocol(coordPid))
+                .getY();
+        if (x1 == -1 | x2 == -1 | y1 == -1 | y2 == -1)
+            throw new RuntimeException(
+                    "Found un-initialized coordinate. Use e.g.,\
+                    InetInitializer class in the config file.");
+        return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+    }
+}
 \end{verbatim}
 \normalsize
+     
+\subsection{The observers}
+\label{s:observers}
 
-Some other companion methods are needed to provide utility
-functions. They are all static and private in order to be visible from
-the factory method. Their functions are quite straightforward and can 
-be guessed by the method signature; nevertheless, a few comments are 
-presented in the following table:
+Some of the observer tasks depicted in Section~\ref{s:coding} can be performed
+by standard \psim~components available in the distribution. 
+
+For example, to compute statistics regarding the degree distribution, the user can
+use the \emph{peersim.reports.DegreeStats} object. To test the network
+robustness, \emph{RandRemoval} can be used: it kills nodes randomly
+and prints statistics about the number of generated clusters and their
+size.\\
+
+However, to dump the topology to a file in a plottable form, we still
+need to write our observer: \emph{InetObserver} implementing the \emph{Control}
+interface and the corresponding 
+\emph{execute()} method. To ease even further our job, we decided to
+not implement directly the \emph{Control} interface, but to extend
+\emph{persim.reports.GraphObserver}. This template class gives us a
+graph API to interact with the protocol to be inspected.
+
+The constructor takes care of reading the parameters from the
+configuration file. The \texttt{protocol} parameter refers to the
+protocol identifier holding the ``who knows whom'' relation (it is a
+\emph{Linkable} protocol). It is inherited by the superclass.
+
+The other parameters, \texttt{coord\_protocol} and \texttt{file\_base},
+correspond respectively to the coordinate container protocol
+identifier and to the filename base used. 
+The final filename generated by
+the program is: 
 
 \begin{center}
-\begin{tabular}{|l|p{4in}|}
-\hline
-\emph{getParents()} & get the the current node best d candidates to 
-connect to\\
-\hline
-\emph{hops()} & return the graph distance in terms of hops from the 
-root of the node given as a parameter\\
-\hline
-\emph{minHops()} & return the minimum hop valued node between the 
-specified nodes\\
-\hline
-\emph{distance()} & get the standard Euclidean distance between two nodes\\
-\hline
-\end{tabular}
+$<$file\_base$>$ + \%08d + .dat 
 \end{center}
 
+The number in the middle of the filename keeps track of the current
+cycle number; 8 digits are available as a cycle counter. 
+This is due to the fact that, as any control object, the
+observer can run at every cycle and in this case a
+different file has to be generated at each time. 
+
 \footnotesize
 \begin{verbatim}
-private static int[] getParents(Graph g, int pid, int cur_node_index,
-    int how_many, double alfa) {
-    int result[] = new int[how_many];
-    ArrayList net_copy = new ArrayList(cur_node_index);
-    // fill up the sub net copy:
-    for (int j = 0; j < cur_node_index; j++) {
-        net_copy.add(j, (Node) g.getNode(j));
+package example.hot;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+
+import peersim.config.Configuration;
+import peersim.core.Node;
+import peersim.graph.Graph;
+import peersim.reports.GraphObserver;
+import peersim.util.FileNameGenerator;
+
+public class InetObserver extends GraphObserver {
+    // ------------------------------------------------------------------------
+    // Parameters
+    // ------------------------------------------------------------------------
+    private static final String PAR_FILENAME_BASE = "file_base";
+
+    private static final String PAR_COORDINATES_PROT = "coord_protocol";
+
+    // ------------------------------------------------------------------------
+    // Fields
+    // ------------------------------------------------------------------------
+
+    private final String graph_filename;
+
+    private final FileNameGenerator fng;
+
+    private final int coordPid;
+
+    // ------------------------------------------------------------------------
+    // Constructor
+    // ------------------------------------------------------------------------
+    public InetObserver(String prefix) {
+        super(prefix);
+        coordPid = Configuration.getPid(prefix + "." + PAR_COORDINATES_PROT);
+        graph_filename = Configuration.getString(prefix + "."
+                + PAR_FILENAME_BASE, "graph_dump");
+        fng = new FileNameGenerator(graph_filename, ".dat");
     }
 
-    // it needs exactly how_many minimums!
-    for (int k = 0; k < how_many; k++) {
-        int candidate_index = 0;
-        double min = Double.POSITIVE_INFINITY;
-        // for all the elements in the copy...
-        for (int j = 0; j < net_copy.size(); j++) {
-            Node parent = (Node) net_copy.get(j);
-            double value = hops(parent, pid)
-                + (alfa * distance((Node) g.getNode(cur_node_index),
-                    parent, pid));
-            if (value < min) {
-                min = value;
-                candidate_index = j;
+    // Control interface method.
+    public boolean execute() {
+        try {
+            updateGraph();
+
+            System.out.print(name + ": ");
+
+            // initialize output streams
+            String fname = fng.nextCounterName();
+            FileOutputStream fos = new FileOutputStream(fname);
+            System.out.println("Writing to file " + fname);
+            PrintStream pstr = new PrintStream(fos);
+
+            // dump topology:
+            graphToFile(g, pstr, coordPid);
+
+            fos.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return false;
+    }
+
+    private static void graphToFile(Graph g, PrintStream ps, int coordPid) {
+        for (int i = 1; i < g.size(); i++) {
+            Node current = (Node) g.getNode(i);
+            double x_to = ((InetCoordinates) current
+                    .getProtocol(coordPid)).getX();
+            double y_to = ((InetCoordinates) current
+                    .getProtocol(coordPid)).getY();
+            for (int index : g.getNeighbours(i)) {
+                Node n = (Node) g.getNode(index);
+                double x_from = ((InetCoordinates) n
+                        .getProtocol(coordPid)).getX();
+                double y_from = ((InetCoordinates) n
+                        .getProtocol(coordPid)).getY();
+                ps.println(x_from + " " + y_from);
+                ps.println(x_to + " " + y_to);
+                ps.println();
             }
         }
-        result[k] = candidate_index; // collect the parent node
-        net_copy.remove(candidate_index); // delete the min from the net
-                                                // copy
-    }
-    return result;
-}
-
-private static int hops(Node node, int pid) {
-    return ((InetNodeProtocol) node.getProtocol(pid)).hops;
-}
-
-private static int minHop(Graph g, int[] indexes, int pid) {
-    int min = Integer.MAX_VALUE;
-    for (int s = 0; s < indexes.length; s++) {
-        Node parent = (Node) g.getNode(indexes[s]);
-        int value = ((InetNodeProtocol) parent.getProtocol(pid)).hops;
-        if (value < min) {
-            min = value;
-        }
-    }
-    return min;
-}
-
-private static double distance(Node new_node, Node old_node, int pid) {
-    double x1 = ((InetNodeProtocol) new_node.getProtocol(pid)).x;
-    double x2 = ((InetNodeProtocol) old_node.getProtocol(pid)).x;
-    double y1 = ((InetNodeProtocol) new_node.getProtocol(pid)).y;
-    double y2 = ((InetNodeProtocol) old_node.getProtocol(pid)).y;
-
-    return Math.sqrt(Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2));
-}
-\end{verbatim}
-\normalsize
-
-\subsection{The observer}
-
-The observer, \emph{InetObserver}, implements the \emph{Control} interface and the corresponding
-\emph{execute()} method. The only mandatory parameter is the protocol
-id of the protocol to be monitored. The file names to write to are
-optional, since a default value is present.
-
-To ensure a single run, the \texttt{at} \emph{Scheduler} parameter is
-used in the config file.
-
-\footnotesize
-\begin{verbatim}
-public class InetObserver implements Control {
-    
-    private static final String PAR_PROT = "protocol";
-
-    ...
-    
-    private static int pid; // protocol index
-
-    private static PrintWriter graph_fileout;
-
-    private static PrintWriter dg_fileout;
-
-    private String graph_filename = "graph.dat"; // file name sring to write
-
-    private String dg_filename = "degree_graph.dat"; // file name string to
-
-    public InetObserver(String prefix) {
-        super();
-        pid = Configuration.getPid(prefix + "." + PAR_PROT);
-        graph_filename = Configuration.getString(prefix + "."
-                + PAR_GRAPH_FILENAME, "graph.dat");
-        dg_filename = Configuration.getString(prefix + "."
-                + PAR_GRAPH_DEGREE_FILENAME, "degree_graph.dat");
-        rcheck = Configuration.contains(prefix + "." + PAR_ROBUSTNESS);
-
-        try {
-            graph_fileout = new PrintWriter(new FileWriter(graph_filename));
-            System.out.println(prefix + " filename: " + graph_filename
-                    + " selected");
-        } catch (Exception e) {
-            ;
-        }
-
-        try {
-            dg_fileout = new PrintWriter(new FileWriter(dg_filename));
-            System.out.println(prefix + " filename: " + dg_filename
-                    + " selected");
-        } catch (Exception e) {
-            ;
-        }
     }
 }
 \end{verbatim}
 \normalsize
 
-The observer task is to write collected data on stable storage. Two kind of
-operations are performed. In the first one, for each node
+In the \emph{execute()} method we MUST call \emph{updateGraph()} (a
+\emph{GraphObserver} protected method) in order to check if some
+change has occurred on the actual graph. 
+The scope of this mechanism is to save the time of constructing the
+graph if many observers are run on the same graph. Time savings can be very
+significant if the undirected version of the same graph is observed by
+many observers.
+
+In addition, note that in \emph{execute()} method the IO library functions
+used may throw some exceptions. In case of troubles, any kind of
+exception is catch-ed, but a runtime exception is thrown to stop the
+process. 
+
+The static utility method \emph{graphToFile()} writes to disk the
+actual topology. The idea is simple: for each node
 $n$, the $x$ and $y$ coordinates are collected and then for each
 neighbor $i$ of node $n$ the coordinates are written in the following
-format:  
-
+format: 
 
 \footnotesize
 \begin{verbatim}
@@ -584,115 +627,46 @@ format:
 
 The particular line triplet formatting order suits the gluplot needs. 
 Please note that the for loop starts from index $1$, not from $0$;
-this is due to the fact that there is at least a single root node. 
-
-
-\footnotesize
-\begin{verbatim}
-     private void graphToFile(peersim.graph.Graph g) {
-        if (graph_fileout != null) {
-            try {
-                // Starts from 1 because for sure node 0 is a root
-                for (int i = 1; i < g.size(); i++) {
-                    Node current = (Node) g.getNode(i);
-                    double x_to = ((InetNodeProtocol) current.getProtocol(pid)).x;
-                    double y_to = ((InetNodeProtocol) current.getProtocol(pid)).y;
-                    Collection col = g.getNeighbours(i);
-                    if (col.isEmpty())
-                        continue; // another root is found, skip!
-                    Iterator it = (Iterator) col.iterator();
-                    while (it.hasNext()) {
-                        int index = ((Integer) it.next()).intValue();
-                        Node n = (Node) g.getNode(index);
-                        double x_from = ((InetNodeProtocol) n.getProtocol(pid)).x;
-                        double y_from = ((InetNodeProtocol) n.getProtocol(pid)).y;
-                        graph_fileout.println(x_from + " " + y_from);
-                        graph_fileout.println(x_to + " " + y_to);
-                        graph_fileout.println("");
-                    }
-                }
-                graph_fileout.close();
-            } catch (Exception e) {
-                ;
-            }
-        }
-    }
-\end{verbatim}
-\normalsize
-
-The second data collecting method builds an array of in-degree frequencies 
-and an array of in-degree probability and dumps the second collection to file.
-
-\footnotesize
-\begin{verbatim}
-private void dgDistribToFile(peersim.graph.Graph g) {
-         if (dg_fileout != null) { 
-             int size = g.size();
-             try {
-                 int[] dgfrq = new int[size];
-                 double[] dgprob = new double[size];
-                 for (int i = 0 ; i < size ; i++) { // do not plot leaves
-                     Node n = (Node)g.getNode(i);
-                     InetNodeProtocol protocol = (InetNodeProtocol)n.getProtocol(pid);
-                     int degree = protocol.in_degree;
-                     dgfrq[degree]++;
-                 }
-                 double sum = 0;
-                 for (int i = size-1 ; i > 0 ; i--) {
-                     dgprob[i] = (dgfrq[i] + sum)/size;
-                     sum += dgfrq[i];
-                 }
-                 // do not count index 0: 'cos the leafs degree is clearly 0!
-                 for (int i = 0 ; i < dgprob.length ; i++ ) {
-                     double k = (double)i/size;
-                     dg_fileout.println(k+" "+dgprob[i]);
-                 }
-                 dg_fileout.close();
-             }
-             catch (Exception e) {e.printStackTrace();
-                 System.out.println(e);}
-         }   
-     }
- }
-\end{verbatim}
-\normalsize
-
+this is due to the fact that node 0 is the root and has no out-bound
+connections.
 
 \section{Experiments}
+\label{s:experiments}
 
- In order to make the model run, a proper peersim configuration file is 
+In order to make the model run, a proper \psim~configuration file is 
 needed. The one presented in the following lines may suits the reader needs:
 
 \footnotesize
 \begin{verbatim}
 # Complex Network file:
-random.seed 1234567890
+#random.seed 1234567890
 simulation.cycles 1
 
-overlay.size 10000
-overlay.maxSize 100000
+network.size 10000
 
-protocol.0 example.hot.InetNodeProtocol
-#protocol.0.maxcoord 1000
+protocol.link IdleProtocol
+
+protocol.coord example.hot.InetCoordinates
 
 init.0 example.hot.InetInitializer
-#init.0.max_coord 1000
-init.0.protocol 0
-init.0.d 1
+init.0.protocol coord
 
-init.1 peersim.dynamics.WireByMethod
-init.1.protocol 0
-init.1.class example.hot.InetInitializer
-init.1.method wireHOTOverlay
-init.1.arg1 1 # d
-init.1.arg2 4 # alfa , default 0.5   
+init.1 example.hot.WireInetTopology
+init.1.protocol link #the linkable to be wired
+init.1.coord_protocol coord
+init.1.alpha 4
 
-control.0 example.hot.InetObserver
-control.0.protocol 0
-#control.0.graph_file ./graph.dat
-#control.0.graph_degree ./degree_graph.dat
-#control.0.robustness
-control.0.at 0
+control.io example.hot.InetObserver
+control.io.protocol link
+control.io.coord_protocol coord
+control.io.file_base graph
+
+control.degree DegreeStats
+control.degree.protocol link
+control.degree.undir
+control.degree.method freq
+
+include.control io degree
 \end{verbatim}
 \normalsize
 
@@ -709,16 +683,54 @@ $\sqrt{netsize}$, the topology tends to be random and not clustered at all
 (the second row of images). For deeper details, please consult the previously
 listed papers.
 
-All the images has been produced using only one root node and only 
-one outbound connection per node. Using two or more outbound connection 
-per node leads to a massively crowded plot, so it is not a very nice picture 
-to plot!
+As stated in Section~\ref{s:observers}, the \emph{DegreeStats} standard
+component can be used to collect degree statistics. However, it should 
+be used carefully. By default in \psim,
+the ``degree'' is the out-bound degree, while we are interested in the
+in-degree. This holds in directed graphs; if the graph is undirected,
+the degree is the sum of the out-bound and in-bound degree. So, how
+can we inspect the in-degree? The idea is very simple. First we need
+to consider the graph as \textbf{undirected} (\texttt{undir}
+parameter) and we choose the frequency statistics (\texttt{freq}
+parameter) in order to produce our plots. The observer will
+print something like:
 
-\begin{figure}
+\footnotesize
+\begin{verbatim}
+1 9838
+2 38
+3 19
+4 14
+5 7
+6 7
+7 7
+8 4
+9 3
+10 3
+11 1
+12 5
+...
+...
+543 1
+566 1
+620 1
+653 1
+2153 1
+\end{verbatim}
+\normalsize
+
+The first column corresponds to the degree, while the second to the
+number of nodes having that degree. We know for sure that for each node, apart from the
+root, there is only one out-bound link. Thus to extract the in-degree
+we simply need to subtract 1 from the first column items.
+
+The values shown previously, have been generated with $\alpha = 4$. 
+
+\begin{figure}[tb!]
 \begin{center}
 \includegraphics[scale=0.6]{pic_alfa01.eps}
 \end{center}
-\caption{Topology with $\alpha$ 0.1\label{t01figure}}
+\caption{Topology with $\alpha$ 0.1: a star topology.\label{t01figure}}
 \end{figure}
 
 
@@ -730,56 +742,56 @@ power-law distribution; only in the case of $\alpha = 4$, the corresponding
 plot exhibits a power-law like behavior at least for a subset of the nodes, 
 but this is very different from what first listed paper was talking about.
 
-\begin{figure}
+\begin{figure}[tb!]
 \begin{center}
 \includegraphics[scale=0.6]{pic_alfa4.eps}
 \end{center}
 \caption{Topology with $\alpha$ 4\label{t4figure}}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[tb!]
 \begin{center}
 \includegraphics[scale=0.6]{picdegree_alfa4.eps}
 \end{center}
 \caption{In-degree distribution with $\alpha$ 4 \label{d4figure}}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[tb!]
 \begin{center}
 \includegraphics[scale=0.6]{pic_alfa20.eps}
 \end{center}
 \caption{Topology with $\alpha$ 20\label{t20figure}}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[tb!]
 \begin{center}
 \includegraphics[scale=0.6]{picdegree_alfa20.eps}
 \end{center}
 \caption{In-degree distribution with $\alpha$ 20 \label{d20figure}}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[tb!]
 \begin{center}
 \includegraphics[scale=0.6]{pic_alfa100.eps}
 \end{center}
 \caption{Topology with $\alpha$ 100\label{t100figure}}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[tb!]
 \begin{center}
 \includegraphics[scale=0.6]{picdegree_alfa100.eps}
 \end{center}
 \caption{In-degree distribution with $\alpha$ 100\label{d100figure}}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[tb!]
 \begin{center}
 \includegraphics[scale=0.6]{pic_alfa2000.eps}
 \end{center}
 \caption{Topology with $\alpha$ 2000\label{t2000figure}}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[tb!]
 \begin{center}
 \includegraphics[scale=0.6]{picdegree_alfa2000.eps}
 \end{center}

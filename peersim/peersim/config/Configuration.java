@@ -805,7 +805,7 @@ public static Class getClass(String name)
 		if (fullname != null) {
 			throw new IllegalParameterException(name,
 			"Class " + classname + 
-			" does not exists. Possible candidate(s): " +
+			" does not exist. Possible candidate(s): " +
 			fullname);
 		}		
 	}

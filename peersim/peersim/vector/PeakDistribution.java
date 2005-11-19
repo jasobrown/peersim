@@ -44,9 +44,9 @@ private static final String PAR_VALUE = "value";
 
 
 /** 
- * The number of peaks in the system. If this value is greater or equal than 
+ * The number of peaks in the system. If this value is greater than or equal to
  * 1, it is interpreted as the actual number of peaks. If it is included in 
- * the range [0, 1[ it is interpreted as a percentage with respect to the
+ * the range [0, 1] it is interpreted as a percentage with respect to the
  * current network size. Defaults to 1. 
  * @config
  */

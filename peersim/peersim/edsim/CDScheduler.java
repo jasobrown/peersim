@@ -29,7 +29,7 @@ import peersim.dynamics.NodeInitializer;
 * It implements {@link Control} but it will most often be invoked only
 * once for each protocol as an
 * initializer, since the scheduled events schedule themselves for the
-* consequtive executions (see {@link NextCycleEvent}).
+* consecutive executions (see {@link NextCycleEvent}).
 *
 * <p>All {@link CDProtocol} specifications in the configuration need to
 * contain a {@link Scheduler} specification at least for the step size

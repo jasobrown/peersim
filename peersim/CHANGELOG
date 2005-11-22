@@ -1,3 +1,7 @@
+AM 22/11/2005
+- Corrected a bug in RangeSimulator, pointed out by Spyros
+  (problems with jvm.options parameter)
+
 AM 11/11/2005
 VERSION 1.0 RELEASED
 ------------------------------------------------------------------

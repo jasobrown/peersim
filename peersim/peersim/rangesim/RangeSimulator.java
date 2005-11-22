@@ -146,7 +146,11 @@ public static void main(String[] args)
 	Configuration.setConfig(properties);
 	
 	// Read jvm options and separate them in different strings
-	jvmoptions = Configuration.getString(PAR_JVM, "").split(" ");
+	String opt = Configuration.getString(PAR_JVM, null);
+	if (opt == null)
+		jvmoptions = new String[0];
+	else
+		jvmoptions = opt.split(" ");
 
 	// Parse range parameters
 	parseRanges();

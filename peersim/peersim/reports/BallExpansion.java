@@ -52,7 +52,8 @@ private static final String PAR_MAXD = "maxd";
 
 /**
  * The number of nodes to print info about.
- * Defaults to 1000.
+ * Defaults to 1000. If larger than the current network size, then the
+ * current network size is used.
  * @config
  */
 private static final String PAR_N = "n";
@@ -101,33 +102,50 @@ public BallExpansion(String name)
 * If parameter {@value #PAR_STATS} is defined then the output is
 * produced by {@link IncrementalStats#toString}, over the values of minimal
 * distances from the given number of nodes to all other nodes in the network.
+* If at least one node is unreachable from any selected starting node, then
+* the path length is taken as infinity ans statistics are calculated
+* accordingly.
 * Otherwise one line is printed for all nodes we observe, containing the
 * number of nodes at distance 1, 2, etc, separated by spaces.
-* Finally, the {@value #PAR_N} nodes are not guaranteed to be the same nodes
-* over consecutive calls to this method.
+* In this output format, unreachable nodes are simply ignored, but of course
+* the sum of the numbers in one line can be used to detect partitioning if
+* necessary.
+* Finally, note that the {@value #PAR_N} nodes are not guaranteed to be the
+* same nodes over consecutive calls to this method.
 * @return always false
 */
-public boolean execute()
-{
+public boolean execute() {
+
 	updateGraph();
 	System.out.print(name + ": ");
 	rp.reset(g.size());
-	if (stats) {
+	if (stats)
+	{
 		IncrementalStats is = new IncrementalStats();
-		for (int i = 0; i < n && i < g.size(); ++i) {
+		for (int i = 0; i < n && i < g.size(); ++i)
+		{
 			ga.flooding(g, b, rp.next());
 			int j = 1;
-			while (j < b.length && b[j] > 0) {
+			while (j < b.length && b[j] > 0)
+			{
 				is.add(j, b[j++]);
+			}
+			if( j < b.length && is.getN()<g.size()-1 )
+			{
+				is.add( Double.POSITIVE_INFINITY );
 			}
 		}
 		System.out.println(is);
-	} else {
+	}
+	else
+	{
 		System.out.println();
-		for (int i = 0; i < n && i < g.size(); ++i) {
+		for (int i = 0; i < n && i < g.size(); ++i)
+		{
 			ga.flooding(g, b, rp.next());
 			int j = 0;
-			while (j < b.length && b[j] > 0) {
+			while (j < b.length && b[j] > 0)
+			{
 				System.out.print(b[j++] + " ");
 			}
 			System.out.println();

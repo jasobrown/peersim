@@ -28,6 +28,8 @@ import peersim.util.IncrementalStats;
 * In fact its functionality is a subset of the union of {@link Clustering}
 * and {@link BallExpansion}, and therefore is redundant,
 * but it is there for historical reasons.
+* @see BallExpansion
+* @see Clustering
 */
 public class GraphStats extends GraphObserver {
 
@@ -38,6 +40,9 @@ public class GraphStats extends GraphObserver {
 /** 
 * The number of nodes to use for
 * sampling average path length.
+* Statistics are printed over a set of node pairs.
+* To create the set of pairs, we select the given number of different nodes
+* first, and then pair all these nodes with every other node in the network.
 * If zero is given, then no statistics
 * will be printed about path length. If a negative value is given then
 * the value is the full size of the graph.
@@ -84,12 +89,17 @@ public GraphStats(String name) {
 
 /**
 * Returns staistics over minimal path length and clustering.
-* The output is {@link IncrementalStats#toString} over the set of
+* The output is the average over the set of
 * clustering coefficients of randomly selected nodes, and the
-* set of distances from randomly selected nodes to all the other nodes
-* (appended in one line).
+* set of distances from randomly selected nodes to all the other nodes.
+* The output is always concatenated in one line, containing zero, one or two
+* numbers (averages) as defined by the config parameters.
+* Note that the path length between a pair of nodes can be infinite, in which
+* case the statistics will reflect this (the average will be infinite, etc).
 * See also the configuration parameters.
 * @return always false
+* @see BallExpansion
+* @see Clustering
 */
 public boolean execute() {
 	
@@ -119,10 +129,11 @@ public boolean execute() {
 			for(int j=0; j<g.size(); ++j)
 			{
 				if( j==i ) continue;
-				stats.add(ga.d[j]);
+				stats.add( ga.d[j]>0 ? 
+					ga.d[j] : Double.POSITIVE_INFINITY );
 			}
 		}
-		System.out.print(stats.getAverage()+" ");
+		System.out.print(stats.getAverage());
 	}
 	
 	System.out.println();

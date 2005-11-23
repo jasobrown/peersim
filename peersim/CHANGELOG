@@ -1,3 +1,10 @@
+MJ 23/11/2005
+- Fixed a bug in GraphStats found by Spyros: it now handles partitioned
+  graphs correctly
+- Fixed the same bug in BallExpansion as well
+- Changed the classdocs of GraphStats that incorrectly stated that
+  it prints IncrementalStats.toString instead of just the average
+
 AM 22/11/2005
 - Corrected a bug in RangeSimulator, pointed out by Spyros
   (problems with jvm.options parameter)

@@ -197,7 +197,7 @@ public void initialize(Node n) {
 		
 		final long delay = firstDelay(sch[pid[i]].step);
 		final long nexttime = Math.max(time,sch[pid[i]].from)+delay;
-		if( nexttime < sch[pid[i]].until && nexttime >= sch[pid[i]].from )
+		if( nexttime < sch[pid[i]].until )
 			EDSimulator.add(nexttime-time, nceclone, n, pid[i]);
 	}
 }

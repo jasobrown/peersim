@@ -72,17 +72,15 @@ private void dfs( int from ) {
 
 	color[from]=GREY;
 
-	Iterator it=g.getNeighbours(from).iterator();
-	while( it.hasNext() )
+	for(int j:g.getNeighbours(from))
 	{
-		int j = ((Integer)it.next()).intValue();
 		if( color[j]==WHITE )
 		{
 			dfs(j);
 		}
 		else
 		{
-			if( color[j]<0 ) cluster.add(new Integer(color[j]));
+			if( color[j]<0 ) cluster.add(color[j]);
 		}
 	}
 
@@ -96,8 +94,9 @@ private void dfs( int from ) {
 * Its parameters and side-effects are identical to those of dfs.
 * In addition, it stores the shortest distances from "from" in {@link #d},
 * if it is not null. On return, <code>d[i]</code> contains the length of
-* the shortest path from "from" to "i", if such a path exists, or is
-* unspecified (actually left untouched) otherwise.
+* the shortest path from "from" to "i", if such a path exists, or it is
+* unchanged (ie the original value of <code>d[i]</code> is kept,
+* whatever that was.
 * <code>d</code> must either be long enough or null.
 */
 private void bfs( int from ) {
@@ -105,8 +104,8 @@ private void bfs( int from ) {
 	List<Integer> q = new LinkedList<Integer>();
 	int u, du;
 	
-	q.add( new Integer(from) );
-	q.add( new Integer(0) );
+	q.add(from);
+	q.add(0);
 	if( d != null ) d[from] = 0;
 
 	color[from]=GREY;
@@ -116,23 +115,20 @@ private void bfs( int from ) {
 		u = q.remove(0).intValue();
 		du = q.remove(0).intValue();
 		
-		Iterator it=g.getNeighbours(u).iterator();
-		while( it.hasNext() )
+		for(int j:g.getNeighbours(u))
 		{
-			Integer j = (Integer)it.next();
-			final int jj = j.intValue();
-			if( color[jj]==WHITE )
+			if( color[j]==WHITE )
 			{
-				color[jj]=GREY;
+				color[j]=GREY;
 				
 				q.add(j);
-				q.add(new Integer(du+1));
-				if( d != null ) d[jj] = du+1;
+				q.add(du+1);
+				if( d != null ) d[j] = du+1;
 			}
 			else
 			{
-				if( color[jj]<0 )
-					cluster.add(new Integer(color[jj]));
+				if( color[j]<0 )
+					cluster.add(color[j]);
 			}
 		}
 		color[u]=BLACK;
@@ -147,12 +143,9 @@ private void tarjanVisit(int i) {
 	color[i]=counter++;
 	root[i]=i;
 	stack.push(i);
-	int j;
 	
-	Iterator it=g.getNeighbours(i).iterator();
-	while( it.hasNext() )
+	for(int j:g.getNeighbours(i))
 	{
-		j = ((Integer)it.next()).intValue();
 		if( color[j]==WHITE )
 		{
 			tarjanVisit(j);
@@ -164,6 +157,7 @@ private void tarjanVisit(int i) {
 		}
 	}
 
+	int j;
 	if(root[i]==i) //this node is the root of its cluster
 	{
 		do
@@ -267,8 +261,7 @@ public static double clustering( Graph g, int i ) {
 	
 	for(int j=0; j<n.length; ++j)
 	for(int k=j+1; k<n.length; ++k)
-		if( g.isEdge(	((Integer)n[j]).intValue(),
-				((Integer)n[k]).intValue() ) ) ++edges;
+		if( g.isEdge((Integer)n[j],(Integer)n[k]) ) ++edges;
 
 	return ((edges*2.0)/n.length)/(n.length-1);
 }
@@ -291,7 +284,7 @@ public static void multicast( Graph g, int[] b, Random r ) {
 	int c2[] = new int[g.size()];
 	for(int i=0; i<c1.length; ++i) c2[i]=c1[i]=WHITE;
 	c2[0]=c1[0]=BLACK;
-	Collection neighbours=null;
+	Collection<Integer> neighbours=null;
 	int black=1;
 	
 	int k=0;
@@ -300,10 +293,10 @@ public static void multicast( Graph g, int[] b, Random r ) {
 		for(int i=0; i<c2.length; ++i)
 		{
 			neighbours=g.getNeighbours(i);
-			Iterator it=neighbours.iterator();
+			Iterator<Integer> it=neighbours.iterator();
 			for(int j=r.nextInt(neighbours.size()); j>0; --j)
 				it.next();
-			int randn = ((Integer)it.next()).intValue();
+			int randn = it.next();
 			
 			// push pull exchane with random neighbour
 			if( c1[i]==BLACK ) //c2[i] is black too
@@ -342,8 +335,6 @@ public void flooding( Graph g, int[] b, int k ) {
 	{
 		if( d[i] >= 0 && d[i] < b.length ) b[d[i]]++;
 	}
-
-//XXX	b[0] = 1;  NOT NEEDED ANYMORE. Covered by for-loop above. 
 }
 
 // --------------------------------------------------------------------

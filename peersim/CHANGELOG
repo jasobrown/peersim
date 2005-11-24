@@ -1,3 +1,15 @@
+SV 24/11/2005
+- Changed GraphStats to stop calculating average path length, once it is known
+  to be infinite (one node is unreachable).
+- Fixed BallExpansion. Previously, in case of unreachable nodes, although the
+  average path length was (correctly) set to Infinity, the getMaxCount()
+  property returned inconsistent data. Now it returns the number of nodes at
+  maximum distance (Infinity), that is, the number of unreachable nodes.
+- Now GraphAlgorithms.bfs() sets the (trivial) distance to node "from" to 0.
+- Cleaned up code duplication in GraphAlgorithms.flooding(). It now makes use
+  of GraphAlgorithms.dist().
+- Also fixed comments in GraphAlgorithms.
+
 MJ 23/11/2005
 - Fixed a bug in GraphStats found by Spyros: it now handles partitioned
   graphs correctly

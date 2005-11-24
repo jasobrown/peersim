@@ -103,8 +103,10 @@ public BallExpansion(String name)
 * produced by {@link IncrementalStats#toString}, over the values of minimal
 * distances from the given number of nodes to all other nodes in the network.
 * If at least one node is unreachable from any selected starting node, then
-* the path length is taken as infinity ans statistics are calculated
-* accordingly.
+* the path length is taken as infinity and statistics are calculated
+* accordingly. In that case, {@link IncrementalStats#getMaxCount()} returns
+* the number of nodes of "infinite distance", that is, the number of
+* unreachable nodes.
 * Otherwise one line is printed for all nodes we observe, containing the
 * number of nodes at distance 1, 2, etc, separated by spaces.
 * In this output format, unreachable nodes are simply ignored, but of course
@@ -124,15 +126,15 @@ public boolean execute() {
 		IncrementalStats is = new IncrementalStats();
 		for (int i = 0; i < n && i < g.size(); ++i)
 		{
-			ga.flooding(g, b, rp.next());
-			int j = 1;
-			while (j < b.length && b[j] > 0)
+			ga.dist(g, rp.next());
+			for (int j=0; j<g.size(); j++)
 			{
-				is.add(j, b[j++]);
-			}
-			if( j < b.length && is.getN()<g.size()-1 )
-			{
-				is.add( Double.POSITIVE_INFINITY );
+				if (ga.d[j] > 0)
+					is.add(ga.d[j]);
+				else if (ga.d[j] == -1)
+					is.add(Double.POSITIVE_INFINITY);
+				// deliberately left ga.d[j]==0 out, as we don't
+				// want to count trivial distance to oneself.
 			}
 		}
 		System.out.println(is);

@@ -123,14 +123,20 @@ public boolean execute() {
 	{
 		stats.reset();
 		final int n = ( nl<0 ? g.size() : nl );
+		outerloop:
 		for(int i=0; i<n && i<g.size(); ++i)
 		{
 			ga.dist(g,i);
 			for(int j=0; j<g.size(); ++j)
 			{
 				if( j==i ) continue;
-				stats.add( ga.d[j]>0 ? 
-					ga.d[j] : Double.POSITIVE_INFINITY );
+				if (ga.d[j] == -1)
+				{
+					stats.add(Double.POSITIVE_INFINITY);
+					break outerloop;
+				}
+				else
+					stats.add(ga.d[j]); 
 			}
 		}
 		System.out.print(stats.getAverage());

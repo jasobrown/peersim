@@ -55,16 +55,15 @@ public int[] d = null;
 
 
 /**
-* Collects accessible nodes form node "from" using a depth-first search.
+* Collects nodes accessible from node "from" using depth-first search.
 * Works on the array {@link #color} which must be of the same length as
-* the size of the graph
-* and must contain values according to the following semantics: 
+* the size of the graph, and must contain values according to the
+* following semantics: 
 * WHITE (0): not seen yet, GREY (1): currently worked upon. BLACK
-* (not 0 or 1): finished.
-* If meets a negatie color saves it in the set {@link #cluster} and treats it
-* as black. 
-* This can be used to check if the cluster currently searched is weakly
-* connected to another cluster.
+* (other than 0 or 1): finished.
+* If a negative color is met, it is saved in the {@link #cluster} set
+* and is treated as black. This can be used to check if the currently
+* visited cluster is weakly connected to another cluster.
 * On exit no nodes are GREY.
 * The result is the modified array {@link #color} and the modified set
 * {@link #cluster}.
@@ -93,13 +92,13 @@ private void dfs( int from ) {
 // --------------------------------------------------------------------
 
 /**
-* Collects accessible nodes form node "from" using a breadth-first search.
+* Collects nodes accessible from node "from" using breadth-first search.
 * Its parameters and side-effects are identical to those of dfs.
-* In addition, it stores the shortest
-* distances from "from" in {@link #d}, if it is not null,
-* i.e. <code>d[i]</code> is the
-* length of the shortest path from "from" to i. d must be long enough or must
-* be null.
+* In addition, it stores the shortest distances from "from" in {@link #d},
+* if it is not null. On return, <code>d[i]</code> contains the length of
+* the shortest path from "from" to "i", if such a path exists, or is
+* unspecified (actually left untouched) otherwise.
+* <code>d</code> must either be long enough or null.
 */
 private void bfs( int from ) {
 
@@ -108,7 +107,8 @@ private void bfs( int from ) {
 	
 	q.add( new Integer(from) );
 	q.add( new Integer(0) );
-	
+	if( d != null ) d[from] = 0;
+
 	color[from]=GREY;
 
 	while( ! q.isEmpty() )
@@ -126,8 +126,8 @@ private void bfs( int from ) {
 				color[jj]=GREY;
 				
 				q.add(j);
-				if( d != null ) d[jj] = du+1;
 				q.add(new Integer(du+1));
+				if( d != null ) d[jj] = du+1;
 			}
 			else
 			{
@@ -328,32 +328,22 @@ public static void multicast( Graph g, int[] b, Random r ) {
 
 /**
 * Performs flooding from given node.
-* As a result the number of nodes that have been reached in step i
-* is put into <code>b[i]</code>. In other words, <code>b[i]</code>
-* contains the number of nodes
-* that can be reached by exactly i steps, and always <code>b[0]=1</code>.
-* In fact, <code>b[i]</code> is the number of nodes that are of at most
-* distance i from the starting node.
+* As a result <code>b[i]</code> contains the number of nodes
+* reached in exactly i steps, and always <code>b[0]=1</code>.
 * If the maximal distance from k is lower than <code>b.length</code>,
 * then the remaining elements of b are zero.
 */
 public void flooding( Graph g, int[] b, int k ) {
 
-	this.g=g;
-	if( color==null || color.length<g.size() ) color = new int[g.size()];
-	if( d==null || d.length<g.size() ) d = new int[g.size()];
-	for(int i=0; i<g.size(); ++i)
-		d[i]=color[i]=WHITE; // we use that WHITE=0
-	for(int i=0; i<b.length; ++i) b[i]=0;
+	dist(g, k);
 
-	bfs(k);
-	
+	for(int i=0; i<b.length; ++i) b[i]=0;
 	for(int i=0; i<d.length; ++i)
 	{
-		if( d[i] > 0 && d[i] < b.length ) b[d[i]]++;
+		if( d[i] >= 0 && d[i] < b.length ) b[d[i]]++;
 	}
 
-	b[0] = 1; 
+//XXX	b[0] = 1;  NOT NEEDED ANYMORE. Covered by for-loop above. 
 }
 
 // --------------------------------------------------------------------

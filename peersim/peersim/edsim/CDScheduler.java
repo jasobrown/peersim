@@ -162,12 +162,31 @@ public boolean execute() {
 /**
  * Schedules the protocol at given node
  * for the first execution adding it to the priority queue of the event driven
- * simulation. The time of the first execution is detemined by
- * {@link #firstDelay}. If {@link #firstDelay} defines
- * a next execution time which is not valid according to the schedule of the
+ * simulation. The time of the first execution is detemined by a reference
+ * point in time and {@link #firstDelay}, which defines the delay from the
+ * reference point.
+ * The reference point is the maximum of the current time, and the
+ * value of parameter {@value peersim.core.Scheduler#PAR_FROM} of the
+ * protocol being
+ * scheduled. If the calculated time of the first execution
+ * is not valid according to the schedule of the
  * protocol then no execution is scheduled for that protocol.
+ * <p>
+ * A final note: for performance reasons, the recommended practice is
+ * not to use parameter {@value peersim.core.Scheduler#PAR_FROM}
+ * in protocols, but
+ * to schedule {@link CDScheduler} itself for the desired time, whenever
+ * possible (eg, it is not possible if {@link CDScheduler} is used as a
+ * {@link NodeInitializer}).
 */
 public void initialize(Node n) {
+/*XXX
+* If "from" is not the current time and this is used as a control (not node
+* initializer) then we dump _lots_ of events in the queue
+* that are just stored there until "from" comes. This reduces performance,
+* and should be fixed. When fixed, the final comment can be removed from the
+* docs.
+*/
 	
 	final long time = CommonState.getTime();
 	for(int i=0; i<pid.length; ++i)
@@ -177,9 +196,8 @@ public void initialize(Node n) {
 		catch(CloneNotSupportedException e) {} //cannot possibly happen
 		
 		final long delay = firstDelay(sch[pid[i]].step);
-		final long nexttime = time+delay;
-		if( nexttime < sch[pid[i]].until &&
-				nexttime >= sch[pid[i]].from )
+		final long nexttime = Math.max(time,sch[pid[i]].from)+delay;
+		if( nexttime < sch[pid[i]].until )
 			EDSimulator.add(delay, nceclone, n, pid[i]);
 	}
 }

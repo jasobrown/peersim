@@ -1,6 +1,8 @@
 MJ 24/11/2005
 - Cleaned up some minor type-safety issues in GraphAlgorithms (no behavioral
   change)
+- Changed CDScheduler so that it schedules protocols even if they specify
+  a "from" parameter in the future, with respect to the call to CDScheduler
 
 SV 24/11/2005
 - Changed GraphStats to stop calculating average path length, once it is known

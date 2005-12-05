@@ -79,8 +79,7 @@ private final boolean pack;
 /**
  * Standard constructor that reads the configuration parameters. Invoked by the
  * simulation engine.
- * @param prefix
- *          the configuration prefix for this class
+ * @param prefix the configuration prefix for this class
  */
 public RandNI(String prefix)
 {
@@ -100,11 +99,13 @@ public RandNI(String prefix)
 public void initialize(Node n)
 {
 	if (Network.size() == 0) return;
-	
+
+	Linkable linkable = (Linkable) n.getProtocol(pid);
 	for (int j = 0; j < k; ++j)
 	{
-		((Linkable) n.getProtocol(pid)).addNeighbor(
-			Network.get(CommonState.r.nextInt(Network.size())));
+		int r = CommonState.r.nextInt(Network.size()-1);
+		if (r >= n.getIndex()) r++;
+		linkable.addNeighbor(Network.get(r));
 	}
 
 	if (pack) ((Linkable) n.getProtocol(pid)).pack();

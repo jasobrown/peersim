@@ -80,7 +80,7 @@ public StarNI(String prefix) {
  * meantime, a new one is chosen so care should be taken. The center is the
  * first node that is not down (starting from node 0, 1, etc)
  * at the time of the first call to the function. When a new center needs to
- * be choosen (the current one is down), the new center is again the first
+ * be chosen (the current one is down), the new center is again the first
  * one which is up. If no nodes are up, the node with the last index is set
  * as center, and selection of a new center is always attempted when this
  * method is called again.

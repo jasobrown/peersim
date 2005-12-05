@@ -23,7 +23,7 @@ import peersim.core.*;
 
 /**
  * This {@link Control} can change the size of networks by adding and removing
- * nodes. Can be used to model churn. This class support only permanent removal
+ * nodes. Can be used to model churn. This class supports only permanent removal
  * of nodes and the addition of brand new nodes. That is, temporary downtime
  * is not supported by this class.
  */
@@ -53,9 +53,10 @@ private static final String PAR_INIT = "init";
 
 /**
  * If defined, nodes are substituted (an existing node is removed, a new one is
- * added. That is, first the number of nodes to add (or remove is the result
- * is negative) is calculated, and then exactly the same number of nodes are
- * removed (or added) immediately so that the network size remains constant.
+ * added. That is, first the number of nodes to add (or remove if
+ * {@value #PAR_ADD} is negative) is calculated, and then exactly the same
+ * number of nodes are removed (or added) immediately so that the network size
+ * remains constant.
  * Not set by default.
  * @config
  */

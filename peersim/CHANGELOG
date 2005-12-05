@@ -1,3 +1,7 @@
+SV 05/12/2005
+- Fixed RandNI.initialize() to ensure no loop edges are added (as was already
+  stated in its javadoc).
+
 MJ 24/11/2005
 - Cleaned up some minor type-safety issues in GraphAlgorithms (no behavioral
   change)

@@ -8,7 +8,6 @@
 </head>
 <body id="top">
 
-<br>
 <div style="text-align: center;">
 <h1>Peersim Peer-to-Peer Simulator</h1>
 <p>
@@ -21,69 +20,71 @@
 </p>
 </div>
 
-<p><table cellpadding="4" cellspacing="0" width="100%" class="title">
+<table class="title">
     <tbody><tr>
       <td class="title" id="intro">Introduction</td>
       <td class="top"><a href="#top">top</a></td>
     </tr>
     </tbody>
 </table>
-</p>
 
 <p>
-Peer-to-peer systems can reach huge dimensions such as millions of
+Peer-to-peer systems can be of a very large scale such as millions of
 nodes, which typically join and leave continously.
 These properties are very challenging to deal with.
 Evaluating a new protocol in a real environment,
 especially in its early stages of development, is not
-feasible.
-There are distributed planetary-scale open platforms (e.g., <a
- href="http://www.planet-lab.org/">PlanetLab</a>) to develop and deploy
-network services, but these solutions don't include more than about 500
-nodes.
-Thus, for large-scale systems, a scalable simulation testbed is mandatory.
+feasible.</p>
 
 <p>
 Peersim has been developed with extreme scalability and support for
 dynamicity in mind. We use it in our everyday research and chose to
 release it to the public under the GPL open source licence.
-It is composed of
-many simple extendable and pluggable components, with a flexible
-configuration mechanism. To allow for scalability and focus on
-self-organization properties of large scale systems,
-some simplifying assumpions have been made, such as ignoring the
-details of the transport communication protocol stack. Peersim is
-developed within the  <a href="http://www.cs.unibo.it/bison">BISON</a>
-project.
-Peersim is written in the Java language.
+It is composed of two simulation engines, a simplified (cycle-based)
+one and and event driven one.
+The engines are supported by
+many simple, extendable, and pluggable components, with a flexible
+configuration mechanism.</p>
 
-<p><table cellpadding="4" cellspacing="0" width="100%" class="title">
+<p>
+The cycle-based engine, to allow for scalability, uses 
+some simplifying assumpions, such as ignoring the
+details of the transport layer in the communication protocol stack.
+The event-based engine is less efficient but more realistic.
+Among other things, it supports transport layer simulation as well.
+In addition, cycle-based protocols can be run by the event-based
+engine too.</p>
+
+
+<p>Peersim is
+partly developed within the  <a href="http://www.cs.unibo.it/bison">BISON</a>
+project.
+Peersim is written in the Java language.</p>
+
+<table cellpadding="4" cellspacing="0" width="100%" class="title">
     <tbody><tr>
-      <td class="title" id="intro">People</td>
+      <td class="title" id="people">People</td>
       <td class="top"><a href="#top">top</a></td>
     </tr>
     </tbody>
 </table>
-</p>
 
-<p>
-The people developing peersim are:<br>
+The people who are actively developing peersim are (in alphabetical order):<br>
 <ul>
   <li><a href="http://www.cs.unibo.it/%7Ejelasity">M&aacute;rk Jelasity</a></li>
-  <li><a href="http://www.cs.unibo.it/%7Emontreso/">Alberto Montresor</a></li>
   <li><a href="http://jesi.web.cs.unibo.it/">Gian Paolo Jesi</a><br>
+  <li><a href="http://www.cs.unibo.it/%7Emontreso/">Alberto Montresor</a></li>
+  <li><a href="http://www.cs.vu.nl/~spyros/">Spyros Voulgaris</a><br>
   </li>
 </ul>
-</p>
 
-<p><table cellpadding="4" cellspacing="0" width="100%" class="title">
+<table cellpadding="4" cellspacing="0" width="100%" class="title">
     <tbody><tr>
       <td class="title" id="download">Download</td>
       <td class="top"><a href="#top">top</a></td>
     </tr>
     </tbody>
 </table>
-</p>
 
 <p>
 The project is hosted at <a
@@ -100,16 +101,14 @@ peersim-announce@lists.sourceforge.net</a> mailing list. The list is
 moderated and extremely low-traffic.
 </p>
 
-<p><table cellpadding="4" cellspacing="0" width="100%" class="title">
+<table cellpadding="4" cellspacing="0" width="100%" class="title">
     <tbody><tr>
       <td class="title" id="docs">Documentation</td>
       <td class="top"><a href="#top">top</a></td>
     </tr>
     </tbody>
 </table>
-</p>
 
-<p>
 Available documentation:<br>
 <ul>
   <li><a href="doc/index.html">class documentation</a>
@@ -118,35 +117,28 @@ Available documentation:<br>
 	<a href="http://peersim.sourceforge.net/tutorial1/tutorial1.pdf">PDF</a> ) : an introduction
 to the simulator usage and programming<br>
   </li>
-  <ul>
-  <li>old HOWTO version: <a
-  href="http://peersim.sourceforge.net/tutorial1/discontinued/tutorial1.html">HTML</a>, 
-  <a href="http://peersim.sourceforge.net/tutorial1/tutorial1.pdf">PDF</a>
-  </li>
-  </ul>
   <li>peersim HOWTO 2: 
 (Formats: <a href="http://peersim.sourceforge.net/tutorial2/tutorial2.html">HTML</a>, <a href="http://peersim.sourceforge.net/tutorial2/tutorial2.pdf">PDF</a> ) : 
 a short guide 
 	to build an internet-like model topology generator.<br>
   </li>
+  <li>old HOWTO (for PeerSim 0.*): <a
+  href="http://peersim.sourceforge.net/tutorial1/discontinued/tutorial1.html">HTML</a>, 
+  <a href="http://peersim.sourceforge.net/tutorial1/tutorial1.pdf">PDF</a>
   </li>
-  <ul>
-  <li>old HOWTO 2 version: <a
+  <li>old HOWTO 2 (for PeerSim 0.*): <a
   href="http://peersim.sourceforge.net/tutorial2/discontinued/tutorial1.html">HTML</a>, 
   <a href="http://peersim.sourceforge.net/tutorial2/tutorial1.pdf">PDF</a>
   </li>
-  </ul>
 </ul>
-</p>
 
-<p><table cellpadding="4" cellspacing="0" width="100%" class="title">
+<table cellpadding="4" cellspacing="0" width="100%" class="title">
     <tbody><tr>
       <td class="title" id="code">Additional Code</td>
       <td class="top"><a href="#top">top</a></td>
     </tr>
     </tbody>
 </table>
-</p>
 
 We use Peersim to simulate several P2P protocols. In this section, we make
 available the code of the more interesting protocols. If the protocol is described
@@ -268,11 +260,15 @@ the experiments described in the publications.
 
 <hr>
 <address>
+<a href="http://validator.w3.org/check?uri=referer"><img
+        src="http://www.w3.org/Icons/valid-html401"
+        alt="Valid HTML 4.01 Transitional" height="31" width="88"></a>
+<A href="http://sourceforge.net"><IMG
+	src="http://sourceforge.net/sflogo.php?group_id=91456&amp;type=5"
+	height="31" alt="SourceForge.net Logo" /></A>
 Page maintenance: Gian Paolo Jesi (<a href="mailto:jesi@cs.unibo.it">jesi@cs.unibo.it</a>)<br>
-Last update: $date Fri Nov 11 11:10:28 CET 2005 $
+Last update: Mon Dec  5 17:30:12 CET 2005<br>
 </address>
-<p align="right">
-<A href="http://sourceforge.net"> <IMG src="http://sourceforge.net/sflogo.php?group_id=91456&amp;type=5" width="210" height="62" border="0" alt="SourceForge.net Logo" /></A>
-</p>
 </body>
 </html>
+

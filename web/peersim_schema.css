@@ -1,40 +1,35 @@
 body {
   background : white;
+  color: black;
+  font-family: sans-serif;
 }
 
-table {
+table.title {
   border : 0;
   text-align : left;
+  font-size: large;
   width: 100%;
   background-color: #66cccc;
-}
-
-h1 {
-  font-size : 32pt;
-  font-family: helvetica,arial,sans-serif; 
-  text-align: center;
-}
-
-td {
-  vertical-align: top; 
-  font-family: helvetica,arial,sans-serif; 
-  width: 50%;
-  color: black;
-}
-
-td.title {
-  font-family: sans-serif;
-  font-size: large;
-  text-align: left;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  padding-bottom:0.5em
 }
 
 td.top {
-  font-weight: bold;
-  font-size: small;
-  text-align: right;
-  vertical-align: middle;
+  text-align : right;
 }
 
-th {
-  text-align : left;
+li {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em
 }
+
+a:link img, a:visited img {
+	border-style: none
+}
+
+address img {
+  float: right;
+  padding: 0.5em;
+}
+

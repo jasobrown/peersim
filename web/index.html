@@ -1,15 +1,17 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
   <meta content="text/html; charset=ISO-8859-1"
- http-equiv="content-type">
-  <link type="text/css" href="peersim_schema.css" rel="stylesheet">
+ http-equiv="content-type"/>
+  <link type="text/css" href="peersim_schema.css" rel="stylesheet"/>
   <title>PeerSim P2P Simulator</title>
 </head>
 <body id="top">
 
 <div style="text-align: center;">
-<h1>Peersim Peer-to-Peer Simulator</h1>
+<h1>PeerSim: A Peer-to-Peer Simulator</h1>
 <p>
     [<a href="#intro">Introduction</a>]
     [<a href="#people">People</a>]
@@ -37,9 +39,9 @@ especially in its early stages of development, is not
 feasible.</p>
 
 <p>
-Peersim has been developed with extreme scalability and support for
+PeerSim has been developed with extreme scalability and support for
 dynamicity in mind. We use it in our everyday research and chose to
-release it to the public under the GPL open source licence.
+release it to the public under the GPL open source license.
 It is composed of two simulation engines, a simplified (cycle-based)
 one and and event driven one.
 The engines are supported by
@@ -48,7 +50,7 @@ configuration mechanism.</p>
 
 <p>
 The cycle-based engine, to allow for scalability, uses 
-some simplifying assumpions, such as ignoring the
+some simplifying assumptions, such as ignoring the
 details of the transport layer in the communication protocol stack.
 The event-based engine is less efficient but more realistic.
 Among other things, it supports transport layer simulation as well.
@@ -56,12 +58,12 @@ In addition, cycle-based protocols can be run by the event-based
 engine too.</p>
 
 
-<p>Peersim is
+<p>PeerSim is
 partly developed within the  <a href="http://www.cs.unibo.it/bison">BISON</a>
 project.
-Peersim is written in the Java language.</p>
+PeerSim is written in the Java language.</p>
 
-<table cellpadding="4" cellspacing="0" width="100%" class="title">
+<table class="title">
     <tbody><tr>
       <td class="title" id="people">People</td>
       <td class="top"><a href="#top">top</a></td>
@@ -69,16 +71,15 @@ Peersim is written in the Java language.</p>
     </tbody>
 </table>
 
-The people who are actively developing peersim are (in alphabetical order):<br>
+<p>The people who are actively developing PeerSim are (in alphabetical order):</p>
 <ul>
   <li><a href="http://www.cs.unibo.it/%7Ejelasity">M&aacute;rk Jelasity</a></li>
-  <li><a href="http://jesi.web.cs.unibo.it/">Gian Paolo Jesi</a><br>
+  <li><a href="http://jesi.web.cs.unibo.it/">Gian Paolo Jesi</a></li>
   <li><a href="http://www.cs.unibo.it/%7Emontreso/">Alberto Montresor</a></li>
-  <li><a href="http://www.cs.vu.nl/~spyros/">Spyros Voulgaris</a><br>
-  </li>
+  <li><a href="http://www.cs.vu.nl/~spyros/">Spyros Voulgaris</a></li>
 </ul>
 
-<table cellpadding="4" cellspacing="0" width="100%" class="title">
+<table class="title">
     <tbody><tr>
       <td class="title" id="download">Download</td>
       <td class="top"><a href="#top">top</a></td>
@@ -91,17 +92,17 @@ The project is hosted at <a
  href="http://sourceforge.net">SourceForge.net</a>.
  The source, the compiled version and other material can be downloaded from
  the 
- <a href="http://sourceforge.net/projects/peersim/">peersim project page</a>.
+ <a href="http://sourceforge.net/projects/peersim/">PeerSim project page</a>.
 </p>
 
 <p>
-If you want to be kept informed about new release of Peersim, join the 
+If you want to be kept informed about new release of PeerSim, join the 
 <a href="http://lists.sourceforge.net/lists/listinfo/peersim-announce">
 peersim-announce@lists.sourceforge.net</a> mailing list. The list is
 moderated and extremely low-traffic.
 </p>
 
-<table cellpadding="4" cellspacing="0" width="100%" class="title">
+<table class="title">
     <tbody><tr>
       <td class="title" id="docs">Documentation</td>
       <td class="top"><a href="#top">top</a></td>
@@ -109,18 +110,18 @@ moderated and extremely low-traffic.
     </tbody>
 </table>
 
-Available documentation:<br>
+<p>Available documentation:</p>
 <ul>
   <li><a href="doc/index.html">class documentation</a>
   compiled with javadoc</li>
   <li>peersim HOWTO: (Formats: <a href="http://peersim.sourceforge.net/tutorial1/tutorial1.html">HTML</a>, 
 	<a href="http://peersim.sourceforge.net/tutorial1/tutorial1.pdf">PDF</a> ) : an introduction
-to the simulator usage and programming<br>
+to the simulator usage and programming
   </li>
   <li>peersim HOWTO 2: 
 (Formats: <a href="http://peersim.sourceforge.net/tutorial2/tutorial2.html">HTML</a>, <a href="http://peersim.sourceforge.net/tutorial2/tutorial2.pdf">PDF</a> ) : 
 a short guide 
-	to build an internet-like model topology generator.<br>
+	to build an internet-like model topology generator.
   </li>
   <li>old HOWTO (for PeerSim 0.*): <a
   href="http://peersim.sourceforge.net/tutorial1/discontinued/tutorial1.html">HTML</a>, 
@@ -132,7 +133,7 @@ a short guide
   </li>
 </ul>
 
-<table cellpadding="4" cellspacing="0" width="100%" class="title">
+<table class="title">
     <tbody><tr>
       <td class="title" id="code">Additional Code</td>
       <td class="top"><a href="#top">top</a></td>
@@ -140,11 +141,11 @@ a short guide
     </tbody>
 </table>
 
-We use Peersim to simulate several P2P protocols. In this section, we make
+<p>We use Peersim to simulate several P2P protocols. In this section, we make
 available the code of the more interesting protocols. If the protocol is described
 in a scientific paper, we provide
 both the code of the protocols and the configuration files needed to reproduce
-the experiments described in the publications. 
+the experiments described in the publications.</p> 
 
 <ul>
   <li>
@@ -161,7 +162,7 @@ the experiments described in the publications.
         In <em>Proceedings of the 2004 International Conference on
         Dependable Systems and Networks (DSN'04)</em>}, 
         pages 19-28, Florence, Italy, June 2004. IEEE Computer Society.
-        <a href="http://www.cs.unibo.it/bison/publications/dsn04.pdf">PDF Version</a> <br>
+        <a href="http://www.cs.unibo.it/bison/publications/dsn04.pdf">PDF Version</a>
       </li>
       <li>
         M&aacute;rk Jelasity and Alberto Montresor.
@@ -258,21 +259,23 @@ the experiments described in the publications.
 </ul>
 
 
-<hr>
+<hr/>
 <address>
 <a href="http://validator.w3.org/check?uri=referer"><img
-        src="http://www.w3.org/Icons/valid-html401"
-        alt="Valid HTML 4.01 Transitional" height="31" width="88"></a>
+        src="http://www.w3.org/Icons/valid-xhtml10"
+	style="width:88px;height:31px"
+        alt="Valid XHTML 1.0 Strict"/></a>
 <a href="http://jigsaw.w3.org/css-validator/"><img
-	style="border:0;width:88px;height:31px"
+	style="width:88px;height:31px"
         src="http://jigsaw.w3.org/css-validator/images/vcss" 
-        alt="Valid CSS!">
+        alt="Valid CSS!"/>
  </a>
-<A href="http://sourceforge.net"><IMG
+<a href="http://sourceforge.net"><img
 	src="http://sourceforge.net/sflogo.php?group_id=91456&amp;type=5"
-	height="31" alt="SourceForge.net Logo" /></A>
-Page maintenance: Gian Paolo Jesi (<a href="mailto:jesi@cs.unibo.it">jesi@cs.unibo.it</a>)<br>
-Last update: Mon Dec  5 17:30:12 CET 2005<br>
+	style="width:100px;height:31px"
+	alt="SourceForge.net Logo"/></a>
+Page maintenance: Gian Paolo Jesi (<a href="mailto:jesi@cs.unibo.it">jesi@cs.unibo.it</a>)<br/>
+Last update: Mon Dec  5 17:30:12 CET 2005<br/>
 </address>
 </body>
 </html>

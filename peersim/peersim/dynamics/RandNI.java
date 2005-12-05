@@ -108,7 +108,7 @@ public void initialize(Node n)
 		linkable.addNeighbor(Network.get(r));
 	}
 
-	if (pack) ((Linkable) n.getProtocol(pid)).pack();
+	if (pack) linkable.pack();
 }
 
 }

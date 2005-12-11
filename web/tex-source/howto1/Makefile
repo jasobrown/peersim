@@ -14,5 +14,5 @@ html: all
 	latex2html -t "Peersim HOWTO 1" -split 0 -nonavigation -noaddress -show_section_numbers -t "Peersim HOWTO 1" tutorial1.tex
 
 clean:
-	rm -f *.dvi *.aux *.log *.blg *.bbl *.ps *.pdf *.out *.toc
+	rm -f *.dvi *.aux *.log *.blg *.bbl *.ps tutorial1.pdf *.out *.toc
 

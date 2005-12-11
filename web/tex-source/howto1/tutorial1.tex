@@ -1,214 +1,198 @@
 \documentclass[a4paper,11pt]{article}
 
-\usepackage{url}
+\usepackage{a4wide}
 \usepackage{graphicx}
+\usepackage{hyperref}
 
-\title{PeerSim HOWTO: build a new protocol for the peersim simulation
-framework}
+\title{PeerSim HOWTO:\\ Build a new protocol for the PeerSim 1.0 simulator}
 \author{Gian Paolo Jesi (jesi@cs.unibo.it)}
-\date{November 16, 2005}
 
 \begin{document}
 
 \maketitle
 
 
+\noindent\emph{This tutorial is for PeerSim 1.0, in particular, its so called
+cycle based engine.
+If the reader is not a PeerSim newbie, she may be
+interested in what major changes have been introduced since the last version.
+The changes are summarized in Appendix~\ref{sec:Appendix-C-changes}.
+For all the details, check the PeerSim CHANGELOG file, included in the
+distribution.}
 
 \section{Introduction}
 
-\textbf{NOTE: This tutorial revision covers peersim release 1.0
-  topics.}\\
 
-
-\textbf{NOTE: if the reader is not a peersim newbie, she may be
-  interested in which major changes have been introduced; a small, but
-  fast reference is provided in Appendix
-  \ref{sec:Appendix-C-changes}. For deeper details, check the peersim
-  CHANGELOG file.}\\
-
-
-This tutorial is aimed to give you a step by step guide to build from
-scratch a new peersim application
-(\url{http://sourceforge.net/projects/peersim}): 
-a framework to experiment with large scale P2P overlay networks. In
-this tutorial it supposed that you and/or your workstation have: 
+This tutorial is a step by step guide to build from
+scratch a new PeerSim application.
+In this tutorial it is supposed that you have access to: 
 
 \begin{itemize}
-\item knowledge of O.O. programming and Java language;
-\item a working Java compiler ( $\geq$ JDK 1.5.x);
-\item a 1.0 peersim release package or a working peersim source tree
-  (you can download it from sourceforg CVS);
-\item the Java Expression Parser version $\geq$ 2.3.0 (download it from: \url{http://www.singularsys.com/jep/});
-\item (suggested) gnuplot software. 
+\item knowledge of the Java language
+\item a Java compiler for Java version 1.5; we propose $\geq$ JDK 1.5.x
+\item the PeerSim 1.0 package (\url{http://sourceforge.net/projects/PeerSim}), 
+or the PeerSim source tree (you can download it from the sourceforg CVS server)
+\item the Java Expression Parser version $\geq$ 2.3.0
+(included in the release, but you can download it from
+\url{http://www.singularsys.com/jep/})
+\item the gnuplot plotting tool is highly recommened 
 \end{itemize}
 
-The aim of this tutorial is to be
-as practical as possible; the goal is to give the reader the basics
-of peersim usage and the basics about howto write a simple component.
-This tutorial IS NOT exhaustive at all!\\
-
-Because of the spiritus of this tutorial,
-after a brief introduction to basic concepts, we will try to learn peersim
-and its basic components
-using a by example methodology.
+The aim of this tutorial is inteded to be
+as practical and lightweight as possible.
+The goal is to give the reader the basics
+of PeerSim usage and the basics about how to write a simple protocol,
+through a step-by-step example.
+This tutorial IS NOT exhaustive at all, it is not meant to be a comprehensive
+guide, but it is enough to get you started.
 
 
 \section{Introduction to Peersim}
 
 
-\subsection{Why peersim}
+\subsection{Why PeerSim}
 
-One of the P2P system properties is that they can be extremely large
-scale (millions of nodes); another issue to deal with, is the high
-dynamism of such systems: nodes in the network join and leave continuously.
-Setting up a protocol experiments in a such simulated environment it
-is not an easy task at all.
+Peer-to-peer (P2P) systems can be extremely large
+scale (millions of nodes).
+Nodes in the network join and leave continuously.
+Experimenting with a protocol in such an environment it no easy task at all.
 
-Peersim has been developed to cope with these P2P properties and thus
+Peersim has been developed to cope with these properties and thus
 to reach extreme scalability and to support dynamism. In addition,
-the simulator structure is based on components and makes easy to fast
-prototype a simulation joining together different pluggable building
-blocks. The term \char`\"{}components\char`\"{} used here has no relation
-with high level component architectures (e.g.: CORBA, DOM+).
+the simulator structure is based on components and makes it easy to quickly
+prototype a protocol, combining different pluggable building
+blocks, that are in fact Java objects.
 
-The peersim performances can be reached only assuming some relaxing
-assumptions about the simulation details. For example, the overhead
-introduced by the low level communication protocol stack (e.g.: TCP
-or UDP) in not taken into account because of the huge additional memory
-and CPU time requirements needed to accomplish this task. Another simplifying
-assumption is the absence of concurrency: in peersim the simulation
-is sequential and based on the concept of cycle in which every node
-can select a neighbor (the neighborhood relation could be defined
-by a fixed topology or defined by an overlay management protocol such
-as \emph{Newscast}) and perform a protocol defined function.
+PeerSim 1.0 supports two simulation models: the so called cycle-based model
+and the traditional event based model.
+This document is about the cycle based model.
+This model is a simplifed model, which makes it possible to achieve extreme
+scalability and impressive performance, at the cost of some loss of realism.
+Many protocols can tolerate this loss of realism very well, according to
+our onw research; however,
+care should be taken when this model is selected to experiment with a protocol.
 
+The simplifying assumptions of the cycle based model are the lack of
+transport layer simulation and the lack of concurrency.
+In other words, nodes communicate with each other directly, and the nodes
+are given the control periodically, in some sequential order, when they can
+perform arbitrary actions, such as call methods of other objects and perform
+some computations.
+
+We note here that it is realtively easy to migrate any cycle-based simulations
+to the event driven engine. However, we don't discuss how to do it in this
+document.
 
 \subsection{Peersim simulation life-cycle}
 
-The peersim structure is aimed to promote modular programming of building
-blocks. Every such block is easily replaceable by another component
-having a similar function, that means, in brief, having the same interface.
-In the peersim framework, a simulation is carried by the \emph{Simulator}
-class. The general idea of the simulation model is: 
+PeerSim was designed to encourage modular programming based on objects
+(building blocks). Every such block is easily replaceable by another component
+that has a similar function, that is, that  has the same interface.
+The general idea of the simulation model is:
 
 \begin{enumerate}
-\item choose a network size (number of nodes); 
-\item choose 1 or more protocol to experiment with and initialize
-the protocol(s); this step will build a topology on top of raw nodes
-inserted at the previous point;
-\item choose 1 or more \emph{Control}\footnote{The \emph{Control} is
-  the unified interface that substitutes the old \emph{Observer} and
-  \emph{Dynamics} interfaces.}
- object to monitor the properties
-  you are interested in and to modify or perturb some parameter during
-  the simulation execution (e.g.: the size of th
-network, update particular values inside protocols, ...); 
-\item ... run your simulation invoking the \emph{Simulator} class
+\item choose a network size (number of nodes) 
+\item choose one or more protocols to experiment with and initialize
+them
+\item choose one or more \emph{Control} objects
+  to monitor the properties
+  you are interested in and to modify some parameters during
+  the simulation (e.g., the size of the
+ network, the internal state of the protocols, etc) 
+\item run your simulation invoking the \emph{Simulator} class with a
+configuration file, that contains the above information
 \end{enumerate}
 
-This is a very general model to give the reader an idea to start with,
-but the simulation scenario can be extremely more complex. 
-
 All the object created during the simulation are instances of classes
-that implements one or more well defined framework interfaces. The
-main interfaces I suggest you to become familiar with are in the
+that implement one or more interfaces. The
+main interfaces to become familiar with are listed in
 Table~\ref{t:psim_classes}.
 
 
 \label{table1}
 \begin{table}
-\begin{center}\begin{tabular}{|c|p{2.5in}|}
+\begin{center}\begin{tabular}{|l|p{11cm}|}
 \hline 
 \emph{Node}&
-All the elements of a P2P network are called nodes, the interface
-manages the local view of neighbor, the reference to the protocol,
-its index identifier inside the topology global array (invisible to
-protocols)\\
+The P2P network is composed of nodes. A node is a container of
+protocols. The node interface provides access to the protocols
+it holds, and to a fixed ID of the node.\\
 \hline 
 \emph{CDProtocol}&
-A protocol simply defines an operation to be performed at each cycle
-(only method nextCycle() is defined)\\
+It is a specific protocol, that is designed to run in the cycle-driven
+model. Such a protocol simply defines an operation to be performed at
+each cycle.\\
 \hline 
 \emph{Linkable}&
-A class implementing this interface has access to the underling network:
-can access to its local view of neighbor\\
+Typically implemented by protocols, this interface provides a service
+to other protocols to access a set of neighbor nodes.
+The instances of the same linkable protocol class over the nodes define
+an overlay network.\\
 \hline 
 \emph{Control}&
-Is a very general interface to run any kind of code using its
-\emph{execute()} method. In general, it is the base interface to observe or
-modify the simulation\\
-\hline
-\emph{Vector}&
-Is a package of classes aimed to modify and analyze numeric vectors
-defined by the vector of protocol instances in the overlay. All the
-protocol instances contained by nodes in the network define a protocol
-vector. These classes handle protocol vectors as a whole: for example,
-by observing one of its fields and reporting aggregation statistics
-over them. \\
+Classes implementing this interface can be scheduled for execution at
+certain points during the simulation.
+These classes typically observe or
+modify the simulation.\\
 \hline
 \end{tabular}\end{center}
 
-\caption{\label{t:psim_classes}Suggested peersim subset of classes or
+\caption{\label{t:psim_classes}Suggested PeerSim subset of classes or
   interfaces to know about.} 
 \end{table}
 
 
-The life-cycle of a peersim simulation is hard coded inside the
-\emph{peersim.Simulator} class. It first reads a particular
-configuration file (see section 
-\ref{configfile}) containing all the simulation parameters 
+The life-cycle of a cycle-based simulation is as follows.
+First the configuration file is read, that is given as a command line
+parameter (see section 
+\ref{configfile}).
+The configuration contains all the simulation parameters 
 concerning all the
-objects involved in the experiment. If no error occurs, the simulator
-loads and executes \emph{Control} type objects. A special
-\emph{Control} object (\emph{peersim.cdsim.FullNextCycle}) is
-dedicated to actually run the protocols.
-From a developer point of view, it is important to note that the
-protocols creation process is based on \textbf{cloning}: only one instance
-of each protocol is actually forged (with the \textbf{new} statement)
-and then it is cloned to populate all the network. Thus the 
-\emph{clone()} method has to be designed with care to avoid 
-unpredictable results.
+objects involved in the experiment.
 
-Each object in peersim (controls and protocols) is wrapped into
-\emph{Scheduler} objects which adds fine grained scheduling facilities to each
-simulation component. This approach leads to total freedom in the
-cycle execution. For example, it is possible to run a subset of
-protocols at the beginning, then some controls in between and finally
-the other protocols (o even a subset). Such kind of scenario is depicted in
-Figure~\ref{obsfigure}. 
+Then the simulator sets up the network initializing the nodes in the
+network, and the protocols in them.
+Each node has the same kinds of protocols; that is, instances of
+a protocols form an array in the network, with one instance in each
+node.
+The instances of the nodes and the protocols are created by cloning.
+That is, only one instance is constructed using the constructor of the
+object, which serve as prototypes, and all the nodes in the network are
+cloned from this prototype.
+For this reason, it is very important to play attention to the implementation
+of the cloning method of the protocols.
 
-The initialization phase is carried out by special \emph{Control}
-objects that run only at the beginning. To obtain this effect, this
-initializer is internally wrapped by the simulator in a \emph{Scheduler} 
-class object that ensures a single shot. In the configuration file,
+At this point, initialization needs to be performed, that sets up the
+initial states of each protocol.
+The initialization phase is carried out by \emph{Control}
+objects that are scheduled to run only at the beginning of each experiment.
+In the configuration file,
 the initialization components are easily recognizable by the
 \texttt{init} prefix. Please note that in the following pages we will
 talk about \emph{Initializer} objects just to remark their function and
-to distinguish them from ordinary \emph{Control} objects, however there
-is no \emph{Initializer} class in peersim
-\footnote{Class
-  \emph{Initializer} was available in early peersim releases, but
-  since version 0.3 has been completely removed.}.
+to distinguish them from ordinary \emph{Control} objects, but the initializer
+objects are simply controls, configured to run in the initialization phase.
 
-%Before executing the protocol code, the simulator runs the \emph{Control}
-%object(s), but the developer can choose and define
-%the execution order of these components and the cycle interval to
-%work in. For example, as depicted in Figure~\ref{obsfigure}, we can
-%choose to run one or more \emph{Control} object before and/or one
-%5or more \emph{Control} objects after the \emph{Dynamics} object(s).
-%Nevertheless, also after the last cycle we can choose to run an
-%  \emph{Observer}
-%to retreive a final snapshot.
+After initialization, the cycle driven engine calls all components (protocols
+and controls) once in each cycle, until a given number of cycles, or until
+a component decides to end the simulation.
+Each object in PeerSim (controls and protocols) is assigned a
+\emph{Scheduler} object which defines when they are executed exactly.
+By default, all objects are executed in each cycle.
+However, it is possible to configure a protocol or control to run only in
+certain cycles, and it is also possible to control the order of the running
+of the components within each cycle.
+The latter scenario is illustrated in Figure~\ref{obsfigure}. 
 
 
 \begin{figure}
 \begin{center}
-\includegraphics[scale=1.1]{controls-protocols.eps}
+\includegraphics[scale=1.1]{controls-protocols}
 \end{center}
-\caption{Controls and protocols scheduling. The ``C'' letters indicate
-  control component, while letter ``P'' indicates a generic protocol
-  execution. The numbers in lower part of the picture indicates the
-  peersim cycles. After the last cycle, it is possible to run a final
+\caption{Scheduling controls and protocols. The ``C'' letters indicate a
+  control component, while letter ``P'' indicates a protocol.
+  The numbers in lower part of the picture indicate the
+  PeerSim cycles. After the last cycle, it is possible to run a final
   control to retrieve a final snapshot.\label{obsfigure}}
 \end{figure}
 
@@ -217,7 +201,7 @@ When a \emph{Control} has to collect data, they are formatted and sent to
 standard output and can be easily redirected to a file to be collected
 for further work. 
 %When developing such a \emph{Control} class, a good
-%rule is to print out data using the \emph{peersim.core.Log} static class.
+%rule is to print out data using the \emph{PeerSim.core.Log} static class.
 
 
 \subsection{The config file}
@@ -230,7 +214,7 @@ are ignored (comments). The pairs are collected by a standard Java
 for example the following command:
 
 \begin{verbatim}
-java -cp <class-path> peersim.Simulator config-file.txt \end{verbatim}
+java -cp <class-path> PeerSim.Simulator config-file.txt \end{verbatim}
 
 
 Clearly the classpath is mandatory only if you have not set it yet
@@ -238,14 +222,13 @@ in a global shell variable.
 
 \subsection{Configuration example 1}
 
-First of all, what we are going to do in this first experiment? 
-
-We are going to impose a fixed P2P random topology composed by 50000
-node network; the chosen protocol is \emph{Aggregation} (what is
+We are going to create a fixed P2P random topology composed of 50000
+nodes.
+The chosen protocol is \emph{Aggregation} (what is
 aggregation? see appendix \ref{sec:Appendix-A-aggregation}) using
-an average function. The values to be aggregated (averaged) at each
-node are initialized using a linear distribution on the interval {[}0,
-100{]}. Finally a \emph{Control} monitors the averaging values.
+the average function. The values to be aggregated (averaged) at each
+node are initialized using a linear distribution on the interval (0,
+100). Finally a \emph{Control} monitors the averaging values.
 Looks easy!
 
 \footnotesize
@@ -286,81 +269,78 @@ Looks easy!
 \normalsize
 
 
-Lets comment the code line by line. 
-
 The first things to note are the
-key names: some of them are referred to global properties, while some
+key names: some of them refer to global properties, while some
 others refer to single component instancies. For example,
 \texttt{simulation.cycles} is global, but \texttt{protocol.lnk.xxx}
 defines parameter \textbf{xxx} of protocol \textbf{lnk}.
 
-From the previous example, follows that each component instance has a
-human readable (e.g., a string) identifier, such as \texttt{lnk}. This
-identifier is resolved as an numering index identifier by the peersim
-engine, but the user does not have to deal with it. 
+Observe that each component has a name,
+such as \texttt{lnk}. In the case of protocols, this
+name is mapped to a numeric index called protocol ID, by the PeerSim
+engine.
+This index does not appear in the configuration file, but it is necessary
+to access protocls during a simulation.
+We give more details later.
 
-A component such as a protocol or a control (or even an initializer
-which is a special control case), is declared by  the
-following syntax scheme:
+A component such as a protocol or a control is declared by  the
+following syntax:
 
-\footnotesize
-\begin{verbatim} <protocol | init| control> . string_id   [full_path_]classname
-\end{verbatim} \normalsize
+\begin{verbatim} <protocol|init|control>.string_id [full_path_]classname
+\end{verbatim}
 
-note that the full class path is optional, in fact peersim can search
-in its classpath in order to find the class. If multiple classes share
+Note that the full class path is optional, in fact PeerSim can search
+in its classpath in order to find a class. If multiple classes share
 the same name (in distinct packages), the full path is needed.
+The prefix {\tt init} defines an initializer object, that has to implement
+the Control interface.
   
 The component parameters (if any) follows this scheme:
 
-\footnotesize
-\begin{verbatim} <protocol | init| control> . string_id [. parameter_name ]
-\end{verbatim} \normalsize
-
-
-The final $<$parameter\_name$>$ is contained between {[}{]} to express
-that it is optional. 
+\begin{verbatim} <protocol|init|control>.string_id.parameter_name
+\end{verbatim}
 
 For example, at \textbf{line 10}, the first protocol chosen comes to life;
-the \textbf{key part} contains its type (or interface type) followed
-by the index and \textbf{the
-value} part contains the desired component class full package path
-(you have to check the javadoc files or the source tree to discover
-the correct package path). In the case of a component parameter
-declaration (see \textbf{line 13},the \textbf{key part} contains the parameter name and the \textbf{value
-part} is simply the value desired (usually an integer or a float).
+the \textbf{key part} contains its type, in this case {\tt protocol}
+followed by the name, in this case {\tt lnk}, and \textbf{the
+value} part contains the classname for the component, in this case
+{\tt IdleProtocol}.
+This class is in the peersim package, and you don't have to know what is
+its fully specified name.
+
+Parameters can be declared for each component.
+For example, see \textbf{line 13}, where the \textbf{key part} contains the
+parameter name and the \textbf{value part} is simply the value desired.
 
 From \textbf{line 3 to line 8}
 some global simulation properties are imposed; these are the total
 number of simulation cycles and the overlay network size. The
-\emph{Shuffle} control (\textbf{line 6}) is something like a
-\emph{system control} needed to shuffle the order in which the nodes
-are visited in each 
-cycle. 
+\emph{Shuffle} control (\textbf{line 6}) shuffles the order in which the nodes
+are visited in each cycle. 
 
 From \textbf{line 10 to line 13}, two protocols are put in the arena.
-The first one, \emph{peersim.core.IdleProtocol} does nothing. It is useful
-because of its ability to access to the topology, in fact it provides
-neighbour links to each node. This feature is present because \emph{IdleProtocol}
-is an implementation of the \emph{Linkable} interface. 
+The first one, \emph{IdleProtocol} does nothing.
+It simply serves as a static container of links to neighboring nodes.
+The class \emph{IdleProtocol} does not implement \emph{CDProtocol}, but it
+does implement the \emph{Linkable} interface, through which it provides
+the links to neighbors.
 
 The second protocol (\texttt{protocol.avg aggregation.AverageFunction})
-is the averaging flavor of aggregation. Its parameter (\texttt{linkable})
-is extremely important: it expresses the need to access the topology
-using not this protocol itself (aggregation), but with the
-linkable-implementing underlying protocol. This is due to the structure
-of aggregation: it does not implement the \emph{Linkable} interface,
-so it can not ``see'' the neighbor list by itself and it must use some other
-protocol in order to do that. The value of parameter linkable is the identifier
-of a \emph{Linkable} interface implementing protocol (\emph{IdleProtocol}
-in the example). Clearly to know if a protocol can get access to the
-topology directly or not, you have to check the documentation (or source
-code).
+is the averaging version of aggregation. Its parameter (\texttt{linkable})
+is important: the aggregation protocol needs to talk to neighbors
+but doesn't have its own list of neighbors.
+In a modular fashion, it can be put over any overlay network.
+The protocol (array) that defines the overlay network has to be specified
+here.
+The value of parameter linkable is the name
+of a protocol implementing  the \emph{Linkable} interface
+(\emph{IdleProtocol}
+in the example).
 
 From \textbf{line 15 to line 26}, it is time to initialize all the
 components previously declared. The initialization components
 are three, but only two of them are actually used at the same
-time. The first initializer, \texttt{peersim.init. WireKOut},
+time. The first initializer, \texttt{PeerSim.init. WireKOut},
 imposes a node wiring (e.g., a topology). The nodes using the declared
 protocol are linked
 randomly to each-other to form a random graph having the specified
@@ -390,9 +370,9 @@ value is the \texttt{avg} string-id (means: \emph{aggregation.AverageFunction}).
 Now you can try the example writing on a console the following line:
 
 \begin{verbatim}
-java -cp <class-path> peersim.Simulator example1.txt \end{verbatim}
+java -cp <class-path> PeerSim.Simulator example1.txt \end{verbatim}
 
-The class-path is mandatory only if the current system has not peersim
+The class-path is mandatory only if the current system has not PeerSim
 classes in the shell CLASSPATH environment variable. To get the exact
 output that will follow, the reader should uncomment the parameter
 at \textbf{line 3}:
@@ -408,13 +388,13 @@ be different):
 \begin{verbatim}
 Simulator: loading configuration
 ConfigProperties: File example/config-example1.txt loaded.
-Simulator: starting experiment 0 invoking peersim.cdsim.CDSimulator
+Simulator: starting experiment 0 invoking PeerSim.cdsim.CDSimulator
 Random seed: 1234567890
 CDSimulator: resetting
 Network: no node defined, using GeneralNode
 CDSimulator: running initializers
-- Running initializer init.rnd: class peersim.dynamics.WireKOut
-- Running initializer init.lin: class peersim.vector.LinearDistribution
+- Running initializer init.rnd: class PeerSim.dynamics.WireKOut
+- Running initializer init.lin: class PeerSim.vector.LinearDistribution
 CDSimulator: loaded controls [control.avgo, control.shf]
 CDSimulator: starting simulation
 
@@ -535,12 +515,12 @@ the node left takes the value declared in the \texttt{value} parameter.
 
 From \textbf{line 27 to 32} is present the last new component: 
 \texttt{control.dnet
-peersim.dynamics.DynamicNetwork}. As stated previously, a \emph{Control}
+PeerSim.dynamics.DynamicNetwork}. As stated previously, a \emph{Control}
 implementing object can be used to to change some other object
 properties; the change can be performed at each simulation cycle (default
 behavior) or using a more sophisticated approach. The object chosen
 in the example deletes 500 nodes from the net at each time (well,
-it is not completely correct to talk about deletion in peersim vision,
+it is not completely correct to talk about deletion in PeerSim vision,
 since the \emph{Linkable} interface does not support the delete
 operation; so it is better to think about \char`\"{}unlinking\char`\"{} 
 nodes from the overlay). The parameters \texttt{add}, \texttt{minsize},
@@ -663,7 +643,7 @@ generated; means that, in this case, no controls will run.
 
 %1 #random.seed 1234567890
 %2 simulation.cycles 30
-%3 control.0 peersim.cdsim.Shuffle
+%3 control.0 PeerSim.cdsim.Shuffle
 %4
 %5 # Imposes the correct protocol running order:
 %6 order.protocol ncast avgagr
@@ -678,12 +658,12 @@ generated; means that, in this case, no controls will run.
 %15 protocol.avgagr example.aggregation.AverageFunction
 %16 protocol.avgagr.linkable ncast
 %17
-%18 init.wrr peersim.vector.WireKOut
+%18 init.wrr PeerSim.vector.WireKOut
 %18 init.wrr.protocol ncast
 %20 init.wrr.k 20
 %21
 %22 # UNCOMMENT THE FOLLOWING LINES TO GET A LINEAR DISTRIBUTION
-%23 init.ldistrib peersim.vector.LinearDistribution
+%23 init.ldistrib PeerSim.vector.LinearDistribution
 %24 init.ldistrib.protocol avgagr
 %25 init.ldistrib.max 100
 %26 init.ldistrib.min 1
@@ -691,7 +671,7 @@ generated; means that, in this case, no controls will run.
 %28 control.avgobs example.aggregation.AverageObserver
 %29 control.avgobs.protocol avgagr
 %30
-%31 control.dnetwork peersim.dynamics.DynamicNetwork
+%31 control.dnetwork PeerSim.dynamics.DynamicNetwork
 %32 control.dnetwork.add -500
 %33 control.dnetwork.minsize 4000
 %34 control.dnetwork.from 5
@@ -750,7 +730,7 @@ other components to get access to this feature (e.g.: \emph{Newscast} or
 \subsection{Needed components}
 
 Now we have a general idea on what we want to code and it is time to
-adapt it to the peersim framework. Writing the protocol class itself,
+adapt it to the PeerSim framework. Writing the protocol class itself,
 it is usually not sufficient. Some companion components are required.
 For example, to restore the quota value for each node at the end of
 each cycle, a specific \emph{Control} object is required. Peersim
@@ -760,7 +740,7 @@ code reuse. To achieve this, the following classes are proposed:
 
 \begin{itemize}
 \item \textbf{protocol class itself}: it is built on
-  \emph{peersim.vector.SimpleValueHolder}; it is a simple base class
+  \emph{PeerSim.vector.SimpleValueHolder}; it is a simple base class
   to access a single float variable. It shares the same interface as
   aggregation: many other components can be used together with the
   load balancing protocol, such as the initializers classes. 
@@ -783,7 +763,7 @@ code reuse. To achieve this, the following classes are proposed:
  share the same interface (both extends \emph{SingleValueHolder}).
 Please note that the initializers provided in the example package are
 "light", demo versions; the developer is encouraged to use the
-\emph{peersim.vector.*} package initializers. 
+\emph{PeerSim.vector.*} package initializers. 
 
 \item \textbf{Observer components}: the aggregation observers can be
   used (the \emph{aggregation.AverageObserver} in particular) since
@@ -801,11 +781,11 @@ subsections present code with comments and other deeper explanations.
 \begin{verbatim}
 package example.loadbalance;
 
-import peersim.config.Configuration;
-import peersim.config.FastConfig;
-import peersim.core.*;
-import peersim.vector.SingleValueHolder;
-import peersim.cdsim.CDProtocol;
+import PeerSim.config.Configuration;
+import PeerSim.config.FastConfig;
+import PeerSim.core.*;
+import PeerSim.vector.SingleValueHolder;
+import PeerSim.cdsim.CDProtocol;
 
 public class BasicBalance extends SingleValueHolder implements CDProtocol {
 
@@ -836,7 +816,7 @@ public class BasicBalance extends SingleValueHolder implements CDProtocol {
 \normalsize
 
 It is simply standard Java code until now; the class needs also to
-implement \emph{peersim.cdsim.CDProtocol} (and \emph{Protocol})
+implement \emph{PeerSim.cdsim.CDProtocol} (and \emph{Protocol})
 interface(s) and to provide  the \emph{nextCycle()} method 
 that is where the actual protocol algorithm is located.
 In addition, the protocols extends the \emph{SingleValueHolder} class,
@@ -917,7 +897,7 @@ Linkable linkable = (Linkable)node.getProtocol(linkableID);
 \end{verbatim}
 
 
-Using the static \emph{peersim.config.FastConfig} class we can get the
+Using the static \emph{PeerSim.config.FastConfig} class we can get the
 current protocol corresponding Linkable identifier; this class manages
 the protocol \texttt{linkable} parameter without direct user
 intervention. Then we can access the actual linkable object as shown
@@ -991,8 +971,8 @@ amount. The quota value is decreased by the same amount at both nodes.
 \begin{verbatim}
 package example.loadbalance;
 
-import peersim.config.*;
-import peersim.core.*;
+import PeerSim.config.*;
+import PeerSim.core.*;
 
 public class ResetQuota implements Control {
 
@@ -1060,12 +1040,12 @@ The interface defines five methods: \emph{degree()}, \emph{getNeighbor()},
 \emph{addNeighbor()}, \emph{contains()}, \emph{pack()}. These methods
 are not usually invoked by the protocol itself (except for \emph{getNeighbor()}
 ), but by an \emph{Initializer} object instead (such as: 
-\emph{peersim.vector.WireKOut}).
+\emph{PeerSim.vector.WireKOut}).
 Please note that there
 is no way to remove nodes from the overlay; the only chance to get
-a similar effect, is to disable a peer accessing to the \emph{peersim.core.Fallible}
+a similar effect, is to disable a peer accessing to the \emph{PeerSim.core.Fallible}
 interface (extended by the \emph{Node} interface) and setting one
-of the available node states (\emph{peersim.core.Fallible.OK | DEAD | 
+of the available node states (\emph{PeerSim.core.Fallible.OK | DEAD | 
 MALICIOUS | DOWN}). 
 
 A feasible implementation could be the following. First of all, the
@@ -1131,8 +1111,8 @@ the topology shrinks as soon as the nodes reach the average load.
 \begin{verbatim}
 package example.loadbalance;
 
-import peersim.core.*;
-import peersim.config.FastConfig;
+import PeerSim.core.*;
+import PeerSim.config.FastConfig;
 
 public class AvgBalance extends BasicBalance {
     /**
@@ -1334,9 +1314,9 @@ is the following.
 \begin{verbatim}
 package example.loadbalance;
 
-import peersim.config.*;
-import peersim.core.*;
-import peersim.util.*;
+import PeerSim.config.*;
+import PeerSim.core.*;
+import PeerSim.util.*;
 
 public class QuotaObserver implements Control {
     /////////////////////////////////////////////////////////////////////////
@@ -1438,7 +1418,7 @@ The emergent topology from newscast topology management has a very
 low diameter and it is very close to a random graph with (out) degree
 c. Suggested readings: "Large-Scale Newscast Computing on the Internet" \url{http://citeseer.nj.nec.com/jelasity02largescale.html}.
 
-\section{\label{sec:Appendix-C-changes} Major peersim changes from
+\section{\label{sec:Appendix-C-changes} Major PeerSim changes from
   previous release}
 
 Peersim release 1.0 represents a major change from the previous
@@ -1463,7 +1443,7 @@ port previously developed components to the new simulator release.
   both of them had access to the entire network, and nothing prevented
   an observer to modify the network or a dynamics to observe it. So,
   now all observer/dynamics classes have to implement the 
-  \emph{peersim.core.Control} interface, which contains only an
+  \emph{PeerSim.core.Control} interface, which contains only an
   \texttt{execute()} 
   method. In the configuration file, the \texttt{dynamics.} and
   \texttt{observer.} 
@@ -1489,7 +1469,7 @@ port previously developed components to the new simulator release.
   supported, but you can set -1$<$add$<$1 which is taken as proportion.
 
 \item Removed the \texttt{simulation.shuffle} parameter, shuffling can now be
-  added by the control \emph{peersim.cdsim.Shuffle}. This way the time
+  added by the control \emph{PeerSim.cdsim.Shuffle}. This way the time
   within the cycle and 
   the schedule of the shuffling is as flexible as for any other control.
 
@@ -1565,8 +1545,8 @@ port previously developed components to the new simulator release.
   5/2.0 is equal to 2.5).
 
 \item Several new functionalities have been added to the
-  \emph{peersim.dynamics} 
-  and \emph{peersim.reports} packages; please refer to the API documentation.
+  \emph{PeerSim.dynamics} 
+  and \emph{PeerSim.reports} packages; please refer to the API documentation.
 
 \end{itemize}
 

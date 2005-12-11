@@ -1,11 +1,10 @@
 all:
-#	latex all
-#	bibtex all
 	latex tutorial1
 	latex tutorial1
 
-pdf: all
-	dvipdfm tutorial1.dvi
+pdf:
+	pdflatex tutorial1
+	pdflatex tutorial1
 
 ps: all
 	dvips -t a4 -o tutorial1.ps tutorial1.dvi

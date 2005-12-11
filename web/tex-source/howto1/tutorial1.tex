@@ -32,14 +32,14 @@ In this tutorial it is supposed that you have access to:
 \item knowledge of the Java language
 \item a Java compiler for Java version 1.5; we propose $\geq$ JDK 1.5.x
 \item the PeerSim 1.0 package (\url{http://sourceforge.net/projects/PeerSim}), 
-or the PeerSim source tree (you can download it from the sourceforg CVS server)
+or the PeerSim source tree (you can download it from the sourceforge CVS server)
 \item the Java Expression Parser version $\geq$ 2.3.0
 (included in the release, but you can download it from
 \url{http://www.singularsys.com/jep/})
-\item the gnuplot plotting tool is highly recommened 
+\item the gnuplot plotting tool is highly recommended 
 \end{itemize}
 
-The aim of this tutorial is inteded to be
+The aim of this tutorial is intended to be
 as practical and lightweight as possible.
 The goal is to give the reader the basics
 of PeerSim usage and the basics about how to write a simple protocol,
@@ -48,7 +48,7 @@ This tutorial IS NOT exhaustive at all, it is not meant to be a comprehensive
 guide, but it is enough to get you started.
 
 
-\section{Introduction to Peersim}
+\section{Introduction to PeerSim}
 
 
 \subsection{Why PeerSim}
@@ -58,7 +58,7 @@ scale (millions of nodes).
 Nodes in the network join and leave continuously.
 Experimenting with a protocol in such an environment it no easy task at all.
 
-Peersim has been developed to cope with these properties and thus
+PeerSim has been developed to cope with these properties and thus
 to reach extreme scalability and to support dynamism. In addition,
 the simulator structure is based on components and makes it easy to quickly
 prototype a protocol, combining different pluggable building
@@ -67,10 +67,10 @@ blocks, that are in fact Java objects.
 PeerSim 1.0 supports two simulation models: the so called cycle-based model
 and the traditional event based model.
 This document is about the cycle based model.
-This model is a simplifed model, which makes it possible to achieve extreme
+This model is a simplified model, which makes it possible to achieve extreme
 scalability and impressive performance, at the cost of some loss of realism.
 Many protocols can tolerate this loss of realism very well, according to
-our onw research; however,
+our own research; however,
 care should be taken when this model is selected to experiment with a protocol.
 
 The simplifying assumptions of the cycle based model are the lack of
@@ -80,11 +80,11 @@ are given the control periodically, in some sequential order, when they can
 perform arbitrary actions, such as call methods of other objects and perform
 some computations.
 
-We note here that it is realtively easy to migrate any cycle-based simulations
+We note here that it is relatively easy to migrate any cycle-based simulations
 to the event driven engine. However, we don't discuss how to do it in this
 document.
 
-\subsection{Peersim simulation life-cycle}
+\subsection{PeerSim simulation life-cycle}
 
 PeerSim was designed to encourage modular programming based on objects
 (building blocks). Every such block is easily replaceable by another component
@@ -205,10 +205,10 @@ for further work.
 %rule is to print out data using the \emph{PeerSim.core.Log} static class.
 
 
-\subsection{The config file}
+\subsection{The configuration file}
 \label{configfile}
 
-The config file is a plain ASCII text file, basically composed of
+The configuration file is a plain ASCII text file, basically composed of
 key-value pairs; the lines starting with \char`\"{}\#\char`\"{} character
 are ignored (comments). The pairs are collected by a standard Java
 \emph{java.util.Properties} object when the simulator starts using
@@ -233,47 +233,47 @@ node are initialized using a linear distribution on the interval (0,
 Looks easy!
 
 \footnotesize
-\begin{listing}{1}
-# PEERSIM EXAMPLE 1
-
-random.seed 1234567890
-simulation.cycles 30
-
-control.shf Shuffle
-
-network.size 50000
- 
-protocol.lnk IdleProtocol
-
-protocol.avg example.aggregation.AverageFunction
-protocol.avg.linkable lnk
- 
-init.rnd WireKOut
-init.rnd.protocol lnk
-init.rnd.k 20
-
-init.peak example.aggregation.PeakDistributionInitializer
-init.peak.value 10000
-init.peak.protocol avg
-
-init.lin LinearDistribution
-init.lin.protocol avg
-init.lin.max 100
-init.lin.min 1
-
-# you can change this to select the peak initializer instead
-include.init rnd lin
-
-control.avgo example.aggregation.AverageObserver
-control.avgo.protocol avg
-\end{listing}
+\begin{verbatim}
+01 # PEERSIM EXAMPLE 1
+02
+03 random.seed 1234567890
+04 simulation.cycles 30
+05
+06 control.shf Shuffle
+07
+08 network.size 50000
+09 
+10 protocol.lnk IdleProtocol
+11
+12 protocol.avg example.aggregation.AverageFunction
+13 protocol.avg.linkable lnk
+14 
+15 init.rnd WireKOut
+16 init.rnd.protocol lnk
+17 init.rnd.k 20
+18
+19 init.peak example.aggregation.PeakDistributionInitializer
+20 init.peak.value 10000
+21 init.peak.protocol avg
+22
+23 init.lin LinearDistribution
+24 init.lin.protocol avg
+25 init.lin.max 100
+26 init.lin.min 1
+27
+28 # you can change this to select the peak initializer instead
+29 include.init rnd lin
+30
+31 control.avgo example.aggregation.AverageObserver
+32 control.avgo.protocol avg
+\end{verbatim}
 
 \normalsize
 
 
 The first things to note are the
 key names: some of them refer to global properties, while some
-others refer to single component instancies. For example,
+others refer to single component instances. For example,
 \texttt{simulation.cycles} is global, but \texttt{protocol.lnk.xxx}
 defines parameter \textbf{xxx} of protocol \textbf{lnk}.
 
@@ -282,7 +282,7 @@ such as \texttt{lnk}. In the case of protocols, this
 name is mapped to a numeric index called protocol ID, by the PeerSim
 engine.
 This index does not appear in the configuration file, but it is necessary
-to access protocls during a simulation.
+to access protocols during a simulation.
 We give more details later.
 
 A component such as a protocol or a control is declared by  the
@@ -350,7 +350,7 @@ degree (\texttt{k}) parameter.
 
 The second and third initializers are alternatives to initialize the aggregation
 protocol, in particular, the initial values to be averaged.
-The initializaters set the initial values to follow a peak or linear
+The initializers set the initial values to follow a peak or linear
 distribution, respectively.
 Peak means that only one node will have a value different from zero.
 Linear means that the nodes will have linearly increasing values.
@@ -434,7 +434,7 @@ decreases very quickly.
 At cycle 12, quite all the nodes have
 a very good approximation of the real average (50). Try to experiment
 with different numbers or change the init distribution (e.g.:
-using \texttt{aggregation.Peak DistributionInitializer}).
+using \texttt{aggregation.PeakDistributionInitializer}).
 You can also replace the overlay network, for example, you can configure
 \emph{Newscast} instead of \emph{IdleProtocol} as it is done in the next
 example.
@@ -450,48 +450,48 @@ cutting out 500 nodes each time it is called, that is, once in each cycle
 from cycle 5 until cycle 10.
 
 \footnotesize
-\begin{listing}{1}
-# PEERSIM EXAMPLE 2
-
-random.seed 1234567890
-
-simulation.cycles 30
-
-control.shf Shuffle
-
-network.size 50000
- 
-protocol.lnk example.newscast.SimpleNewscast
-protocol.lnk.cache 20
-
-protocol.avg example.aggregation.AverageFunction
-protocol.avg.linkable lnk
-
-init.rnd WireKOut
-init.rnd.protocol lnk
-init.rnd.k 20
-
-init.pk example.aggregation.PeakDistributionInitializer
-init.pk.value 10000
-init.pk.protocol avg
-
-init.ld LinearDistribution
-init.ld.protocol 1
-init.ld.max 100
-init.ld.min 1
-
-# you can change this to include the linear initializer instead
-include.init rnd pk 
-
-control.ao example.aggregation.AverageObserver
-control.ao.protocol avg
-
-control.dnet DynamicNetwork
-control.dnet.add -500
-#control.dnet.minsize 4000
-control.dnet.from 5
-control.dnet.until 10
-\end{listing}
+\begin{verbatim}
+01 # PEERSIM EXAMPLE 2
+02
+03 random.seed 1234567890
+04
+05 simulation.cycles 30
+06
+07 control.shf Shuffle
+08
+09 network.size 50000
+10 
+11 protocol.lnk example.newscast.SimpleNewscast
+12 protocol.lnk.cache 20
+13
+14 protocol.avg example.aggregation.AverageFunction
+15 protocol.avg.linkable lnk
+16
+17 init.rnd WireKOut
+18 init.rnd.protocol lnk
+19 init.rnd.k 20
+20
+21 init.pk example.aggregation.PeakDistributionInitializer
+22 init.pk.value 10000
+23 init.pk.protocol avg
+24
+25 init.ld LinearDistribution
+26 init.ld.protocol 1
+27 init.ld.max 100
+28 init.ld.min 1
+29
+30 # you can change this to include the linear initializer instead
+31 include.init rnd pk 
+32
+33 control.ao example.aggregation.AverageObserver
+34 control.ao.protocol avg
+35
+36 control.dnet DynamicNetwork
+37 control.dnet.add -500
+38 #control.dnet.minsize 4000
+39 control.dnet.from 5
+40 control.dnet.until 10
+\end{verbatim}
 \normalsize
 
 The global parameters are the same as in the previous example; only
@@ -711,8 +711,7 @@ For example, in the case of the \emph{LoadBalance} protocol,
 
 The \emph{resetQuota()} method is called by a control object at
 the end of each cycle. Clearly, a suitable control entry should be present
-in the configuration file
-(\texttt{control.rq loadbalance.ResetQuota}.
+in the configuration file: \texttt{loadbalance.ResetQuota}.
 
 \footnotesize
 \begin{verbatim}
@@ -753,7 +752,7 @@ to the node itself (the node on which the simulator is invoking the
 \emph{nextCycle()} method) and the protocol ID of the protocol
 which is being executed.
 First we have to get the protocol ID of
-the protocol that implements the \emph{Linkable} interace, to be able
+the protocol that implements the \emph{Linkable} interface, to be able
 to access the neighbors of the node.
 This is done like this:
 \begin{verbatim}
@@ -761,7 +760,7 @@ int linkableID = FastConfig.getLinkable(protocolID);
 Linkable linkable = (Linkable)node.getProtocol(linkableID);
 \end{verbatim}
 Using the static \emph{PeerSim.config.FastConfig} class we can get the
-protocol ID of the linlable protocol that was configured for the protocol
+protocol ID of the linkable protocol that was configured for the protocol
 being executed.
 
 If the local quota is equal to 0, the node has already
@@ -869,101 +868,33 @@ public class ResetQuota implements Control {
 \end{verbatim}
 \normalsize
 
-The code is very compact because the \emph{Control} interface itself
+The code is very compact partly because the \emph{Control} interface itself
 is very simple: only the \emph{execute()} method. The constructor takes
-care of initializing the configuration file parameters (respectively:
-the reset value and the protocol identifier to deal with). The \emph{execute()}
-method makes use of network global knowledge: it invokes the \emph{resetQuota()}
-method on all the \emph{Network} object elements (it is a static
-object available everywhere in the simulator environment; you can think
-about it as an array). It is clear that the simulator has global knowledge,
-but it is up to the protocol developer to make use or not of this
-facility according to the consistency of the simulation itself. 
+care of initialization using the configuration. The \emph{execute()}
+method invokes the \emph{resetQuota()} method on all the protocols.
+It accesses the protocols through the \emph{Network} class, which is a
+static class with only static fields.
+You can think about it as an array of nodes.
 
 
-\subsection{Implementing the Linkable interface}
+\section{An extended protocol}
 
-In this howto there are a lot of references about the \emph{Linkable}
-interface and about its importance, so for the sake of completeness,
-it is time to give a look at how to implement it in brief. It is interesting
-to node that this interface should be implemented by low level or
-by topology management protocols and not by a higher level protocol
-such as a load balancing one. The reason to discourage the
-implementation in higher level components,
-is the risk to affect modularity. At least, the reader should consider
-the ability to switch off the built in \emph{Linkable} interface and
-to use an external protocol facility instead.
-
-The interface defines five methods: \emph{degree()}, \emph{getNeighbor()},
-\emph{addNeighbor()}, \emph{contains()}, \emph{pack()}. These methods
-are not usually invoked by the protocol itself (except for \emph{getNeighbor()}
-), but by an \emph{Initializer} object instead (such as: 
-\emph{PeerSim.vector.WireKOut}).
-Please note that there
-is no way to remove nodes from the overlay; the only chance to get
-a similar effect, is to disable a peer accessing to the \emph{PeerSim.core.Fallible}
-interface (extended by the \emph{Node} interface) and setting one
-of the available node states (\emph{PeerSim.core.Fallible.OK | DEAD | 
-MALICIOUS | DOWN}). 
-
-A feasible implementation could be the following. First of all, the
-class (e.g.: \emph{BasicBalance}) needs a structure to represent the
-neighbor view: an \emph{ArrayList} structure is fine.
-
-\footnotesize
-\begin{verbatim}
- protected ArrayList nView = new ArrayList();
- // Constructor:
- 
- // Linkable interface implementation methods:
- public int degree() {
-     return nView.size();
- }
- 
- public Node getNeighbor(int i) {
-     return (Node)nView.get(i);
- } 
- 
- public boolean addNeighbor(Node n) {
-     if (!contains(n)) {
-         nView.add(n);
-         return true;
-     }
-     else {return false;}
- }
- 
- public boolean contains(Node n) {
-     return nView.contains(n);
- }
- 
- public void pack() { ; } // unused!
-\end{verbatim}
-\normalsize
-
-Again the code is quite straightforward. All the elements inside the
-view are \emph{Node} class (interface) types. All methods are simple
-functions built upon the \emph{ArrayList} structure. The last method
-is included in the interface description with the aim to provide a
-view size compression facility, but it is usually not implemented (the
-size of each view is typically quite small).
-
-
-\section{A second new protocol}
-
-This new protocol is an extensions of the previous one. The general
-core is quite the same, but the algorithm uses the global load average
-value instead of the most distant neighbor load value. To calculate
-the global load average, a little trick is used; it would be possible
-to calculate this value using aggregation, but we can \textbf{simulate}
-the aggregation effect (alias calculating the average load) by running
+This new protocol extends the previous one. The general
+core is the same, but the algorithm uses the global load average
+instead of the most distant neighbor load value, when deciding
+how much load to send or receive. To calculate
+the global load average, we cheat a little; it would be possible
+to calculate the average using aggregation, but we can \textbf{simulate}
+the aggregation protocol by running
 a static method with global knowledge once. This method will initialize
-a global variable available to all nodes. 
+a global variable available to all nodes.
+This way we increase performance, without sacrificing much realism.
 
-This protocol is targeted to gain advantage from the newscast protocol
-features; when a node reaches the global load value (average), it
-switches to a DOWN state. In this way, the node exits from the overlay
-and the newscast protocol no more cares about it. The effect is that
-the topology shrinks as soon as the nodes reach the average load.
+This protocol is targeted to take advantage of the newscast protocol
+as well; when a node reaches the global load value (average), it
+switches its fail-state to DOWN. In this way, the node exits from the overlay
+because the newscast protocol removes it. The effect is that
+the number of nodes decreases as more and more nodes reach the average load.
 
 \footnotesize
 \begin{verbatim}
@@ -1016,18 +947,13 @@ public class AvgBalance extends BasicBalance {
 
 
 The first part is straightforward. Two global variables are defined:
-\emph{average}, and \emph{avg\_done}; the second is a flag used to be
+\emph{average}, and \emph{avg\_done}; the second is a flag used to make
 sure not to
 perform the calculation more than once. A different and much more
-elegant approach is to define the average calculation method inside
-a static constructor, but this solution is \textbf{wrong}! When the
-node protocol objects are created, the load distribution is not defined
-yet, so the global average result will be 0.
-
-The function \emph{calculateAVG()} simulates the average aggregation
-behaviour. It makes use of global knowledge, looping on each overlay
-node. 
-
+elegant approach seems to be to define the average calculation method inside
+a constructor, but this solution is \textbf{wrong}! When the
+constructor is run, the load distribution is not guaranteed to be defined
+yet, so the global average is undefined.
 \footnotesize
 \begin{verbatim}
     protected static void suspend(Node node) {
@@ -1035,10 +961,8 @@ node.
     }
 \end{verbatim}
 \normalsize
-
-This is the utility function to exit from the topology; simply sets
+This is the utility function to exit from the overlay network; simply sets
 a node state from \emph{Fallible} interface.
-
 \footnotesize
 \begin{verbatim}
     public void nextCycle(Node node, int protocolID) {
@@ -1079,17 +1003,17 @@ a node state from \emph{Fallible} interface.
     }
 \end{verbatim}
 \normalsize
-
-Method \emph{nextCycle()} is the protocol algorithm core. It first
-checks for the average calculation: if the flag is not set, it performs
+Method \emph{nextCycle()} is the core protocol algorithm. It first
+checks for the average; if the flag is not set, it performs
 the computation.
 
 If the difference between the current and the average load is less
 then 1 (the fixed quota value per cycle) the node is suspended and
-thus exits from the topology defined by the newscast protocol; moreover,
+thus exits from the overlay defined by the newscast protocol; moreover,
 if the quota has been already spent, it returns. The protocol then
-checks if the local value is less or grater then the average and respectively
-get the most loaded or the least loaded neighbor and exchange.
+checks if the local value is less or grater then the average and
+finds the most loaded or the least loaded neighbor, respectively, and
+performs the exchange.
 
 \footnotesize
 \begin{verbatim}
@@ -1146,27 +1070,27 @@ get the most loaded or the least loaded neighbor and exchange.
     }
 \end{verbatim}
 \normalsize
-
 The methods to get the the most loaded or the least loaded neighbor
 are straightforward and very similar, but are shown for completeness.
 
 
 \section{Evaluating the protocols}
 
-The performance about load variance reduction can be analyzed with
-an \emph{aggregation.AverageObserver} or a \emph{loadbalance.LBObserver}
-(they are very similar), but do not expect huge differences. In fact,
-from this point of view, the two protocols have nearly an identical
-performance, no matter whatever distribution you are using. The 
-\emph{AVGBalance}
-protocol improvement over the \emph{BasicBalance} one is about the
-achieved overall load transfer. The \emph{AVGBalance} amount of transfer
-is minimal and it is practically the same of the theoretical minimal
-amount of transfer needed to solve the problem 
-(more about this: \url{http://www.cs.unibo.it/bison/publications/modular-p2p.pdf}). 
+The load balancing protocol is supposed to reduce the variance of the load.
+The variance can be analyzed using 
+\emph{aggregation.AverageObserver} or a \emph{loadbalance.LBObserver}
+(they are very similar).
+With respect to this metric,
+the two protocols have nearly identical
+performance, independently of the initial distribution you are using.
+However, the \emph{AVGBalance}
+protocol improves \emph{BasicBalance} in the
+overall load transfer. \emph{AVGBalance} transfers
+a provably minimal amount of load
+(see \url{http://www.cs.unibo.it/bison/publications/modular-p2p.pdf}). 
 
-The \emph{Control} class code to inspect the load transfer amount
-is the following. 
+We can implement a control to observe the load that is being transferred
+as follows.
 
 \footnotesize
 \begin{verbatim}
@@ -1224,8 +1148,10 @@ public class QuotaObserver implements Control {
 \end{verbatim}
 \normalsize
 
-The idea is very simple: at each simulation cycle it collects all
-node values about quota and prints statistics on the console.
+The idea is very simple: at each simulation cycle it collects
+the remaining quota and prints statistics on the console.
+From these statistics, and knowing the initial value of the quota,
+the load that has been transferred can be calculated.
 
 
 \appendix
@@ -1272,7 +1198,7 @@ for the details.
 Peersim release 1.0 represents a major change from the previous
 versions. 
 Due to strong refactoring, backward compatibility is broken and also
-some configuration parameters has ben changed. 
+some configuration parameters has been changed. 
 The following is a list of the major changes from the previous
 release. This list is given in order to provide the reader a fast reference to
 port previously developed components to the new simulator release.

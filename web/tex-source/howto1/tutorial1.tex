@@ -2,6 +2,7 @@
 
 \usepackage{a4wide}
 \usepackage{graphicx}
+\usepackage{moreverb}
 \usepackage{hyperref}
 
 \title{PeerSim HOWTO:\\ Build a new protocol for the PeerSim 1.0 simulator}
@@ -232,40 +233,41 @@ node are initialized using a linear distribution on the interval (0,
 Looks easy!
 
 \footnotesize
-\begin{verbatim}
-1 # PEERSIM EXAMPLE 1
-2
-3 random.seed 1234567890
-4 simulation.cycles 30
-5
-6 control.shf Shuffle
-7
-8 network.size 50000
-9  
-10 protocol.lnk IdleProtocol
-11
-12 protocol.avg example.aggregation.AverageFunction
-13 protocol.avg.linkable lnk
-14 
-15 init.rnd WireKOut
-16 init.rnd.protocol lnk
-17 init.rnd.k 20
-18 
-19 init.peak example.aggregation.PeakDistributionInitializer
-20 init.peak.value 10000
-21 init.peak.protocol avg
-22
-23 init.lin LinearDistribution
-24 init.lin.protocol avg
-25 init.lin.max 100
-26 init.lin.min 1
-27
-28 # you can change this to select the peak initializer instead
-29 include.init rnd lin
-30
-31 control.avgo example.aggregation.AverageObserver
-32 control.avgo.protocol avg
-\end{verbatim}
+\begin{listing}{1}
+# PEERSIM EXAMPLE 1
+
+random.seed 1234567890
+simulation.cycles 30
+
+control.shf Shuffle
+
+network.size 50000
+ 
+protocol.lnk IdleProtocol
+
+protocol.avg example.aggregation.AverageFunction
+protocol.avg.linkable lnk
+ 
+init.rnd WireKOut
+init.rnd.protocol lnk
+init.rnd.k 20
+
+init.peak example.aggregation.PeakDistributionInitializer
+init.peak.value 10000
+init.peak.protocol avg
+
+init.lin LinearDistribution
+init.lin.protocol avg
+init.lin.max 100
+init.lin.min 1
+
+# you can change this to select the peak initializer instead
+include.init rnd lin
+
+control.avgo example.aggregation.AverageObserver
+control.avgo.protocol avg
+\end{listing}
+
 \normalsize
 
 
@@ -338,36 +340,43 @@ of a protocol implementing  the \emph{Linkable} interface
 in the example).
 
 From \textbf{line 15 to line 26}, it is time to initialize all the
-components previously declared. The initialization components
-are three, but only two of them are actually used at the same
-time. The first initializer, \texttt{PeerSim.init. WireKOut},
-imposes a node wiring (e.g., a topology). The nodes using the declared
-protocol are linked
+components previously declared. We declare three initialization components,
+but only two of them are actually used (see \textbf{line 29}).
+The first initializer, \texttt{PeerSim.init.WireKOut},
+performs the wiring of the static overlay network. 
+In particular, the nodes are linked
 randomly to each-other to form a random graph having the specified
 degree (\texttt{k}) parameter. 
 
-The second and third initializer task is to initialize the aggregation
-function value-field to be averaged. Respectively, The initialization
-values follows a peak and linear
-distribution fashion. Both initializers need a protocol identifier to
-refer to (\texttt{protocol} parameter) and initialization values
-ranges according to their functions (e.g., \texttt{max}, \texttt{min}
-parameters 
+The second and third initializers are alternatives to initialize the aggregation
+protocol, in particular, the initial values to be averaged.
+The initializaters set the initial values to follow a peak or linear
+distribution, respectively.
+Peak means that only one node will have a value different from zero.
+Linear means that the nodes will have linearly increasing values.
+Both initializers need a protocol name that identifies the
+protocol to initialize (\texttt{protocol} parameter).
+Additional parameters are the range (\texttt{max}, \texttt{min}
+parameters)
 for the \emph{PeakDistributionInitializer} and \texttt{value}
-parameter for \emph{LinearDistribution}). 
+parameter for \emph{LinearDistribution}. 
 
-The chance to use the peak or linear distribution is given by the
-\texttt{include. init} directive (\textbf{line 29}) that selects which
+The choice to use the peak or linear distribution is given by the
+\texttt{include.init} property (\textbf{line 29}) that selects which
 initializers are 
-allowed to run following the order in which they have been
-inserted. The same directive works also with protocols and controls.
+allowed to run.
+This property also defines the order in which the components are run.
+Note that the default order (if there is no include property) is according
+to alphabetical order of names.
+A similar include property works also with protocols and controls.
 
 Finally at \textbf{line 31, 32} the last component is declared:
-\texttt{aggregation. AverageObserver}. Its only parameter used is \texttt{protocol} and clearly refers to the
+\texttt{aggregation.AverageObserver}.
+Its only parameter used is \texttt{protocol} which refers to the
 \emph{aggregation.AverageFunction} protocol type, so the parameter
-value is the \texttt{avg} string-id (means: \emph{aggregation.AverageFunction}). 
+value is \texttt{avg}.
 
-Now you can try the example writing on a console the following line:
+Now you can run the example writing on a console the following line:
 
 \begin{verbatim}
 java -cp <class-path> PeerSim.Simulator example1.txt \end{verbatim}
@@ -381,26 +390,11 @@ at \textbf{line 3}:
 
 on top of the configuration file. This parameter is very useful to
 replicate exactly the experiment results based on (pseudo) random
-behavior. The experiment output is (some initialization strings may
-be different):
+behavior. The standard output is:
 
-\tiny
+\scriptsize
 \begin{verbatim}
-Simulator: loading configuration
-ConfigProperties: File example/config-example1.txt loaded.
-Simulator: starting experiment 0 invoking PeerSim.cdsim.CDSimulator
-Random seed: 1234567890
-CDSimulator: resetting
-Network: no node defined, using GeneralNode
-CDSimulator: running initializers
-- Running initializer init.rnd: class PeerSim.dynamics.WireKOut
-- Running initializer init.lin: class PeerSim.vector.LinearDistribution
-CDSimulator: loaded controls [control.avgo, control.shf]
-CDSimulator: starting simulation
-
-
 control.avgo: 0 1.0 100.0 50000 50.49999999999998 816.7990066335468 1 1
-CDSimulator: cycle 0 done
 control.avgo: 1 1.2970059401188023 99.38519770395408 50000 50.50000000000005 249.40673287686545 1 1
 control.avgo: 2 9.573571471429428 84.38874902498048 50000 50.500000000000085 77.89385877895182 1 1
 control.avgo: 3 23.860361582231647 71.93627224106982 50000 50.49999999999967 24.131366707228402 1 1
@@ -434,140 +428,122 @@ control.avgo: 29 50.49998958653935 50.5000099409645 50000 50.50000000000045 0.0 
 \normalsize
 
 The observer component produces many numbers, but looking at the 3th and
-4th data columns (respectively the maximum of averages and the minimum
-of averages) it is easy to see how the variance decreases very quickly.
-At cycle 12, quite all the nodes has
+4th data columns (the maximum and the minimum
+of the values over the network) it is easy to see how the variance
+decreases very quickly.
+At cycle 12, quite all the nodes have
 a very good approximation of the real average (50). Try to experiment
-with different numbers and then to change the init distribution (e.g.:
-using \texttt{aggregation.Peak DistributionInitializer}) and / or the
-protocol stack (put \emph{Newscast} or \emph{SCAMP} instead of 
-\emph{IdleProtocol}).
+with different numbers or change the init distribution (e.g.:
+using \texttt{aggregation.Peak DistributionInitializer}).
+You can also replace the overlay network, for example, you can configure
+\emph{Newscast} instead of \emph{IdleProtocol} as it is done in the next
+example.
 
 
 \subsection{Configuration example 2}
 
 This second example is an improved version of the first one. What is
-new? Now the aggregation protocol runs on top of Newscast and a new
-values distribution is provided (simply uncomment it and comment out
-the first two lines of the previous distribution). Moreover, there is
+new? Now the aggregation protocol runs on top of Newscast and a
+few other extensions are added. For example, there is
 a \emph{Control} object that changes the network size, shrinking it by
-cutting out 500 nodes each time).
+cutting out 500 nodes each time it is called, that is, once in each cycle
+from cycle 5 until cycle 10.
 
 \footnotesize
-\begin{verbatim}
-1 # PEERSIM EXAMPLE 2
-2
-3 random.seed 1234567890
-4
-5 simulation.cycles 30
-6
-7 control.shf Shuffle
-8
-9 network.size 50000
-10 
-11 protocol.lnk example.newscast.SimpleNewscast
-12 protocol.lnk.cache 20
-13
-14 protocol.avg example.aggregation.AverageFunction
-15 protocol.avg.linkable lnk
-16
-17 init.rnd WireKOut
-18 init.rnd.protocol lnk
-19 init.rnd.k 20
-20
-21 init.pd example.aggregation.PeakDistributionInitializer
-22 init.pd.value 10000
-23 init.pd.protocol avg
-24
-25 init.ld LinearDistribution
-26 init.ld.protocol 1
-27 init.ld.max 100
-28 init.ld.min 1
-29
-30 # you can change this to include the linear initializer instead
-31 include.init 0 1 
-32
-33 control.ao example.aggregation.AverageObserver
-34 control.ao.protocol avg
-35
-36 control.dnet DynamicNetwork
-37 control.dnet.add -500
-38 #control.dnet.minsize 4000
-39 control.dnet.from 5
-40 control.net.until 10
-\end{verbatim}
+\begin{listing}{1}
+# PEERSIM EXAMPLE 2
+
+random.seed 1234567890
+
+simulation.cycles 30
+
+control.shf Shuffle
+
+network.size 50000
+ 
+protocol.lnk example.newscast.SimpleNewscast
+protocol.lnk.cache 20
+
+protocol.avg example.aggregation.AverageFunction
+protocol.avg.linkable lnk
+
+init.rnd WireKOut
+init.rnd.protocol lnk
+init.rnd.k 20
+
+init.pk example.aggregation.PeakDistributionInitializer
+init.pk.value 10000
+init.pk.protocol avg
+
+init.ld LinearDistribution
+init.ld.protocol 1
+init.ld.max 100
+init.ld.min 1
+
+# you can change this to include the linear initializer instead
+include.init rnd pk 
+
+control.ao example.aggregation.AverageObserver
+control.ao.protocol avg
+
+control.dnet DynamicNetwork
+control.dnet.add -500
+#control.dnet.minsize 4000
+control.dnet.from 5
+control.dnet.until 10
+\end{listing}
 \normalsize
 
 The global parameters are the same as in the previous example; only
-new additions are discussed below. At \textbf{line 11-12} there is the
-\emph{Newscast} (what is newscast? See Appendix \ref{sec:Appendix-B-newscast}) 
-component declaration with its 
-only parameter cache (please note: cache size should be at least as
-large as network \texttt{k} degree size). 
+new additions are discussed below. At \textbf{line 11-12} the
+\emph{Newscast} protocol is selected as the overlay protocol
+(what is newscast? See Appendix \ref{sec:Appendix-B-newscast}) 
+The only parameter is cache size.
 The initializers section (at \textbf{lines 17-28}) is the same as in
 the previous example. However, here the peak distribution is
 selected. To change it and switching to the linear distribution,
-change the \texttt{include init} directive at \textbf{line 31}.
-
+change the \texttt{include init} property in \textbf{line 31}.
 The
-peak distribution initializes all nodes except one with 0 value and
-the node left takes the value declared in the \texttt{value} parameter.
+peak distribution initializes all nodes with the value zero,
+except one, that gets the \texttt{value} parameter.
 
-From \textbf{line 27 to 32} is present the last new component: 
 \texttt{control.dnet
-PeerSim.dynamics.DynamicNetwork}. As stated previously, a \emph{Control}
-implementing object can be used to to change some other object
-properties; the change can be performed at each simulation cycle (default
+PeerSim.dynamics.DynamicNetwork} defines the last component
+from \textbf{line 36 to 40}. 
+As stated previously, a \emph{Control}
+object can be used modify some parameters in the simulation.
+The change can be performed at each simulation cycle (default
 behavior) or using a more sophisticated approach. The object chosen
-in the example deletes 500 nodes from the net at each time (well,
-it is not completely correct to talk about deletion in PeerSim vision,
-since the \emph{Linkable} interface does not support the delete
-operation; so it is better to think about \char`\"{}unlinking\char`\"{} 
-nodes from the overlay). The parameters \texttt{add}, \texttt{minsize},
-\texttt{from} and \texttt{until} have respectively the following meaning:
+in the example deletes 500 nodes from the network at each time
+the control is executed.
 
-\begin{itemize}
-\item adds the specified number of nodes (if negative, subracts);
-\item the minimum size is referred to the overlay: it can not be less than
-what is stated here;
-\item the cycle number from which the component can start running;
-\item the cycle number until which the component object can run.
-\end{itemize}
-
-Other parameters are available; please check the source or the JavaDoc.
-
-It is interesting to note that not all the parameters associated to
-a \emph{Control} component can be found in its source code (or
-documentation); this is due to the Simulator class 
-behavior. When it creates the \emph{Control} instances, it
-wraps them in a \emph{Scheduler} class object: this is the class where
-some parameters (such as \texttt{step}, \texttt{from}, \texttt{until})
-are actually defined.
+Parameter \texttt{add} specifies the number of nodes to add, can be negative.
+Parameter\texttt{minsize} set a lower bound on the network size: if it is
+reached, no more nodes are removed.
+Other parameters are available; please check the class documentation.
+Parameters \texttt{from} and \texttt{until} are generic parameters that can
+be specified for each component.
+They select the cycles in which the given component is executed.
+A third, here unused, such parameter is \texttt{step}.
+For example, if set to two, every second cycle is executed only.
 
 \subsection{Advanced configuration features}
 
-Thanks to the presence of the Java Expression Parser (since release
+Thanks to the Java Expression Parser (since release
 0.2), the configuration
-file can handle many types of \textbf{expressions}, such as boolean 
-expressions, common mathematical functions and well known predefined
+file can handle many types of \textbf{expressions},
+common mathematical functions and well known predefined
 constants (e.g.: $\pi$ and $e$); for an exhaustive feature list check
 the Java Expression Parser web page
 (\url{http://www.singularsys.com/jep/index.html}).
-
-Expressions can be used anywhere instead of numeric values, as follows:
-
+Expressions can be used anywhere instead of numeric values, for example
 \begin{verbatim}
 MAG 2
 SIZE 2^MAG
 \end{verbatim}
-
-the variable SIZE will be auto-magically evaluated in number 4.
-
-Multiple expressions can be written in a tree-like fashion and they will
-be evaluated recursively (the CPU conscious users have to know that 
-no optimizations are performed and the same expression may be evaluated
-many times) as in the following code sample:
-
+defines variable SIZE to be evaluated as expected.
+Multiple interdependent expressions can be written and they will
+be evaluated properly. For example:
 \begin{verbatim}
 A B+C
 B D+E
@@ -576,138 +552,38 @@ D 1
 E F
 F 2
 \end{verbatim}
+will produce: A=7, B=3, C=4, D=1, E=2 and F=2.
+Recursive definitions are not allowed.
 
-The evaluation will produce: A=7, B=3, C=4, D=1, E=2 and F=2.
-
-Recursive definitions are not allowed and a simple trick is used to 
-avoid them: if the recursion depth is grater than a configurable 
-threshold parameter (set at 100 by default) an error message is
-printed and the simulator stops.
-
-For any kind of simulator object (e.g., protocol, control and init),
-it is possible to specify an ordering scheme. The default one is given
-by the component ids
-alphabetically order.
-%In fact, the object prefixes are
-%not limited to numerical indexes, but they can be expressed by any 
-%string, as follows:
-
+For sets of components,
+it is possible to specify the ordering of execution. The default one is given
+by the alphabetical order of the component names.
+The order can be explicitly overridden as follows
 \begin{verbatim}
 control.conn ConnectivityObserver
 control.myClass Class1
 control.1 Class2
-\end{verbatim}
-
-The lexicographical order can be explicitly overridden 
-giving an item name list separated  by any non-word character
-(non alphanumeric or underscore) in the following directive:
-
-\begin{verbatim}
 order.observer myClass conn 1
 \end{verbatim}
-
 If not all names appear in the list,
-then the vacant objects will follow the default alphabetical order.
+then the missing objects will follow the default alphabetical order.
 For example:
-
 \begin{verbatim}
 order.observer myClass
 \end{verbatim}
-
 will produce the following order:
-
-\begin{center}
-$\langle$ \texttt{observer.myClass} ; \texttt{observer.1} ;
-\texttt{observer.conn} $\rangle$
- 
-\end{center}
-
+\texttt{observer.myClass}, \texttt{observer.1},
+\texttt{observer.conn}.
 Another available feature is to tell the simulator which items are
-allowed to run using the following directive:
-
+allowed to run:
 \begin{verbatim}
 include.control conn myClass
 \end{verbatim}
-
-This will return \texttt{control.conn} and \texttt{control.myClass}.
-If the list is empty, then an empty ordering array will be
-generated; means that, in this case, no controls will run. 
-
-%\subsubsection{A concrete example}
-
-%To have a practical idea about how to use these new features, the following
-%example is presented; it is a modified example2 version.
-
-%\footnotesize
-%\begin{verbatim}
-
-%1 #random.seed 1234567890
-%2 simulation.cycles 30
-%3 control.0 PeerSim.cdsim.Shuffle
-%4
-%5 # Imposes the correct protocol running order:
-%6 order.protocol ncast avgagr
-%7 include.control avgobs
-%8 
-%9 overlay.size 50000
-%10 overlay.maxsize 200000
-%11 
-%12 protocol.ncast example.newscast.SimpleNewscast
-%13 protocol.ncast.cache 20
-%14
-%15 protocol.avgagr example.aggregation.AverageFunction
-%16 protocol.avgagr.linkable ncast
-%17
-%18 init.wrr PeerSim.vector.WireKOut
-%18 init.wrr.protocol ncast
-%20 init.wrr.k 20
-%21
-%22 # UNCOMMENT THE FOLLOWING LINES TO GET A LINEAR DISTRIBUTION
-%23 init.ldistrib PeerSim.vector.LinearDistribution
-%24 init.ldistrib.protocol avgagr
-%25 init.ldistrib.max 100
-%26 init.ldistrib.min 1
-%27
-%28 control.avgobs example.aggregation.AverageObserver
-%29 control.avgobs.protocol avgagr
-%30
-%31 control.dnetwork PeerSim.dynamics.DynamicNetwork
-%32 control.dnetwork.add -500
-%33 control.dnetwork.minsize 4000
-%34 control.dnetwork.from 5
-%35 control.dnetwork.until 10
-%\end{verbatim}
-%\normalsize
-
-%In this configuration file, the component indexes are no more used,
-%but a string identifier is used instead. 
-%Because of the chosen protocol symbol names (\texttt{ncast} and 
-%\texttt{avgagr}),
-%it is necessary to impose a different running order scheme to let
-%newscast run first using (at \textbf{line 6}):
-%
-%\begin{verbatim}
-%order.protocol ncast avgagr
-%\end{verbatim}
-
-%In addition, a similar approach is used with the controls for
-%observing the simulation (at \textbf{line 7}):
-
-%\begin{verbatim}
-%include.control dnetwork
-%\end{verbatim}
-
-%This allows only the \texttt{dnetwork} control to run. This approach
-%avoids the usage of error prone comments in the file to switch
-%components on or off.  
+will result in the execution of \texttt{control.conn} and
+\texttt{control.myClass}, in this order.
+If the list is empty, nothing is run.
 
 \section{Writing a new protocol}
-
-
-This section covers the description of how to write a new protocol. 
-
-
-\subsection{Which kind of protocol?}
 
 The protocol we are going to develop is a simple load balancing algorithm.
 It works as follows. The state of a node is composed of two values:
@@ -1372,59 +1248,47 @@ node values about quota and prints statistics on the console.
 
 \appendix
 \section{\label{sec:Appendix-A-aggregation}A few words about
-Aggregation}
+Gossip-based Aggregation}
 
-It is a very fast epidemic-style protocol targeted to compute a particular
-function (e.g.: average, max, min, ...) on a numeric value holded
-at each network node. In order to work, every node needs access to
-its neighbor list view on the overlay network; no particular requirements
-about the topology management protocol are imposed. In the case of
-averaging function, a generic method \emph{updateState(a, b)} returns
-(a+b)/2, where a and b are values at (respectively) node a and node
-b. This kind of computation is performed by each node at each simulation
-cycle.
 
-The global average is not affected, but the variance over all the
-estimates decreases very fast in a few cycles (the convergence rate
-is exponential and it does not care about the network size). The aggregation
-protocol is also very robust in case of node failures. 
+Aggregation is about computing a particular
+function (e.g., average, max, min, etc) over a set of numeric values
+distributed over the network.
+In gossip-based aggregation, each node periodically selects a neighbor
+to communicate with (using an underlying overlay network) and
+in each such communication step they mutually update their approximations
+of the value to be calculated, based on their previous approximations.
 
-Suggested readings: project BISON publication page \url{http://www.cs.unibo.it/bison/pub.shtml}.
+See \url{http://www.cs.unibo.it/bison/publications/aggregation-tocs.pdf}
+for the details.
 
 
 \section{\label{sec:Appendix-B-newscast}A few words about Newscast}
 
 Newscast is an epidemic content distribution and topology management
-protocol. Every peer in the system has a partial view knowledge about
-the topology which is modeled as a fixed size (c) set of node descriptors.
+protocol. Every peer in the system has a partial view of
+the set of nodes which is in fact a fixed size set of node descriptors.
 Each descriptor is a tuple consisting of a peer address and a time-stamp
 recording the time when the descriptor was created.
 
 Each node updates its state by choosing a random neighbor and exchanging
-with it the view. The exchanging process merges the two involved peer
-partial view, keeping the c freshest descriptors. in this manner,
-old information (descriptor) are auto-magically removed from the system
-as time goes on. This process allows the protocol to repair the overlay
-topology removing dead links with minimum effort and this is a great
-feature for a highly dynamic oriented system where nodes join and
-leave continuously. 
-
-The protocol relies on the timestamps, but it doesn't need synchronized
-clocks: timestamps have to be only mutually consistent. To achieve
-this, a simple time normalization of the received descriptors is performed.
-So time precision is not critical at all. 
+views. After the exchange both peers merge the two views and keep the
+freshest entries only.
+In this manner,
+old information (descriptors) is removed from the system.
+This process allows the protocol to repair the overlay
+topology removing dead links with minimum effort which is very useful
+in highly dynamic system where nodes join and leave continuously. 
 
 The emergent topology from newscast topology management has a very
-low diameter and it is very close to a random graph with (out) degree
-c. Suggested readings: "Large-Scale Newscast Computing on the Internet" \url{http://citeseer.nj.nec.com/jelasity02largescale.html}.
+low diameter and it is very close to a random graph.
+See \url{http://www.cs.unibo.it/bison/publications/middleware2004.pdf}
+for the details.
 
-\section{\label{sec:Appendix-C-changes} Major PeerSim changes from
-  previous release}
+\section{\label{sec:Appendix-C-changes}PeerSim changes from previous release}
 
 Peersim release 1.0 represents a major change from the previous
 versions. 
-Many useful features have been added, listed below in
-Section~\ref{s:new_features}.    
 Due to strong refactoring, backward compatibility is broken and also
 some configuration parameters has ben changed. 
 The following is a list of the major changes from the previous
@@ -1436,8 +1300,7 @@ port previously developed components to the new simulator release.
 
 \begin{itemize}
 
-\item Peersim now contains \textbf{Java 1.5 features}, so you MUST use
-  the JDK 1.5 to run it. 
+\item Peersim 1.0 requires Java 1.5 to compile.
 
 \item The observer and dynamic distinction is gone. It was pretty artificial:
   both of them had access to the entire network, and nothing prevented

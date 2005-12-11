@@ -589,69 +589,62 @@ The protocol we are going to develop is a simple load balancing algorithm.
 It works as follows. The state of a node is composed of two values:
 the local load and the quota. The second one is the amount of ``load''
 the node is allowed to transfer at each cycle. The quota is necessary
-in order to make real load balancing, otherwise it would be simply
-averaging. Every node contacts the most \textbf{distant} neighbor
+in order to model the upper bound of load that can realistically be
+transferred in a time unit.
+Every node contacts the most \textbf{distant} neighbor
 in its local view and then exchanges at maximum the quota value. The
 concept of ``distance'' is expressed in terms of maximally
-different load from the current node load. Comparing the distance
-to the actual node load, the protocol chooses to perform a load balance
+different load from the load of the current node. Comparing the distance,
+the protocol chooses to perform a load balancing
 step using a push or pull approach.
 
-After each cycle, the quota value is restored to allow further computation.
+After each cycle, the quota value is restored.
 The protocol does not care about topology management and relies on
-other components to get access to this feature (e.g.: \emph{Newscast} or
-\emph{IdleProtocol}). 
+other components to get access to neighbors (e.g., \emph{Newscast} or
+a static topology through \emph{IdleProtocol}, as seen in previous
+examples). 
 
 
-\subsection{Needed components}
+\subsection{Necessary components}
 
 Now we have a general idea on what we want to code and it is time to
-adapt it to the PeerSim framework. Writing the protocol class itself,
-it is usually not sufficient. Some companion components are required.
+adapt it to the PeerSim framework. Writing the protocol class itself
+is often not sufficient. Some companion components are required.
 For example, to restore the quota value for each node at the end of
 each cycle, a specific \emph{Control} object is required. Peersim
 is basically a collection of interchangeable components, so the development
 of new stuff should have \textbf{modularity} in mind and should maximize
 code reuse. To achieve this, the following classes are proposed:
 
-\begin{itemize}
-\item \textbf{protocol class itself}: it is built on
-  \emph{PeerSim.vector.SimpleValueHolder}; it is a simple base class
-  to access a single float variable. It shares the same interface as
-  aggregation: many other components can be used together with the
-  load balancing protocol, such as the initializers classes. 
+\begin{description}
+\item[protocol]  It is built on
+  \emph{PeerSim.vector.SimpleValueHolder} which is a simple base class
+  to access a single float variable. Aggregation used the same base class
+  as well.
 
-\item \textbf{Control components}: 
+\item[ResetQuota] A control to restore the quota value
+  at each node at the end of each cycle.
 
-\begin{itemize}
-
-\item \textbf{ResetQuota}: it is necessary to restore the quota value
-  at each node at the end of each cycle (as previously stated). This
-  object is quite straightforward: it simply implements the only one
-  method the interface \emph{Control} declares, invoking the protected
-  protocol method \emph{resetQuota()}
-
-\item \textbf{QuotaObserver}: a control to monitor the \textbf{quota}
+\item[QuotaObserver] A control to monitor the \textbf{quota}
   parameter and thus the amount of traffic exchanged in the overlay. 
 
-\item \textbf{Initializer components}: they are not really needed!
- In fact the aggregation initializers can be used directly because they
- share the same interface (both extends \emph{SingleValueHolder}).
+\item[initialization]
+ The initializer we have seen with the aggregation (averaging) example can
+ be used directly because they
+ share the same interface (extend \emph{SingleValueHolder}).
 Please note that the initializers provided in the example package are
-"light", demo versions; the developer is encouraged to use the
-\emph{PeerSim.vector.*} package initializers. 
+"light", demo versions; the developer is encouraged to check out the
+\emph{PeerSim.vector.*} package initializers.
 
-\item \textbf{Observer components}: the aggregation observers can be
-  used (the \emph{aggregation.AverageObserver} in particular) since
-  they share the same interface.
+\item[observers] The aggregation observers can be
+  used (\emph{aggregation.AverageObserver} in particular). It is possible
+  again, since these components are also based on the same interface.
+\end{description}
 
-\end{itemize}
-
-\end{itemize}
 To give the reader an idea about the actual code to write, the following
 subsections present code with comments and other deeper explanations.
 
-\subsection{The core load balancing class}
+\subsection{The core load balancing protocol class}
 
 \footnotesize
 \begin{verbatim}
@@ -691,19 +684,21 @@ public class BasicBalance extends SingleValueHolder implements CDProtocol {
 \end{verbatim}
 \normalsize
 
-It is simply standard Java code until now; the class needs also to
-implement \emph{PeerSim.cdsim.CDProtocol} (and \emph{Protocol})
-interface(s) and to provide  the \emph{nextCycle()} method 
-that is where the actual protocol algorithm is located.
+The class needs to
+implement \emph{PeerSim.cdsim.CDProtocol}, that is, provide a
+\emph{nextCycle()} method 
+where the actual protocol algorithm is located.
 In addition, the protocols extends the \emph{SingleValueHolder} class,
-an implementation of \emph{SingleValue} interface. It is a simple
+an implementation of the \emph{SingleValue} interface. It is a simple
 solution to have a public standard access (getter and setter methods)
-to a single internal variable. In this example the variable holds the
-node actual load.  
+to a single internal variable, and to allow controls to operate on
+these values in a reusable manner. In this example the variable holds the
+node's actual load.
 
 In the constructor signature, the string parameter 
-is a string corresponding to the configuration file component key
-(e.g.: \texttt{protocol.lb} in the \emph{LoadBalance} protocol case).
+is the full name of the configuration component.
+For example, in the case of the \emph{LoadBalance} protocol,
+\texttt{``protocol.lb''}.
 
 \footnotesize
 \begin{verbatim}
@@ -714,12 +709,10 @@ is a string corresponding to the configuration file component key
 \end{verbatim}
 \normalsize
 
-The \emph{resetQuota()} method is called by a special control object at
-the cycle end. Clearly a suitable control entry should be present
-in the configuration file (such as: \texttt{control.rq loadbalance.ResetQuota}
-and \texttt{control.rq.protocol protocol-id}). This method is not
-mandatory, but it is much more software engineering oriented then a
-dirty variable access performed by the dynamics object.
+The \emph{resetQuota()} method is called by a control object at
+the end of each cycle. Clearly, a suitable control entry should be present
+in the configuration file
+(\texttt{control.rq loadbalance.ResetQuota}.
 
 \footnotesize
 \begin{verbatim}
@@ -754,46 +747,35 @@ public void nextCycle(Node node, int protocolID) {
 \end{verbatim}
 \normalsize
 
-This method is required by the \emph{CDProtocol} interface. It is the
-behavior performed by the protocol. The arguments represent a reference
+This method is declared by the \emph{CDProtocol} interface. It defines the
+behavior of the protocol. The arguments represent a reference
 to the node itself (the node on which the simulator is invoking the
-\emph{nextCycle()} method) and the index protocol identifier (the
-\emph{BasicBalance} 
-internal protocol index in this case). First it has to get a reference
-(in indexed form) to 
-the \emph{Linkable} interface enabled protocol in the node protocol
-stack; as a remind, something implementing the \emph{Linkable} interface,
-is an entity capable of accessing the topology. Having this linkable
-reference we can access to the real \emph{Linkable} interface
-implementation with: 
-
+\emph{nextCycle()} method) and the protocol ID of the protocol
+which is being executed.
+First we have to get the protocol ID of
+the protocol that implements the \emph{Linkable} interace, to be able
+to access the neighbors of the node.
+This is done like this:
 \begin{verbatim}
 int linkableID = FastConfig.getLinkable(protocolID);
 Linkable linkable = (Linkable)node.getProtocol(linkableID);
 \end{verbatim}
-
-
 Using the static \emph{PeerSim.config.FastConfig} class we can get the
-current protocol corresponding Linkable identifier; this class manages
-the protocol \texttt{linkable} parameter without direct user
-intervention. Then we can access the actual linkable object as shown
-in the second line.
+protocol ID of the linlable protocol that was configured for the protocol
+being executed.
 
-If the local quota is equal to 0, the node have already
+If the local quota is equal to 0, the node has already
 spent its amount of network traffic, so it returns.
 
-To get the most distant node from the current one, a for statement loops on
-all neighbor node load value; the number of neighbor is equal to the
-node degree (accessible thanks to \emph{Linkable} interface). To pick
-a node having a the \emph{Linkable} access:
-
+To get the most distant node from the current one, we loops over
+all neighboring load values; the number of neighbors is equal to the
+node degree (accessible through to \emph{Linkable} interface). Getting a node
+through the \emph{Linkable} interface goes like this:
 \begin{verbatim}
 Node peer = linkable.getNeighbor(i);
 \end{verbatim}
-
-and from this obtained \emph{Node} interface reference it is possible
-to get the protocol interface we are interested in (\emph{BasicBalance}):
-
+and from this node it is possible
+to get the protocol we are interested in (\emph{BasicBalance}) like this:
 \begin{verbatim}
 BasicBalance n = (BasicBalance)peer.getProtocol(protocolID);
 \end{verbatim}
@@ -828,17 +810,17 @@ step invoking the \emph{doTransfer()} method.
 
 
 The \texttt{doTransfer()} method performs the actual load exchange
-among the current node and the neighbor expressed by the parameter.
-This is the place where it is time to decide to perform a pull or a
-push load balancing approach. To make this choice the local load value
-is compared with the neighbor load value. In case of a push choice,
+among the current node and the neighbor given by the parameter.
+This method decides whether to perform a pull or a
+push load balancing step. For this purpose the local load value
+is compared with the neighboring load value. In case of a push choice,
 the local value is increased and the other node value is decreased;
-in the other case (pull) the exact opposite holds. The \emph{maxTrans}
-variable is the absolute amount of ``{}load'' to transfer
+in the pull case the opposite is done. The \emph{maxTrans}
+variable is the absolute amount of load to transfer
 to reach the balance between the two involved nodes; because of the
 quota upper bound on the transfers at each cycle, the algorithm chooses
-the minimum between the quota itself and the aimed \emph{maxTrans}
-amount. The quota value is decreased by the same amount at both nodes.
+the minimum between the quota and \emph{maxTrans}.
+The quota is then decreased by the same amount at both nodes.
 
 
 \subsection{Load balancing control class code}

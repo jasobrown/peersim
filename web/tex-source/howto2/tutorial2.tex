@@ -1,17 +1,15 @@
-
 \documentclass[a4paper,11pt]{article}
 
-\usepackage{url}
 \usepackage{graphicx}
 \usepackage{a4wide}
+\usepackage{hyperref}
 
 \newcommand{\id}[1]{{\scshape\small #1}}
 \newcommand{\psim}{\id{Peersim}}
 
-\title{PeerSim HOWTO 2: build a topology generator}
+\title{PeerSim HOWTO 2: Build a topology generator}
 
 \author{Gian Paolo Jesi (jesi@cs.unibo.it)}
-\date{November 16, 2005}
 
 \begin{document}
 
@@ -727,76 +725,59 @@ we simply need to subtract 1 from the first column items.
 
 The values shown previously, have been generated with $\alpha = 4$. 
 
-\begin{figure}[tb!]
-\begin{center}
-\includegraphics[scale=0.6]{pic_alfa01.eps}
-\end{center}
-\caption{Topology with $\alpha$ 0.1: a star topology.\label{t01figure}}
-\end{figure}
+%\begin{figure}[tb!]
+%\begin{center}
+%\includegraphics[scale=0.6]{pic_alfa01.eps}
+%\end{center}
+%\caption{Topology with $\alpha$ 0.1: a star topology.\label{t01figure}}
+%\end{figure}
 
 
-The degree distribution related to the generated star topology 
-(Figure~\ref{t01figure}) is not 
-shown (it is simply a straight line).
+%The degree distribution related to the generated star topology 
+%(Figure~\ref{t01figure}) is not 
+%shown (it is simply a straight line).
 Clearly the plots show that there is not any evidence about in-degree 
 power-law distribution; only in the case of $\alpha = 4$, the corresponding 
 plot exhibits a power-law like behavior at least for a subset of the nodes, 
 but this is very different from what first listed paper was talking about.
 
-\begin{figure}[tb!]
+\begin{figure}
 \begin{center}
-\includegraphics[scale=0.6]{pic_alfa4.eps}
+\includegraphics[width=7cm]{pic_alfa4.eps}\hfill
+\includegraphics[width=7cm]{picdegree_alfa4.eps}
 \end{center}
-\caption{Topology with $\alpha$ 4\label{t4figure}}
+\caption{Topology and in-degree distribution with $\alpha$ 4\label{t4figure}}
 \end{figure}
 
-\begin{figure}[tb!]
+\begin{figure}
 \begin{center}
-\includegraphics[scale=0.6]{picdegree_alfa4.eps}
+\includegraphics[width=7cm]{pic_alfa20.eps}\hfill
+\includegraphics[width=7cm]{picdegree_alfa20.eps}
 \end{center}
-\caption{In-degree distribution with $\alpha$ 4 \label{d4figure}}
+\caption{Topology and in-degree distribution with $\alpha$ 20\label{t20figure}}
 \end{figure}
 
-\begin{figure}[tb!]
+\begin{figure}
 \begin{center}
-\includegraphics[scale=0.6]{pic_alfa20.eps}
+\includegraphics[width=7cm]{pic_alfa100.eps}\hfill
+\includegraphics[width=7cm]{picdegree_alfa100.eps}
 \end{center}
-\caption{Topology with $\alpha$ 20\label{t20figure}}
+\caption{Topology and in-degree distribution
+with $\alpha$ 100\label{t100figure}}
 \end{figure}
 
-\begin{figure}[tb!]
-\begin{center}
-\includegraphics[scale=0.6]{picdegree_alfa20.eps}
-\end{center}
-\caption{In-degree distribution with $\alpha$ 20 \label{d20figure}}
-\end{figure}
-
-\begin{figure}[tb!]
-\begin{center}
-\includegraphics[scale=0.6]{pic_alfa100.eps}
-\end{center}
-\caption{Topology with $\alpha$ 100\label{t100figure}}
-\end{figure}
-
-\begin{figure}[tb!]
-\begin{center}
-\includegraphics[scale=0.6]{picdegree_alfa100.eps}
-\end{center}
-\caption{In-degree distribution with $\alpha$ 100\label{d100figure}}
-\end{figure}
-
-\begin{figure}[tb!]
-\begin{center}
-\includegraphics[scale=0.6]{pic_alfa2000.eps}
-\end{center}
-\caption{Topology with $\alpha$ 2000\label{t2000figure}}
-\end{figure}
-
-\begin{figure}[tb!]
-\begin{center}
-\includegraphics[scale=0.6]{picdegree_alfa2000.eps}
-\end{center}
-\caption{In-degree distribution with $\alpha$ 2000\label{d2000figure}}
-\end{figure}
+%\begin{figure}[tb!]
+%\begin{center}
+%\includegraphics[scale=0.6]{pic_alfa2000.eps}
+%\end{center}
+%\caption{Topology with $\alpha$ 2000\label{t2000figure}}
+%\end{figure}
+%
+%\begin{figure}[tb!]
+%\begin{center}
+%\includegraphics[scale=0.6]{picdegree_alfa2000.eps}
+%\end{center}
+%\caption{In-degree distribution with $\alpha$ 2000\label{d2000figure}}
+%\end{figure}
 
 \end{document}

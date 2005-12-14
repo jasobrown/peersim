@@ -7,7 +7,8 @@
 \newcommand{\id}[1]{{\scshape\small #1}}
 \newcommand{\psim}{\id{Peersim}}
 
-\title{PeerSim HOWTO 2: Build a topology generator}
+\title{PeerSim HOWTO:\\
+Build a topology generator for PeerSim 1.0}
 
 \author{Gian Paolo Jesi (jesi@cs.unibo.it)}
 
@@ -17,176 +18,128 @@
 
 \section{Introduction}
 
-\textbf{NOTE: This tutorial revision covers \psim~release 1.0
-  topics.}\\
-
-This tutorial teaches you how to build from scratch a new \psim~
-( \psim~ project page: \url{http://sourceforge.net/projects/peersim}
-) topology generator. In order to understand this tutorial, the reader
-is encouraged to start reading the first \psim~ tutorial 
-(\url{http://peersim. sourceforge.net/peersim_HOWTO.html}) 
-to have an idea of the basic concepts that will not be discussed any
+This tutorial describes how to build a new \psim\ 
+(\psim~project page: \url{http://sourceforge.net/projects/peersim})
+topology generator. In order to understand this tutorial, the reader
+is encouraged to study the first \psim\ tutorial 
+(\url{http://peersim. sourceforge.net/tutorial1/tutorial1.pdf}) 
+to learn about the basic concepts that will not be discussed any
 further in this document. 
 
-The aim of this tutorial is to be as practical as possible; the goal
-is to give the reader ideas about technical or intermediate level
-features of \psim~ and to encourage him/her to experiment further.
-The full source code discussed in this document is available via CVS
-at \psim~ project page in the \emph{peersim.example.hot} class package.
+The aim of this tutorial is to be as practical as possible;
+we encourage the reader to experiment further.
+The full source code discussed in this document is available
+in the \psim\ release in the \emph{peersim.example.hot} class package,
+and the latest version via anonymous cvs from the project.
 
 
-\section{What is a topology?}
+\section{What is a topology and why it is important?}
 
-The network abstraction in \psim~ is a (sometimes huge) array of
-\emph{Node} structures (interfaces); because of the size of the network
-and to overcome scalability problems, usually in large P2P networks
-each node knows about the existence of a very small subset of other
-nodes (e.g., order of $\log(N)$ where $N$ is the whole network size). Thus
-each node has a short list of other node references, usually called
-``neighbors'', build accordingly to some kind of strategy
-or rule. 
+In a large-scale an dynamic P2P system nodes cannot have complete
+information about the entire network.
+Instead, all nodes can possibly have only a few neighbors, that is,
+peers that the ``know about''.
+These ``knows about'' relations define a network that is called
+\emph{overlay network}, and that is a fundamental concept of P2P systems.
 
-Thus, we can say that a topology is how nodes are arranged (linked)
-together and clearly this depends upon the particular chosen rule.
-Examples of topology are the following (not exhaustive at all): 
+Many P2P protocols are either about building a specific overlay network
+or rely on a fixed overlay network that are provided by other services
+or that are given by some constraints.
+In all cases it is very important to be able to experiment with protocols
+over many different network topologies.
+\psim\ already contain many topologies to experiment with, in the
+\emph{peersim.dynamics.Wire*} classes, readily applicable to
+initialize linkable protocols.
+In this document we give a brief illustration of how to build a custom
+generator.
 
-\begin{itemize}
-\item random graphs 
-\item Watts-Strogatz model graph 
-\item star model 
-\item ring model 
-\item lattice model 
-\item ...
-\end{itemize}
 
-\subsection{Which rule to choose?}
+\subsection{A simple model to simulate the Internet}
 \label{sec:rule}
 
 In this document, we have chosen to code a particular topology generator
 to build Internet-like tree topologies. The building process is based
-on the \emph{preferential attachment} approach. The rule applied is
+on a specific, location dependent
+\emph{preferential attachment} approach. The wiring rule applied is
 quite simple and takes into account geometric and network constraints
-to better mimic real world network. The preferential attachment choice
-can be affected by a parameter ($ \alpha $) that amplifies or reduces the
-geometric location influence in favor of the path distance. 
+to better mimic real world networks. Preferential attachment
+is tuned by the parameter $\alpha$ that amplifies or reduces the
+influence of the geometric location. 
 
-The rule strategy is the following: we consider a square unit region
-$D$, then we start with node $x(0)$ chosen at random and we set $W(x(0))
-= 0$ (it i
-
-s the root node). For each i with $i = 1...n-1$ we choose a
-new node $x(i)$ in the region $D$ and we connect it to an \textbf{early
-inserted} node $x(j)$ that minimize the following formula:
+The rule strategy is the following: we consider a unit square,
+and we place $x_0$ in the middle, that is, $x_0=(0.5,0.5)$.
+This node is called the root. Let $W()$ denote the number of hops to
+the root.
+For each $i = 1\ldots n-1$, we select a point $x_i$ in the unit square at
+random, and we connect it to an already existing node $x_j$
+that minimizes the following formula:
 
 \begin{center}
-$W(x(j)) + \alpha \cdot dist(x(i), x(j))$ with 0 $\leq$ j $<$ i
+$W(x_j) + \alpha\cdot \mathrm{dist}(x_j,x_i)$
 \end{center}
 
-where: 
-
-\begin{itemize}
-\item $W(x(j))$ is the distance in terms of hops (the path distance from node
-$x(j)$ to the root node); 
-\item $dist(...)$ is the usual Euclidean distance; 
-\item $ \alpha $ is a weight parameter that can minimize or maximize 
-the geometric distance influence;
- 
-\end{itemize}
-
-After having chosen a node $x(j)$, we set $W(x(i)) = W(x(j))+1$ . At
-the end we obtain a tree rooted in $x(0)$. This topology implies that
+where dist() is the Euclidean distance and $\alpha$ is a weight
+parameter.
+Of course,  $W(x_i) = W(x_j)+1$.
+This way we obtain a tree rooted in $x_0$. This topology implies that
 every node (except the root) has an out-degree of exactly one link.
-
-%We have extended this model to improve robustness allowing every node
-%to have exactly $d$ outbound neighbors instead of only one. This means
-%that, at the time of joining the network, each node should have at
-%least $d$ candidates to be selected as neighbors. To achieve this property,
-%as a first step we select at random exactly $d$ root nodes and we connect
-%them together in a ring fashion (a doubly linked list). In this way
-%each ordinary node has at least $d$ nodes (the $d$ roots) to choose from
-%in order to select its neighbors. In other words, each node has to
-%select the best $d$ nodes that minimize the function above. 
-
 To get further details about this model, we suggest the following
 readings:
 
 \begin{enumerate}
 
 \item ``Heuristically Optimized Trade-offs: A New Paradigm for Power
-Laws in the Internet'' \\
-(\url{http://cgi.di.uoa.gr/~elias/publications/paper-fkp02.pdf} )
+Laws in the Internet''
+(\url{http://cgi.di.uoa.gr/~elias/publications/paper-fkp02.pdf})
 
 \item  ``Degree distributions
-of the FKP network model'' \\
+of the FKP network model''
 (\url{http://research.microsoft.com/~jchayes/Papers/FKPdgrees.pdf}) 
 
 \item ``On Power-Law
-Relationships of the Internet Topology''\\
+Relationships of the Internet Topology''
 (\url{http://www.cs.ucr.edu/~michalis/CAMERA.ps})
 
 \end{enumerate}
 
-The model should generate a topology that exhibits a power-law bound
-on the in-degree sequence of nodes; but, as stated in the second
-previously listed paper, this power-law prediction is not true. In fact
-this preferential attachment model does not generate always such an
-in-degree sequence 
-distribution, but for some parameter values it shows a power-law like
-behaviour. 
-
 \section{What we need to code}
 \label{s:coding}
 
-Our aim is to write a standard \psim~component able to produce the
-desired topology according to the $\alpha$ parameter. Apart from the
-$\alpha$ parameter, the algorithm relies also on how the nodes are
-distributed in the squared area. We choose to initialize their
-2d-coordinates using a uniformly random distribution.
-
-We are not interested
-in building the topology in a set of steps over time: we want
-something like a topology initializer that arranges the wiring from scratch in
-one step.
-
-In order to build the desired topology, we need to extend or implement
-the following classes/interfaces:  
+Our aim is to write \psim\ components able to produce the
+desired topology according to the $\alpha$ parameter, and
+to analyze it as well.
+The topology could be build gradually during a simulation, or
+at once, in a single step. We opt for the latter approach.
+In order to build the desired topology, we will need the following
+components (note that other design decisions could be taken: we selected
+the following way):
 
 \begin{itemize}
 
-\item the \emph{Protocol} class: the protocol itself does nothing; we
-  need a place to store some informations, such as the coordinates.
-The reader can think to this class as ``glue code''.
+\item A \emph{Protocol} class that simply stores we the coordinates,
+and has no behavioral elements (ie, a plain container).
  
-\item the \emph{Control} interface: we need several \emph{Control}
-  implementing classes in order to perform the following task:
+\item An initializer that sets the values for the coordinates of each node.
 
-\begin{itemize}
+\item A control to wire the topology (actually add the links among the
+nodes) within an arbitrary linkable protocol, based on the coordinates.
 
-\item Initialize the 2d-coordinates for each node and select an
-  initial root node.
-
-\item An observer is needed to print the topology to a file (e.g., to
+\item An observer to print the topology to a file (e.g., to
   visualize the generated graph using GnuPlot).
 
-\item An observer can be used to collect statistics about the
+\item An observer to be used to collect statistics about the
   in-degree distribution.
 
-\item Another observer can test the topology robustness to random node
+\item An observer to test the robustness to random node
   failures.
 
-\end{itemize}
-
-\item A class dedicated to the actual node wiring process according to
-  the rules described in Section~\ref{sec:rule}. It can be considered
-  as a \emph{factory} component.
 
 \end{itemize}
 
-As we will see in next sections, some of the classes we intend to code
-are not needed. \psim~standard components can be used instead. It is
-important to decouple carefully all the tasks we intend to accomplish in
-order to figure out if there are ``common patterns'' that are already
-available and ready to use.
+As we will see in next sections, some of the classes we listed are
+\psim\ standard components that can readily used, due to the generic
+\emph{Linkable} interface, that provides an abstraction to deal with any
+topologies in a modular fashion.
 
 
 \section{Code writing}
@@ -246,26 +199,19 @@ public class InetCoordinates implements Protocol {
 \end{verbatim}
 \normalsize
 
-The actual ``who knows whom'' relation (the topology) container is decoupled
-from this class. Any standard \psim~component implementing the
-\emph{Linkable} interface can be used (see the configuration file in
-Section~\ref{s:experiments}). 
+This class stores only the coordinates, the links will be stored in another
+(arbitrary) protocol the implements the 
+\emph{Linkable} interface.
 
-The class is basically a structure encapsulated in an
-object to hold the $x$ and $y$ coordinate components. Another solution
-could be to define a specialized sub-class of 
-\emph{peersim.core.GeneralNode} in which the coordinate be stored
-and then use \emph{peersim.core.IdleProtocol} to handle the nodes
-``who knows whom'' relations. Both the approaches are identical in
-practice, it is just a developer choice. The reader can implement this
-second suggestion just for exercise.
+The \emph{clone()} method must be redefined simply to catch and swallow
+the exception (that is never thrown),
+since otherwise no deep cloning is needed (we have only primitive types).
 
-The \emph{clone()} method must be redefined according to the
-\emph{Protocol} class contract. It does not have to do much: there
-are only primitive types that are cloned by default.
-
-The coordinates components are not public and can be accessed by their
+The coordinate components are not public and can be accessed by their
 getter/setter methods.
+this is important because that way one can use the \emph{peersim.vector}
+package to initialize coordinates in a completely flexible way.
+In this document we do not use that package.
 
 \subsection{Initialization class}
 \label{s:init}
@@ -336,43 +282,34 @@ the configuration
 file. It declares the protocol holding the coordinates.
 
 The class is very simple, it
-has to generate uniformly random numbers for each node coordinate
-components ($x$ and $y$). The only exception is the root node that, by
-default, is the index 0 node. Its coordinate is forced to be $(0.5,
-0.5)$. This particular choice is to generate nice looking graphs when
-it is time to plot them.
+generates uniform random coordinates ($x$ and $y$).
+The only exception is the root node that, by
+default, is the node with index 0. Its coordinate is fixed to be $(0.5,
+0.5)$.
 
-To generate random number, the static field \texttt{r} of
-\emph{CommonState} is used.
+To generate random numbers, the static field \texttt{r} of
+\emph{CommonState} MUST is used at all times,
+because that way the experiment are guaranteed to be reproducible.
 
-\subsection{The factory class}
-\label{s:factory}
+\subsection{The wiring class}
+\label{s:wiring}
 
-The factory class uses the features of a standard \psim~component:
-\emph{peersim.dynamics.WireGraph} (it is a \emph{Control}
-instance). The overlay is wired using the 
-\emph{Graph} API methods; the wiring logic has to be in the
+The wiring class extends a standard \psim~component:
+\emph{peersim.dynamics.WireGraph}. It implements \emph{Control}
+and provides generic functionality for dealing with topologies,
+providing a graph interface.
+The wiring logic has to be in the
 \emph{wire()} method that is called by the superclass.
-
-The class has to read from the configuration file both the $\alpha$
-value parameter (\texttt{alpha} in the config file) and the coordinate
-container protocol identifier (\texttt{coord\_protocol} in the config
-file). This
-is done in the class constructor. The other parameter, \texttt{protocol}
-is inherited by the superclass: it is the \emph{Linkable}
-implementing protocol identifier.
-
-The \emph{wire()} method contains the wiring rules described in
-Section~\ref{sec:rule}.
-
-To keep track of the hop distances, a network sized integer array is
-used. Each index $i$ slot value corresponds to the $node_{i}$ hop distance from the
-root.
-
 By default, the wiring process considers the index 0 node as the root.
 
-A static utility method, \emph{distance()}, gives the Euclidean
-distance between two nodes.
+The class has to read from the configuration file both $\alpha$
+(\texttt{alpha} in the configuration file) and the coordinate
+container protocol identifier (\texttt{coord\_protocol} in the configuration
+file). This
+is done in the class constructor. The other parameter, \texttt{protocol}
+is inherited from the superclass: it is the protocol that implements
+the \emph{Linkable} interface.
+
 
 
 \footnotesize
@@ -456,7 +393,9 @@ public class WireInetTopology extends WireGraph {
                 .getY();
         double y2 = ((InetCoordinates) old_node.getProtocol(coordPid))
                 .getY();
-        if (x1 == -1 | x2 == -1 | y1 == -1 | y2 == -1)
+        if (x1 == -1 || x2 == -1 || y1 == -1 || y2 == -1)
+        // NOTE: in release 1.0 the line above incorrectly contains
+        // |-s instead of ||. Use latest CVS version, or fix it by hand.
             throw new RuntimeException(
                     "Found un-initialized coordinate. Use e.g.,\
                     InetInitializer class in the config file.");
@@ -465,43 +404,39 @@ public class WireInetTopology extends WireGraph {
 }
 \end{verbatim}
 \normalsize
-     
+
 \subsection{The observers}
 \label{s:observers}
 
-Some of the observer tasks depicted in Section~\ref{s:coding} can be performed
-by standard \psim~components available in the distribution. 
+Some of the observer tasks mentioned in Section~\ref{s:coding} can be performed
+by standard \psim\ components available in the distribution. 
 
-For example, to compute statistics regarding the degree distribution, the user can
-use the \emph{peersim.reports.DegreeStats} object. To test the network
-robustness, \emph{RandRemoval} can be used: it kills nodes randomly
-and prints statistics about the number of generated clusters and their
-size.\\
+For example, to compute statistics of the degree distribution, the user can
+use \emph{peersim.reports.DegreeStats}. To test the network
+robustness, \emph{peersim.reports.RandRemoval} can be used:
+it prints statistics about the number of generated clusters and their
+size, as a function of the number of randomly removed nodes.
 
-However, to dump the topology to a file in a plottable form, we still
-need to write our observer: \emph{InetObserver} implementing the \emph{Control}
+However, to dump the topology to a file in a plottable form, we
+need to write our own observer:
+\emph{InetObserver} implementing the \emph{Control}
 interface and the corresponding 
-\emph{execute()} method. To ease even further our job, we decided to
-not implement directly the \emph{Control} interface, but to extend
-\emph{persim.reports.GraphObserver}. This template class gives us a
-graph API to interact with the protocol to be inspected.
+\emph{execute()} method.
+We extend \emph{persim.reports.GraphObserver}.
+This template class gives us  useful functionality to simplify dealing
+with the observation of graphs.
 
 The constructor takes care of reading the parameters from the
 configuration file. The \texttt{protocol} parameter refers to the
-protocol identifier holding the ``who knows whom'' relation (it is a
+protocol identifier holding the ``who knows whom'' relation (it must be a
 \emph{Linkable} protocol). It is inherited by the superclass.
 
 The other parameters, \texttt{coord\_protocol} and \texttt{file\_base},
-correspond respectively to the coordinate container protocol
-identifier and to the filename base used. 
+correspond to the coordinate container protocol
+name and to the filename prefix to be used. 
 The final filename generated by
-the program is: 
-
-\begin{center}
-$<$file\_base$>$ + \%08d + .dat 
-\end{center}
-
-The number in the middle of the filename keeps track of the current
+the program is ``<file\_base> + \%08d + .dat'', 
+where the number in the middle of the filename keeps track of the current
 cycle number; 8 digits are available as a cycle counter. 
 This is due to the fact that, as any control object, the
 observer can run at every cycle and in this case a
@@ -606,12 +541,12 @@ significant if the undirected version of the same graph is observed by
 many observers.
 
 In addition, note that in \emph{execute()} method the IO library functions
-used may throw some exceptions. In case of troubles, any kind of
-exception is catch-ed, but a runtime exception is thrown to stop the
-process. 
+used may throw some exceptions. Any
+exceptions are caught, and re-thrown as runtime exceptions, that
+result in the abortion of the simulation run.
 
 The static utility method \emph{graphToFile()} writes to disk the
-actual topology. The idea is simple: for each node
+actual topology. For each node
 $n$, the $x$ and $y$ coordinates are collected and then for each
 neighbor $i$ of node $n$ the coordinates are written in the following
 format: 
@@ -624,16 +559,16 @@ format:
 \end{verbatim}
 \normalsize 
 
-The particular line triplet formatting order suits the gluplot needs. 
-Please note that the for loop starts from index $1$, not from $0$;
-this is due to the fact that node 0 is the root and has no out-bound
+This format is suitable for plotting with GnuPlot. 
+Please note that the loop starts from index $1$, not from $0$;
+this is due to the fact that node 0 is the root and has no outgoing
 connections.
 
 \section{Experiments}
 \label{s:experiments}
 
-In order to make the model run, a proper \psim~configuration file is 
-needed. The one presented in the following lines may suits the reader needs:
+In order to make the model run, a \psim\ configuration file is 
+needed.
 
 \footnotesize
 \begin{verbatim}
@@ -672,23 +607,43 @@ include.control io degree
 It produces a 10000 node overlay network with the parameters listed in 
 the \texttt{init.0} section.
 
+\begin{figure}
+\noindent
+\includegraphics[width=8cm]{pic_alfa4}\hfill
+\includegraphics[width=8cm]{picdegree_alfa4}
+\caption{Topology and in-degree distribution with $\alpha$ 4\label{t4figure}}
+\end{figure}
+
+\begin{figure}
+\noindent
+\includegraphics[width=8cm]{pic_alfa20}\hfill
+\includegraphics[width=8cm]{picdegree_alfa20}
+\caption{Topology and in-degree distribution with $\alpha$ 20\label{t20figure}}
+\end{figure}
+
+\begin{figure}
+\noindent
+\includegraphics[width=8cm]{pic_alfa100}\hfill
+\includegraphics[width=8cm]{picdegree_alfa100}
+\caption{Topology and in-degree distribution
+with $\alpha$ 100\label{t100figure}}
+\end{figure}
+
 The presented figures show the produced topology and highlight the 
-parameter $\alpha$ importance. In fact, it affects the clustering behavior of 
+role of $\alpha$. In fact, it affects the clustering behavior of 
 the system and it is tightly correlated to the size of the network. If 
 $\alpha$ is lower than $\sqrt{netsize}$, the topology becomes more and more 
-clustered (as show in the first two figures); with extremely low $\alpha$, 
+clustered; with extremely low $\alpha$, 
 the topology becomes a star. On the other end, if $\alpha$ is grater than 
-$\sqrt{netsize}$, the topology tends to be random and not clustered at all 
-(the second row of images). For deeper details, please consult the previously
-listed papers.
+$\sqrt{netsize}$, the topology tends to be random and not clustered at all.
 
 As stated in Section~\ref{s:observers}, the \emph{DegreeStats} standard
 component can be used to collect degree statistics. However, it should 
 be used carefully. By default in \psim,
-the ``degree'' is the out-bound degree, while we are interested in the
-in-degree. This holds in directed graphs; if the graph is undirected,
-the degree is the sum of the out-bound and in-bound degree. So, how
-can we inspect the in-degree? The idea is very simple. First we need
+the ``degree'' is the out-degree, while we are interested in the
+in-degree.
+So, how
+can we inspect the in-degree? First we need
 to consider the graph as \textbf{undirected} (\texttt{undir}
 parameter) and we choose the frequency statistics (\texttt{freq}
 parameter) in order to produce our plots. The observer will
@@ -720,64 +675,8 @@ print something like:
 
 The first column corresponds to the degree, while the second to the
 number of nodes having that degree. We know for sure that for each node, apart from the
-root, there is only one out-bound link. Thus to extract the in-degree
-we simply need to subtract 1 from the first column items.
-
-The values shown previously, have been generated with $\alpha = 4$. 
-
-%\begin{figure}[tb!]
-%\begin{center}
-%\includegraphics[scale=0.6]{pic_alfa01}
-%\end{center}
-%\caption{Topology with $\alpha$ 0.1: a star topology.\label{t01figure}}
-%\end{figure}
-
-
-%The degree distribution related to the generated star topology 
-%(Figure~\ref{t01figure}) is not 
-%shown (it is simply a straight line).
-Clearly the plots show that there is not any evidence about in-degree 
-power-law distribution; only in the case of $\alpha = 4$, the corresponding 
-plot exhibits a power-law like behavior at least for a subset of the nodes, 
-but this is very different from what first listed paper was talking about.
-
-\begin{figure}
-\begin{center}
-\includegraphics[width=7cm]{pic_alfa4}\hfill
-\includegraphics[width=7cm]{picdegree_alfa4}
-\end{center}
-\caption{Topology and in-degree distribution with $\alpha$ 4\label{t4figure}}
-\end{figure}
-
-\begin{figure}
-\begin{center}
-\includegraphics[width=7cm]{pic_alfa20}\hfill
-\includegraphics[width=7cm]{picdegree_alfa20}
-\end{center}
-\caption{Topology and in-degree distribution with $\alpha$ 20\label{t20figure}}
-\end{figure}
-
-\begin{figure}
-\begin{center}
-\includegraphics[width=7cm]{pic_alfa100}\hfill
-\includegraphics[width=7cm]{picdegree_alfa100}
-\end{center}
-\caption{Topology and in-degree distribution
-with $\alpha$ 100\label{t100figure}}
-\end{figure}
-
-%\begin{figure}[tb!]
-%\begin{center}
-%\includegraphics[scale=0.6]{pic_alfa2000}
-%\end{center}
-%\caption{Topology with $\alpha$ 2000\label{t2000figure}}
-%\end{figure}
-%
-%\begin{figure}[tb!]
-%\begin{center}
-%\includegraphics[scale=0.6]{picdegree_alfa2000}
-%\end{center}
-%\caption{In-degree distribution with $\alpha$ 2000\label{d2000figure}}
-%\end{figure}
+root, there is only one out-link, and we also know that all links are
+strictly uni-directional. Thus to extract the in-degree
+we simply need to subtract one from the first column.
 
 \end{document}

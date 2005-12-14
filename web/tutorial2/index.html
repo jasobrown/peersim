@@ -23,11 +23,12 @@ original version by:  Nikos Drakos, CBLU, University of Leeds
 <BODY >
 
 <P>
-<H1 ALIGN="CENTER">PeerSim HOWTO 2: build a topology generator</H1>
+<H1 ALIGN="CENTER">PeerSim HOWTO:
+<BR>
+Build a topology generator for PeerSim 1.0</H1>
 <DIV>
 
 <P ALIGN="CENTER"><STRONG>Gian Paolo Jesi (jesi@cs.unibo.it)</STRONG></P>
-<P ALIGN="CENTER"><STRONG>November 16, 2005</STRONG></P>
 </DIV>
 
 <P>
@@ -37,187 +38,129 @@ original version by:  Nikos Drakos, CBLU, University of Leeds
 </H1>
 
 <P>
-<B>NOTE: This tutorial revision covers <FONT SIZE="-1">P<SMALL>EERSIM</SMALL></FONT>&nbsp;release 1.0
-  topics.</B>
-<BR>
-<P>
-This tutorial teaches you how to build from scratch a new <FONT SIZE="-1">P<SMALL>EERSIM</SMALL></FONT>&nbsp;
-( <FONT SIZE="-1">P<SMALL>EERSIM</SMALL></FONT>&nbsp; project page: <TT><A NAME="tex2html1"
-  HREF="http://sourceforge.net/projects/peersim">http://sourceforge.net/projects/peersim</A></TT>) topology generator. In order to understand this tutorial, the reader
-is encouraged to start reading the first <FONT SIZE="-1">P<SMALL>EERSIM</SMALL></FONT>&nbsp; tutorial 
+This tutorial describes how to build a new <FONT SIZE="-1">P<SMALL>EERSIM</SMALL></FONT> 
+(<FONT SIZE="-1">P<SMALL>EERSIM</SMALL></FONT>&nbsp;project page: <TT><A NAME="tex2html1"
+  HREF="http://sourceforge.net/projects/peersim">http://sourceforge.net/projects/peersim</A></TT>)
+topology generator. In order to understand this tutorial, the reader
+is encouraged to study the first <FONT SIZE="-1">P<SMALL>EERSIM</SMALL></FONT> tutorial 
 (<TT><A NAME="tex2html2"
-  HREF="http://peersim. sourceforge.net/peersim_HOWTO.html">http://peersim. sourceforge.net/peersim_HOWTO.html</A></TT>) 
-to have an idea of the basic concepts that will not be discussed any
+  HREF="http://peersim. sourceforge.net/tutorial1/tutorial1.pdf">http://peersim. sourceforge.net/tutorial1/tutorial1.pdf</A></TT>) 
+to learn about the basic concepts that will not be discussed any
 further in this document. 
 
 <P>
-The aim of this tutorial is to be as practical as possible; the goal
-is to give the reader ideas about technical or intermediate level
-features of <FONT SIZE="-1">P<SMALL>EERSIM</SMALL></FONT>&nbsp; and to encourage him/her to experiment further.
-The full source code discussed in this document is available via CVS
-at <FONT SIZE="-1">P<SMALL>EERSIM</SMALL></FONT>&nbsp; project page in the <I>peersim.example.hot</I> class package.
+The aim of this tutorial is to be as practical as possible;
+we encourage the reader to experiment further.
+The full source code discussed in this document is available
+in the <FONT SIZE="-1">P<SMALL>EERSIM</SMALL></FONT> release in the <I>peersim.example.hot</I> class package,
+and the latest version via anonymous cvs from the project.
 
 <P>
 
 <H1><A NAME="SECTION00020000000000000000">
-2 What is a topology?</A>
+2 What is a topology and why it is important?</A>
 </H1>
 
 <P>
-The network abstraction in <FONT SIZE="-1">P<SMALL>EERSIM</SMALL></FONT>&nbsp; is a (sometimes huge) array of
-<I>Node</I> structures (interfaces); because of the size of the network
-and to overcome scalability problems, usually in large P2P networks
-each node knows about the existence of a very small subset of other
-nodes (e.g., order of <IMG
- WIDTH="60" HEIGHT="37" ALIGN="MIDDLE" BORDER="0"
- SRC="img2.png"
- ALT="$\log(N)$"> where <IMG
- WIDTH="22" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
- SRC="img3.png"
- ALT="$N$"> is the whole network size). Thus
-each node has a short list of other node references, usually called
-``neighbors'', build accordingly to some kind of strategy
-or rule. 
+In a large-scale an dynamic P2P system nodes cannot have complete
+information about the entire network.
+Instead, all nodes can possibly have only a few neighbors, that is,
+peers that the ``know about''.
+These ``knows about'' relations define a network that is called
+<I>overlay network</I>, and that is a fundamental concept of P2P systems.
 
 <P>
-Thus, we can say that a topology is how nodes are arranged (linked)
-together and clearly this depends upon the particular chosen rule.
-Examples of topology are the following (not exhaustive at all): 
-
-<P>
-
-<UL>
-<LI>random graphs 
-</LI>
-<LI>Watts-Strogatz model graph 
-</LI>
-<LI>star model 
-</LI>
-<LI>ring model 
-</LI>
-<LI>lattice model 
-</LI>
-<LI>...
-</LI>
-</UL>
+Many P2P protocols are either about building a specific overlay network
+or rely on a fixed overlay network that are provided by other services
+or that are given by some constraints.
+In all cases it is very important to be able to experiment with protocols
+over many different network topologies.
+<FONT SIZE="-1">P<SMALL>EERSIM</SMALL></FONT> already contain many topologies to experiment with, in the
+<I>peersim.dynamics.Wire*</I> classes, readily applicable to
+initialize linkable protocols.
+In this document we give a brief illustration of how to build a custom
+generator.
 
 <P>
 
 <H2><A NAME="SECTION00021000000000000000"></A>
 <A NAME="sec:rule"></A>
 <BR>
-2.1 Which rule to choose?
+2.1 A simple model to simulate the Internet
 </H2>
 
 <P>
 In this document, we have chosen to code a particular topology generator
 to build Internet-like tree topologies. The building process is based
-on the <I>preferential attachment</I> approach. The rule applied is
+on a specific, location dependent
+<I>preferential attachment</I> approach. The wiring rule applied is
 quite simple and takes into account geometric and network constraints
-to better mimic real world network. The preferential attachment choice
-can be affected by a parameter (<IMG
- WIDTH="17" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
+to better mimic real world networks. Preferential attachment
+is tuned by the parameter <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
  SRC="img1.png"
- ALT="$\alpha $">) that amplifies or reduces the
-geometric location influence in favor of the path distance. 
+ ALT="$\alpha $"> that amplifies or reduces the
+influence of the geometric location. 
 
 <P>
-The rule strategy is the following: we consider a square unit region
+The rule strategy is the following: we consider a unit square,
+and we place <IMG
+ WIDTH="22" HEIGHT="31" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$x_0$"> in the middle, that is, <IMG
+ WIDTH="111" HEIGHT="36" ALIGN="MIDDLE" BORDER="0"
+ SRC="img3.png"
+ ALT="$x_0=(0.5,0.5)$">.
+This node is called the root. Let <IMG
+ WIDTH="37" HEIGHT="36" ALIGN="MIDDLE" BORDER="0"
+ SRC="img4.png"
+ ALT="$W()$"> denote the number of hops to
+the root.
+For each <!-- MATH
+ $i = 1\ldots n-1$
+ -->
 <IMG
- WIDTH="21" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
- SRC="img4.png"
- ALT="$D$">, then we start with node <IMG
- WIDTH="39" HEIGHT="37" ALIGN="MIDDLE" BORDER="0"
+ WIDTH="109" HEIGHT="33" ALIGN="MIDDLE" BORDER="0"
  SRC="img5.png"
- ALT="$x(0)$"> chosen at random and we set <IMG
- WIDTH="108" HEIGHT="37" ALIGN="MIDDLE" BORDER="0"
+ ALT="$i = 1\ldots n-1$">, we select a point <IMG
+ WIDTH="20" HEIGHT="31" ALIGN="MIDDLE" BORDER="0"
  SRC="img6.png"
- ALT="$W(x(0))
-= 0$"> (it i
-
-<P>
-s the root node). For each i with <IMG
- WIDTH="105" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
+ ALT="$x_i$"> in the unit square at
+random, and we connect it to an already existing node <IMG
+ WIDTH="22" HEIGHT="31" ALIGN="MIDDLE" BORDER="0"
  SRC="img7.png"
- ALT="$i = 1...n-1$"> we choose a
-new node <IMG
- WIDTH="36" HEIGHT="37" ALIGN="MIDDLE" BORDER="0"
- SRC="img8.png"
- ALT="$x(i)$"> in the region <IMG
- WIDTH="21" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
- SRC="img4.png"
- ALT="$D$"> and we connect it to an <B>early
-inserted</B> node <IMG
- WIDTH="39" HEIGHT="37" ALIGN="MIDDLE" BORDER="0"
- SRC="img9.png"
- ALT="$x(j)$"> that minimize the following formula:
+ ALT="$x_j$">
+that minimizes the following formula:
 
 <P>
 <DIV ALIGN="CENTER">
 <!-- MATH
- $W(x(j)) + \alpha \cdot dist(x(i), x(j))$
+ $W(x_j) + \alpha\cdot \mathrm{dist}(x_j,x_i)$
  -->
 <IMG
- WIDTH="242" HEIGHT="37" ALIGN="MIDDLE" BORDER="0"
- SRC="img10.png"
- ALT="$W(x(j)) + \alpha \cdot dist(x(i), x(j))$"> with 0 <IMG
- WIDTH="19" HEIGHT="33" ALIGN="MIDDLE" BORDER="0"
- SRC="img11.png"
- ALT="$\leq$"> j <IMG
- WIDTH="19" HEIGHT="33" ALIGN="MIDDLE" BORDER="0"
- SRC="img12.png"
- ALT="$&lt;$"> i
-
+ WIDTH="181" HEIGHT="36" ALIGN="MIDDLE" BORDER="0"
+ SRC="img8.png"
+ ALT="$W(x_j) + \alpha\cdot \mathrm{dist}(x_j,x_i)$">
 </DIV>
 
 <P>
-where: 
-
-<P>
-
-<UL>
-<LI><IMG
- WIDTH="73" HEIGHT="37" ALIGN="MIDDLE" BORDER="0"
- SRC="img13.png"
- ALT="$W(x(j))$"> is the distance in terms of hops (the path distance from node
-<IMG
- WIDTH="39" HEIGHT="37" ALIGN="MIDDLE" BORDER="0"
- SRC="img9.png"
- ALT="$x(j)$"> to the root node); 
-</LI>
-<LI><IMG
- WIDTH="66" HEIGHT="37" ALIGN="MIDDLE" BORDER="0"
- SRC="img14.png"
- ALT="$dist(...)$"> is the usual Euclidean distance; 
-</LI>
-<LI><IMG
- WIDTH="17" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
+where dist() is the Euclidean distance and <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
  SRC="img1.png"
- ALT="$\alpha $"> is a weight parameter that can minimize or maximize 
-the geometric distance influence;
-
-<P>
-</LI>
-</UL>
-
-<P>
-After having chosen a node <IMG
- WIDTH="39" HEIGHT="37" ALIGN="MIDDLE" BORDER="0"
- SRC="img9.png"
- ALT="$x(j)$">, we set <!-- MATH
- $W(x(i)) = W(x(j))+1$
+ ALT="$\alpha $"> is a weight
+parameter.
+Of course,  <!-- MATH
+ $W(x_i) = W(x_j)+1$
  -->
 <IMG
- WIDTH="197" HEIGHT="37" ALIGN="MIDDLE" BORDER="0"
- SRC="img15.png"
- ALT="$W(x(i)) = W(x(j))+1$"> . At
-the end we obtain a tree rooted in <IMG
- WIDTH="39" HEIGHT="37" ALIGN="MIDDLE" BORDER="0"
- SRC="img5.png"
- ALT="$x(0)$">. This topology implies that
+ WIDTH="155" HEIGHT="36" ALIGN="MIDDLE" BORDER="0"
+ SRC="img9.png"
+ ALT="$W(x_i) = W(x_j)+1$">.
+This way we obtain a tree rooted in <IMG
+ WIDTH="22" HEIGHT="31" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$x_0$">. This topology implies that
 every node (except the root) has an out-degree of exactly one link.
-
-<P>
 To get further details about this model, we suggest the following
 readings:
 
@@ -225,36 +168,27 @@ readings:
 
 <OL>
 <LI>``Heuristically Optimized Trade-offs: A New Paradigm for Power
-Laws in the Internet'' 
-<BR>(<TT><A NAME="tex2html3"
-  HREF="http://cgi.di.uoa.gr/~elias/publications/paper-fkp02.pdf">http://cgi.di.uoa.gr/~elias/publications/paper-fkp02.pdf</A></TT> )
+Laws in the Internet''
+(<TT><A NAME="tex2html3"
+  HREF="http://cgi.di.uoa.gr/~elias/publications/paper-fkp02.pdf">http://cgi.di.uoa.gr/~elias/publications/paper-fkp02.pdf</A></TT>)
 
 <P>
 </LI>
 <LI>``Degree distributions
-of the FKP network model'' 
-<BR>(<TT><A NAME="tex2html4"
+of the FKP network model''
+(<TT><A NAME="tex2html4"
   HREF="http://research.microsoft.com/~jchayes/Papers/FKPdgrees.pdf">http://research.microsoft.com/~jchayes/Papers/FKPdgrees.pdf</A></TT>) 
 
 <P>
 </LI>
 <LI>``On Power-Law
 Relationships of the Internet Topology''
-<BR>(<TT><A NAME="tex2html5"
+(<TT><A NAME="tex2html5"
   HREF="http://www.cs.ucr.edu/~michalis/CAMERA.ps">http://www.cs.ucr.edu/~michalis/CAMERA.ps</A></TT>)
 
 <P>
 </LI>
 </OL>
-
-<P>
-The model should generate a topology that exhibits a power-law bound
-on the in-degree sequence of nodes; but, as stated in the second
-previously listed paper, this power-law prediction is not true. In fact
-this preferential attachment model does not generate always such an
-in-degree sequence 
-distribution, but for some parameter values it shows a power-law like
-behaviour. 
 
 <P>
 
@@ -265,59 +199,46 @@ behaviour.
 </H1>
 
 <P>
-Our aim is to write a standard <FONT SIZE="-1">P<SMALL>EERSIM</SMALL></FONT>&nbsp;component able to produce the
+Our aim is to write <FONT SIZE="-1">P<SMALL>EERSIM</SMALL></FONT> components able to produce the
 desired topology according to the <IMG
- WIDTH="17" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
  SRC="img1.png"
- ALT="$\alpha $"> parameter. Apart from the
-<IMG
- WIDTH="17" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
- SRC="img1.png"
- ALT="$\alpha $"> parameter, the algorithm relies also on how the nodes are
-distributed in the squared area. We choose to initialize their
-2d-coordinates using a uniformly random distribution.
-
-<P>
-We are not interested
-in building the topology in a set of steps over time: we want
-something like a topology initializer that arranges the wiring from scratch in
-one step.
-
-<P>
-In order to build the desired topology, we need to extend or implement
-the following classes/interfaces:  
+ ALT="$\alpha $"> parameter, and
+to analyze it as well.
+The topology could be build gradually during a simulation, or
+at once, in a single step. We opt for the latter approach.
+In order to build the desired topology, we will need the following
+components (note that other design decisions could be taken: we selected
+the following way):
 
 <P>
 
 <UL>
-<LI>the <I>Protocol</I> class: the protocol itself does nothing; we
-  need a place to store some informations, such as the coordinates.
-The reader can think to this class as ``glue code''.
+<LI>A <I>Protocol</I> class that simply stores we the coordinates,
+and has no behavioral elements (ie, a plain container).
 
 <P>
 </LI>
-<LI>the <I>Control</I> interface: we need several <I>Control</I>
-  implementing classes in order to perform the following task:
-
-<P>
-
-<UL>
-<LI>Initialize the 2d-coordinates for each node and select an
-  initial root node.
+<LI>An initializer that sets the values for the coordinates of each node.
 
 <P>
 </LI>
-<LI>An observer is needed to print the topology to a file (e.g., to
+<LI>A control to wire the topology (actually add the links among the
+nodes) within an arbitrary linkable protocol, based on the coordinates.
+
+<P>
+</LI>
+<LI>An observer to print the topology to a file (e.g., to
   visualize the generated graph using GnuPlot).
 
 <P>
 </LI>
-<LI>An observer can be used to collect statistics about the
+<LI>An observer to be used to collect statistics about the
   in-degree distribution.
 
 <P>
 </LI>
-<LI>Another observer can test the topology robustness to random node
+<LI>An observer to test the robustness to random node
   failures.
 
 <P>
@@ -325,21 +246,10 @@ The reader can think to this class as ``glue code''.
 </UL>
 
 <P>
-</LI>
-<LI>A class dedicated to the actual node wiring process according to
-  the rules described in Section&nbsp;<A HREF="#sec:rule">2.1</A>. It can be considered
-  as a <I>factory</I> component.
-
-<P>
-</LI>
-</UL>
-
-<P>
-As we will see in next sections, some of the classes we intend to code
-are not needed. <FONT SIZE="-1">P<SMALL>EERSIM</SMALL></FONT>&nbsp;standard components can be used instead. It is
-important to decouple carefully all the tasks we intend to accomplish in
-order to figure out if there are ``common patterns'' that are already
-available and ready to use.
+As we will see in next sections, some of the classes we listed are
+<FONT SIZE="-1">P<SMALL>EERSIM</SMALL></FONT> standard components that can readily used, due to the generic
+<I>Linkable</I> interface, that provides an abstraction to deal with any
+topologies in a modular fashion.
 
 <P>
 
@@ -406,35 +316,21 @@ public class InetCoordinates implements Protocol {
 }
 </PRE>
 <P>
-The actual ``who knows whom'' relation (the topology) container is decoupled
-from this class. Any standard <FONT SIZE="-1">P<SMALL>EERSIM</SMALL></FONT>&nbsp;component implementing the
-<I>Linkable</I> interface can be used (see the configuration file in
-Section&nbsp;<A HREF="#s:experiments">5</A>). 
+This class stores only the coordinates, the links will be stored in another
+(arbitrary) protocol the implements the 
+<I>Linkable</I> interface.
 
 <P>
-The class is basically a structure encapsulated in an
-object to hold the <IMG
- WIDTH="15" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
- SRC="img16.png"
- ALT="$x$"> and <IMG
- WIDTH="14" HEIGHT="33" ALIGN="MIDDLE" BORDER="0"
- SRC="img17.png"
- ALT="$y$"> coordinate components. Another solution
-could be to define a specialized sub-class of 
-<I>peersim.core.GeneralNode</I> in which the coordinate be stored
-and then use <I>peersim.core.IdleProtocol</I> to handle the nodes
-``who knows whom'' relations. Both the approaches are identical in
-practice, it is just a developer choice. The reader can implement this
-second suggestion just for exercise.
+The <I>clone()</I> method must be redefined simply to catch and swallow
+the exception (that is never thrown),
+since otherwise no deep cloning is needed (we have only primitive types).
 
 <P>
-The <I>clone()</I> method must be redefined according to the
-<I>Protocol</I> class contract. It does not have to do much: there
-are only primitive types that are cloned by default.
-
-<P>
-The coordinates components are not public and can be accessed by their
+The coordinate components are not public and can be accessed by their
 getter/setter methods.
+this is important because that way one can use the <I>peersim.vector</I>
+package to initialize coordinates in a completely flexible way.
+In this document we do not use that package.
 
 <P>
 
@@ -510,73 +406,53 @@ file. It declares the protocol holding the coordinates.
 
 <P>
 The class is very simple, it
-has to generate uniformly random numbers for each node coordinate
-components (<IMG
- WIDTH="15" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
- SRC="img16.png"
+generates uniform random coordinates (<IMG
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img10.png"
  ALT="$x$"> and <IMG
- WIDTH="14" HEIGHT="33" ALIGN="MIDDLE" BORDER="0"
- SRC="img17.png"
- ALT="$y$">). The only exception is the root node that, by
-default, is the index 0 node. Its coordinate is forced to be <IMG
- WIDTH="76" HEIGHT="37" ALIGN="MIDDLE" BORDER="0"
- SRC="img18.png"
+ WIDTH="14" HEIGHT="31" ALIGN="MIDDLE" BORDER="0"
+ SRC="img11.png"
+ ALT="$y$">).
+The only exception is the root node that, by
+default, is the node with index 0. Its coordinate is fixed to be <IMG
+ WIDTH="70" HEIGHT="36" ALIGN="MIDDLE" BORDER="0"
+ SRC="img12.png"
  ALT="$(0.5,
-0.5)$">. This particular choice is to generate nice looking graphs when
-it is time to plot them.
+0.5)$">.
 
 <P>
-To generate random number, the static field <TT>r</TT> of
-<I>CommonState</I> is used.
+To generate random numbers, the static field <TT>r</TT> of
+<I>CommonState</I> MUST is used at all times,
+because that way the experiment are guaranteed to be reproducible.
 
 <P>
 
 <H2><A NAME="SECTION00043000000000000000"></A>
-<A NAME="s:factory"></A>
+<A NAME="s:wiring"></A>
 <BR>
-4.3 The factory class
+4.3 The wiring class
 </H2>
 
 <P>
-The factory class uses the features of a standard <FONT SIZE="-1">P<SMALL>EERSIM</SMALL></FONT>&nbsp;component:
-<I>peersim.dynamics.WireGraph</I> (it is a <I>Control</I>
-instance). The overlay is wired using the 
-<I>Graph</I> API methods; the wiring logic has to be in the
+The wiring class extends a standard <FONT SIZE="-1">P<SMALL>EERSIM</SMALL></FONT>&nbsp;component:
+<I>peersim.dynamics.WireGraph</I>. It implements <I>Control</I>
+and provides generic functionality for dealing with topologies,
+providing a graph interface.
+The wiring logic has to be in the
 <I>wire()</I> method that is called by the superclass.
-
-<P>
-The class has to read from the configuration file both the <IMG
- WIDTH="17" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
- SRC="img1.png"
- ALT="$\alpha $">
-value parameter (<TT>alpha</TT> in the config file) and the coordinate
-container protocol identifier (<TT>coord_protocol</TT> in the config
-file). This
-is done in the class constructor. The other parameter, <TT>protocol</TT>
-is inherited by the superclass: it is the <I>Linkable</I>
-implementing protocol identifier.
-
-<P>
-The <I>wire()</I> method contains the wiring rules described in
-Section&nbsp;<A HREF="#sec:rule">2.1</A>.
-
-<P>
-To keep track of the hop distances, a network sized integer array is
-used. Each index <IMG
- WIDTH="11" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
- SRC="img19.png"
- ALT="$i$"> slot value corresponds to the <IMG
- WIDTH="49" HEIGHT="35" ALIGN="MIDDLE" BORDER="0"
- SRC="img20.png"
- ALT="$node_{i}$"> hop distance from the
-root.
-
-<P>
 By default, the wiring process considers the index 0 node as the root.
 
 <P>
-A static utility method, <I>distance()</I>, gives the Euclidean
-distance between two nodes.
+The class has to read from the configuration file both <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img1.png"
+ ALT="$\alpha $">
+(<TT>alpha</TT> in the configuration file) and the coordinate
+container protocol identifier (<TT>coord_protocol</TT> in the configuration
+file). This
+is done in the class constructor. The other parameter, <TT>protocol</TT>
+is inherited from the superclass: it is the protocol that implements
+the <I>Linkable</I> interface.
 
 <P>
 <PRE>
@@ -659,7 +535,9 @@ public class WireInetTopology extends WireGraph {
                 .getY();
         double y2 = ((InetCoordinates) old_node.getProtocol(coordPid))
                 .getY();
-        if (x1 == -1 | x2 == -1 | y1 == -1 | y2 == -1)
+        if (x1 == -1 || x2 == -1 || y1 == -1 || y2 == -1)
+        // NOTE: in release 1.0 the line above incorrectly contains
+        // |-s instead of ||. Use latest CVS version, or fix it by hand.
             throw new RuntimeException(
                     "Found un-initialized coordinate. Use e.g.,\
                     InetInitializer class in the config file.");
@@ -676,52 +554,39 @@ public class WireInetTopology extends WireGraph {
 </H2>
 
 <P>
-Some of the observer tasks depicted in Section&nbsp;<A HREF="#s:coding">3</A> can be performed
-by standard <FONT SIZE="-1">P<SMALL>EERSIM</SMALL></FONT>&nbsp;components available in the distribution. 
+Some of the observer tasks mentioned in Section&nbsp;<A HREF="#s:coding">3</A> can be performed
+by standard <FONT SIZE="-1">P<SMALL>EERSIM</SMALL></FONT> components available in the distribution. 
 
 <P>
-For example, to compute statistics regarding the degree distribution, the user can
-use the <I>peersim.reports.DegreeStats</I> object. To test the network
-robustness, <I>RandRemoval</I> can be used: it kills nodes randomly
-and prints statistics about the number of generated clusters and their
-size.
-<BR>
+For example, to compute statistics of the degree distribution, the user can
+use <I>peersim.reports.DegreeStats</I>. To test the network
+robustness, <I>peersim.reports.RandRemoval</I> can be used:
+it prints statistics about the number of generated clusters and their
+size, as a function of the number of randomly removed nodes.
+
 <P>
-However, to dump the topology to a file in a plottable form, we still
-need to write our observer: <I>InetObserver</I> implementing the <I>Control</I>
+However, to dump the topology to a file in a plottable form, we
+need to write our own observer:
+<I>InetObserver</I> implementing the <I>Control</I>
 interface and the corresponding 
-<I>execute()</I> method. To ease even further our job, we decided to
-not implement directly the <I>Control</I> interface, but to extend
-<I>persim.reports.GraphObserver</I>. This template class gives us a
-graph API to interact with the protocol to be inspected.
+<I>execute()</I> method.
+We extend <I>persim.reports.GraphObserver</I>.
+This template class gives us  useful functionality to simplify dealing
+with the observation of graphs.
 
 <P>
 The constructor takes care of reading the parameters from the
 configuration file. The <TT>protocol</TT> parameter refers to the
-protocol identifier holding the ``who knows whom'' relation (it is a
+protocol identifier holding the ``who knows whom'' relation (it must be a
 <I>Linkable</I> protocol). It is inherited by the superclass.
 
 <P>
 The other parameters, <TT>coord_protocol</TT> and <TT>file_base</TT>,
-correspond respectively to the coordinate container protocol
-identifier and to the filename base used. 
+correspond to the coordinate container protocol
+name and to the filename prefix to be used. 
 The final filename generated by
-the program is: 
-
-<P>
-<DIV ALIGN="CENTER">
-<IMG
- WIDTH="19" HEIGHT="33" ALIGN="MIDDLE" BORDER="0"
- SRC="img12.png"
- ALT="$&lt;$">file_base<IMG
- WIDTH="19" HEIGHT="33" ALIGN="MIDDLE" BORDER="0"
- SRC="img21.png"
- ALT="$&gt;$"> + %08d + .dat 
-
-</DIV>
-
-<P>
-The number in the middle of the filename keeps track of the current
+the program is ``<file_base&gt; + %08d + .dat'', 
+where the number in the middle of the filename keeps track of the current
 cycle number; 8 digits are available as a cycle counter. 
 This is due to the fact that, as any control object, the
 observer can run at every cycle and in this case a
@@ -826,29 +691,29 @@ many observers.
 
 <P>
 In addition, note that in <I>execute()</I> method the IO library functions
-used may throw some exceptions. In case of troubles, any kind of
-exception is catch-ed, but a runtime exception is thrown to stop the
-process. 
+used may throw some exceptions. Any
+exceptions are caught, and re-thrown as runtime exceptions, that
+result in the abortion of the simulation run.
 
 <P>
 The static utility method <I>graphToFile()</I> writes to disk the
-actual topology. The idea is simple: for each node
+actual topology. For each node
 <IMG
- WIDTH="16" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
- SRC="img22.png"
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img13.png"
  ALT="$n$">, the <IMG
- WIDTH="15" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
- SRC="img16.png"
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img10.png"
  ALT="$x$"> and <IMG
- WIDTH="14" HEIGHT="33" ALIGN="MIDDLE" BORDER="0"
- SRC="img17.png"
+ WIDTH="14" HEIGHT="31" ALIGN="MIDDLE" BORDER="0"
+ SRC="img11.png"
  ALT="$y$"> coordinates are collected and then for each
 neighbor <IMG
- WIDTH="11" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
- SRC="img19.png"
+ WIDTH="11" HEIGHT="18" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
  ALT="$i$"> of node <IMG
- WIDTH="16" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
- SRC="img22.png"
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img13.png"
  ALT="$n$"> the coordinates are written in the following
 format: 
 
@@ -859,15 +724,15 @@ format:
  \newline}
 </PRE>
 <P>
-The particular line triplet formatting order suits the gluplot needs. 
-Please note that the for loop starts from index <IMG
- WIDTH="14" HEIGHT="19" ALIGN="BOTTOM" BORDER="0"
- SRC="img23.png"
+This format is suitable for plotting with GnuPlot. 
+Please note that the loop starts from index <IMG
+ WIDTH="13" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img15.png"
  ALT="$1$">, not from <IMG
- WIDTH="14" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
- SRC="img24.png"
+ WIDTH="13" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img16.png"
  ALT="$0$">;
-this is due to the fact that node 0 is the root and has no out-bound
+this is due to the fact that node 0 is the root and has no outgoing
 connections.
 
 <P>
@@ -879,8 +744,8 @@ connections.
 </H1>
 
 <P>
-In order to make the model run, a proper <FONT SIZE="-1">P<SMALL>EERSIM</SMALL></FONT>&nbsp;configuration file is 
-needed. The one presented in the following lines may suits the reader needs:
+In order to make the model run, a <FONT SIZE="-1">P<SMALL>EERSIM</SMALL></FONT> configuration file is 
+needed.
 
 <P>
 <PRE>
@@ -919,48 +784,107 @@ It produces a 10000 node overlay network with the parameters listed in
 the <TT>init.0</TT> section.
 
 <P>
-The presented figures show the produced topology and highlight the 
-parameter <IMG
- WIDTH="17" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
+
+<DIV ALIGN="CENTER"><A NAME="t4figure"></A><A NAME="117"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 1:</STRONG>
+Topology and in-degree distribution with <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
  SRC="img1.png"
- ALT="$\alpha $"> importance. In fact, it affects the clustering behavior of 
+ ALT="$\alpha $"> 4</CAPTION>
+<TR><TD><IMG
+ WIDTH="347" HEIGHT="244" ALIGN="BOTTOM" BORDER="0"
+ SRC="img17.png"
+ ALT="\includegraphics[width=8cm]{pic_alfa4}">
+<IMG
+ WIDTH="348" HEIGHT="246" ALIGN="BOTTOM" BORDER="0"
+ SRC="img18.png"
+ ALT="\includegraphics[width=8cm]{picdegree_alfa4}"></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="t20figure"></A><A NAME="118"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 2:</STRONG>
+Topology and in-degree distribution with <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img1.png"
+ ALT="$\alpha $"> 20</CAPTION>
+<TR><TD><IMG
+ WIDTH="347" HEIGHT="244" ALIGN="BOTTOM" BORDER="0"
+ SRC="img19.png"
+ ALT="\includegraphics[width=8cm]{pic_alfa20}">
+<IMG
+ WIDTH="348" HEIGHT="246" ALIGN="BOTTOM" BORDER="0"
+ SRC="img20.png"
+ ALT="\includegraphics[width=8cm]{picdegree_alfa20}"></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="t100figure"></A><A NAME="119"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 3:</STRONG>
+Topology and in-degree distribution
+with <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img1.png"
+ ALT="$\alpha $"> 100</CAPTION>
+<TR><TD><IMG
+ WIDTH="347" HEIGHT="244" ALIGN="BOTTOM" BORDER="0"
+ SRC="img21.png"
+ ALT="\includegraphics[width=8cm]{pic_alfa100}">
+<IMG
+ WIDTH="348" HEIGHT="246" ALIGN="BOTTOM" BORDER="0"
+ SRC="img22.png"
+ ALT="\includegraphics[width=8cm]{picdegree_alfa100}"></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+The presented figures show the produced topology and highlight the 
+role of <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img1.png"
+ ALT="$\alpha $">. In fact, it affects the clustering behavior of 
 the system and it is tightly correlated to the size of the network. If 
 <IMG
- WIDTH="17" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
  SRC="img1.png"
  ALT="$\alpha $"> is lower than <!-- MATH
  $\sqrt{netsize}$
  -->
 <IMG
- WIDTH="81" HEIGHT="44" ALIGN="MIDDLE" BORDER="0"
- SRC="img25.png"
+ WIDTH="75" HEIGHT="40" ALIGN="MIDDLE" BORDER="0"
+ SRC="img23.png"
  ALT="$\sqrt{netsize}$">, the topology becomes more and more 
-clustered (as show in the first two figures); with extremely low <IMG
- WIDTH="17" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
+clustered; with extremely low <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
  SRC="img1.png"
  ALT="$\alpha $">, 
 the topology becomes a star. On the other end, if <IMG
- WIDTH="17" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
  SRC="img1.png"
  ALT="$\alpha $"> is grater than 
 <!-- MATH
  $\sqrt{netsize}$
  -->
 <IMG
- WIDTH="81" HEIGHT="44" ALIGN="MIDDLE" BORDER="0"
- SRC="img25.png"
- ALT="$\sqrt{netsize}$">, the topology tends to be random and not clustered at all 
-(the second row of images). For deeper details, please consult the previously
-listed papers.
+ WIDTH="75" HEIGHT="40" ALIGN="MIDDLE" BORDER="0"
+ SRC="img23.png"
+ ALT="$\sqrt{netsize}$">, the topology tends to be random and not clustered at all.
 
 <P>
 As stated in Section&nbsp;<A HREF="#s:observers">4.4</A>, the <I>DegreeStats</I> standard
 component can be used to collect degree statistics. However, it should 
 be used carefully. By default in <FONT SIZE="-1">P<SMALL>EERSIM</SMALL></FONT>,
-the ``degree'' is the out-bound degree, while we are interested in the
-in-degree. This holds in directed graphs; if the graph is undirected,
-the degree is the sum of the out-bound and in-bound degree. So, how
-can we inspect the in-degree? The idea is very simple. First we need
+the ``degree'' is the out-degree, while we are interested in the
+in-degree.
+So, how
+can we inspect the in-degree? First we need
 to consider the graph as <B>undirected</B> (<TT>undir</TT>
 parameter) and we choose the frequency statistics (<TT>freq</TT>
 parameter) in order to produce our plots. The observer will
@@ -991,213 +915,18 @@ print something like:
 <P>
 The first column corresponds to the degree, while the second to the
 number of nodes having that degree. We know for sure that for each node, apart from the
-root, there is only one out-bound link. Thus to extract the in-degree
-we simply need to subtract 1 from the first column items.
-
-<P>
-The values shown previously, have been generated with <IMG
- WIDTH="51" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
- SRC="img26.png"
- ALT="$\alpha = 4$">. 
-
-<P>
-
-<DIV ALIGN="CENTER"><A NAME="t01figure"></A><A NAME="177"></A>
-<TABLE>
-<CAPTION ALIGN="BOTTOM"><STRONG>Figure 1:</STRONG>
-Topology with <IMG
- WIDTH="17" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
- SRC="img1.png"
- ALT="$\alpha $"> 0.1: a star topology.</CAPTION>
-<TR><TD>
-<DIV ALIGN="CENTER">
-<IMG
- WIDTH="388" HEIGHT="288" ALIGN="BOTTOM" BORDER="0"
- SRC="img27.png"
- ALT="\includegraphics[scale=0.6]{pic_alfa01.eps}">
-
-</DIV></TD></TR>
-</TABLE>
-</DIV>
-
-<P>
-The degree distribution related to the generated star topology 
-(Figure&nbsp;<A HREF="#t01figure">1</A>) is not 
-shown (it is simply a straight line).
-Clearly the plots show that there is not any evidence about in-degree 
-power-law distribution; only in the case of <IMG
- WIDTH="51" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
- SRC="img26.png"
- ALT="$\alpha = 4$">, the corresponding 
-plot exhibits a power-law like behavior at least for a subset of the nodes, 
-but this is very different from what first listed paper was talking about.
-
-<P>
-
-<DIV ALIGN="CENTER"><A NAME="t4figure"></A><A NAME="178"></A>
-<TABLE>
-<CAPTION ALIGN="BOTTOM"><STRONG>Figure 2:</STRONG>
-Topology with <IMG
- WIDTH="17" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
- SRC="img1.png"
- ALT="$\alpha $"> 4</CAPTION>
-<TR><TD>
-<DIV ALIGN="CENTER">
-<IMG
- WIDTH="388" HEIGHT="288" ALIGN="BOTTOM" BORDER="0"
- SRC="img28.png"
- ALT="\includegraphics[scale=0.6]{pic_alfa4.eps}">
-
-</DIV></TD></TR>
-</TABLE>
-</DIV>
-
-<P>
-
-<DIV ALIGN="CENTER"><A NAME="d4figure"></A><A NAME="179"></A>
-<TABLE>
-<CAPTION ALIGN="BOTTOM"><STRONG>Figure 3:</STRONG>
-In-degree distribution with <IMG
- WIDTH="17" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
- SRC="img1.png"
- ALT="$\alpha $"> 4</CAPTION>
-<TR><TD>
-<DIV ALIGN="CENTER">
-<IMG
- WIDTH="388" HEIGHT="288" ALIGN="BOTTOM" BORDER="0"
- SRC="img29.png"
- ALT="\includegraphics[scale=0.6]{picdegree_alfa4.eps}">
-
-</DIV></TD></TR>
-</TABLE>
-</DIV>
-
-<P>
-
-<DIV ALIGN="CENTER"><A NAME="t20figure"></A><A NAME="180"></A>
-<TABLE>
-<CAPTION ALIGN="BOTTOM"><STRONG>Figure 4:</STRONG>
-Topology with <IMG
- WIDTH="17" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
- SRC="img1.png"
- ALT="$\alpha $"> 20</CAPTION>
-<TR><TD>
-<DIV ALIGN="CENTER">
-<IMG
- WIDTH="388" HEIGHT="288" ALIGN="BOTTOM" BORDER="0"
- SRC="img30.png"
- ALT="\includegraphics[scale=0.6]{pic_alfa20.eps}">
-
-</DIV></TD></TR>
-</TABLE>
-</DIV>
-
-<P>
-
-<DIV ALIGN="CENTER"><A NAME="d20figure"></A><A NAME="181"></A>
-<TABLE>
-<CAPTION ALIGN="BOTTOM"><STRONG>Figure 5:</STRONG>
-In-degree distribution with <IMG
- WIDTH="17" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
- SRC="img1.png"
- ALT="$\alpha $"> 20</CAPTION>
-<TR><TD>
-<DIV ALIGN="CENTER">
-<IMG
- WIDTH="388" HEIGHT="288" ALIGN="BOTTOM" BORDER="0"
- SRC="img31.png"
- ALT="\includegraphics[scale=0.6]{picdegree_alfa20.eps}">
-
-</DIV></TD></TR>
-</TABLE>
-</DIV>
-
-<P>
-
-<DIV ALIGN="CENTER"><A NAME="t100figure"></A><A NAME="182"></A>
-<TABLE>
-<CAPTION ALIGN="BOTTOM"><STRONG>Figure 6:</STRONG>
-Topology with <IMG
- WIDTH="17" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
- SRC="img1.png"
- ALT="$\alpha $"> 100</CAPTION>
-<TR><TD>
-<DIV ALIGN="CENTER">
-<IMG
- WIDTH="388" HEIGHT="288" ALIGN="BOTTOM" BORDER="0"
- SRC="img32.png"
- ALT="\includegraphics[scale=0.6]{pic_alfa100.eps}">
-
-</DIV></TD></TR>
-</TABLE>
-</DIV>
-
-<P>
-
-<DIV ALIGN="CENTER"><A NAME="d100figure"></A><A NAME="183"></A>
-<TABLE>
-<CAPTION ALIGN="BOTTOM"><STRONG>Figure 7:</STRONG>
-In-degree distribution with <IMG
- WIDTH="17" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
- SRC="img1.png"
- ALT="$\alpha $"> 100</CAPTION>
-<TR><TD>
-<DIV ALIGN="CENTER">
-<IMG
- WIDTH="388" HEIGHT="288" ALIGN="BOTTOM" BORDER="0"
- SRC="img33.png"
- ALT="\includegraphics[scale=0.6]{picdegree_alfa100.eps}">
-
-</DIV></TD></TR>
-</TABLE>
-</DIV>
-
-<P>
-
-<DIV ALIGN="CENTER"><A NAME="t2000figure"></A><A NAME="184"></A>
-<TABLE>
-<CAPTION ALIGN="BOTTOM"><STRONG>Figure 8:</STRONG>
-Topology with <IMG
- WIDTH="17" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
- SRC="img1.png"
- ALT="$\alpha $"> 2000</CAPTION>
-<TR><TD>
-<DIV ALIGN="CENTER">
-<IMG
- WIDTH="388" HEIGHT="288" ALIGN="BOTTOM" BORDER="0"
- SRC="img34.png"
- ALT="\includegraphics[scale=0.6]{pic_alfa2000.eps}">
-
-</DIV></TD></TR>
-</TABLE>
-</DIV>
-
-<P>
-
-<DIV ALIGN="CENTER"><A NAME="d2000figure"></A><A NAME="185"></A>
-<TABLE>
-<CAPTION ALIGN="BOTTOM"><STRONG>Figure 9:</STRONG>
-In-degree distribution with <IMG
- WIDTH="17" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
- SRC="img1.png"
- ALT="$\alpha $"> 2000</CAPTION>
-<TR><TD>
-<DIV ALIGN="CENTER">
-<IMG
- WIDTH="388" HEIGHT="288" ALIGN="BOTTOM" BORDER="0"
- SRC="img35.png"
- ALT="\includegraphics[scale=0.6]{picdegree_alfa2000.eps}">
-
-</DIV></TD></TR>
-</TABLE>
-</DIV>
+root, there is only one out-link, and we also know that all links are
+strictly uni-directional. Thus to extract the in-degree
+we simply need to subtract one from the first column.
 
 <P>
 
 <H1><A NAME="SECTION00060000000000000000">
 About this document ...</A>
 </H1>
- <STRONG>PeerSim HOWTO 2: build a topology generator</STRONG><P>
+ <STRONG>PeerSim HOWTO:
+<BR>
+Build a topology generator for PeerSim 1.0</STRONG><P>
 This document was generated using the
 <A HREF="http://www.latex2html.org/"><STRONG>LaTeX</STRONG>2<tt>HTML</tt></A> translator Version 2002-2-1 (1.70)
 <P>
@@ -1210,9 +939,9 @@ Copyright &#169; 1997, 1998, 1999,
 Mathematics Department, Macquarie University, Sydney.
 <P>
 The command line arguments were: <BR>
- <STRONG>latex2html</STRONG> <TT>-t 'Peersim HOWTO 2' -split 0 -nonavigation -noaddress -show_section_number tutorial2.tex</TT>
+ <STRONG>latex2html</STRONG> <TT>-t 'Peersim HOWTO 2' -split 0 -nonavigation -noaddress -show_section_numbers -t 'Peersim HOWTO 2' tutorial2.tex</TT>
 <P>
-The translation was initiated by Gian Paolo Jesi on 2005-11-17
+The translation was initiated by Mark Jelasity on 2005-12-14
 <BR><HR>
 
 </BODY>

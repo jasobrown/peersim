@@ -1,3 +1,7 @@
+MJ 14/12/05
+- Fixed bug (checking for uninitialized coordinates) in
+  examples.hot.WireInetTopology.
+
 SV 05/12/2005
 - Fixed RandNI.initialize() to ensure no loop edges are added (as was already
   stated in its javadoc).

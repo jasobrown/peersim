@@ -136,7 +136,7 @@ public class WireInetTopology extends WireGraph {
                 .getY();
         double y2 = ((InetCoordinates) old_node.getProtocol(coordPid))
                 .getY();
-        if (x1 == -1 | x2 == -1 | y1 == -1 | y2 == -1)
+        if (x1 == -1 || x2 == -1 || y1 == -1 || y2 == -1)
             throw new RuntimeException(
                     "Found un-initialized coordinate. Use e.g., InetInitializer class in the config file.");
         return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));

@@ -54,7 +54,7 @@ release: clean all docnew
 	rm -fr peersim-$(VER)
 	mkdir peersim-$(VER)
 	mv doc peersim-$(VER)
-	cp README CHANGELOG RELEASE-NOTES build.xml peersim-$(VER)
+	cp Makefile README CHANGELOG RELEASE-NOTES build.xml peersim-$(VER)
 	mkdir peersim-$(VER)/example
 	cp example/*.txt peersim-$(VER)/example
 	mkdir peersim-$(VER)/src

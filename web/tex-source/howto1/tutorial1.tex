@@ -12,12 +12,12 @@
 \maketitle
 
 
-\noindent\emph{This tutorial is for PeerSim 1.0, in particular, its so called
+\noindent\emph{This tutorial is for PeerSim 1.0, in particular, its so-called
 cycle based engine.
 If the reader is not a PeerSim newbie, she may be
 interested in what major changes have been introduced since the last version.
 The changes are summarized in Appendix~\ref{sec:Appendix-C-changes}.
-For all the details, check the PeerSim CHANGELOG file, included in the
+For a more detailed list, please check the PeerSim CHANGELOG file, included in the
 distribution.}
 
 \section{Introduction}
@@ -35,15 +35,15 @@ or the PeerSim source tree (you can download it from the sourceforge CVS server)
 \item the Java Expression Parser version $\geq$ 2.3.0
 (included in the release, but you can download it from
 \url{http://www.singularsys.com/jep/})
-\item the gnuplot plotting tool is highly recommended 
+\item the Gnuplot plotting tool is highly recommended 
 \end{itemize}
 
-The aim of this tutorial is intended to be
+The aim of this tutorial is to be
 as practical and lightweight as possible.
 The goal is to give the reader the basics
-of PeerSim usage and the basics about how to write a simple protocol,
-through a step-by-step example.
-This tutorial IS NOT exhaustive at all, it is not meant to be a comprehensive
+of PeerSim and a step-by-step example about writing simple
+protocols in PeerSim.
+This tutorial IS NOT exhaustive, it is not meant to be a comprehensive
 guide, but it is enough to get you started.
 
 
@@ -63,14 +63,14 @@ the simulator structure is based on components and makes it easy to quickly
 prototype a protocol, combining different pluggable building
 blocks, that are in fact Java objects.
 
-PeerSim 1.0 supports two simulation models: the so called cycle-based model
-and the traditional event based model.
-This document is about the cycle based model.
-This model is a simplified model, which makes it possible to achieve extreme
-scalability and impressive performance, at the cost of some loss of realism.
-Many protocols can tolerate this loss of realism very well, according to
-our own research; however,
-care should be taken when this model is selected to experiment with a protocol.
+PeerSim 1.0 supports two simulation models: the {\em cycle-based} model
+and a more traditional {\em event-based} model.
+This document is about the former.
+This model is a simplified one, which makes it possible to achieve extreme
+scalability and performance, at the cost of some loss of realism.
+Several simple protocols can tolerate this loss without problems, according
+to our own experience; yet, care should be taken when this model is selected 
+to experiment with a protocol.
 
 The simplifying assumptions of the cycle based model are the lack of
 transport layer simulation and the lack of concurrency.
@@ -86,8 +86,8 @@ document.
 \subsection{PeerSim simulation life-cycle}
 
 PeerSim was designed to encourage modular programming based on objects
-(building blocks). Every such block is easily replaceable by another component
-that has a similar function, that is, that  has the same interface.
+(building blocks). Every block is easily replaceable by another component
+implementing the same interface (i.e., the same functionality).
 The general idea of the simulation model is:
 
 \begin{enumerate}
@@ -142,10 +142,9 @@ modify the simulation.\\
 \end{table}
 
 
-The life-cycle of a cycle-based simulation is as follows.
-First the configuration file is read, that is given as a command line
-parameter (see section 
-\ref{configfile}).
+The life-cycle of a cycle-based simulation is as follows. The first
+step is to read the configuration file, given as a command-line 
+parameter (see Section \ref{configfile}).
 The configuration contains all the simulation parameters 
 concerning all the
 objects involved in the experiment.
@@ -201,24 +200,21 @@ When a \emph{Control} has to collect data, they are formatted and sent to
 standard output and can be easily redirected to a file to be collected
 for further work. 
 %When developing such a \emph{Control} class, a good
-%rule is to print out data using the \emph{PeerSim.core.Log} static class.
+%rule is to print out data using the \emph{peersim.core.Log} static class.
 
 
 \subsection{The configuration file}
 \label{configfile}
 
 The configuration file is a plain ASCII text file, basically composed of
-key-value pairs; the lines starting with \char`\"{}\#\char`\"{} character
-are ignored (comments). The pairs are collected by a standard Java
-\emph{java.util.Properties} object when the simulator starts using
-for example the following command:
+key-value pairs representing Java \emph{java.util.Properties}; the lines 
+starting with  \char`\"{}\#\char`\"{} character are ignored (comments). 
+
+The config file is specified on the command line as follows:
 
 \begin{verbatim}
-java -cp <class-path> PeerSim.Simulator config-file.txt \end{verbatim}
-
-
-Clearly the classpath is mandatory only if you have not set it yet
-in a global shell variable.
+java peersim.Simulator config-file.txt 
+\end{verbatim}
 
 \subsection{Configuration example 1}
 
@@ -333,7 +329,7 @@ but doesn't have its own list of neighbors.
 In a modular fashion, it can be put over any overlay network.
 The protocol (array) that defines the overlay network has to be specified
 here.
-The value of parameter linkable is the name
+The value of parameter {\tt linkable} is the name
 of a protocol implementing  the \emph{Linkable} interface
 (\emph{IdleProtocol}
 in the example).
@@ -341,7 +337,7 @@ in the example).
 From \textbf{line 15 to line 26}, it is time to initialize all the
 components previously declared. We declare three initialization components,
 but only two of them are actually used (see \textbf{line 29}).
-The first initializer, \texttt{PeerSim.init.WireKOut},
+The first initializer, \texttt{peersim.init.WireKOut},
 performs the wiring of the static overlay network. 
 In particular, the nodes are linked
 randomly to each-other to form a random graph having the specified
@@ -378,7 +374,7 @@ value is \texttt{avg}.
 Now you can run the example writing on a console the following line:
 
 \begin{verbatim}
-java -cp <class-path> PeerSim.Simulator example1.txt \end{verbatim}
+java -cp <class-path> peersim.Simulator example1.txt \end{verbatim}
 
 The class-path is mandatory only if the current system has not PeerSim
 classes in the shell CLASSPATH environment variable. To get the exact
@@ -507,7 +503,7 @@ peak distribution initializes all nodes with the value zero,
 except one, that gets the \texttt{value} parameter.
 
 \texttt{control.dnet
-PeerSim.dynamics.DynamicNetwork} defines the last component
+peersim.dynamics.DynamicNetwork} defines the last component
 from \textbf{line 36 to 40}. 
 As stated previously, a \emph{Control}
 object can be used modify some parameters in the simulation.
@@ -617,7 +613,7 @@ code reuse. To achieve this, the following classes are proposed:
 
 \begin{description}
 \item[protocol]  It is built on
-  \emph{PeerSim.vector.SimpleValueHolder} which is a simple base class
+  \emph{peersim.vector.SimpleValueHolder} which is a simple base class
   to access a single float variable. Aggregation used the same base class
   as well.
 
@@ -633,7 +629,7 @@ code reuse. To achieve this, the following classes are proposed:
  share the same interface (extend \emph{SingleValueHolder}).
 Please note that the initializers provided in the example package are
 "light", demo versions; the developer is encouraged to check out the
-\emph{PeerSim.vector.*} package initializers.
+\emph{peersim.vector.*} package initializers.
 
 \item[observers] The aggregation observers can be
   used (\emph{aggregation.AverageObserver} in particular). It is possible
@@ -649,11 +645,11 @@ subsections present code with comments and other deeper explanations.
 \begin{verbatim}
 package example.loadbalance;
 
-import PeerSim.config.Configuration;
-import PeerSim.config.FastConfig;
-import PeerSim.core.*;
-import PeerSim.vector.SingleValueHolder;
-import PeerSim.cdsim.CDProtocol;
+import peersim.config.Configuration;
+import peersim.config.FastConfig;
+import peersim.core.*;
+import peersim.vector.SingleValueHolder;
+import peersim.cdsim.CDProtocol;
 
 public class BasicBalance extends SingleValueHolder implements CDProtocol {
 
@@ -684,7 +680,7 @@ public class BasicBalance extends SingleValueHolder implements CDProtocol {
 \normalsize
 
 The class needs to
-implement \emph{PeerSim.cdsim.CDProtocol}, that is, provide a
+implement \emph{peersim.cdsim.CDProtocol}, that is, provide a
 \emph{nextCycle()} method 
 where the actual protocol algorithm is located.
 In addition, the protocols extends the \emph{SingleValueHolder} class,
@@ -758,7 +754,7 @@ This is done like this:
 int linkableID = FastConfig.getLinkable(protocolID);
 Linkable linkable = (Linkable)node.getProtocol(linkableID);
 \end{verbatim}
-Using the static \emph{PeerSim.config.FastConfig} class we can get the
+Using the static \emph{peersim.config.FastConfig} class we can get the
 protocol ID of the linkable protocol that was configured for the protocol
 being executed.
 
@@ -827,8 +823,8 @@ The quota is then decreased by the same amount at both nodes.
 \begin{verbatim}
 package example.loadbalance;
 
-import PeerSim.config.*;
-import PeerSim.core.*;
+import peersim.config.*;
+import peersim.core.*;
 
 public class ResetQuota implements Control {
 
@@ -899,8 +895,8 @@ the number of nodes decreases as more and more nodes reach the average load.
 \begin{verbatim}
 package example.loadbalance;
 
-import PeerSim.core.*;
-import PeerSim.config.FastConfig;
+import peersim.core.*;
+import peersim.config.FastConfig;
 
 public class AvgBalance extends BasicBalance {
     /**
@@ -1095,9 +1091,9 @@ as follows.
 \begin{verbatim}
 package example.loadbalance;
 
-import PeerSim.config.*;
-import PeerSim.core.*;
-import PeerSim.util.*;
+import peersim.config.*;
+import peersim.core.*;
+import peersim.util.*;
 
 public class QuotaObserver implements Control {
     /////////////////////////////////////////////////////////////////////////
@@ -1213,7 +1209,7 @@ port previously developed components to the new simulator release.
   both of them had access to the entire network, and nothing prevented
   an observer to modify the network or a dynamics to observe it. So,
   now all observer/dynamics classes have to implement the 
-  \emph{PeerSim.core.Control} interface, which contains only an
+  \emph{peersim.core.Control} interface, which contains only an
   \texttt{execute()} 
   method. In the configuration file, the \texttt{dynamics.} and
   \texttt{observer.} 
@@ -1239,7 +1235,7 @@ port previously developed components to the new simulator release.
   supported, but you can set -1$<$add$<$1 which is taken as proportion.
 
 \item Removed the \texttt{simulation.shuffle} parameter, shuffling can now be
-  added by the control \emph{PeerSim.cdsim.Shuffle}. This way the time
+  added by the control \emph{peersim.cdsim.Shuffle}. This way the time
   within the cycle and 
   the schedule of the shuffling is as flexible as for any other control.
 
@@ -1315,8 +1311,8 @@ port previously developed components to the new simulator release.
   5/2.0 is equal to 2.5).
 
 \item Several new functionalities have been added to the
-  \emph{PeerSim.dynamics} 
-  and \emph{PeerSim.reports} packages; please refer to the API documentation.
+  \emph{peersim.dynamics} 
+  and \emph{peersim.reports} packages; please refer to the API documentation.
 
 \end{itemize}
 

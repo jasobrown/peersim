@@ -58,17 +58,27 @@ public static Graph wireRingLattice(Graph g, int k) {
 // -------------------------------------------------------------------
 
 /**
-* Watts-Strogatz model. Rewiring is done
+* Watts-Strogatz model. A bit modified though: by default assumes a directed
+* graph. This means that directed
+* links are re-wired, and the undirected edges in the original (undirected)
+* lattice are modeled
+* by double directed links pointing in opposite directions. Rewiring is done
 * with replacement, so the possibility of wiring two links to the same target
 * is positive (though very small).
+* <p>
+* Note that it is possible to pass an undirected graph as a parameter. In that
+* case the output is the directed graph produced by the method, converted to
+* an undirected graph by dropping directionality of the edges. This graph is
+* still not from the original undirected WS model though.
 * @param g the graph to be wired
-* @param k lattice parameter
-* @param p the propability of rewireing
+* @param k lattice parameter: this is the out-degree of a node in the
+* ring lattice before rewiring
+* @param p the propability of rewiring each 
 * @param r source of randomness
 * @return returns g for convinience
 */
 public static Graph wireWS( Graph g, int k, double p, Random r ) {
-
+//XXX unintuitive to call it WS due to the slight mods
 	final int n = g.size();
 	for(int i=0; i<n; ++i)
 	for(int j=-k/2; j<=k/2; ++j)

@@ -1,3 +1,6 @@
+MJ 30/12/06
+- Fixed docs of the Watts-Strogatz model in GraphFactory
+
 MJ 14/12/05
 - Fixed bug (checking for uninitialized coordinates) in
   examples.hot.WireInetTopology.

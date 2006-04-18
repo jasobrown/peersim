@@ -19,6 +19,8 @@
 package peersim.core;
 
 import peersim.config.Configuration;
+import java.util.Comparator;
+import java.util.Arrays;
 
 /**
 * This class forms the basic framework of all simulations.
@@ -267,6 +269,19 @@ public static void swap(int i, int j) {
 public static void shuffle() {
 	
 	for(int i=len; i>1; i--) swap(i-1, CommonState.r.nextInt(i));
+}
+
+// ------------------------------------------------------------------
+
+/**
+* Sorts the node array. The index of each node is updated accordingly.
+* @param c The comparator to be used for sorting the nodes. If null, the
+* natural order of the nodes is used.
+*/
+public static void sort(Comparator<? super Node> c) {
+	
+	Arrays.sort(node,0,len,c);
+	for(int i=0; i<len; i++) node[i].setIndex(i);
 }
 
 // ------------------------------------------------------------------

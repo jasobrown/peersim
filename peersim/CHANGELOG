@@ -1,4 +1,7 @@
-MJ 30/12/06
+MJ 06/04/06
+- Added a sort method to peersim.core.Network
+
+MJ 30/12/05
 - Fixed docs of the Watts-Strogatz model in GraphFactory
 
 MJ 14/12/05

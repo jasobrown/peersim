@@ -32,12 +32,12 @@ Build a new protocol for the PeerSim 1.0 simulator</H1>
 </DIV>
 
 <P>
-<I>This tutorial is for PeerSim 1.0, in particular, its so called
+<I>This tutorial is for PeerSim 1.0, in particular, its so-called
 cycle based engine.
 If the reader is not a PeerSim newbie, she may be
 interested in what major changes have been introduced since the last version.
 The changes are summarized in Appendix&nbsp;<A HREF="#sec:Appendix-C-changes">C</A>.
-For all the details, check the PeerSim CHANGELOG file, included in the
+For a more detailed list, please check the PeerSim CHANGELOG file, included in the
 distribution.</I>
 
 <P>
@@ -73,17 +73,17 @@ or the PeerSim source tree (you can download it from the sourceforge CVS server)
 <TT><A NAME="tex2html2"
   HREF="http://www.singularsys.com/jep/">http://www.singularsys.com/jep/</A></TT>)
 </LI>
-<LI>the gnuplot plotting tool is highly recommended 
+<LI>the Gnuplot plotting tool is highly recommended 
 </LI>
 </UL>
 
 <P>
-The aim of this tutorial is intended to be
+The aim of this tutorial is to be
 as practical and lightweight as possible.
 The goal is to give the reader the basics
-of PeerSim usage and the basics about how to write a simple protocol,
-through a step-by-step example.
-This tutorial IS NOT exhaustive at all, it is not meant to be a comprehensive
+of PeerSim and a step-by-step example about writing simple
+protocols in PeerSim.
+This tutorial IS NOT exhaustive, it is not meant to be a comprehensive
 guide, but it is enough to get you started.
 
 <P>
@@ -112,14 +112,14 @@ prototype a protocol, combining different pluggable building
 blocks, that are in fact Java objects.
 
 <P>
-PeerSim 1.0 supports two simulation models: the so called cycle-based model
-and the traditional event based model.
-This document is about the cycle based model.
-This model is a simplified model, which makes it possible to achieve extreme
-scalability and impressive performance, at the cost of some loss of realism.
-Many protocols can tolerate this loss of realism very well, according to
-our own research; however,
-care should be taken when this model is selected to experiment with a protocol.
+PeerSim 1.0 supports two simulation models: the <EM>cycle-based</EM> model
+and a more traditional <EM>event-based</EM> model.
+This document is about the former.
+This model is a simplified one, which makes it possible to achieve extreme
+scalability and performance, at the cost of some loss of realism.
+Several simple protocols can tolerate this loss without problems, according
+to our own experience; yet, care should be taken when this model is selected 
+to experiment with a protocol.
 
 <P>
 The simplifying assumptions of the cycle based model are the lack of
@@ -142,8 +142,8 @@ document.
 
 <P>
 PeerSim was designed to encourage modular programming based on objects
-(building blocks). Every such block is easily replaceable by another component
-that has a similar function, that is, that  has the same interface.
+(building blocks). Every block is easily replaceable by another component
+implementing the same interface (i.e., the same functionality).
 The general idea of the simulation model is:
 
 <P>
@@ -174,7 +174,7 @@ Table&nbsp;<A HREF="#t:psim_classes">1</A>.
 <P>
 <A NAME="table1"></A>
 <BR><P></P>
-<DIV ALIGN="CENTER"><A NAME="290"></A>
+<DIV ALIGN="CENTER"><A NAME="292"></A>
 <TABLE>
 <CAPTION><STRONG>Table 1:</STRONG>
 Suggested PeerSim subset of classes or
@@ -214,10 +214,9 @@ modify the simulation.</TD>
 <BR>
 
 <P>
-The life-cycle of a cycle-based simulation is as follows.
-First the configuration file is read, that is given as a command line
-parameter (see section 
-<A HREF="#configfile">2.3</A>).
+The life-cycle of a cycle-based simulation is as follows. The first
+step is to read the configuration file, given as a command-line 
+parameter (see Section <A HREF="#configfile">2.3</A>).
 The configuration contains all the simulation parameters 
 concerning all the
 objects involved in the experiment.
@@ -261,7 +260,7 @@ The latter scenario is illustrated in Figure&nbsp;<A HREF="#obsfigure">1</A>.
 
 <P>
 
-<DIV ALIGN="CENTER"><A NAME="obsfigure"></A><A NAME="291"></A>
+<DIV ALIGN="CENTER"><A NAME="obsfigure"></A><A NAME="293"></A>
 <TABLE>
 <CAPTION ALIGN="BOTTOM"><STRONG>Figure 1:</STRONG>
 Scheduling controls and protocols. The ``C'' letters indicate a
@@ -295,19 +294,16 @@ for further work.
 
 <P>
 The configuration file is a plain ASCII text file, basically composed of
-key-value pairs; the lines starting with &#34;#&#34; character
-are ignored (comments). The pairs are collected by a standard Java
-<I>java.util.Properties</I> object when the simulator starts using
-for example the following command:
+key-value pairs representing Java <I>java.util.Properties</I>; the lines 
+starting with  &#34;#&#34; character are ignored (comments). 
+
+<P>
+The config file is specified on the command line as follows:
 
 <P>
 <PRE>
-java -cp &lt;class-path&gt; PeerSim.Simulator config-file.txt
+java peersim.Simulator config-file.txt
 </PRE>
-
-<P>
-Clearly the classpath is mandatory only if you have not set it yet
-in a global shell variable.
 
 <P>
 
@@ -437,7 +433,7 @@ but doesn't have its own list of neighbors.
 In a modular fashion, it can be put over any overlay network.
 The protocol (array) that defines the overlay network has to be specified
 here.
-The value of parameter linkable is the name
+The value of parameter <TT>linkable</TT> is the name
 of a protocol implementing  the <I>Linkable</I> interface
 (<I>IdleProtocol</I>
 in the example).
@@ -446,7 +442,7 @@ in the example).
 From <B>line 15 to line 26</B>, it is time to initialize all the
 components previously declared. We declare three initialization components,
 but only two of them are actually used (see <B>line 29</B>).
-The first initializer, <TT>PeerSim.init.WireKOut</TT>,
+The first initializer, <TT>peersim.init.WireKOut</TT>,
 performs the wiring of the static overlay network. 
 In particular, the nodes are linked
 randomly to each-other to form a random graph having the specified
@@ -488,7 +484,7 @@ Now you can run the example writing on a console the following line:
 
 <P>
 <PRE>
-java -cp &lt;class-path&gt; PeerSim.Simulator example1.txt
+java -cp &lt;class-path&gt; peersim.Simulator example1.txt
 </PRE>
 
 <P>
@@ -624,7 +620,7 @@ except one, that gets the <TT>value</TT> parameter.
 </FONT>
 <P>
 <FONT SIZE="-2"><TT>control.dnet
-PeerSim.dynamics.DynamicNetwork</TT> defines the last component
+peersim.dynamics.DynamicNetwork</TT> defines the last component
 from <B>line 36 to 40</B>. 
 As stated previously, a <I>Control</I>
 object can be used modify some parameters in the simulation.
@@ -757,7 +753,7 @@ code reuse. To achieve this, the following classes are proposed:
 <DL>
 <DT><STRONG>protocol</STRONG></DT>
 <DD>It is built on
-  <I>PeerSim.vector.SimpleValueHolder</I> which is a simple base class
+  <I>peersim.vector.SimpleValueHolder</I> which is a simple base class
   to access a single float variable. Aggregation used the same base class
   as well.
 
@@ -781,7 +777,7 @@ code reuse. To achieve this, the following classes are proposed:
  share the same interface (extend <I>SingleValueHolder</I>).
 Please note that the initializers provided in the example package are
 "light", demo versions; the developer is encouraged to check out the
-<I>PeerSim.vector.*</I> package initializers.
+<I>peersim.vector.*</I> package initializers.
 
 <P>
 </DD>
@@ -804,11 +800,11 @@ subsections present code with comments and other deeper explanations.
 <FONT SIZE="-2"></FONT><PRE>
 package example.loadbalance;
 
-import PeerSim.config.Configuration;
-import PeerSim.config.FastConfig;
-import PeerSim.core.*;
-import PeerSim.vector.SingleValueHolder;
-import PeerSim.cdsim.CDProtocol;
+import peersim.config.Configuration;
+import peersim.config.FastConfig;
+import peersim.core.*;
+import peersim.vector.SingleValueHolder;
+import peersim.cdsim.CDProtocol;
 
 public class BasicBalance extends SingleValueHolder implements CDProtocol {
 
@@ -838,7 +834,7 @@ public class BasicBalance extends SingleValueHolder implements CDProtocol {
 </PRE><FONT SIZE="-2"></FONT>
 <P>
 <FONT SIZE="-2">The class needs to
-implement <I>PeerSim.cdsim.CDProtocol</I>, that is, provide a
+implement <I>peersim.cdsim.CDProtocol</I>, that is, provide a
 <I>nextCycle()</I> method 
 where the actual protocol algorithm is located.
 In addition, the protocols extends the <I>SingleValueHolder</I> class,
@@ -911,7 +907,7 @@ This is done like this:
 int linkableID = FastConfig.getLinkable(protocolID);
 Linkable linkable = (Linkable)node.getProtocol(linkableID);
 </PRE><FONT SIZE="-2">
-Using the static <I>PeerSim.config.FastConfig</I> class we can get the
+Using the static <I>peersim.config.FastConfig</I> class we can get the
 protocol ID of the linkable protocol that was configured for the protocol
 being executed.
 </FONT>
@@ -982,8 +978,8 @@ The quota is then decreased by the same amount at both nodes.
 <FONT SIZE="-2"></FONT><PRE>
 package example.loadbalance;
 
-import PeerSim.config.*;
-import PeerSim.core.*;
+import peersim.config.*;
+import peersim.core.*;
 
 public class ResetQuota implements Control {
 
@@ -1057,8 +1053,8 @@ the number of nodes decreases as more and more nodes reach the average load.
 <FONT SIZE="-2"></FONT><PRE>
 package example.loadbalance;
 
-import PeerSim.core.*;
-import PeerSim.config.FastConfig;
+import peersim.core.*;
+import peersim.config.FastConfig;
 
 public class AvgBalance extends BasicBalance {
     /**
@@ -1249,9 +1245,9 @@ as follows.
 <FONT SIZE="-2"></FONT><PRE>
 package example.loadbalance;
 
-import PeerSim.config.*;
-import PeerSim.core.*;
-import PeerSim.util.*;
+import peersim.config.*;
+import peersim.core.*;
+import peersim.util.*;
 
 public class QuotaObserver implements Control {
     /////////////////////////////////////////////////////////////////////////
@@ -1387,7 +1383,7 @@ C..1 Backward compatibility changes
   both of them had access to the entire network, and nothing prevented
   an observer to modify the network or a dynamics to observe it. So,
   now all observer/dynamics classes have to implement the 
-  <I>PeerSim.core.Control</I> interface, which contains only an
+  <I>peersim.core.Control</I> interface, which contains only an
   <TT>execute()</TT> 
   method. In the configuration file, the <TT>dynamics.</TT> and
   <TT>observer.</TT> 
@@ -1438,7 +1434,7 @@ C..1 Backward compatibility changes
 <P>
 </LI>
 <LI>Removed the <TT>simulation.shuffle</TT> parameter, shuffling can now be
-  added by the control <I>PeerSim.cdsim.Shuffle</I>. This way the time
+  added by the control <I>peersim.cdsim.Shuffle</I>. This way the time
   within the cycle and 
   the schedule of the shuffling is as flexible as for any other control.
 
@@ -1542,8 +1538,8 @@ C..2 New features in brief
 <P>
 </LI>
 <LI>Several new functionalities have been added to the
-  <I>PeerSim.dynamics</I> 
-  and <I>PeerSim.reports</I> packages; please refer to the API documentation.
+  <I>peersim.dynamics</I> 
+  and <I>peersim.reports</I> packages; please refer to the API documentation.
 
 <P>
 </LI>
@@ -1570,7 +1566,7 @@ Mathematics Department, Macquarie University, Sydney.
 The command line arguments were: <BR>
  <STRONG>latex2html</STRONG> <TT>-t 'Peersim HOWTO 1' -split 0 -nonavigation -noaddress -show_section_numbers -t 'Peersim HOWTO 1' tutorial1.tex</TT>
 <P>
-The translation was initiated by Mark Jelasity on 2005-12-11
+The translation was initiated by Gian Paolo Jesi on 2005-12-24
 <BR><HR>
 
 </BODY>

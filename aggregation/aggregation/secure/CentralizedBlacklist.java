@@ -183,7 +183,7 @@ public boolean execute()
 			}
 	}
 	// System.out.println("");
-	Log.println(name, correct + " " + falsePositives + " " + map.keySet().size());
+	System.out.println(name +  correct + " " + falsePositives + " " + map.keySet().size());
 	return false;
 }
 

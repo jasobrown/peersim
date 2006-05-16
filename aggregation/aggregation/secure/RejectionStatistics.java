@@ -19,7 +19,6 @@
 package aggregation.secure;
 
 import peersim.core.Control;
-import peersim.core.Log;
 
 /**
  * This class is used to collect statistics with respect to the actual
@@ -91,7 +90,7 @@ public static void incIncorrect()
 // Comment inherited from interface
 public boolean execute()
 {
-	Log.println(name, correct + " " + incorrect);
+	System.out.println(name +  correct + " " + incorrect);
 	return false;
 }
   

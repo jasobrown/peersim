@@ -169,7 +169,7 @@ public boolean execute()
 				tn++;
 		}
 	}
-	Log.println(name, 
+	System.out.println(name +  
 		" SIZEMIN  " + nsize.getMin() +
 		" SIZEMAX  " + nsize.getMax() +
 		" SIZEMINCNT " + nsize.getMinCount() +

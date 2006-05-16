@@ -166,7 +166,7 @@ public boolean execute()
     
   /* Printing statistics */
   if (!partial || ((time % epoch)==0)) {
-    Log.println(name, 
+    System.out.println(name +  
     	" TIME " + time +
     	" VAR " + var +
     	" RED " + (var/initvar) +

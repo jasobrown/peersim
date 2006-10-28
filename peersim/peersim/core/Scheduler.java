@@ -57,20 +57,20 @@ public static final String PAR_STEP = "step";
 * Defaults to -1. That is, defaults to be ineffective.
 * @config
 */
-private static final String PAR_AT = "at";
+public static final String PAR_AT = "at";
 
 
 /** 
 * Defaults to 0.
 * @config
 */
-private static final String PAR_FROM = "from";
+public static final String PAR_FROM = "from";
 
 /** 
 * Defaults to <tt>Long.MAX_VALUE</tt>.
 * @config
 */
-private static final String PAR_UNTIL = "until";
+public static final String PAR_UNTIL = "until";
 
 /**
 * Defines if component is active after the simulation has finished.

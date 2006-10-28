@@ -70,6 +70,7 @@ public GeneralNode(String prefix) {
 	
 	String[] names = Configuration.getNames(PAR_PROT);
 	CommonState.setNode(this);
+	ID=nextID();
 	protocol = new Protocol[names.length];
 	for (int i=0; i < names.length; i++) {
 		CommonState.setPid(i);
@@ -77,7 +78,6 @@ public GeneralNode(String prefix) {
 			Configuration.getInstance(names[i]);
 		protocol[i] = p; 
 	}
-	ID=nextID();
 }
 
 
@@ -90,11 +90,11 @@ public Object clone() {
 	catch( CloneNotSupportedException e ) {} // never happens
 	result.protocol = new Protocol[protocol.length];
 	CommonState.setNode(result);
+	result.ID=nextID();
 	for(int i=0; i<protocol.length; ++i) {
 		CommonState.setPid(i);
 		result.protocol[i] = (Protocol)protocol[i].clone();
 	}
-	result.ID=nextID();
 	return result;
 }
 

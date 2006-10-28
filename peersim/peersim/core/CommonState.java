@@ -18,8 +18,8 @@
 
 package peersim.core;
 
-import  peersim.util.ExtendedRandom;
-import  peersim.config.Configuration;
+import peersim.config.*;
+import peersim.util.*;
 
 /**
  * This is the common state of the simulation all objects see.

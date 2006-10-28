@@ -7,8 +7,8 @@ simulation.cycles 100
 
 control.sh Shuffle
 
-overlay.size 1
-overlay.maxSize 10000
+network.size 1
+network.maxSize 10000
 
 protocol.0 lpbcast.SimpleLpbcast
 #protocol.0.l 10

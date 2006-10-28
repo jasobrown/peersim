@@ -66,4 +66,12 @@ public String getMessage() {
 		getStackTrace()[pos].getLineNumber();
 }
 
+/**
+ * Returns the exception message without stack trace information
+ */
+public String getShortMessage()
+{
+	return super.getMessage();
+}
+
 }

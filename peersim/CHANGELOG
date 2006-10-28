@@ -17,7 +17,11 @@ AM 28/10/2006
   associated controls in the same way as the PeerSim simulator,
   but terminates before actually starting the simulation. All message
   errors are reported.
-
+- Separated the container task of Configuration from the its goal
+  of being a unique central point for accessing configuration. 
+  This is useful (note: not needed) in a distributed simulator
+  I'm writing, where multiple configuration files are loaded
+  (for multiple purposes).
 
 
 MJ 22/04/2006

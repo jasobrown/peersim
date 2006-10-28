@@ -12,6 +12,12 @@ AM 28/10/2006
   to a predefined parameter.
 - Added the VectorComparator class to be used to sort real node
   arrays based on a specified getter.
+- Added a new tool to check whether a config file contains errors
+  or not. It works as follows: it initializes a network and the
+  associated controls in the same way as the PeerSim simulator,
+  but terminates before actually starting the simulation. All message
+  errors are reported.
+
 
 
 MJ 22/04/2006

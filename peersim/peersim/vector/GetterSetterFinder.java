@@ -77,7 +77,7 @@ public static Method getGetterMethod(Class clazz, String methodName)
 	
 	Class ret = method.getReturnType();
 	if (	!( ret==int.class || ret==long.class ||
-		ret==double.class || ret==float.class )
+		ret==double.class || ret==float.class || ret==boolean.class)
 	) {
 		throw new NoSuchMethodException(method.getName() + " of class "
 		+ clazz.getName() + " is not a valid getter method: "+

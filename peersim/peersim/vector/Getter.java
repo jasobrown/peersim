@@ -131,7 +131,11 @@ protected Number get(Node n) {
 
 	try 
 	{
-		return (Number)method.invoke(n.getProtocol(pid));
+		Object ret =method.invoke(n.getProtocol(pid));
+		if (ret instanceof Boolean)
+			return ((Boolean) ret) ? 1 : 0;
+		else
+			return (Number) ret;
 	}
 	catch (Exception e)
 	{

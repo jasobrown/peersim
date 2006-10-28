@@ -1,3 +1,19 @@
+AM 28/10/2006
+- Moved the ID creation before the creation of the Protocol objects
+  belonging to a node. This solve problems for Protocols that
+  assume that the ID field was filled.
+- Added a MemoryObserver reports to provide information about
+  memory usage.
+- Modified peersim.vector.Getter and peersim.vector.GetterSetterFinder
+  to handle boolean values as numbers (0/1). This enables to use class 
+  from the vector package to perform statistics on boolean fields.
+- Modified persim.vector.VectorObserver to add the capability to
+  stop the simulation when one of the aggregate values is equal
+  to a predefined parameter.
+- Added the VectorComparator class to be used to sort real node
+  arrays based on a specified getter.
+
+
 MJ 22/04/2006
 VERSION 1.0.1 RELEASED
 ------------------------------------------------------------------

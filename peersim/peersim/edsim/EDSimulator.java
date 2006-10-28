@@ -293,17 +293,16 @@ private static boolean executeNext() {
 			nce.execute();
 		}
 		else
-		{try
 		{
-			EDProtocol prot = (EDProtocol) ev.node.getProtocol(pid);
-			prot.processEvent(ev.node, pid, ev.event);
+			try {
+				EDProtocol prot = (EDProtocol) ev.node.getProtocol(pid);
+				prot.processEvent(ev.node, pid, ev.event);
+			} catch (ClassCastException e) {
+				throw new IllegalArgumentException("Protocol " +
+					Configuration.lookupPid(pid) + 
+					" does not implement EDProtocol; " + ev.event.getClass()  );
+			}
 		}
-		catch (ClassCastException e)
-		{
-			throw new IllegalArgumentException("Protocol " +
-				Configuration.lookupPid(pid) + 
-				" does not implement EDProtocol");
-		}}
 	}
 	
 	return false;
@@ -315,8 +314,10 @@ private static boolean executeNext() {
 
 /**
  * Runs an experiment, resetting everything except the random seed.
+ * If parameter fake is true, it only loads initializers, controls,
+ * etc. No actual simulation is performed.
  */
-public static void nextExperiment() 
+public static void nextExperiment(boolean fake) 
 {
 	// Reading parameter
 	rbits = Configuration.getInt(PAR_RBITS, 8);	
@@ -341,6 +342,9 @@ public static void nextExperiment()
 	runInitializers();
 	scheduleControls();
 
+	if (fake) 
+		return;
+		
 	// Perform the actual simulation; executeNext() will tell when to
 	// stop.
 	boolean exit = false;
@@ -354,6 +358,7 @@ public static void nextExperiment()
 	{
 		if( ctrlSchedules[j].fin ) controls[j].execute();
 	}
+
 }
 
 //---------------------------------------------------------------------

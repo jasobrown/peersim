@@ -53,12 +53,13 @@ public class Simulator {
 // ======================================================================
 
 /** {@link CDSimulator} */
-protected static final int CDSIM = 0;
+public static final int CDSIM = 0;
 
 /** {@link EDSimulator} */
-protected static final int EDSIM = 1;
+public static final int EDSIM = 1;
 
-protected static final int UNKNOWN = -1;
+/** Unknown simulator */
+public static final int UNKNOWN = -1;
 
 /** the class names of simulators used */
 protected static final String[] simName = {
@@ -82,24 +83,30 @@ public static final String PAR_EXPS = "simulation.experiments";
  */
 public static final String PAR_REDIRECT = "simulation.stdout";
 
-// ========================== methods ===================================
+// ==================== static fields ===================================
 // ======================================================================
+
+/** */
+private static int simID = UNKNOWN;
+
+//========================== methods ===================================
+//======================================================================
 
 /**
 * Returns the numeric id of the simulator to invoke. At the moment this can
 * be {@link #CDSIM}, {@link #EDSIM} or {@link #UNKNOWN}.
 */
-protected static int getSimID() {
+public static int getSimID() {
 	
-	if( CDSimulator.isConfigurationCycleDriven())
-	{
-		return CDSIM;
+	if (simID == UNKNOWN) {
+		if( CDSimulator.isConfigurationCycleDriven()){
+			simID = CDSIM;
+		}
+		else if( EDSimulator.isConfigurationEventDriven() ) {	
+			simID = EDSIM;
+		}
 	}
-	else if( EDSimulator.isConfigurationEventDriven() )
-	{	
-		return EDSIM;
-	}
-	else	return UNKNOWN;
+	return simID;
 }
 
 // ----------------------------------------------------------------------
@@ -181,10 +188,10 @@ public static void main(String[] args)
 			switch(SIMID)
 			{
 			case CDSIM:
-				CDSimulator.nextExperiment();
+				CDSimulator.nextExperiment(false);
 				break;
 			case EDSIM:
-				EDSimulator.nextExperiment();
+				EDSimulator.nextExperiment(false);
 				break;
 			}
 		}

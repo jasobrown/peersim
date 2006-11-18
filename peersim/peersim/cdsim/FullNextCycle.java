@@ -20,6 +20,7 @@ package peersim.cdsim;
 
 import peersim.config.*;
 import peersim.core.*;
+import peersim.util.RandPermutation;
 
 /**
 * Control to run a cycle of the cycle drive simulation.
@@ -43,13 +44,27 @@ public class FullNextCycle implements Control {
 */
 private static final String PAR_GETPAIR = "getpair";
 
+/**
+* Shuffle iteration order if set. Not set by default. If set, then nodes are
+* iterated in a random order. However, in the network the nodes actually
+* stay in the order they originally were. The prise for leaving the
+* network untouched is memory: we need to store the permutation we use
+* to iterate the network.
+* @config
+*/
+private static final String PAR_SHUFFLE = "shuffle";
+
 // --------------------------------------------------------------------
 
 protected final boolean getpair_rand;
 
+protected final boolean shuffle;
+
 /** Holds the protocol schedulers of this simulation */
 protected Scheduler[] protSchedules = null;
 
+/** The random permutation to use if config par {@value #PAR_SHUFFLE} is set. */
+protected RandPermutation rperm = new RandPermutation( CDState.r );
 
 // =============== initialization ======================================
 // =====================================================================
@@ -60,6 +75,7 @@ protected Scheduler[] protSchedules = null;
 public FullNextCycle(String prefix) {
 	
 	getpair_rand = Configuration.contains(prefix+"."+PAR_GETPAIR);
+	shuffle = Configuration.contains(prefix+"."+PAR_SHUFFLE);
 
 	// load protocol schedulers
 	String[] names = Configuration.getNames(Node.PAR_PROT);
@@ -84,19 +100,21 @@ public FullNextCycle(String prefix) {
  */
 public boolean execute() {
 
-	int cycle=CDState.getCycle();
+	final int cycle=CDState.getCycle();
+	if( shuffle ) rperm.reset( Network.size() );
 	for(int j=0; j<Network.size(); ++j)
 	{
 		Node node = null;
 		if( getpair_rand )
-			node = Network.get(
-			   CDState.r.nextInt(Network.size()));
+			node = Network.get(CDState.r.nextInt(Network.size()));
+		else if( shuffle )
+			node = Network.get(rperm.next());
 		else
 			node = Network.get(j);
 		if( !node.isUp() ) continue; 
-		int len = node.protocolSize();
 		CDState.setNode(node);
 		CDState.setCycleT(j);
+		final int len = node.protocolSize();
 		for(int k=0; k<len; ++k)
 		{
 			// Check if the protocol should be executed, given the

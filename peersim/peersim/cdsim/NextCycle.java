@@ -72,22 +72,22 @@ public NextCycle(String prefix) {
  */
 public boolean execute() {
 
-	int cycle=CDState.getCycle();
+	final int cycle=CDState.getCycle();
+	if( shuffle ) rperm.reset( Network.size() );
 	for(int j=0; j<Network.size(); ++j)
 	{
 		Node node = null;
 		if( getpair_rand )
-			node = Network.get(
-			   CDState.r.nextInt(Network.size()));
+			node = Network.get(CDState.r.nextInt(Network.size()));
+		else if( shuffle )
+			node = Network.get(rperm.next());
 		else
 			node = Network.get(j);
 		if( !node.isUp() ) continue; 
-		int len = pids.length;
 		CDState.setNode(node);
 		CDState.setCycleT(j);
-		for(int k=0; k<len; ++k)
+		for(int pid: pids)
 		{
-			int pid = pids[k];
 			// Check if the protocol should be executed, given the
 			// associated scheduler.
 			if (!protSchedules[pid].active(cycle))

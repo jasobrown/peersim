@@ -25,6 +25,7 @@ doc:
 		peersim.vector \
 		example.aggregation \
 		example.loadbalance \
+		example.edaggregation \
 		example.hot \
 		example.newscast 
 
@@ -48,6 +49,7 @@ docnew:
 		example.aggregation \
 		example.loadbalance \
 		example.hot \
+		example.edaggregation \
 		example.newscast 
 
 release: clean all docnew

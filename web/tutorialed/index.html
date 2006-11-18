@@ -1,0 +1,555 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Peersim HOWTO 1</TITLE>
+<META NAME="description" CONTENT="Peersim HOWTO 1">
+<META NAME="keywords" CONTENT="all">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="all.css">
+
+</HEAD>
+
+<BODY >
+
+<P>
+<H1 ALIGN="CENTER">A Basic Event Driven Example for PeerSim 1.0</H1>
+<DIV>
+
+<P ALIGN="CENTER"><STRONG>M&#225;rk Jelasity</STRONG></P>
+</DIV>
+
+<P>
+
+<H1><A NAME="SECTION00010000000000000000">
+1 Introduction</A>
+</H1>
+
+<P>
+This document walks you through a basic example application of PeerSim,
+that uses the <I>event based</I> simulation model.
+We assume that you are familiar with the examples described in
+the short tutorials on the cycle based model: the basic working
+of PeerSim, its configuration file, and the gossip-based averaging example,
+where nodes collectively calculate the average of some parameter via
+periodically exchanging messages and performing pairwise averaging steps.
+The example discussed here will be the same: gossip-based averaging.
+Only this time using the event based model, where message sending is modeled
+in more detail.
+This will allow us to observe problems with the protocol that remained hidden
+in the cycle based simulations.
+
+<P>
+In the event based model, everything works exactly the same way as in the
+cycle based model, except time management and the way control is passed to
+the protocols.
+<I>Protocols</I> that are not executable (that are used only to store
+data, such as some linkable protocols that only store neighbors, or vectors that
+store numeric values) can be applied and initialized in exactly the same way.
+<I>Controls</I> in any package outside package <I>peersim.cdsim</I> can
+be used as well. By default controls are called in each cycle in the cycle
+based model. In the event based model they have to be scheduled explicitly,
+since there are no cycles.
+
+<P>
+Evidently, we can write controls that are specific to the event based model,
+that is, that are able to send events (messages) to protocols.
+In many cases, this will be necessary because often the system will be
+driven completely or partially by external events such as queries by users,
+that can best be
+modeled by controls that generate these events and thereby drive the
+execution of the simulation.
+
+<P>
+There are components that are not available.
+This includes any component that relies on the static class
+<I>peersim.cdsim.CDState</I> which offers an interface to read cycle-specific
+global state.
+Our experience is that many components written for the cycle based model
+that rely on this state can be easily modified to remove this dependency.
+
+<P>
+However, maybe a bit surprisingly, protocols that implement the cycle based
+interface <I>peersim.cdsim.CDProtocol</I> can be utilized in the event
+based model as well; we will explain later how.
+But it should be noted immediately that this must be done with care, because
+in most of the cases it does not make any sense.
+However, this feature does have its very useful applications: it makes it
+possible to easily invoke protocols periodically, a feature that is
+characteristic to practically all P2P protocols in connection with
+housekeeping, failure detection and sending heartbeat messages.
+
+<P>
+
+<H1><A NAME="SECTION00020000000000000000">
+2 Event Based Averaging: the Protocol</A>
+</H1>
+
+<P>
+Let us start with the Java class that implement our averaging protocol
+in the event based model, that begins like this:
+<PRE>
+package example.edaggregation;
+
+import peersim.vector.SingleValueHolder;
+import peersim.config.*;
+import peersim.core.*;
+import peersim.transport.Transport;
+import peersim.cdsim.CDProtocol;
+import peersim.edsim.EDProtocol;
+
+/**
+* Event driven version of epidemic averaging.
+*/
+public class AverageED extends SingleValueHolder
+implements CDProtocol, EDProtocol {
+</PRE>
+<P>
+The first thing we notice is that we implement interface <I>EDProtocol</I>
+and also <I>CDProtocol</I>.
+The former will allow the class to process incoming messages.
+The latter is a bit confusing, as it belongs to the cycle based model.
+First of all, protocols need not implement this interface in the event
+based model.
+However, protocols that would like to get control periodically can achieve
+this effect using this trick of implementing <I>CDProtocol</I>, and
+setting a <I>CDScheduler</I> in the configuration, as we will describe
+below.
+This has several advantages over fiddling with timers and so on.
+The code is much cleaner, the periodic execution that is managed by a separate
+component is modular itself and can be configured separately, and finally,
+we can port our old cycle based protocols much easier to the event based
+model.
+
+<P>
+<PRE>
+/**
+ * @param prefix string prefix for config properties
+ */
+public AverageED(String prefix) { super(prefix); }
+</PRE>
+<P>
+Our simple protocol does not read any configuration parameters.
+Now let us turn to the implementation of the cycle based interface.
+This method defines the activity to be performed periodically.
+
+<P>
+<PRE>
+/**
+ * This is the standard method the define periodic activity.
+ * The frequency of execution of this method is defined by a
+ * {@link peersim.edsim.CDScheduler} component in the configuration.
+ */
+public void nextCycle( Node node, int pid )
+{
+        Linkable linkable = 
+                (Linkable) node.getProtocol( FastConfig.getLinkable(pid) );
+        if (linkable.degree() &gt; 0)
+        {
+                Node peern = linkable.getNeighbor(
+                                CommonState.r.nextInt(linkable.degree()));
+                
+                // XXX quick and dirty handling of failures
+                // (message would be lost anyway, we save time)
+                if(!peern.isUp()) return;
+                
+                AverageED peer = (AverageED) peern.getProtocol(pid);
+                
+                ((Transport)node.getProtocol(FastConfig.getTransport(pid))).
+                        send(
+                                node,
+                                peern,
+                                new AverageMessage(value,node),
+                                pid);
+        }
+}
+</PRE>
+<P>
+What we need to observe here is the stuff specific to the event based
+model.
+This boils down to handling the transport layer.
+First of all, class <I>FastConfig</I> gives us a way to access the transport
+layer that was configured for this protocol.
+Using this transport layer, we can send messages to protocols on other nodes.
+A message can be an arbitrary object.
+Since the simulator is not distributed, there is no trouble with
+serialization, etc; the object will be stored by reference.
+
+<P>
+The target protocol is defined by the target node <TT>peern</TT>, and
+the protocol identifier of the target protocol <TT>pid</TT>.
+In our case, we send a message to the same protocol on a different node.
+Evidently, the target protocol has to implement the <I>EDProtocol</I>
+interface.
+
+<P>
+<PRE>
+/**
+* This is the standard method to define to process incoming messages.
+*/
+public void processEvent( Node node, int pid, Object event ) {
+                
+        AverageMessage aem = (AverageMessage)event;
+        
+        if( aem.sender!=null )
+                ((Transport)node.getProtocol(FastConfig.getTransport(pid))).
+                        send(
+                                node,
+                                aem.sender,
+                                new AverageMessage(value,null),
+                                pid);
+                                
+        value = (value + aem.value) / 2;
+}
+
+}
+</PRE>
+<P>
+The method above is specified in <I>EDSimulator</I> and is supposed to
+handle incoming messages.
+In our example, there is only one type of message.
+All we need to check whether the sender is null, because if it is, it
+means that we do not need to answer the message (it is already an answer).
+If we need to answer, we do this the same way as we have seen already, through
+the transport layer.
+
+<P>
+<PRE>
+/**
+* The type of a message. It contains a value of type double and the
+* sender node of type {@link peersim.core.Node}.
+*/
+class AverageMessage {
+
+        final double value;
+        /** If not null,
+        this has to be answered, otherwise this is the answer. */
+        final Node sender;
+        public AverageMessage( double value, Node sender )
+        {
+                this.value = value;
+                this.sender = sender;
+        }
+}
+</PRE>
+<P>
+This private class is the type of the message that the protocol uses.
+It is private because no other component has anything to do with the
+message type.
+
+<P>
+
+<H1><A NAME="SECTION00030000000000000000">
+3 Event Based Averaging: the Configuration</A>
+</H1>
+
+<P>
+Let us examine a configuration file that can be used to run the event based
+simulation.
+It is very similar to the cycle based configuration, the difference is
+slight, but important.
+
+<P>
+<PRE>
+# network size
+SIZE 1000
+
+# parameters of periodic execution
+CYCLES 100
+CYCLE SIZE*10000
+
+# parameters of message transfer
+# delay values here are relative to cycle length, in percentage,
+# eg 50 means half the cycle length, 200 twice the cycle length, etc.
+MINDELAY 0
+MAXDELAY 0
+# drop is a probability, 0&lt;=DROP&lt;=1
+DROP 0
+</PRE>
+<P>
+We have just defined a number of constants to make the configuration file
+cleaner and easier to change from the command line.
+For example, <TT>CYCLE</TT> defines the length of a cycle.
+
+<P>
+<PRE>
+random.seed 1234567890
+network.size SIZE
+simulation.endtime CYCLE*CYCLES
+simulation.logtime CYCLE
+</PRE>
+<P>
+Parameter <TT>simulation.endtime</TT> is the key thing here: it tells the
+simulator when to stop.
+The internal representation of time is long (64 bit integer).
+It is zero at startup time and it is advanced by message delays.
+Simulation stops when the event queue is empty (nothing left to do) or
+if all the events in the queue are scheduled for a time later than the
+specified end time.
+
+<P>
+The simulator prints indications on the standard error about the
+progress of time.
+Parameter <TT>simulation.logtime</TT> specifies the frequency of these
+messages.
+
+<P>
+<PRE>
+################### protocols ===========================
+
+protocol.link peersim.core.IdleProtocol
+
+protocol.avg example.edaggregation.AverageED
+protocol.avg.linkable link
+protocol.avg.step CYCLE
+protocol.avg.transport tr
+
+protocol.urt UniformRandomTransport
+protocol.urt.mindelay (CYCLE*MINDELAY)/100
+protocol.urt.maxdelay (CYCLE*MAXDELAY)/100
+
+protocol.tr UnreliableTransport
+protocol.tr.transport urt
+protocol.tr.drop DROP
+</PRE>
+<P>
+Here we configure our protocol (<TT>avg</TT>) and specify the
+overlay network (<TT>link</TT>) and the transport layer (<TT>tr</TT>).
+We also have to specify the <TT>step</TT> scheduling parameter, familiar
+from the cycle based model.
+This is because we have implemented the cycle based interface, so we need
+to specify how long a cycle is, in order to be able to make use of it.
+
+<P>
+The overlay network is just a container of links that will remain constant
+throughout the simulation and that will be initialized as shown below.
+
+<P>
+The transport layer is also configured as a protocol. It models both random
+delays and message drops.
+First we define a transport layer that has random delay (<TT>urt</TT>) and
+then we wrap it in a generic wrapper that takes any transport layer, and
+drops messages with a given probability (<TT>tr</TT>).
+Transport layers are defined in package <I>peersim.transport</I>.
+As everything, this component is also modular and custom transport layers can
+be easily developed and used.
+
+<P>
+<PRE>
+################### initialization ======================
+
+init.rndlink WireKOut
+init.rndlink.k 20
+init.rndlink.protocol link
+
+init.vals LinearDistribution
+init.vals.protocol avg
+init.vals.max SIZE
+init.vals.min 1
+
+init.sch CDScheduler
+init.sch.protocol avg
+init.sch.randstart
+</PRE>
+<P>
+Here the only component that is specific to the event based model is
+<TT>sch</TT>.
+It is responsible for scheduling the periodic call of the cycle based
+interface (<TT>nextCycle</TT>).
+In this configuration, this component will first assign a random point in
+time between 0 and <TT>CYCLE</TT> to all nodes, which will be the first
+time <TT>nextCycle</TT> is called on protocol <TT>avg</TT>.
+Then the next calls will happen in intervals of exactly <TT>CYCLE</TT> time
+steps regularly.
+More advanced methods also exist, besides, the scheduling can be customized
+by class extension; we do not go into the details here.
+
+<P>
+<PRE>
+################ control ==============================
+
+control.0 SingleValueObserver
+control.0.protocol avg
+control.0.step CYCLE
+</PRE>
+<P>
+This we have seen already.
+Note that we need to specify the <TT>step</TT> parameter here as well,
+just like for protocol <TT>avg</TT>.
+This will specify how often this control will be called.
+Otherwise controls can be scheduled the same way as in the cycle based model,
+only there is no default <TT>step</TT>, because there are no cycles.
+
+<P>
+
+<H1><A NAME="SECTION00040000000000000000">
+4 Running the Protocol</A>
+</H1>
+
+<P>
+If we invoke the configuration file above, we should get the following on
+standard error:
+<PRE>
+Simulator: loading configuration
+ConfigProperties: File config-edexample.txt loaded.
+Simulator: starting experiment 0 invoking peersim.edsim.EDSimulator
+Random seed: 1234567890
+EDSimulator: resetting
+Network: no node defined, using GeneralNode
+EDSimulator: running initializers
+- Running initializer init.rndlink: class peersim.dynamics.WireKOut
+- Running initializer init.sch: class peersim.edsim.CDScheduler
+- Running initializer init.vals: class peersim.vector.LinearDistribution
+EDSimulator: loaded controls [control.0]
+Current time: 0
+Current time: 10000000
+Current time: 20000000
+Current time: 30000000
+Current time: 40000000
+Current time: 50000000
+.
+.
+.
+Current time: 980000000
+Current time: 990000000
+EDSimulator: queue is empty, quitting at time 999980413
+</PRE>
+<P>
+and the following on standard output:
+
+<P>
+<PRE>
+control.0: 1.0 1000.0 1000 500.5 83416.66666666667 1 1
+control.0: 37.5 919.0 1000 500.5 25724.159091250687 1 1
+control.0: 206.7109375 767.890625 1000 500.5 8096.807036889389 1 1
+control.0: 352.373046875 695.453125 1000 500.5 2578.022573176135 1 1
+control.0: 412.430419921875 625.474609375 1000 500.5 801.1082179446831 1 1
+control.0: 436.43787479400635 570.459858417511 1000 500.5 243.53994072762902 1 1
+control.0: 470.7608990445733 527.0359845032217 1000 500.49999999999994 74.13788674564383 1 2
+control.0: 483.6040476858616 518.0301055684686 1000 500.49999999999903 23.428974301677556 1 1
+control.0: 490.5196089811798 512.0301471857779 1000 500.4999999999993 7.285566419597019 1 1
+control.0: 494.97216907397836 506.0375954180854 1000 500.4999999999999 2.1798299307442246 1 1
+control.0: 497.18190345272336 503.5837144460532 1000 500.5000000000001 0.6073148838336206 1 1
+control.0: 498.54320551492475 502.3533156558903 1000 500.5 0.1786794435445898 1 2
+control.0: 499.4023441821402 501.4962048486104 1000 500.49999999999966 0.055257607540637785 1 1
+control.0: 500.0032071191514 501.09832936709677 1000 500.4999999999995 0.017914865984002482 1 1
+.
+.
+.
+control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
+control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
+control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
+control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
+</PRE><FONT SIZE="-2">Recall that the meaning of the values are min, max, number of samples,
+average, variance, number of instances of min, and number of instances of max
+in the sample.
+This output indicates that the correct average (500.5) is found, with
+zero variance (all nodes hold the correct average).
+</FONT>
+<P>
+<FONT SIZE="-2">This seems nice, but since we can now play with delay, we can add some
+delay and see what happens (in the default config file the delay was zero).
+So, how about appending <TT>MINDELAY=10 MAXDELAY=10</TT> to the command line,
+which means that all messages will be delayed by exactly 10% of the cycle
+length.
+We get
+</FONT>
+<P>
+<FONT SIZE="-2"></FONT><PRE>
+.
+.
+.
+control.0: 499.126081326076 499.126081326076 1000 499.12608132608807 0.0 1000 1000
+control.0: 499.126081326076 499.126081326076 1000 499.12608132608807 0.0 1000 1000
+control.0: 499.126081326076 499.126081326076 1000 499.12608132608807 0.0 1000 1000
+</PRE><FONT SIZE="-2"></FONT>
+<P>
+<FONT SIZE="-2">That is, our simple delay scheme already destroys the nice properties of
+the protocol: we have convergence, but the result is incorrect.
+One can verify that different random seeds give different results, and
+changing the delay interval and drop rate also have their effects on
+performance.
+</FONT>
+<P>
+<FONT SIZE="-2">So, how about keeping the delay and drop rate zero.
+Is that a guarantee that we get correct behavior?
+Not really.
+Let us experiment with a shorter cycle length, for example,
+<TT>CYCLE=SIZE</TT>.
+This means that there will often be more events scheduled to happen at the
+same time point.
+In such cases, PeerSim executes those events in a random order.
+We obtain:
+</FONT>
+<P>
+<FONT SIZE="-2"></FONT><PRE>
+.
+.
+.
+control.0: 500.4835099381911 500.4835099381911 1000 500.48350993818605 7.807634196601234E-9 1000 1000
+control.0: 500.4835099381911 500.4835099381911 1000 500.48350993818605 7.807634196601234E-9 1000 1000
+control.0: 500.4835099381911 500.4835099381911 1000 500.48350993818605 7.807634196601234E-9 1000 1000
+</PRE><FONT SIZE="-2"></FONT>
+<P>
+<FONT SIZE="-2">What is the conclusion?
+We must say this time the incorrect result is more due to an artifact, that is,
+insufficient time resolution.
+If messages indeed have zero delay, then even the slightest difference in
+execution time results in non-overlapping pairwise exchanges.
+Clearly, in continuous time no events will happen at the same time.
+However, the slightest random delay in message delivery renders the result
+meaningful, because then the order-uncertainty is indeed real.
+</FONT>
+<P>
+<FONT SIZE="-2">All in all, we see that the event based simulator model can reveal problems
+with protocols not visible in the cycle based model, however, it also
+introduces new artifacts.
+</FONT>
+<P>
+
+<H1><A NAME="SECTION00050000000000000000">
+5 Disclaimer</A>
+</H1>
+<P>
+<FONT SIZE="-2">This simple example is only to get you started.
+You have not seen all.
+It is highly recommended to study the class documentation of the relevant
+packages (<I>peersim.edsim, peersim.transport</I>) for maximal control,
+and it does not hurt if you are also familiar with the generic components
+of PeerSim as well.
+</FONT>
+<P>
+
+<H1><A NAME="SECTION00060000000000000000">
+About this document ...</A>
+</H1><FONT SIZE="-2">
+ </FONT><STRONG>A Basic Event Driven Example for PeerSim 1.0</STRONG><P>
+This document was generated using the
+<A HREF="http://www.latex2html.org/"><STRONG>LaTeX</STRONG>2<tt>HTML</tt></A> translator Version 2002-2-1 (1.70)
+<P>
+Copyright &#169; 1993, 1994, 1995, 1996,
+<A HREF="http://cbl.leeds.ac.uk/nikos/personal.html">Nikos Drakos</A>, 
+Computer Based Learning Unit, University of Leeds.
+<BR>
+Copyright &#169; 1997, 1998, 1999,
+<A HREF="http://www.maths.mq.edu.au/~ross/">Ross Moore</A>, 
+Mathematics Department, Macquarie University, Sydney.
+<P>
+The command line arguments were: <BR>
+ <STRONG>latex2html</STRONG> <TT>-t 'Peersim HOWTO 1' -split 0 -nonavigation -noaddress -show_section_numbers -t 'Peersim HOWTO 1' all.tex</TT>
+<P>
+The translation was initiated by Mark Jelasity on 2006-11-18
+<BR><HR>
+
+</BODY>
+</HTML>

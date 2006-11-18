@@ -1,0 +1,375 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage{a4wide}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\title{A Basic Event Driven Example for PeerSim 1.0}
+\author{M\'ark Jelasity}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+This document walks you through a basic example application of PeerSim,
+that uses the \emph{event based} simulation model.
+We assume that you are familiar with the examples described in
+the short tutorials on the cycle based model: the basic working
+of PeerSim, its configuration file, and the gossip-based averaging example,
+where nodes collectively calculate the average of some parameter via
+periodically exchanging messages and performing pairwise averaging steps.
+The example discussed here will be the same: gossip-based averaging.
+Only this time using the event based model, where message sending is modelled
+in more detail.
+This will allow us to observe problems with the protocol that remained hidden
+in the cycle based simulations.
+
+In the event based model, everything works exactly the same way as in the
+cycle based model, except time management and the way control is passed to
+the protocols.
+\emph{Protocols} that are not executable (that are used only to store
+data, such as some linkable protocols that only store neighbors, or vectors that
+store numeric values) can be applied and initialized in exactly the same way.
+\emph{Controls} in any package outside package \emph{peersim.cdsim} can
+be used as well. By default controls are called in each cycle in the cycle
+based model. In the event based model they have to be scheduled explicitly,
+since there are no cycles.
+
+Evidently, we can write controls that are specific to the event based model,
+that is, that are able to send events (messages) to protocols.
+In many cases, this will be necessary because often the system will be
+driven completely or partially by external events such as queries by users,
+that can best be
+modeled by controls that generate these events and thereby drive the
+execution of the simulation.
+
+There are components that are not available.
+This includes any component that relies on the static class
+\emph{peersim.cdsim.CDState} which offers an interface to read cycle-specific
+global state.
+Our experience is that many components written for the cycle based model
+that rely on this state can be easily modified to remove this dependency.
+
+However, maybe a bit surprisingly, protocols that implement the cycle based
+interface \emph{peersim.cdsim.CDProtocol} can be utilized in the event
+based model as well; we will explain later how.
+But it should be noted immediately that this must be done with care, because
+in most of the cases it does not make any sense.
+However, this feature does have its very useful applications: it makes it
+possible to easily invoke protocols periodically, a feature that is
+characteristic to practically all P2P protocols in connection with
+housekeeping, failure detection and sending heartbeat messages.
+
+\section{Event based averaging: the protocol}
+
+Let us start with the Java class that implement our averaging protocol
+in the event based model, that begins like this:
+\footnotesize
+\begin{verbatim}
+package example.edaggregation;
+
+import peersim.vector.SingleValueHolder;
+import peersim.config.*;
+import peersim.core.*;
+import peersim.transport.Transport;
+import peersim.cdsim.CDProtocol;
+import peersim.edsim.EDProtocol;
+
+/**
+* Event driven version of epidemic averaging.
+*/
+public class AverageED extends SingleValueHolder
+implements CDProtocol, EDProtocol {
+\end{verbatim}
+\normalsize
+
+The first thing we notice is that we implement interface \emph{EDProtocol}
+and also \emph{CDProtocol}.
+The former will allow the class to process incoming messages.
+The latter is a bit confusing, as it belongs to the cycle based model.
+First of all, protocols need not implement this interface in the event
+based model.
+However, protocols that would like to get control periodically can achieve
+this effect using this trick of implementing \emph{CDProtocol}, and
+setting a \emph{CDScheduler} in the configuration, as we will describe
+below.
+This has several advantages over fiddling with timers and so on.
+The code is much cleaner, the periodic execution that is managed by a separate
+component is modular itself and can be configured separately, and finally,
+we can port our old cycle based protocols much easier to the event based
+model.
+
+\footnotesize
+\begin{verbatim}
+/**
+ * @param prefix string prefix for config properties
+ */
+public AverageED(String prefix) { super(prefix); }
+\end{verbatim}
+\normalsize
+
+Our simple protocol does not read any configuration parameters.
+Now let us turn to the implementation of the cycle based interface.
+This method defines the activity to be performed periodically.
+
+\footnotesize
+\begin{verbatim}
+/**
+ * This is the standard method the define periodic activity.
+ * The frequency of execution of this method is defined by a
+ * {@link peersim.edsim.CDScheduler} component in the configuration.
+ */
+public void nextCycle( Node node, int pid )
+{
+        Linkable linkable = 
+                (Linkable) node.getProtocol( FastConfig.getLinkable(pid) );
+        if (linkable.degree() > 0)
+        {
+                Node peern = linkable.getNeighbor(
+                                CommonState.r.nextInt(linkable.degree()));
+                
+                // XXX quick and dirty handling of failures
+                // (message would be lost anyway, we save time)
+                if(!peern.isUp()) return;
+                
+                AverageED peer = (AverageED) peern.getProtocol(pid);
+                
+                ((Transport)node.getProtocol(FastConfig.getTransport(pid))).
+                        send(
+                                node,
+                                peern,
+                                new AverageMessage(value,node),
+                                pid);
+        }
+}
+\end{verbatim}
+\normalsize
+
+What we need to observe here is the stuff specific to the event based
+model.
+This boils down to handling the transport layer.
+First of all, class \emph{FastConfig} gives us a way to access the transport
+layer that was configured for this protocol.
+Using this transport layer, we can send messages to protocols on other nodes.
+A message can be an arbitrary object.
+Since the simulator is not distributed, there is no trouble with
+serialization, etc; the object will be stored by reference.
+
+The target protocol is defined by the target node \texttt{peern}, and
+the protocol identifier of the target protocol \texttt{pid}.
+In our case, we send a message to the same protocol on a different node.
+Evidently, the target protocol has to implement the \emph{EDProtocol}
+interface.
+
+\footnotesize
+\begin{verbatim}
+/**
+* This is the standard method to define to process incoming messages.
+*/
+public void processEvent( Node node, int pid, Object event ) {
+                
+        AverageMessage aem = (AverageMessage)event;
+        
+        if( aem.sender!=null )
+                ((Transport)node.getProtocol(FastConfig.getTransport(pid))).
+                        send(
+                                node,
+                                aem.sender,
+                                new AverageMessage(value,null),
+                                pid);
+                                
+        value = (value + aem.value) / 2;
+}
+
+}
+\end{verbatim}
+\normalsize
+
+The method above is specified in \emph{EDSimulator} and is supposed to
+handle icoming messages.
+In our example, there is only one type of message.
+All we need to check whether the sender is null, because if it is, it
+means that we do not need to answer the message (it is already an answer).
+If we need to answer, we do this the same way as we have seen already, through
+the transport layer.
+
+\footnotesize
+\begin{verbatim}
+/**
+* The type of a message. It contains a value of type double and the
+* sender node of type {@link peersim.core.Node}.
+*/
+class AverageMessage {
+
+        final double value;
+        /** If not null,
+        this has to be answered, otherwise this is the answer. */
+        final Node sender;
+        public AverageMessage( double value, Node sender )
+        {
+                this.value = value;
+                this.sender = sender;
+        }
+}
+
+\end{verbatim}
+\normalsize
+
+This private class is the type of the message that the protocol uses.
+It is private because no other component has anything to do with the
+message type.
+
+\section{Event based averaging: the configuration}
+
+Let us examine a configuration file that can be used to run the event based
+simulation.
+It is very similar to the cycle based configuration, the difference is
+slight, but important.
+
+\footnotesize
+\begin{verbatim}
+# network size
+SIZE 1000
+
+# parameters of periodic execution
+CYCLES 100
+CYCLE SIZE*10000
+
+# parameters of message transfer
+# delay values here are relative to cycle length, in percentage,
+# eg 50 means half the cycle length, 200 twice the cycle length, etc.
+MINDELAY 0
+MAXDELAY 0
+# drop is a probability, 0<=DROP<=1
+DROP 0
+\end{verbatim}
+\normalsize
+
+We have just defined a number of constants to make the configuration file
+cleaner and easier to change from the command line.
+For example, \texttt{CYCLE} defines the length of a cycle.
+
+\footnotesize
+\begin{verbatim}
+random.seed 1234567890
+network.size SIZE
+simulation.endtime CYCLE*CYCLES
+simulation.logtime CYCLE
+\end{verbatim}
+\normalsize
+
+Parameter \texttt{simulation.endtime} is the key thing here: it tells the
+simulator when to stop.
+The internal representation of time is long (64 bit integer).
+It is zero at startup time and it is advanced by message delays.
+Simulation stops when the event queue is empty (nothing left to do) or
+if all the events in the queue are scheduled for a time later than the
+specified end time.
+
+The simulator prints indications on the standard error about the
+progress of time.
+Parameter \texttt{simulation.logtime} specifies the frequency of these
+messages.
+
+\footnotesize
+\begin{verbatim}
+################### protocols ===========================
+
+protocol.link peersim.core.IdleProtocol
+
+protocol.avg example.edaggregation.AverageED
+protocol.avg.linkable link
+protocol.avg.step CYCLE
+protocol.avg.transport tr
+
+protocol.urt UniformRandomTransport
+protocol.urt.mindelay (CYCLE*MINDELAY)/100
+protocol.urt.maxdelay (CYCLE*MAXDELAY)/100
+
+protocol.tr UnreliableTransport
+protocol.tr.transport urt
+protocol.tr.drop DROP
+\end{verbatim}
+\normalsize
+
+Here we configure our protocol (\texttt{avg}) and specify the
+overlay network (\texttt{link}) and the transport layer (\texttt{tr}).
+We also have to specify the \texttt{step} scheduling parameter, familiar
+from the cycle based model.
+This is because we have implemented the cycle based interface, so we need
+to specify how long a cycle is, in order to be able to make use of it.
+
+The overlay network is just a container of links that will remain constant
+throughout the simulation and that will be initialized as shown below.
+
+The transport layer is also configured as a protocol. It models both random
+delays and message drops.
+First we define a transport layer that has random delay (\texttt{urt}) and
+then we wrap it in a generic wrapper that takes any transport layer, and
+drops messages with a given probability (\texttt{tr}).
+
+\footnotesize
+\begin{verbatim}
+################### initialization ======================
+
+init.rndlink WireKOut
+init.rndlink.k 20
+init.rndlink.protocol link
+
+init.vals LinearDistribution
+init.vals.protocol avg
+init.vals.max SIZE
+init.vals.min 1
+
+init.sch CDScheduler
+init.sch.protocol avg
+init.sch.randstart
+\end{verbatim}
+\normalsize
+
+Here the only component that is specific to the event based model is
+\texttt{sch}.
+It is responsible for scheduling the periodic call of the cycle based
+interface (\texttt{nextCycle}).
+In this configuration, this component will first assign a random point in
+time between 0 and \texttt{CYCLE} to all nodes, which will be the first
+time \texttt{nextCycle} is called on protocol \texttt{avg}.
+Then the next calls will happen in intervals of exactly \texttt{CYCLE} time
+steps regularly.
+More advanced methods also exist, besides, the scheduling can be customized
+by class extension; we do not go into the details here.
+
+\footnotesize
+\begin{verbatim}
+################ control ==============================
+
+control.0 SingleValueObserver
+control.0.protocol avg
+control.0.step CYCLE
+\end{verbatim}
+\normalsize
+
+This we have seen already.
+Note that we need to specify the \texttt{step} parameter here as well,
+just like for protocol \texttt{avg}.
+This will specify how often this control will be called.
+Otherwise controls can be scheduled the same way as in the cycle based model,
+only there is no default \texttt{step}, because there are no cycles.
+
+
+\section{Let's play}
+
+\section{Disclaimer}
+
+This simple example is only to get you started.
+You have not seen all.
+It is highly recommended to study the class documentation of the relevant
+packages (\emph{peersim.edsim, peersim.transport}) for maximal control,
+and it does not hurt if you are also familiar with the generic components
+of PeerSim as well.
+
+\end{document}
+
+

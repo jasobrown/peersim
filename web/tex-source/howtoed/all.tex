@@ -21,7 +21,7 @@ of PeerSim, its configuration file, and the gossip-based averaging example,
 where nodes collectively calculate the average of some parameter via
 periodically exchanging messages and performing pairwise averaging steps.
 The example discussed here will be the same: gossip-based averaging.
-Only this time using the event based model, where message sending is modelled
+Only this time using the event based model, where message sending is modeled
 in more detail.
 This will allow us to observe problems with the protocol that remained hidden
 in the cycle based simulations.
@@ -62,7 +62,7 @@ possible to easily invoke protocols periodically, a feature that is
 characteristic to practically all P2P protocols in connection with
 housekeeping, failure detection and sending heartbeat messages.
 
-\section{Event based averaging: the protocol}
+\section{Event Based Averaging: the Protocol}
 
 Let us start with the Java class that implement our averaging protocol
 in the event based model, that begins like this:
@@ -188,7 +188,7 @@ public void processEvent( Node node, int pid, Object event ) {
 \normalsize
 
 The method above is specified in \emph{EDSimulator} and is supposed to
-handle icoming messages.
+handle incoming messages.
 In our example, there is only one type of message.
 All we need to check whether the sender is null, because if it is, it
 means that we do not need to answer the message (it is already an answer).
@@ -221,7 +221,7 @@ This private class is the type of the message that the protocol uses.
 It is private because no other component has anything to do with the
 message type.
 
-\section{Event based averaging: the configuration}
+\section{Event Based Averaging: the Configuration}
 
 Let us examine a configuration file that can be used to run the event based
 simulation.
@@ -309,6 +309,9 @@ delays and message drops.
 First we define a transport layer that has random delay (\texttt{urt}) and
 then we wrap it in a generic wrapper that takes any transport layer, and
 drops messages with a given probability (\texttt{tr}).
+Transport layers are defined in package \emph{peersim.transport}.
+As everything, this component is also modular and custom transport layers can
+be easily developed and used.
 
 \footnotesize
 \begin{verbatim}
@@ -359,7 +362,128 @@ Otherwise controls can be scheduled the same way as in the cycle based model,
 only there is no default \texttt{step}, because there are no cycles.
 
 
-\section{Let's play}
+\section{Running the Protocol}
+
+If we invoke the configuration file above, we should get the following on
+standard error:
+\footnotesize
+\begin{verbatim}
+Simulator: loading configuration
+ConfigProperties: File config-edexample.txt loaded.
+Simulator: starting experiment 0 invoking peersim.edsim.EDSimulator
+Random seed: 1234567890
+EDSimulator: resetting
+Network: no node defined, using GeneralNode
+EDSimulator: running initializers
+- Running initializer init.rndlink: class peersim.dynamics.WireKOut
+- Running initializer init.sch: class peersim.edsim.CDScheduler
+- Running initializer init.vals: class peersim.vector.LinearDistribution
+EDSimulator: loaded controls [control.0]
+Current time: 0
+Current time: 10000000
+Current time: 20000000
+Current time: 30000000
+Current time: 40000000
+Current time: 50000000
+.
+.
+.
+Current time: 980000000
+Current time: 990000000
+EDSimulator: queue is empty, quitting at time 999980413
+\end{verbatim}
+\normalsize
+
+and the following on standard output:
+
+\scriptsize
+\begin{verbatim}
+control.0: 1.0 1000.0 1000 500.5 83416.66666666667 1 1
+control.0: 37.5 919.0 1000 500.5 25724.159091250687 1 1
+control.0: 206.7109375 767.890625 1000 500.5 8096.807036889389 1 1
+control.0: 352.373046875 695.453125 1000 500.5 2578.022573176135 1 1
+control.0: 412.430419921875 625.474609375 1000 500.5 801.1082179446831 1 1
+control.0: 436.43787479400635 570.459858417511 1000 500.5 243.53994072762902 1 1
+control.0: 470.7608990445733 527.0359845032217 1000 500.49999999999994 74.13788674564383 1 2
+control.0: 483.6040476858616 518.0301055684686 1000 500.49999999999903 23.428974301677556 1 1
+control.0: 490.5196089811798 512.0301471857779 1000 500.4999999999993 7.285566419597019 1 1
+control.0: 494.97216907397836 506.0375954180854 1000 500.4999999999999 2.1798299307442246 1 1
+control.0: 497.18190345272336 503.5837144460532 1000 500.5000000000001 0.6073148838336206 1 1
+control.0: 498.54320551492475 502.3533156558903 1000 500.5 0.1786794435445898 1 2
+control.0: 499.4023441821402 501.4962048486104 1000 500.49999999999966 0.055257607540637785 1 1
+control.0: 500.0032071191514 501.09832936709677 1000 500.4999999999995 0.017914865984002482 1 1
+.
+.
+.
+control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
+control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
+control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
+control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
+\end{verbatim}
+\normalsize
+Recall that the meaning of the values are min, max, number of samples,
+average, variance, number of instances of min, and number of instances of max
+in the sample.
+This output indicates that the correct average (500.5) is found, with
+zero variance (all nodes hold the correct average).
+
+This seems nice, but since we can now play with delay, we can add some
+delay and see what happens (in the default config file the delay was zero).
+So, how about appending \texttt{MINDELAY=10 MAXDELAY=10} to the command line,
+which means that all messages will be delayed by exactly 10\% of the cycle
+length.
+We get
+
+\scriptsize
+\begin{verbatim}
+.
+.
+.
+control.0: 499.126081326076 499.126081326076 1000 499.12608132608807 0.0 1000 1000
+control.0: 499.126081326076 499.126081326076 1000 499.12608132608807 0.0 1000 1000
+control.0: 499.126081326076 499.126081326076 1000 499.12608132608807 0.0 1000 1000
+\end{verbatim}
+\normalsize
+
+That is, our simple delay scheme already destroys the nice properties of
+the protocol: we have convergence, but the result is incorrect.
+One can verify that different random seeds give different results, and
+changing the delay interval and drop rate also have their effects on
+performance.
+
+So, how about keeping the delay and drop rate zero.
+Is that a guarantee that we get correct behavior?
+Not really.
+Let us experiment with a shorter cycle length, for example,
+\texttt{CYCLE=SIZE}.
+This means that there will often be more events scheduled to happen at the
+same time point.
+In such cases, PeerSim executes those events in a random order.
+We obtain:
+
+\scriptsize
+\begin{verbatim}
+.
+.
+.
+control.0: 500.4835099381911 500.4835099381911 1000 500.48350993818605 7.807634196601234E-9 1000 1000
+control.0: 500.4835099381911 500.4835099381911 1000 500.48350993818605 7.807634196601234E-9 1000 1000
+control.0: 500.4835099381911 500.4835099381911 1000 500.48350993818605 7.807634196601234E-9 1000 1000
+\end{verbatim}
+\normalsize
+
+What is the conclusion?
+We must say this time the incorrect result is more due to an artifact, that is,
+insufficient time resolution.
+If messages indeed have zero delay, then even the slightest difference in
+execution time results in non-overlapping pairwise exchanges.
+Clearly, in continuous time no events will happen at the same time.
+However, the slightest random delay in message delivery renders the result
+meaningful, because then the order-uncertainty is indeed real.
+
+All in all, we see that the event based simulator model can reveal problems
+with protocols not visible in the cycle based model, however, it also
+introduces new artifacts.
 
 \section{Disclaimer}
 

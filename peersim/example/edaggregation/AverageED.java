@@ -46,8 +46,9 @@ public AverageED(String prefix) { super(prefix); }
 //--------------------------------------------------------------------------
 
 /**
- * Using a {@link Linkable} protocol choses a neighbor and performs a
- * variance reduction step.
+ * This is the standard method the define periodic activity.
+ * The frequency of execution of this method is defined by a
+ * {@link peersim.edsim.CDScheduler} component in the configuration.
  */
 public void nextCycle( Node node, int pid )
 {
@@ -75,6 +76,9 @@ public void nextCycle( Node node, int pid )
 
 //--------------------------------------------------------------------------
 
+/**
+* This is the standard method to define to process incoming messages.
+*/
 public void processEvent( Node node, int pid, Object event ) {
 		
 	AverageMessage aem = (AverageMessage)event;
@@ -95,6 +99,10 @@ public void processEvent( Node node, int pid, Object event ) {
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+/**
+* The type of a message. It contains a value of type double and the
+* sender node of type {@link peersim.core.Node}.
+*/
 class AverageMessage {
 
 	final double value;

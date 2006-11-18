@@ -1,3 +1,11 @@
+MJ 18/11/2006
+- Added the possibility to shuffle iteration order without actually
+  shuffling the nodes in the network. This however needs more memory.
+  It can be accessed by a new parameter "shuffle" to controls
+  FullNextCycle and NextCycle, which is not defined by default.
+- Added a new example on using the event based engine, and also added
+  a simple tutorial to the web page about it.
+
 AM 28/10/2006
 - Moved the ID creation before the creation of the Protocol objects
   belonging to a node. This solve problems for Protocols that

@@ -63,7 +63,7 @@ public class CDSimulator
  * Parameter representing the maximum number of cycles to be performed
  * @config
  */
-private static final String PAR_CYCLES = "simulation.cycles";
+public static final String PAR_CYCLES = "simulation.cycles";
 
 /**
  * This option is only for experts. It switches off the main cycle that
@@ -171,11 +171,9 @@ public static final boolean isConfigurationCycleDriven()
 // ---------------------------------------------------------------------
 
 /**
- * Runs an experiment, resetting everything except the random seed. If
- * parameter fake is true, it only loads initializers, controls, etc. 
- * and no actual simulation is performed.
+ * Runs an experiment, resetting everything except the random seed. 
  */
-public static final void nextExperiment(boolean fake)
+public static final void nextExperiment()
 {
 
 	// Reading parameter
@@ -194,10 +192,6 @@ public static final void nextExperiment(boolean fake)
 
 	// main cycle
 	loadControls();
-
-	// If stop is true, the simulation is not executed.
-	if (fake)
-		return;
 
 	System.err.println("CDSimulator: starting simulation");
 	for (int i = 0; i < cycles; ++i) {

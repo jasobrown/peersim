@@ -188,10 +188,10 @@ public static void main(String[] args)
 			switch(SIMID)
 			{
 			case CDSIM:
-				CDSimulator.nextExperiment(false);
+				CDSimulator.nextExperiment();
 				break;
 			case EDSIM:
-				EDSimulator.nextExperiment(false);
+				EDSimulator.nextExperiment();
 				break;
 			}
 		}

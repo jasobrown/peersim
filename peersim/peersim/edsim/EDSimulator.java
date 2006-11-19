@@ -91,7 +91,7 @@ public class EDSimulator
  * value are executed.
  * @config
  */
-private static final String PAR_ENDTIME = "simulation.endtime";	
+public static final String PAR_ENDTIME = "simulation.endtime";	
 
 /**
  * This parameter specifies
@@ -314,10 +314,8 @@ private static boolean executeNext() {
 
 /**
  * Runs an experiment, resetting everything except the random seed.
- * If parameter fake is true, it only loads initializers, controls,
- * etc. No actual simulation is performed.
  */
-public static void nextExperiment(boolean fake) 
+public static void nextExperiment() 
 {
 	// Reading parameter
 	rbits = Configuration.getInt(PAR_RBITS, 8);	
@@ -342,9 +340,6 @@ public static void nextExperiment(boolean fake)
 	runInitializers();
 	scheduleControls();
 
-	if (fake) 
-		return;
-		
 	// Perform the actual simulation; executeNext() will tell when to
 	// stop.
 	boolean exit = false;

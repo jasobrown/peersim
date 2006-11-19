@@ -88,38 +88,36 @@ protected static int getSimID() {
 // ----------------------------------------------------------------------
 
 /**
-* Loads the configuration and check whether all parameters are
-* present.
+* Loads the configuration and checks the configuration files against
+* simple configuration errors, such as missing classes, missing 
+* parameters or syntax errors.
 * <p>
-* Loading the configuration is currently done with the help of constructing
-* an instance of {@link ParsedProperties} using the constructor
-* {@link ParsedProperties#ParsedProperties(String[])}.
-* The parameter
-* <code>args</code> is simply passed to this class. This class is then used
-* to initialize the configuration.
+* The goal is to provide a mechanism to test a configuration file,
+* without having to perform the actual simulations (that could be
+* time-consuming) and without necessarily blocking after the first
+* error encountered. It may be useful, for example, when a major 
+* refactoring of your code requires a thorough check on all your 
+* configuration files.
 * <p>
-* After loading the configuration, the experiments are run by invoking the
-* appropriate engine, which is identified as follows:
-* <ul>
-* <li>{@link CDSimulator}:
-* if {@link CDSimulator#isConfigurationCycleDriven} returns
-* true</li>
-* <li>{@link EDSimulator}:
-* if {@link EDSimulator#isConfigurationEventDriven} returns
-* true
-* </li>
-* </ul>
+* Loading the configuration is currently done with the help of 
+* constructing an instance of {@link ParsedProperties} using the 
+* constructor {@link ParsedProperties#ParsedProperties(String[])},
+* in the same way as the normal simulator.
 * <p>
-* This list represents the order in which these alternatives are checked.
-* That is, if more than one return true, then the first will be taken.
-* Note that this class checks only for these clues and does not check if the
-* configuration is consistent or valid.
+* After loading the configuration, the collection of nodes forming a 
+* Network is instantiated, together with all protocols forming a
+* node. Initialization controls are executed, and then the simulation
+* stops. 
+* <p>
+* For each error encountered, a message is printed ons standard error,
+* and the initialization keeps going without interruption. If multiple 
+* errors are present, an error message for each of them is printed.
+* Apart from errors, default choices are also printed as warnings, to 
+* allow developers to spot subtle configuration errors such as missing
+* parameters that defaults to standard values.
+* 
 * @param args passed on to
 * {@link ParsedProperties#ParsedProperties(String[])}
-* @see ParsedProperties
-* @see Configuration
-* @see CDSimulator
-* @see EDSimulator
 */
 public static void main(String[] args)
   throws Exception
@@ -144,10 +142,14 @@ public static void main(String[] args)
 		switch(SIMID)
 		{
 		case CDSIM:
-			CDSimulator.nextExperiment(true);
+			// Set cycles to 0, so no simulation is ever performed.
+			prop.setProperty(CDSimulator.PAR_CYCLES, "0");
+			CDSimulator.nextExperiment();
 			break;
 		case EDSIM:
-			EDSimulator.nextExperiment(true);
+			// Set endtime to 0, so no simulation is ever performed.
+			prop.setProperty(EDSimulator.PAR_ENDTIME, "0");
+			EDSimulator.nextExperiment();
 			break;
 		}
 	

@@ -76,7 +76,7 @@ public KingParser(String prefix)
 {
 	this.prefix = prefix;
 	ratio = Configuration.getDouble(prefix + "." + PAR_RATIO, 1);
-	filename = Configuration.getString(prefix + "." + PAR_FILE);
+	filename = Configuration.getString(prefix + "." + PAR_FILE, null);
 }
 
 // ---------------------------------------------------------------------
@@ -90,13 +90,19 @@ public KingParser(String prefix)
 public boolean execute()
 {
 	BufferedReader in = null;
-	try {
-		in = new BufferedReader(new FileReader(filename));
-	} catch (FileNotFoundException e) {
-		throw new IllegalParameterException(prefix + "." + PAR_FILE, filename
-				+ " does not exist");
+	if (filename != null) {
+		try {
+			in = new BufferedReader(new FileReader(filename));
+		} catch (FileNotFoundException e) {
+			throw new IllegalParameterException(prefix + "." + PAR_FILE, filename
+					+ " does not exist");
+		}
+	} else {
+		in = new BufferedReader( new InputStreamReader(
+						ClassLoader.getSystemResourceAsStream("t-king.map")
+					)	);
 	}
-
+		
 	// XXX If the file format is not correct, we will get quite obscure
 	// exceptions. To be improved.
 

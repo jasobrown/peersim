@@ -1,3 +1,13 @@
+AM 19/11/2006
+- Modified CDSimulator, EDSimulator, in order to get rid of 
+  the "fake" parameters. Now CheckConfig stops simulations
+  by simple setting simulation.cycle or simulation.endtime to 0.
+- Added a new transport class for trace initialization. Unlike
+  KingParser, this class reads a more compact, binary format
+  (described in the file); this implies a large gain with
+  respect to efficiency (less than a second w.r.t. to several 
+  seconds). 
+
 MJ 18/11/2006
 - Added the possibility to shuffle iteration order without actually
   shuffling the nodes in the network. This however needs more memory.
@@ -18,7 +28,7 @@ AM 28/10/2006
 - Modified persim.vector.VectorObserver to add the capability to
   stop the simulation when one of the aggregate values is equal
   to a predefined parameter.
-- Added the VectorComparator class to be used to sort real node
+- Added the VectorComparator class to be used to sort node
   arrays based on a specified getter.
 - Added a new tool to check whether a config file contains errors
   or not. It works as follows: it initializes a network and the

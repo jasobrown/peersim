@@ -62,7 +62,7 @@ protected static final String PAR_RANGES = "ranges";
 /**
  * This parameter contains the list of observers for which the string
  * contained in parameter {@value #PAR_RANGES} should be augmented with 
- * a "TIME <t>" specification regarding current time. Observers are 
+ * a "TIME &lt;t&gt;" specification regarding current time. Observers are 
  * separated by one of this characters: ' ' - ',' - ';'.
  */
 protected static final String PAR_TIME = "simulation.logtime";

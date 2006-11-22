@@ -96,7 +96,7 @@ private static Node node;
 * This field is public because it doesn't matter if it changes
 * during an experiment (although it shouldn't) until no other sources of
 * randomness are used within the system. Besides, we can save the cost
-* of calling a wrapper method, which is important becuase this is needed
+* of calling a wrapper method, which is important because this is needed
 * very often.
 */
 public static ExtendedRandom r = null;
@@ -105,6 +105,14 @@ public static ExtendedRandom r = null;
 // ======================== initialization =========================
 // =================================================================
 
+/**
+* Configuration parameter used to define which random generator
+* class should be used. If not specified, the default implementation
+* {@link ExtendedRandom} is used. User-specified random generators 
+* must extend class {@link ExtendedRandom}. 
+* @config
+*/
+public static final String PAR_RANDOM = "random";
 
 /**
 * Configuration parameter used to initialize the random seed.
@@ -123,7 +131,7 @@ static {
 	
 	long seed =
 		Configuration.getLong(PAR_SEED,System.currentTimeMillis());
-	r = new ExtendedRandom(seed);
+	initializeRandom(seed);
 }
 
 
@@ -259,6 +267,16 @@ public static Node getNode()
 public static void setNode(Node n)
 {
 	node = n;
+}
+
+//-----------------------------------------------------------------
+
+public static void initializeRandom(long seed)
+{
+	if (r == null) {
+		r = (ExtendedRandom) Configuration.getInstance(PAR_RANDOM, new ExtendedRandom(null));
+	}
+	r.setSeed(seed);
 }
 
 //-----------------------------------------------------------------

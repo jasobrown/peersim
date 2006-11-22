@@ -1,3 +1,8 @@
+AM 22/11/2006
+- Added the possibility of customizing the Random generator through
+  a new configuration parameter (random). The specified generator
+  must extend ExtendedRandom.
+
 AM 19/11/2006
 - Modified CDSimulator, EDSimulator, in order to get rid of 
   the "fake" parameters. Now CheckConfig stops simulations

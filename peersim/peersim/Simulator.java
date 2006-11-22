@@ -24,7 +24,6 @@ import peersim.cdsim.*;
 import peersim.config.*;
 import peersim.core.*;
 import peersim.edsim.*;
-import peersim.util.*;
 
 
 /**
@@ -175,7 +174,7 @@ public static void main(String[] args)
 			if( k>0 )
 			{
 				long seed = CommonState.r.nextLong();
-				CommonState.r = new ExtendedRandom(seed);
+				CommonState.initializeRandom(seed);
 			}
 			System.err.print("Simulator: starting experiment "+k);
 			System.err.println(" invoking "+simName[SIMID]);

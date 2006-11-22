@@ -23,6 +23,9 @@ import java.lang.Math;
 
 /**
  * Extends the functionality of <code>java.util.Random</code>.
+ * User-specified custom generators must extend this class.
+ * Subclass should overrired method {@link #next(int)}, as it 
+ * is used by all other methods.
  */
 public class ExtendedRandom extends Random {
 
@@ -30,12 +33,11 @@ private long lastSeed;
 
 // -------------------------------------------------------------------------
 
-/** Calls super constructor. Also stores the seed to be returned by
-{@link #getLastSeed}. */
-public ExtendedRandom(long seed) {
+/** 
+ * Calls super constructor. 
+ */
+public ExtendedRandom(String prefix) {
 
-	super(seed);
-	lastSeed = seed;
 }
 
 // -------------------------------------------------------------------------

@@ -23,26 +23,10 @@ import java.lang.Math;
 
 /**
  * Extends the functionality of <code>java.util.Random</code>.
- * User-specified custom generators must extend this class.
- * Subclass should overrired method {@link #next(int)}, as it 
- * is used by all other methods.
  */
 public class ExtendedRandom extends Random {
 
 private long lastSeed;
-
-// -------------------------------------------------------------------------
-
-/** 
- * Does nothing. This constructor is added so that PeerSim can create
- * an instance of this class automatically from the configuration. However,
- * there are no dependencies to PeerSim because the constructor is empty.
- * @param prefix Dummy variable to implement the interface required by PeerSim.
- * It is not used.
- */
-public ExtendedRandom(String prefix) {
-
-}
 
 // -------------------------------------------------------------------------
 

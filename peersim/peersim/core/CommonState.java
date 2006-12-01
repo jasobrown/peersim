@@ -274,7 +274,7 @@ public static void setNode(Node n)
 public static void initializeRandom(long seed)
 {
 	if (r == null) {
-		r = (ExtendedRandom) Configuration.getInstance(PAR_RANDOM, new ExtendedRandom(null));
+		r = (ExtendedRandom) Configuration.getInstance(PAR_RANDOM, new ExtendedRandom(seed));
 	}
 	r.setSeed(seed);
 }

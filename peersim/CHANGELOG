@@ -1,6 +1,6 @@
 MJ 01/12/2006
-- restored a constructor of ExtendedRandom removed a week ago, and added
-  documentation
+- Restored ExtendedRandom to its state in release 1.0.1 and modified
+  CommonState to respect that interface
 
 AM 22/11/2006
 - Added the possibility of customizing the Random generator through

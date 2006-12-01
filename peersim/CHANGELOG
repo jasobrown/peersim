@@ -1,3 +1,7 @@
+MJ 01/12/2006
+- restored a constructor of ExtendedRandom removed a week ago, and added
+  documentation
+
 AM 22/11/2006
 - Added the possibility of customizing the Random generator through
   a new configuration parameter (random). The specified generator

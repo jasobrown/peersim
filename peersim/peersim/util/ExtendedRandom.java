@@ -34,10 +34,24 @@ private long lastSeed;
 // -------------------------------------------------------------------------
 
 /** 
- * Calls super constructor. 
+ * Does nothing. This constructor is added so that PeerSim can create
+ * an instance of this class automatically from the configuration. However,
+ * there are no dependencies to PeerSim because the constructor is empty.
+ * @param prefix Dummy variable to implement the interface required by PeerSim.
+ * It is not used.
  */
 public ExtendedRandom(String prefix) {
 
+}
+
+// -------------------------------------------------------------------------
+
+/** Calls super constructor. Also stores the seed to be returned by
+{@link #getLastSeed}. */
+public ExtendedRandom(long seed) {
+	
+	super(seed);
+	lastSeed = seed;
 }
 
 // -------------------------------------------------------------------------

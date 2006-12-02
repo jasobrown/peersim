@@ -34,7 +34,8 @@ public interface Node extends Fallible, Cloneable
 public static final String PAR_PROT = "protocol";
 
 /**
- * Returns the i-th protocol in this node. If <code>i</code> is not a valid protocol id
+ * Returns the <code>i</code>-th protocol in this node. If <code>i</code> 
+ * is not a valid protocol id
  * (negative or larger than or equal to the number of protocols), then it throws
  * IndexOutOfBoundsException.
  */

@@ -30,7 +30,7 @@ public interface CDProtocol extends Protocol
 
 /**
  * A protocol which is defined by performing an algorithm in more or less
- * regular periodic intrevals.
+ * regular periodic intervals.
  * This method is called by the simulator engine once in each cycle with
  * the appropriate parameters.
  * 

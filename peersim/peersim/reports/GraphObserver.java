@@ -42,7 +42,7 @@ public abstract class GraphObserver implements Control {
 private static final String PAR_PROT = "protocol";
 
 /**
- * If defined, the undirected version of the graph will be analized. Not defined
+ * If defined, the undirected version of the graph will be analyzed. Not defined
  * by default.
  * @config
  */

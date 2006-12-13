@@ -48,7 +48,7 @@ protected final List<Integer>[] in;
 // ==============================================================
 
 /**
-* Initializatio based on given graph. Stores the graph and if necessary
+* Initialization based on given graph. Stores the graph and if necessary
 * (if the graph is directed) searches for the incoming edges and stores
 * them too. The given graph is stored by reference (not cloned) so it should
 * not be modified while this object is in use.

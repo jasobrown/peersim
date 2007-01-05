@@ -74,8 +74,6 @@ public class LBObserver implements Control {
      */
     private IncrementalStats stats = null;
 
-    private final int len = Network.size();
-
     // ------------------------------------------------------------------------
     // Constructor
     // ------------------------------------------------------------------------
@@ -109,6 +107,7 @@ public class LBObserver implements Control {
         }
 
         /* Compute max, min, average */
+	final int len = Network.size();
         for (int i = 0; i < len; i++) {
             SingleValue prot = (SingleValue) Network.get(i).getProtocol(pid);
             double value = prot.getValue();

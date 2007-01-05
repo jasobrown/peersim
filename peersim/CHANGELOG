@@ -1,3 +1,6 @@
+MJ 05/01/2007
+- Fixed a bug in examples.loadbalance.LBObserver
+
 MJ 01/12/2006
 - Restored ExtendedRandom to its state in release 1.0.1 and modified
   CommonState to respect that interface

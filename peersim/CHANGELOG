@@ -1,3 +1,12 @@
+AM 17/02/2007
+- Modified VectorObserver to enable the specification of a generic
+  condition (not only aggregate == value, but any kind of complex
+  condition). This break the compatibility with the previous version
+  in the cvs, but not with the previous released version.
+- Improved the RangeSimulator to better manage the shutdown of 
+  subprocesses that are spawn by the RangeSimulator. This has
+  required the change of the methods from static to normal ones.
+
 MJ 05/01/2007
 - Fixed a bug in examples.loadbalance.LBObserver
 

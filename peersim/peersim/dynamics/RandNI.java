@@ -22,7 +22,7 @@ import peersim.core.*;
 import peersim.config.Configuration;
 
 /**
- * Initializes the neighbor list of a node with ranom links.
+ * Initializes the neighbor list of a node with random links.
  */
 public class RandNI implements NodeInitializer {
 

@@ -82,7 +82,7 @@ java peersim.rangesim.RangeSimulator config.file jvm.options=-Xmx256m
  * @author Alberto Montresor
  * @version $Revision$
  */
-public class RangeSimulator
+public class RangeSimulator implements ProcessHandler
 {
 
 // --------------------------------------------------------------------------
@@ -102,7 +102,7 @@ private static final String PAR_RANGE = "range";
  * parameters.
  * @config
  */
-private static final String PAR_JVM = "jvm.options";
+public static final String PAR_JVM = "jvm.options";
 
 
 // --------------------------------------------------------------------------
@@ -110,20 +110,23 @@ private static final String PAR_JVM = "jvm.options";
 // --------------------------------------------------------------------------
 
 /** Names of range parameters */
-private static String[] pars;
+private String[] pars;
 
 /** Values to be simulated, for each parameter */
-private static String[][] values;
+private String[][] values;
 
 /** The jvm options to be used when creating jvms */
-private static String[] jvmoptions;
+private String[] jvmoptions;
+
+/** Command line arguments */
+private String[] args;
 
 /** The current process that is executed */
-static Process p;
+private Process p;
 
 
 // --------------------------------------------------------------------------
-// Methods
+// Main
 // --------------------------------------------------------------------------
 
 /**
@@ -131,15 +134,26 @@ static Process p;
  */
 public static void main(String[] args)
 {
+	RangeSimulator r = new RangeSimulator(args);
+	r.run();
+}
+
+//--------------------------------------------------------------------------
+// Constructor
+//--------------------------------------------------------------------------
+
+public RangeSimulator(String[] args)
+{
+
 	// Check if there are no arguments or there is an explicit --help
 	// flag; if so, print the usage of the class
 	if (args.length == 0 || args[0].equals("--help")) {
 		usage();
-		System.exit(1);
+		System.exit(101);
 	}
 
-	String[] argv = args.clone();
-	
+	this.args = args.clone();
+
 	// Read property file
 	System.err.println("Simulator: loading configuration");
 	Properties properties = new ParsedProperties(args);
@@ -155,22 +169,30 @@ public static void main(String[] args)
 	// Parse range parameters
 	parseRanges();
 
+}
+
+/**
+ * Main method to be executed
+ */
+public void run()
+{
 	// Shutdown thread management
-	Thread t = new ShutdownThread();
+	ProcessManager t = new ProcessManager();
+	t.addThread(this);
 	Runtime.getRuntime().addShutdownHook(t);
 
 	// Executes experiments; report short messages about exceptions that are
 	// handled by the configuration mechanism.
 	try {
-		doExperiments(properties, argv);
+		doExperiments(args);
 	} catch (MissingParameterException e) {
 		Runtime.getRuntime().removeShutdownHook(t);
 		System.err.println(e + "");
-		System.exit(1);
+		System.exit(101);
 	} catch (IllegalParameterException e) {
 		Runtime.getRuntime().removeShutdownHook(t);
 		System.err.println(e + "");
-		System.exit(1);
+		System.exit(101);
 	}
 	Runtime.getRuntime().removeShutdownHook(t);
 	System.exit(0);
@@ -183,26 +205,32 @@ public static void main(String[] args)
  * parameter that will change during the simulation and the values that
  * will be used for those parameters.
  */
-private static void parseRanges()
+private void parseRanges()
 {
 	// Get ranges
 	String[] ranges = Configuration.getNames(PAR_RANGE);
 
+	// Start is the first element in which ranges are stored
+	int start;
+	
+	// If there is an explicit simulation.experiment or there are no 
+	// ranges, put an experiment range at the beginning of the values.
+	// Otherwise, just use the ranges.
 	if (Configuration.contains(Simulator.PAR_EXPS) || ranges.length == 0) {
-		// If there is an explicit simulation.experiment or there are no 
-		// ranges
 		pars = new String[ranges.length + 1];
 		values = new String[ranges.length + 1][];
-		pars[ranges.length] = "EXP";
-		values[ranges.length] = StringListParser.parseList("1:"
+		pars[0] = "EXP";
+		values[0] = StringListParser.parseList("1:"
 				+ Configuration.getInt(Simulator.PAR_EXPS, 1));
+		start = 1;
 	} else {
 		pars = new String[ranges.length];
 		values = new String[ranges.length][];
+		start = 0;
 	}
 
-	for (int i = 0; i < ranges.length; i++) {
-		String[] array = Configuration.getString(ranges[i]).split(";");
+	for (int i = start; i < pars.length; i++) {
+		String[] array = Configuration.getString(ranges[i-start]).split(";");
 		if (array.length != 2) {
 			throw new IllegalParameterException(ranges[i],
 					" should be formatted as <parameter>;<value list>");
@@ -219,7 +247,7 @@ private static void parseRanges()
  * array. The index array is treated as a vector of digits; the first is
  * managed managed as a vector of digits.
  */
-private static void nextValues(int[] idx, String[][] values)
+private void nextValues(int[] idx, String[][] values)
 {
 	idx[idx.length - 1]++;
 	for (int j = idx.length - 1; j > 0; j--) {
@@ -232,7 +260,7 @@ private static void nextValues(int[] idx, String[][] values)
 
 // --------------------------------------------------------------------
 
-public static void doExperiments(Properties properties, String[] args)
+private void doExperiments(String[] args)
 {
 
 	// Configure the java parameter for exception
@@ -253,8 +281,9 @@ public static void doExperiments(Properties properties, String[] args)
 	list.add("peersim.Simulator");
 	
 	// Parameters specified on the command line
-	for (int i=0; i < args.length; i++)
+	for (int i=0; i < args.length; i++) {
 		list.add(args[i]);
+	}
 	
 	// Since multiple experiments are managed here, the value
 	// of standard variable for multiple experiments is changed to 1
@@ -316,7 +345,7 @@ public static void doExperiments(Properties properties, String[] args)
  * to run the same JVM as the current one. If not possible,
  * we use the first java command found in the path.
  */
-private static void executeProcess(List<String> list)
+private void executeProcess(List<String> list)
 {
 	// Prepare the argument array for process forking
 	String[] newargs = new String[list.size()];
@@ -384,30 +413,31 @@ private static String getLine(BufferedReader toprint)
 private static void usage()
 {
 	System.err.println("Usage:");
-	System.err.println("  peersim.RangeSimulator <configfile> <property>*");
+	System.err.println("  peersim.RangeSimulator <configfile> [property]*");
 }
 
 //--------------------------------------------------------------------
 
+RangeSimulator()
+{
 }
 
 /**
- * This thread is used to kill a child process in the case of an abnormal
- * termination of the RangeSimulator (for example, due to a signal).
+ * Stop the process executing the external java virtual machine.
  */
-class ShutdownThread extends Thread
+public void doStop()
 {
+	if (p != null)
+		p.destroy();
+}
 
 /**
- * Kill the child process.
+ * Wait until the java virtual machine has terminated; it won't be
+ * used in this class, but you never know.
  */
-public void run()
+public void join() throws InterruptedException
 {
-	Process tokill = RangeSimulator.p;
-	System.err.println("Terminating simulation.");
-	if (tokill != null) {
-		tokill.destroy();
-	}
+	p.waitFor();
 }
 
 }

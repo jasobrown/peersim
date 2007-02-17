@@ -65,7 +65,7 @@ protected static final String PAR_RANGES = "ranges";
  * a "TIME &lt;t&gt;" specification regarding current time. Observers are 
  * separated by one of this characters: ' ' - ',' - ';'.
  */
-protected static final String PAR_TIME = "simulation.logtime";
+protected static final String PAR_TIME = "simulation.timed-observers";
 
 
 //--------------------------------------------------------------------------
@@ -101,7 +101,7 @@ public TaggedOutputStream(String prefix)
 	super(System.out);
 	
 	obstime = new ArrayList<String>();
-	String[] obs = Configuration.getString(PAR_TIME, "").split(" :,");
+	String[] obs = Configuration.getString(PAR_TIME, "").split("[ :,]");
 	for (int i=0; i < obs.length; i++) {
 		obstime.add("control." + obs[i]);
 	}

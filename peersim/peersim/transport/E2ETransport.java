@@ -27,7 +27,7 @@ import peersim.edsim.*;
  * This transport protocol is based on the {@link E2ENetwork} class.
  * Each instance
  * of this transport class is assigned to one of the routers contained in
- * the (fuly static singleton) {@link E2ENetwork},
+ * the (fully static singleton) {@link E2ENetwork},
  * and subsequently the {@link E2ENetwork} class is used to obtain the
  * latency for messages sending based on the router assignment.
  *
@@ -44,7 +44,7 @@ public class E2ETransport implements Transport, RouterInfo
 /**
  * The delay that corresponds to the time spent on the source (and destination)
  * nodes. In other words, full latency is calculated by fetching the latency
- * that belongs to communicting between two routers, incremented by
+ * that belongs to communicating between two routers, incremented by
  * twice this delay. Defaults to 0.
  * @config
  */

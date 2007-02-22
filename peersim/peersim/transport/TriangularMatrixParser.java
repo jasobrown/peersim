@@ -111,7 +111,7 @@ public boolean execute()
 		System.err.println("TriangularMatrixParser: reading " + size + " rows");
 	
 		// If the file format is not correct, data will be read 
-		// uncorrectly. Probably a good way to spot this is the 
+		// incorrectly. Probably a good way to spot this is the 
 		// presence of negative delays, or an end of file.
 	
 		// Reading data

@@ -137,7 +137,9 @@ class Operators extends Group implements IntegralDomainI,HasDivI,
 	public int compare(Number num1,Number num2)	{
 		if (num1 instanceof Double || num2 instanceof Double) {
 			// One is double
-			return (int) (num1.doubleValue() - num2.doubleValue());
+			double n1 = num1.doubleValue();
+			double n2 = num2.doubleValue();
+			return (n1 < n2 ? -1 : (n1 == n2 ? 0 : 1));
 		} else {
 			// Both integer
 			BigInteger a = (BigInteger) num1;

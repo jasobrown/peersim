@@ -112,12 +112,12 @@ private long nextID() {
 
 public void setFailState(int failState) {
 	
-	switch(failState)
+	// after a node is dead, all operations on it are errors by definition
+	if(failstate==DEAD) throw new IllegalStateException(
+						"Node is already DEAD");		switch(failState)
 	{
 		case OK:
-			if(failstate==DEAD) throw new IllegalStateException(
-				"Cannot set OK when already DEAD");
-			else failstate=OK;
+			failstate=OK;
 			break;
 		case DEAD:
 			//protocol = null;

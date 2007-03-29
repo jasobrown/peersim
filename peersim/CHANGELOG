@@ -1,5 +1,8 @@
 MJ 29/03/2007
 - Set len=0 in IdleProtocol.onKill (credit goes to Samuel Bernard)
+- Fixed GeneralNode.setFailState to always throw an exception after
+  the node is DEAD (not only when OK is attempted to set)
+  (credit goes to Samuel Bernard)
 
 AM 24/02/2007
 - Modified peersim.config.Operators to fix a bug in the comparison

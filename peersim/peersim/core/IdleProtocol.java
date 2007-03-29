@@ -153,6 +153,7 @@ public String toString()
 public void onKill()
 {
 	neighbors = null;
+	len = 0;
 }
 
 }

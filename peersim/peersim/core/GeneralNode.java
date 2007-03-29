@@ -113,8 +113,9 @@ private long nextID() {
 public void setFailState(int failState) {
 	
 	// after a node is dead, all operations on it are errors by definition
-	if(failstate==DEAD) throw new IllegalStateException(
-						"Node is already DEAD");		switch(failState)
+	if(failstate==DEAD && failState!=DEAD) throw new IllegalStateException(
+		"Cannot change fail state: node is already DEAD");
+	switch(failState)
 	{
 		case OK:
 			failstate=OK;

@@ -1,3 +1,10 @@
+MJ 03/04/2007
+- Clarified the specification of the Cleanable interface by stating that
+  none of the methods of the implementing object are guaranteed to work
+  after calling onKill, however, toString should work as a recommendation.
+  Accordingly, updated toString in IdleProtocol and SimpleNewscast 
+  (credit goes to Samuel Bernard)
+ 
 MJ 29/03/2007
 - Set len=0 in IdleProtocol.onKill (credit goes to Samuel Bernard)
 - Fixed GeneralNode.setFailState to always throw an exception after

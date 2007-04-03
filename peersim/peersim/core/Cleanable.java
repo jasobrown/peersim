@@ -36,6 +36,12 @@ public interface Cleanable
 /**
  * Performs cleanup when removed from the network. This is called by the
  * host node when its fail state is set to {@link Fallible#DEAD}.
+ * It is very important that after calling this method, NONE of the methods
+ * of the implementing object are guaranteed to work any longer.
+ * They might throw arbitrary exceptions, etc. The idea is that after
+ * calling this, typically no one should access this object.
+ * However, as a recommendation, at least toString should be guaranteed to
+ * execute normally, to aid debugging.
  */
 public void onKill();
 

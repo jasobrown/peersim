@@ -52,6 +52,27 @@ docnew:
 		example.edaggregation \
 		example.newscast 
 
+docpdf:
+	rm -rf doc/*
+	javadoc -overview overview.html -docletpath ~/aurigadoclet/bin/AurigaDoclet.jar -doclet com.aurigalogic.doclet.core.Doclet -format pdf -classpath .:jep-2.3.0.jar:djep-1.0.0.jar -out doc.pdf \
+		peersim \
+		peersim.cdsim \
+		peersim.config \
+		peersim.core \
+		peersim.dynamics \
+		peersim.edsim \
+		peersim.graph \
+		peersim.rangesim \
+		peersim.reports \
+		peersim.transport \
+		peersim.util \
+		peersim.vector \
+		example.aggregation \
+		example.loadbalance \
+		example.hot \
+		example.edaggregation \
+		example.newscast 
+
 release: clean all docnew
 	rm -fr peersim-$(VER)
 	mkdir peersim-$(VER)

@@ -363,6 +363,8 @@ public void nextCycle( Node n, int protocolID )
 
 public String toString() {
 
+	if( cache == null ) return "DEAD!";
+	
 	StringBuffer sb = new StringBuffer();
 
 	for(int i=0; i<_degree(); ++i)

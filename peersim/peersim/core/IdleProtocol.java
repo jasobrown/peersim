@@ -140,6 +140,7 @@ public void pack()
 
 public String toString()
 {
+	if( neighbors == null ) return "DEAD!";
 	StringBuffer buffer = new StringBuffer();
 	buffer.append("len=" + len + " maxlen=" + neighbors.length + " [");
 	for (int i = 0; i < len; ++i) {

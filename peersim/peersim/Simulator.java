@@ -52,13 +52,13 @@ public class Simulator {
 // ======================================================================
 
 /** {@link CDSimulator} */
-protected static final int CDSIM = 0;
+public static final int CDSIM = 0;
 
 /** {@link EDSimulator} */
-protected static final int EDSIM = 1;
+public static final int EDSIM = 1;
 
 /** Unknown simulator */
-protected static final int UNKNOWN = -1;
+public static final int UNKNOWN = -1;
 
 /** the class names of simulators used */
 protected static final String[] simName = {
@@ -95,7 +95,7 @@ private static int simID = UNKNOWN;
 * Returns the numeric id of the simulator to invoke. At the moment this can
 * be {@link #CDSIM}, {@link #EDSIM} or {@link #UNKNOWN}.
 */
-protected static int getSimID() {
+public static int getSimID() {
 	
 	if (simID == UNKNOWN) {
 		if( CDSimulator.isConfigurationCycleDriven()){

@@ -1,3 +1,38 @@
+Release notes for Peersim 1.0.2
+
+This minor release fixes several small bugs:
+- fixed a bug in RangeSimulator that was causing strange 
+  "too many open files" errors when executing large simulations
+- fixed minor bugs related to the Cleanable interface
+  (credit goes to Samuel Bernard)
+- fixed a bug in peersim.config.Operators was preventing the correct
+  comparison of two values
+- fixed a bug in examples.loadbalance.LBObserver 
+- moved the ID creation before the creation of the Protocol objects
+  belonging to a node; this solve problems for Protocols that
+  assume that the ID field was filled.
+
+New features added:
+- the possibility of customizing the Random generator through
+  a new configuration parameter (random). The specified generator
+  must extend ExtendedRandom.
+- a new transport class for trace initialization. Unlike
+  KingParser, this class reads a more compact, binary format
+  (described in the file).
+- the possibility to shuffle iteration order without actually
+  shuffling the nodes in the network. 
+- a new example on using the event based engine, and also added
+  a simple tutorial to the web page about it.
+- a MemoryObserver reports to provide information about memory usage.
+- modified peersim.vector.Getter and peersim.vector.GetterSetterFinder
+  to handle boolean values as numbers (0/1). This enables to use class 
+  from the vector package to perform statistics on boolean fields.
+- added the VectorComparator class to be used to sort node
+  arrays based on a specified getter.
+  
+  
+==========================================================================
+
 Release notes for Peersim 1.0.1
 
 This minor release contains bug fixes only.

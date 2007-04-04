@@ -25,7 +25,7 @@ import peersim.core.*;
 
 /**
  * Initializes static singleton {@link E2ENetwork} by reading a trace 
- * file containining the latency distance measured between a set of 
+ * file containing the latency distance measured between a set of 
  * "virtual" routers. Latency is assumed to be symmetric, so the 
  * latency between x and y is equal to the latency to y and x.
  * 
@@ -56,6 +56,13 @@ public class TriangularMatrixParser implements Control
  */
 private static final String PAR_FILE = "file";
 
+/**
+ * The ratio between the time units used in the configuration file and the
+ * time units used in the Peersim simulator.
+ * @config
+ */
+private static final String PAR_RATIO = "ratio";
+
 // ---------------------------------------------------------------------
 // Fields
 // ---------------------------------------------------------------------
@@ -65,6 +72,9 @@ private String filename;
 
 /** Prefix for reading parameters */
 private String prefix;
+
+/** Ratio read from PAR_RATIO */
+private double ratio;
 
 // ---------------------------------------------------------------------
 // Initialization
@@ -77,6 +87,7 @@ public TriangularMatrixParser(String prefix)
 {
 	this.prefix = prefix;
 	filename = Configuration.getString(prefix + "." + PAR_FILE);
+	ratio = Configuration.getDouble(prefix + "." + PAR_RATIO);
 }
 
 // ---------------------------------------------------------------------
@@ -118,7 +129,7 @@ public boolean execute()
 		int count = 0;
 		for (int r=0; r < size; r++) {
 			for (int c = r+1; c < size; c++) {
-				int x = in.readInt();
+				int x = (int) (ratio*in.readInt());
 				count++;
 				E2ENetwork.setLatency(r,c,x);
 			}

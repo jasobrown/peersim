@@ -137,7 +137,7 @@ public boolean isInteger() {
 * by {@link #pid}.
 * @param val the value to set.
 */
-protected void set(Node n, long val) {
+public void set(Node n, long val) {
 	
 	init();
 	
@@ -171,7 +171,7 @@ protected void set(Node n, long val) {
 * by {@link #pid}.
 * @param val the value to set.
 */
-protected void set(Node n, double val) {
+public void set(Node n, double val) {
 	
 	init();
 	
@@ -205,7 +205,7 @@ protected void set(Node n, double val) {
 * by {@link #pid}.
 * @param val the value to set.
 */
-protected void set(int i, long val) { set(Network.get(i),val); }
+public void set(int i, long val) { set(Network.get(i),val); }
 
 // --------------------------------------------------------------------------
 
@@ -216,7 +216,7 @@ protected void set(int i, long val) { set(Network.get(i),val); }
 * by {@link #pid}.
 * @param val the value to set.
 */
-protected void set(int i, double val) { set(Network.get(i),val); }
+public void set(int i, double val) { set(Network.get(i),val); }
 
 }
 

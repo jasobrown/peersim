@@ -125,7 +125,7 @@ public Class getType() {
 * by {@link #pid}.
 * @return the read value.
 */
-protected Number get(Node n) {
+public Number get(Node n) {
 	
 	init();
 
@@ -151,7 +151,7 @@ protected Number get(Node n) {
 * by {@link #pid}.
 * @return the read value.
 */
-protected long getLong(Node n) {
+public long getLong(Node n) {
 	
 	init();
 
@@ -179,7 +179,7 @@ protected long getLong(Node n) {
 * by {@link #pid}.
 * @return the read value.
 */
-protected double getDouble(Node n) {
+public double getDouble(Node n) {
 	
 	init();
 
@@ -209,7 +209,7 @@ protected double getDouble(Node n) {
 * by {@link #pid}.
 * @return the read value.
 */
-protected Number get(int i) { return get(Network.get(i)); }
+public Number get(int i) { return get(Network.get(i)); }
 
 // --------------------------------------------------------------------------
 
@@ -220,7 +220,7 @@ protected Number get(int i) { return get(Network.get(i)); }
 * by {@link #pid}.
 * @return the read value.
 */
-protected long getLong(int i) { return getLong(Network.get(i)); }
+public long getLong(int i) { return getLong(Network.get(i)); }
 
 // --------------------------------------------------------------------------
 
@@ -231,7 +231,7 @@ protected long getLong(int i) { return getLong(Network.get(i)); }
 * by {@link #pid}.
 * @return the read value.
 */
-protected double getDouble(int i) { return getDouble(Network.get(i)); }
+public double getDouble(int i) { return getDouble(Network.get(i)); }
 
 }
 

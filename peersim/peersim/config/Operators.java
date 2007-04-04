@@ -21,8 +21,11 @@ import org.lsmp.djep.groupJep.groups.*;
 import org.lsmp.djep.groupJep.interfaces.*;
 
 /**
+ * This class implements the <code>Group</code> interface of JEP,
+ * enabling the configuration system to read integers with arbitrary 
+ * length. 
  */
-class Operators extends Group implements IntegralDomainI,HasDivI,
+public class Operators extends Group implements IntegralDomainI,HasDivI,
 	OrderedSetI,HasModI,HasPowerI {
 	
 

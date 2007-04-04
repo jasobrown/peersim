@@ -1,4 +1,17 @@
-MJ 03/04/2007
+AM 04/04/2007:
+- Solved a bug in RangeSimulator: creation of several processes may 
+  end up in "too many files" errors due to the fact stdin, stderr and
+  stdout files are not closed when a process terminates. See 
+  http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4784692
+	http://www.thescripts.com/forum/thread18019.html
+- Changed peersim.config.Operators, peersim.vector.Getter, 
+  peersim.vector.Setter to public, to enable classes
+  external to the package to use their functionalities.
+- Reverted peersim.vector.Observer to the version of 1.0.1; the
+  functionalities introduced with previous changes will be
+  re-intruduced as an external package associated to Peersim.
+
+MJ 03/04/2007:
 - Clarified the specification of the Cleanable interface by stating that
   none of the methods of the implementing object are guaranteed to work
   after calling onKill, however, toString should work as a recommendation.

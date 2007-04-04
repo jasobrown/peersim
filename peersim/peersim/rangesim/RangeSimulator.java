@@ -386,9 +386,24 @@ private void executeProcess(List<String> list)
 		}
 	}
 
+	// We close all the files and we destroy the process. They are not 
+	// cleaned when the process is closed. See:
+	// http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4784692
+	// http://www.thescripts.com/forum/thread18019.html
+	try {
+		p.getErrorStream().close();
+		p.getInputStream().close();
+		p.getOutputStream().close();
+		p.destroy();
+	} catch (IOException e) {
+		e.printStackTrace();
+	}
+
 	// The static variable p (used also by ShutdownThread) is back to
 	// null - no process must be killed on shutdown.
 	p = null;
+	
+	
 
 }
 

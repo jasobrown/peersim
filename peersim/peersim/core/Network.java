@@ -195,7 +195,7 @@ public static int getCapacity() { return node.length; }
 */
 public static void add( Node n ) {
 	
-	if(len==node.length) setCapacity(3*node.length/2);
+	if(len==node.length) setCapacity(3*node.length/2+1);
 	node[len] = n;
 	n.setIndex(len);
 	len++;

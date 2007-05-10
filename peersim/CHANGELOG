@@ -1,3 +1,8 @@
+MJ 29/03/2007
+- Bug fixed: was not possible to add nodes to an empty network (how strange
+  this bug came out so late...; in any case, fixed now).
+  (credit goes to Samuel Bernard)
+
 AM 05/04/2006
 VERSION 1.0.2 RELEASED
 ------------------------------------------------------------------

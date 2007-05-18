@@ -19,6 +19,7 @@
 package peersim.core;
 
 import peersim.config.Configuration;
+import peersim.config.IllegalParameterException;
 
 // XXX a quite primitive scheduler, should be able to be configured
 // much more flexibly using a simlpe syntax for time ranges.
@@ -82,13 +83,13 @@ public static final String PAR_UNTIL = "until";
 */
 private static final String PAR_FINAL = "FINAL";
 
-public final long step;
+public long step;
 
-public final long from;
+public long from;
 
-public final long until;
+public long until;
 
-public final boolean fin;
+public boolean fin;
 
 /** The next scheduled time point.*/
 protected long next;
@@ -108,31 +109,61 @@ public Scheduler(String prefix) {
 // ------------------------------------------------------------------
 
 /** Reads configuration parameters from the component defined by
-* <code>prefix</code>. If useDefault is false, then at least parameter
+* <code>prefix</code>. If useDefaultStep is false, then at least parameter
 * {@value #PAR_STEP} must be explicitly defined. Otherwise {@value #PAR_STEP}
 * defaults to 1.
 */
-public Scheduler(String prefix, boolean useDefault)
+public Scheduler(String prefix, boolean useDefaultStep)
 {
-	long at = Configuration.getLong(prefix+"."+PAR_AT,-1);
-	if( at < 0 )
+	fin = Configuration.contains(prefix+"."+PAR_FINAL);
+
+	if (Configuration.contains(prefix+"."+PAR_AT)) // AT defined
 	{
-		if (useDefault) 
-			step = Configuration.getLong(prefix+"."+PAR_STEP,1);
-		else
-			step = Configuration.getLong(prefix+"."+PAR_STEP);
-		from = Configuration.getLong(prefix+"."+PAR_FROM,0);
-		until = Configuration.getLong(
-				prefix+"."+PAR_UNTIL,Long.MAX_VALUE);
-	}
-	else
-	{
+		// FROM, UNTIL, and STEP should *not* be defined
+		if (Configuration.contains(prefix+"."+PAR_FROM) ||
+				Configuration.contains(prefix+"."+PAR_UNTIL) ||
+				Configuration.contains(prefix+"."+PAR_STEP))
+			throw new IllegalParameterException(prefix,
+				"Cannot use \""+PAR_AT+"\" and \""+PAR_FROM+
+				"\"/\""+PAR_UNTIL+"\"/\""+PAR_STEP+"\" together");
+
+		long at = Configuration.getLong(prefix+"."+PAR_AT);
 		from = at;
 		until = at+1;
 		step = 1;
 	}
+	else // AT not defined
+	{
+		from = Configuration.getLong(prefix+"."+PAR_FROM, 0);
+		until = Configuration.getLong(prefix+"."+PAR_UNTIL, Long.MAX_VALUE);
+
+		if (Configuration.contains(prefix+"."+PAR_STEP)) // STEP defined
+		{
+			step = Configuration.getLong(prefix+"."+PAR_STEP);
+		}
+		else // STEP not defined
+		{
+			if (useDefaultStep)
+				step = 1;
+			else
+			{
+				if (Configuration.contains(prefix+"."+PAR_FROM) ||
+						Configuration.contains(prefix+"."+PAR_UNTIL))
+					System.err.println("Warning: Control "+
+							prefix+" defines \""+PAR_FROM+
+							"\"/\""+PAR_UNTIL+"\" but not \""+
+							PAR_STEP+"\"");
+				from = until = step = -1;
+
+				if (!fin) // FINAL not defined either
+					System.err.println("Warning: Control "+
+						prefix+" will not execute at all!");
+			}
+		}
+
+	}
+
 	next = from;
-	fin = Configuration.contains(prefix+"."+PAR_FINAL);
 }
 
 

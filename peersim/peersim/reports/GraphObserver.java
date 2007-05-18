@@ -121,7 +121,7 @@ protected GraphObserver(String name) {
 /**
 * Sets {@link #g}.
 * It MUST be called by any implementation of {@link #execute()} before
-* doing anyting else.
+* doing anything else.
 * Attempts to initialize {@link #g} from a
 * pre-calculated graph stored in a static field, but first it
 * checks whether it needs to be updated.

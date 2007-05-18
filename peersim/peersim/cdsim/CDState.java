@@ -61,7 +61,7 @@ private CDState() {}
 
 
 /**
-* Returns true if and only if there is a cycle driven simultion going on.
+* Returns true if and only if there is a cycle driven simulation going on.
 */
 public static boolean isCD() { return cycle >= 0; }
 

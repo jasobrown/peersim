@@ -90,7 +90,7 @@ public Heap(int size) {
 //--------------------------------------------------------------------------
 
 /**
- * Returns the current number of event in the system.
+ * Returns the current number of events in the system.
  */
 public int size()
 {

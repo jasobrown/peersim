@@ -15,7 +15,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-		
+
 package peersim.graph;
 
 import java.util.Collection;
@@ -23,12 +23,12 @@ import java.util.Collection;
 /**
 * A general graph interface. It follows the following model:
 * the graph has n nodes which are indexed from 0 to n-1.
-* The parameters of operators refer to indeces only.
-* Implementations might return
-* objects that represent the nodes or edges, though it is not required.
+* The parameters of operators refer to indices only.
+* Implementations might return objects that represent the
+* nodes or edges, although this is not required.
 *
-* Unidrected graphs are modelled by the interface as directed graphs in which
-* all edge (i,j) has a corresponding reverse edge (j,i).
+* Undirected graphs are modelled by the interface as directed graphs in which
+* every edge (i,j) has a corresponding reverse edge (j,i).
 */
 public interface Graph {
 
@@ -87,4 +87,3 @@ public interface Graph {
 	*/
 	public int degree(int i);
 }
-

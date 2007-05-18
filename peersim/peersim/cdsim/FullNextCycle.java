@@ -23,7 +23,7 @@ import peersim.core.*;
 import peersim.util.RandPermutation;
 
 /**
-* Control to run a cycle of the cycle drive simulation.
+* Control to run a cycle of the cycle driven simulation.
 * This does not need to be explicitly configured (although you can do it for
 * hacking purposes).
 */
@@ -47,7 +47,7 @@ private static final String PAR_GETPAIR = "getpair";
 /**
 * Shuffle iteration order if set. Not set by default. If set, then nodes are
 * iterated in a random order. However, in the network the nodes actually
-* stay in the order they originally were. The prise for leaving the
+* stay in the order they originally were. The price for leaving the
 * network untouched is memory: we need to store the permutation we use
 * to iterate the network.
 * @config
@@ -92,10 +92,9 @@ public FullNextCycle(String prefix) {
 /** 
  * Execute all the {@link CDProtocol}s on all nodes that are up.
  * If the node goes down as a result of the execution of a protocol, then
- * the rest of the protocols on that node are not exectuted and we move on
+ * the rest of the protocols on that node are not executed and we move on
  * to the next node.
- * It sets the {@link CDState}
- * appropriately.
+ * It sets the {@link CDState} appropriately.
  * @return always false
  */
 public boolean execute() {
@@ -136,5 +135,3 @@ public boolean execute() {
 }
 
 }
-
-

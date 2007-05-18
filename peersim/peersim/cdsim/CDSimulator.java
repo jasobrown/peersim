@@ -67,7 +67,7 @@ public static final String PAR_CYCLES = "simulation.cycles";
 
 /**
  * This option is only for experts. It switches off the main cycle that
- * calles the cycle driven protocols. When you switch this off, you need to
+ * calls the cycle driven protocols. When you switch this off, you need to
  * control the execution of the protocols by configuring controls that do
  * the job (eg, {@link FullNextCycle}, {@link NextCycle}). It's there for
  * people who want maximal flexibility for their hacks.
@@ -142,6 +142,7 @@ private static String[] loadControls()
 		controls = new Control[names.length];
 		ctrlSchedules = new Scheduler[names.length];
 	} else {
+		// provide for an extra control that handles the main cycle
 		controls = new Control[names.length + 1];
 		ctrlSchedules = new Scheduler[names.length + 1];
 		// calling with a prefix that cannot exist

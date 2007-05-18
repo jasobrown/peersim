@@ -1,3 +1,18 @@
+SV 18/05/2007
+- Updated core.Scheduler, to allow more flexible schedules.
+  It is now possible to define final-only schedules. For ED, simply
+  define "FINAL", but not "step". For CD, define "FINAL", and "at -1", or
+  "until -1".
+- Added more checking in core.Scheduler. An exception is thrown if "at" and
+  "from", "until", or "step" are defined at the same time. In ED it is possible
+  to omit "step", in order to define final-only schedules. But if "from" or
+  "until" are defined while "step" is missing, a warning will be printed.
+  A warning will also print if the defined schedule results in no single
+  execution.
+- Fixed bug in edsim.ControlEvent, which was executing a control even if its
+  time was negative.
+- Fixed a large number of small typos in various files (in comments).
+
 MJ 29/03/2007
 - Bug fixed: was not possible to add nodes to an empty network (how strange
   this bug came out so late...; in any case, fixed now).

@@ -42,7 +42,7 @@ private static final String PAR_N = "n";
 /**
  * If defined, then the given number of nodes will be traced. That is, it is
  * guaranteed that in each call the same nodes will be picked in the same order.
- * If a nodes fails which is being traced, 0 will be its degree. Not defined by
+ * If a node being traced fails, its degree will be considered 0. Not defined by
  * default.
  * @config
  */

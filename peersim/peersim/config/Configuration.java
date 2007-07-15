@@ -600,7 +600,7 @@ public static Class getClass(String name, Class def)
  * @param name
  *          Name of configuration property
  * @throws MissingParameterException
- *           if the given protperty is not defined
+ *           if the given property is not defined
  * @throws IllegalParameterException
  *           if there is any problem creating the instance
  */

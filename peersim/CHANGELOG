@@ -1,3 +1,8 @@
+SV 15/07/2007
+- Corrected small bug in GraphFactory.wireRingLattice giving wrong number of
+  neighbors for odd k.
+- Corrected tiny bug in EDSimulator.nextExperiment ensuring that 8<=rbits<64.
+
 SV 18/05/2007
 - Updated core.Scheduler, to allow more flexible schedules.
   It is now possible to define final-only schedules. For ED, simply

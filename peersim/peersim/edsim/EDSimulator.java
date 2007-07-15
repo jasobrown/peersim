@@ -319,9 +319,9 @@ public static void nextExperiment()
 {
 	// Reading parameter
 	rbits = Configuration.getInt(PAR_RBITS, 8);	
-	if (rbits < 8 && rbits >= 64) {
+	if (rbits < 8 || rbits >= 64) {
 		throw new IllegalParameterException(PAR_RBITS, "This parameter"
-		+" should be >= 8 or <= 64");
+		+" should be >= 8 or < 64");
 	}
 	endtime = Configuration.getLong(PAR_ENDTIME);
 	if( CommonState.getEndTime() < 0 ) // not initialized yet

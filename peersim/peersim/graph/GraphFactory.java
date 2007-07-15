@@ -45,8 +45,16 @@ private GraphFactory() {}
 public static Graph wireRingLattice(Graph g, int k) {
 	
 	final int n = g.size();
+
+	// Compute the number of predecessors and successors a node should know.
+	// E.g., for k=4 (even): 2 predecessors, 2 successors
+	//       for k=5 (odd) : 2 predecessors, 3 successors
+	// For the trivial case of k=1, each node knows only its successor.
+	int pred = (k%2==0) ? k/2 : (k-1)/2;
+	int succ = (k%2==0) ? k/2 : (k+1)/2;
+
 	for(int i=0; i<n; ++i)
-	for(int j=-k/2; j<=k/2; ++j)
+	for(int j=-pred; j<=succ; ++j)
 	{
 		if( j==0 ) continue;
 		final int v = (i+j+n)%n;

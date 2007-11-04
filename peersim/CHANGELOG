@@ -1,3 +1,11 @@
+MJ 04/11/07
+- The previous fix by Spyros for wireRingLattice introduced and
+  inconsistency between the documentation and the behavior of the method.
+  Documentation (and therefore the interface specification) is now changed,
+  consistent with the new behavior. (Also simplified the implementation)
+- Added a sensible error message when an event has null destination
+  (uninformative error message detected by sourceforge user "pemf")
+
 SV 15/07/2007
 - Corrected small bug in GraphFactory.wireRingLattice giving wrong number of
   neighbors for odd k.

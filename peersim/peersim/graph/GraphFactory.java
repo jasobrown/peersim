@@ -35,9 +35,15 @@ private GraphFactory() {}
 
 /**
 * Wires a ring lattice.
-* The added connections are defined as follows: node i has conections to nodes
-* i-k/2, i-k/2+1, ..., i+k/2 (but not with i) and all values are understood
-* mod n to make the lattice circular, where n is the number of nodes in g.
+* The added connections are defined as follows. If k is even, links to
+* i-k/2, i-k/2+1, ..., i+k/2 are added (but not to i), thus adding an
+* equal number of predecessors and successors.
+* If k is odd, then we add one more successors than predecessors.
+* For example, for k=4: 2 predecessors, 2 successors.
+* For k=5: 2 predecessors, 3 successors.
+* For k=1: each node is linked only to its successor.
+* All values are understood mod n to make the lattice circular, where n is the
+* number of nodes in g.
 * @param g the graph to be wired
 * @param k lattice parameter
 * @return returns g for convinience
@@ -46,12 +52,8 @@ public static Graph wireRingLattice(Graph g, int k) {
 	
 	final int n = g.size();
 
-	// Compute the number of predecessors and successors a node should know.
-	// E.g., for k=4 (even): 2 predecessors, 2 successors
-	//       for k=5 (odd) : 2 predecessors, 3 successors
-	// For the trivial case of k=1, each node knows only its successor.
-	int pred = (k%2==0) ? k/2 : (k-1)/2;
-	int succ = (k%2==0) ? k/2 : (k+1)/2;
+	int pred = k/2;
+	int succ = k-pred;
 
 	for(int i=0; i<n; ++i)
 	for(int j=-pred; j<=succ; ++j)

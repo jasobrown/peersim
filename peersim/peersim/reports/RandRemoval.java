@@ -83,7 +83,7 @@ public RandRemoval(String name)
 */
 public boolean execute()
 {
-	if( n <= 1 ) return false;
+	if( n < 1 ) return false;
 	updateGraph();
 	
 	System.out.println(name + ":");

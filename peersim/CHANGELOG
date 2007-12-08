@@ -1,3 +1,7 @@
+MJ 08/12/07
+- Fixed RandRemoval: now it accepts parameter "n=1" (credits to Norbert
+  Tolgyesi for spotting this)
+
 MJ 04/11/07
 - The previous fix by Spyros for wireRingLattice introduced and
   inconsistency between the documentation and the behavior of the method.

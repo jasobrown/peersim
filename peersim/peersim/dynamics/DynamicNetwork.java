@@ -45,6 +45,7 @@ public class DynamicNetwork implements Control
 control.0 DynamicNetwork
 control.0.init.0 RandNI
 control.0.init.0.k 5
+control.0.init.0.protocol somelinkable
 ...
  * </pre>
  * @config

@@ -1,11 +1,11 @@
 Wed Apr  4 22:19:45 CEST 2007
-This is version 1.0.2 of the Peersim high level P2P network simulator.
+This is version 1.0.3 of the Peersim high level P2P network simulator.
 
 This archive is composed of:
 - the doc/ directory containing the javadoc-generated documentation
 - the src/ directory containing the simulator source
 - the example/ directory containing example configuration files
-- peersim-1.0.2.jar, a java archive containing the compiled bytecode
+- peersim-1.0.3.jar, a java archive containing the compiled bytecode
 - jep-2.3.0.jar and djep-1.0.0.jar, a Java Mathematical Expression Parser 
   library from Singular Systems (http://www.singularsys.com/jep/).
   JEP is needed by the peersim core; it is distributed under
@@ -13,7 +13,7 @@ This archive is composed of:
 
 To run the examples, you need java 5 installed, and then type:
 
-java -cp "peersim-1.0.2.jar:jep-2.3.0.jar:djep-1.0.0.jar" peersim.Simulator example/config-example1.txt
+java -cp "peersim-1.0.3.jar:jep-2.3.0.jar:djep-1.0.0.jar" peersim.Simulator example/config-example1.txt
 
 in the directory of this README file in the extracted archive.
 On a Windows system, substitute ':' with ';' in the classpath string.

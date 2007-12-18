@@ -18,8 +18,7 @@
 		
 package peersim.core;
 
-import peersim.config.Configuration;
-import peersim.config.IllegalParameterException;
+import peersim.config.*;
 
 // XXX a quite primitive scheduler, should be able to be configured
 // much more flexibly using a simlpe syntax for time ranges.
@@ -58,20 +57,20 @@ private static final String PAR_STEP = "step";
 * Defaults to -1. That is, defaults to be ineffective.
 * @config
 */
-public static final String PAR_AT = "at";
+private static final String PAR_AT = "at";
 
 
 /** 
 * Defaults to 0.
 * @config
 */
-public static final String PAR_FROM = "from";
+private static final String PAR_FROM = "from";
 
 /** 
 * Defaults to <tt>Long.MAX_VALUE</tt>.
 * @config
 */
-public static final String PAR_UNTIL = "until";
+private static final String PAR_UNTIL = "until";
 
 /**
 * Defines if component is active after the simulation has finished.
@@ -83,13 +82,13 @@ public static final String PAR_UNTIL = "until";
 */
 private static final String PAR_FINAL = "FINAL";
 
-public long step;
+public final long step;
 
-public long from;
+public final long from;
 
-public long until;
+public final long until;
 
-public boolean fin;
+public final boolean fin;
 
 /** The next scheduled time point.*/
 protected long next;
@@ -109,16 +108,13 @@ public Scheduler(String prefix) {
 // ------------------------------------------------------------------
 
 /** Reads configuration parameters from the component defined by
-* <code>prefix</code>. If useDefaultStep is false, then at least parameter
+* <code>prefix</code>. If useDefault is false, then at least parameter
 * {@value #PAR_STEP} must be explicitly defined. Otherwise {@value #PAR_STEP}
 * defaults to 1.
 */
-public Scheduler(String prefix, boolean useDefaultStep)
+public Scheduler(String prefix, boolean useDefault)
 {
-	fin = Configuration.contains(prefix+"."+PAR_FINAL);
-
-	if (Configuration.contains(prefix+"."+PAR_AT)) // AT defined
-	{
+	if (Configuration.contains(prefix+"."+PAR_AT)) {
 		// FROM, UNTIL, and STEP should *not* be defined
 		if (Configuration.contains(prefix+"."+PAR_FROM) ||
 				Configuration.contains(prefix+"."+PAR_UNTIL) ||
@@ -131,39 +127,16 @@ public Scheduler(String prefix, boolean useDefaultStep)
 		from = at;
 		until = at+1;
 		step = 1;
-	}
-	else // AT not defined
-	{
-		from = Configuration.getLong(prefix+"."+PAR_FROM, 0);
-		until = Configuration.getLong(prefix+"."+PAR_UNTIL, Long.MAX_VALUE);
-
-		if (Configuration.contains(prefix+"."+PAR_STEP)) // STEP defined
-		{
+	} else {
+		if (useDefault) 
+			step = Configuration.getLong(prefix+"."+PAR_STEP,1);
+		else
 			step = Configuration.getLong(prefix+"."+PAR_STEP);
-		}
-		else // STEP not defined
-		{
-			if (useDefaultStep)
-				step = 1;
-			else
-			{
-				if (Configuration.contains(prefix+"."+PAR_FROM) ||
-						Configuration.contains(prefix+"."+PAR_UNTIL))
-					System.err.println("Warning: Control "+
-							prefix+" defines \""+PAR_FROM+
-							"\"/\""+PAR_UNTIL+"\" but not \""+
-							PAR_STEP+"\"");
-				from = until = step = -1;
-
-				if (!fin) // FINAL not defined either
-					System.err.println("Warning: Control "+
-						prefix+" will not execute at all!");
-			}
-		}
-
+		from = Configuration.getLong(prefix+"."+PAR_FROM,0);
+		until = Configuration.getLong(prefix+"."+PAR_UNTIL,Long.MAX_VALUE);
 	}
-
 	next = from;
+	fin = Configuration.contains(prefix+"."+PAR_FINAL);
 }
 
 

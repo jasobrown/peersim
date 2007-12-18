@@ -1,3 +1,13 @@
+AM 18/12/2007
+VERSION 1.0.3 RELEASED
+------------------------------------------------------------------
+------------------------------------------------------------------
+
+AM 18/12/07
+- Reverted peersim.core.Scheduler to 1.19 version (removing Spyros
+  changes), but adding the control to avoid at and step/from/until
+  at the same time.
+
 MJ 08/12/07
 - Fixed RandRemoval: now it accepts parameter "n=1" (credits to Norbert
   Tolgyesi for spotting this)
@@ -30,12 +40,12 @@ SV 18/05/2007
   time was negative.
 - Fixed a large number of small typos in various files (in comments).
 
-MJ 29/03/2007
+MJ 10/05/2007
 - Bug fixed: was not possible to add nodes to an empty network (how strange
   this bug came out so late...; in any case, fixed now).
   (credit goes to Samuel Bernard)
 
-AM 05/04/2006
+AM 05/04/2007
 VERSION 1.0.2 RELEASED
 ------------------------------------------------------------------
 ------------------------------------------------------------------

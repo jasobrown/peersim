@@ -1,4 +1,4 @@
-VER=1.0
+VER=1.0.2
 
 .PHONY: all clean doc release
 
@@ -31,7 +31,7 @@ doc:
 
 docnew:
 	rm -rf doc/*
-	javadoc -overview overview.html -docletpath peersim-doclet.jar -doclet doclets.standard.Standard -classpath .:jep-2.3.0.jar:djep-1.0.0.jar -d doc \
+	javadoc -overview overview.html -docletpath peersim-doclet.jar -doclet peersim.tools.doclets.standard.Standard -classpath .:jep-2.3.0.jar:djep-1.0.0.jar -d doc \
                 -group "Peersim" "peersim*" \
                 -group "Examples" "example.*" \
 		peersim \

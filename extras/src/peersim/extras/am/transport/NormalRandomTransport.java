@@ -19,12 +19,13 @@
 package peersim.extras.am.transport;
 
 import java.util.*;
+
 import peersim.config.*;
 import peersim.core.*;
 import peersim.edsim.*;
-import cern.jet.random.*;
-import edu.cornell.lassp.houle.RngPack.*;
 import peersim.transport.*;
+import cern.jet.random.*;
+import cern.jet.random.engine.*;
 
 /**
  * In this transport layer, message delays are generated based on a normal
@@ -110,7 +111,7 @@ public long getLatency(Node src, Node dest)
 // ---------------------------------------------------------------------
 // Helper class
 // ---------------------------------------------------------------------
-class ConfigRandomElement extends RandomElement
+class ConfigRandomElement extends RandomEngine
 {
 
 Random r;
@@ -127,11 +128,18 @@ void setSeed(long seed)
 
 /**
  * Wrapper for <CODE>CommonState</CODE>
- * @see RandomElement#raw()
+ * @see RandomEngine#raw()
  */
 public double raw()
 {
 	return r.nextDouble();
 }
+
+public int nextInt()
+{
+	return r.nextInt();
+}
+
+
 }
 }

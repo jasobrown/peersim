@@ -1,0 +1,14 @@
+The jar files of peersim must be downloaded separately.
+
+To run the Makefile, modify the Makefile PEERSIM_JARS variable to point to 
+your peersim installation, or copy the peersim jar files to the lib
+directory. Then invoke:
+
+To compile the sources, invoke:
+
+  make
+
+To compile the API documentation, invoke:
+
+  make doc
+

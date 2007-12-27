@@ -17,6 +17,7 @@
     [<a href="#people">People</a>]
     [<a href="#download">Download</a>]
     [<a href="#docs">Documentation</a>]
+    [<a href="#extras">Peersim Extras</a>]
     [<a href="#code">Additional Code</a>]
    <!-- [<a href="#projects">Projects</a>] -->
 </p>
@@ -143,119 +144,211 @@ moderated and extremely low-traffic.
 
 <table class="title">
     <tbody><tr>
-      <td class="title" id="code">Additional Code</td>
+      <td class="title" id="extras">Peersim Extras</td>
       <td class="top"><a href="#top">top</a></td>
     </tr>
     </tbody>
 </table>
 
-<p>We use Peersim to simulate several P2P protocols. In this section, we make
-available the code of the more interesting protocols. If the protocol is described
-in a scientific paper, we provide
-both the code of the protocols and the configuration files needed to reproduce
-the experiments described in the publications.</p> 
+<p>
+Peersim cannot grow forever. Still, each of us has
+developed a lot of additional code that could be useful to somebody
+else. To avoid to "bloat" Peersim, we have decided to create the
+Peersim Extras repository for code that (i)  has not reached the 
+maturity required to be included in Peersim, or (ii) is too specific 
+for the mainstream Peersim.
+</p>
+<p>
+Peersim Extras' CVS repository can be checked out through anonymous 
+(pserver) CVS with the following instruction set. The module is <tt>extras</tt>. 
+When prompted for a password for anonymous, simply press the Enter key. 
+</p>
 
-<ul>
-  <li>
-    <em>OverStat</em> is a collection of <em>aggregation</em> protocols.
+<pre>
+cvs -d:pserver:anonymous@peersim.cvs.sourceforge.net:/cvsroot/peersim login
+ 
+cvs -z3 -d:pserver:anonymous@peersim.cvs.sourceforge.net:/cvsroot/peersim co -P extras
+</pre>
+
+<table class="title">
+    <tbody><tr>
+      <td class="title" id="code">User code</td>
+      <td class="top"><a href="#top">top</a></td>
+    </tr>
+    </tbody>
+</table>
+
+<p>
+The following table page contains additional packages developed by Peersim users for
+their research. We provide them "as it is": please refer to the
+maintainers names and addresses listed below for further information 
+and support.
+</p>
+
+<p>
+If you are interested in advertise your Peersim code, please write
+to Gian Paolo Jesi (jesi@cs.unibo.it) providing a short description,
+a link to your code and your name and address.
+If your code has been used to write a scientific publication, please 
+provide also a link to it and make sure that the result of your
+publications can be reproduced with the configuration files contained 
+in your code.
+</p>
+
+<table class="third">
+<thead>
+<tr>
+  <td class="third"><b>Description</b></td>
+  <td class="third"><b>Code</b></td>
+  <td class="third"><b>Maintainer</b></td>
+</tr>
+</thead>
+<tbody>
+
+<tr>
+  <td class="third">
+    <b>Pastry</b><br />
+    An implementation of the Pastry protocol for Peersim. Lab assignment for the Distributed
+    Systems course at the University of Trento.
+  </td>
+  <td class="third">
+    <a href="code/pastry.tar.gz">pastry.tar.gz</a>
+  </td>
+  <td class="third">
+    Andrea Presa (<a href="mailto:presa.andrea@gmail.com">presa.andrea@gmail.com</a>)
+  </td>
+</tr>
+
+<tr>
+  <td class="third">
+    <b>Chord</b><br />
+    An implementation of the Chord protocol for Peersim. Lab assignment for the Distributed
+    Systems course at the University of Trento.
+  </td>
+  <td class="third">
+    <a href="code/chord.tar.gz">chord.tar.gz</a>
+  </td>
+  <td class="third">
+    Manuel Cortella (<a href="mailto:manuel.cortella@studenti.unitn.it">manuel.cortella@studenti.unitn.it</a>)<br />
+    Elisa Bisoffi (<a href="mailto:elisa.bisoffi@studenti.unitn.it">elisa.bisoffi@studenti.unitn.it</a>)
+  </td>
+</tr>
+
+<tr>
+  <td class="third"> 
+    <b>Skipnet</b><br />
+    An implementation of the Skipnet protocol for Peersim. Lab assignment for the Distributed
+    Systems course at the University of Trento.
+  </td>
+  <td class="third">
+    <a href="code/skipnet.tar.gz">skipnet.tar.gz</a>
+  </td>
+  <td class="third">
+    Rodolfo Cartas Ayala (<a href="mailto:rodolfocartas@gmail.com">rodolfocartas@gmail.com</a>)
+  </td>
+</tr>
+<tr>
+  <td class="third">
+    <b>Aggregation</b><br />
     Aggregation is a collective term for a set of functions aimed at providing
     statistical information over distributed systems, such as the average 
-    load of the nodes or the size of the network. We have
-    developed extremely scalable, robust and decentralized aggregation protocols.
-    The protocols are described in the following papers:
-    <ul>
-      <li>
-        Alberto Montresor, M&aacute;rk Jelasity, and Ozalp Babaoglu.
-        Robust Aggregation Protocols for Large-Scale Overlay Networks.
-        In <em>Proceedings of the 2004 International Conference on
-        Dependable Systems and Networks (DSN'04)</em>}, 
-        pages 19-28, Florence, Italy, June 2004. IEEE Computer Society.
-        <a href="http://www.cs.unibo.it/bison/publications/dsn04.pdf">PDF Version</a>
-      </li>
-      <li>
-        M&aacute;rk Jelasity and Alberto Montresor.
-        Epidemic-Style Proactive Aggregation in Large Overlay Networks.
-        In <em>Proceedings of the 24th International Conference on
-        Distributed Computing Systems (ICDCS'04)</em>, pages 102-109, 
-        Tokyo, Japan, March 2004. IEEE Computer Society.
-        <a href="http://www.cs.unibo.it/bison/publications/icdcs04.pdf">PDF Version</a>
-      </li>
-    </ul>  
-    A journal paper covering also these papers has been accepted for publication in
-    ACM Transactions on Computer Systems
-    (TOCS). The code and the configuration files needed to reproduce our results
-    (with detailed reference to the actual figures in the journal paper)
-    are available <a href="code/aggregation.tgz">here</a>.
-  </li>
-  <li>
-    <em>SG-1</em> is a protocol for self-organizing and maintaining a superpeer
-    based topology. The protocol is described in the following paper:
-    <ul>
-      <li>
-        Alberto Montresor. A Robust Protocol for Building Superpeer Overlay Topologies.
-        In <em>Proceedings of the 4th International Conference on Peer-to-Peer Computing</em>,
-        Zurich, Switzerland, August 2004. IEEE. 
-        <a href="http://www.cs.unibo.it/techreports/2004/2004-08.pdf">PDF Version</a>
-      </li>
-    </ul>  
-    The code and the configuration files used to generate the experimental results in
-    this paper are available
-    <a href="code/superpeer.tgz">here</a>.
-  </li>
-  <li>
+    load of the nodes or the size of the network. We have developed extremely 
+    scalable, robust and decentralized aggregation protocols, described
+    in:
+    <P> M&aacute;rk Jelasity, Alberto Montresor, and Ozalp Babaoglu. <CITE>Gossip-based aggregation in large dynamic networks</CITE>.
+    ACM Trans. Comput. Syst., 23(1):219-252, August 2005.
+    <A HREF="http://www.cs.unibo.it/bison/publications/aggregation-tocs.pdf">[PDF]</A>,
+    <A HREF="http://www.dit.unitn.it/~montreso/pubs/refs/JMB05.bib">[Bibtex]</A>.
+    </P> 
+  </td>
+  <td class="third">
+    <a href="code/aggregation.tgz">aggregation.tgz</a>
+  </td>
+  <td class="third">
+    Alberto Montresor (<a href="mailto:alberto.montresor@unitn.it">alberto.montresor@unitn.it</a>)
+  </td>
+</tr>
+<tr>
+  <td class="third">
+  <b>SG-1</b> <br />
+  A protocol for self-organizing and maintaining a superpeer-based topology. 
+  <P>
+  Alberto Montresor. <CITE>A Robust Protocol for Building Superpeer Overlay Topologies</CITE>.
+  In Proceedings of the 4th International Conference on Peer-to-Peer Computing,
+  Zurich, Switzerland, August 2004. IEEE. 
+  <A HREF="http://www.cs.unibo.it/pub/TR/UBLCS/2004/2004-08.pdf">[PDF]</A>,
+  <A HREF="http://www.dit.unitn.it/~montreso/pubs/refs/Mon04.bib">[Bibtex]</A>.
+  </P>
+  </td>
+  <td class="third">
+  <a href="code/superpeer.tgz">superpeer.tgz</a>.
+  </td>
+  <td class="third">
+    Alberto Montresor (<a href="mailto:alberto.montresor@unitn.it">alberto.montresor@unitn.it</a>)
+  </td>
+</tr>
+<tr>
+  <td class="third">
+    <B>Peer sampling service</B><BR />
     We introduced the <em>peer sampling service</em>, that can be used as a source of
     random peers by participating peers. We performed extensive experiments
     on several gossip based implementations of the service.
-    <ul>
-	<!-- Authors: Mark Jelasity and Rachid Guerraoui and Anne Marie Kermarrec and
-	  Maarten van Steen -->
-	<li><a name="JGKvS04">M</a>&aacute;rk Jelasity,
-	  Rachid Guerraoui, Anne-Marie Kermarrec, and Maarten van Steen.
-	<a href="http://www.inf.u-szeged.hu/~jelasity/cikkek/middleware04.pdf">The peer sampling service: Experimental evaluation of unstructured gossip-based implementations</a>.
-	In Hans-Arno Jacobsen, editor, <cite>Middleware 2004</cite>, volume 3231 of
-	  <cite>Lecture Notes in Computer Science</cite>, pages 79-98.
-	  Springer-Verlag, 2004.
-        </li>
-    </ul>  
-    The experiments can be reproduced using the <a href="code/middleware04-exp.tar.gz">archive</a>
-    that contains the implementation of the protocols and the configuration files for peersim.
-  </li>
-  <li>
+    <P>M&aacute;rk Jelasity, Rachid Guerraoui, Anne-Marie Kermarrec, and Maarten van Steen.
+    <CITE>The peer sampling service: Experimental evaluation of unstructured 
+    gossip-based implementations</CITE>. In Hans-Arno Jacobsen, editor, Middleware 2004, volume 3231 of
+    Lecture Notes in Computer Science, pages 79-98. Springer-Verlag, 2004. 
+    <a href="http://www.inf.u-szeged.hu/~jelasity/cikkek/middleware04.pdf">[PDF]</A>
+  </td>
+  <td class="third">
+    <a href="code/middleware04-exp.tar.gz">middleware04-exp.tar.gz</a>
+    </td>
+    <td class="third">
+    M</a>&aacute;rk Jelasity (<a href="mailto:jelasity@inf.u-szeged.hu">jelasity@inf.u-szeged.hu</a>)
+  </td>
+</tr>
+<tr>
+  <td class="third">
+    <B>T-Man</B><BR />
     The T-Man protocol can be used to build a wide range of different topologies
     using only a ranking function that defines the preference of each node for
-    neighbors. The original technical report is
-    <ul>
-      <li><a name="JB04">M</a>&aacute;rk Jelasity and Ozalp Babaoglu.
-	<a href="http://www.cs.unibo.it/pub/TR/UBLCS/2004/2004-07.pdf">T-Man: Fast
-	gossip-based construction of large-scale overlay topologies</a>.
-	Technical Report UBLCS-2004-7, University of Bologna, Department of Computer
-	Science, Bologna, Italy, May 2004.
-	<a href="http://www.cs.unibo.it/pub/TR/UBLCS/2004/2004-07.pdf">http://www.cs.unibo.it/pub/TR/UBLCS/2004/2004-07.pdf</a>.</li>
-    </ul>
-    The experiments in the technical report can be reproduced using the <a href="code/UBLCS-2004-7.tar.gz">archive</a>
-    that contains the implementation of the protocols and the configuration files for peersim.
-  </li>
-<li>
+    neighbors. The original technical report is:
+    <P>M</a>&aacute;rk Jelasity and Ozalp Babaoglu.
+    <CITE>T-Man: Fast gossip-based construction of large-scale overlay topologies</CITE>.
+    Technical Report UBLCS-2004-7, University of Bologna, Department of Computer
+    Science, Bologna, Italy, May 2004.
+    <a href="http://www.cs.unibo.it/pub/TR/UBLCS/2004/2004-07.pdf">[PDF]</a>.
+    </P>
+  </td>
+  <td class="third">
+    <a href="code/UBLCS-2004-7.tar.gz">UBLCS-2004-7.tar.gz</a>
+  </td>
+  <td class="third">
+    M</a>&aacute;rk Jelasity (<a href="mailto:jelasity@inf.u-szeged.hu">jelasity@inf.u-szeged.hu</a>)
+  </td>
+</tr>
+<tr>
+  <td class="third">
+    <B>PdProtocol</B><BR />
     The PdProtocol plays the Prisoner Dilemma between nodes in a
     network to achieve cooperation. It is based on a socially inspired mechanism
-    (based on "tags") applied to P2P networks. The original technical report is the following: 
-    <ul>
-      <li>Andrea Marcozzi, David Hales, Gian Paolo Jesi, Stefano
-      Arteconi, Ozalp Babaoglu.
-      <a
-      href="http://www.cs.unibo.it/pub/TR/UBLCS/2005/2005-15.pdf">Tag-Based Cooperation in Peer-to-Peer Networks with Newscast</a>.
-      Technical Report UBLCS-2005-15, University of Bologna, Department of Computer Science, Bologna, Italy, June 2005.
-    </li>
-    </ul>
-    The protocol source code and the configuration file to reproduce
-    the experimental results shown in document are available <a href="code/pdprotocol.tgz">here</a>.
-</li>
-
-<li>
-    The SLACER protocol generates a cooperative artificial social network (ASN) in a P2P overlay. Its related papers are the following:
+    (based on "tags") applied to P2P networks. 
+    <p>    
+    Andrea Marcozzi, David Hales, Gian Paolo Jesi, Stefano Arteconi, Ozalp Babaoglu.
+    <CITE>Tag-Based Cooperation in Peer-to-Peer Networks with Newscast</CITE>. Technical Report UBLCS-2005-15, University of Bologna, Department of Computer Science, Bologna, Italy, June 2005. <a href="http://www.cs.unibo.it/pub/TR/UBLCS/2005/2005-15.pdf">[PDF]</A>
+  </td>
+  <td class="third">
+    <a href="code/pdprotocol.tgz">pdprotocol.tgz</a>.
+  </td>
+  <td class="third">
+    Stefano Arteconi (<a href="mailto:arteconi@cs.unibo.it">arteconi@cs.unibo.it</a>)
+  </td>
+</tr>
+<tr>
+  <td class="third">
+    <B>Slacer</B> <BR />
+    This protocol generates a cooperative artificial social network (ASN) in a P2P overlay. Its related papers are the following:
     <ul>
       <li>David Hales and Stefano Arteconi.
-      
 	SLACER: A Self-Organizing Protocol for Coordination in Peer-to-Peer Networks. To appear in IEEE Intelligent System journal.
     </li>
     <li>
@@ -265,16 +358,19 @@ the experiments described in the publications.</p>
 	here</a>. 
     </li>
     </ul>
-    The protocol source code and the configuration file to reproduce the experimental results shown in document 
-    are available <a href="code/slacer.tgz">here</a>.
-</li>
-
-<li>
-    Additional code regarding ASN inspired algorithms (PD + Greedy
-    Cheating Liars, Weakest link, and Broadcast) is 
-    available <a href="code/GCL-weakestLink-bcast.tgz">here</a>. 
-    The algorithms are analyzed and discussed respectively in the
-    following technical reports:
+  </td>
+  <td class="third">
+    <a href="code/slacer.tgz">slacer.tgz</a>.
+  </td>
+  <td class="third">
+    Stefano Arteconi (<a href="mailto:arteconi@cs.unibo.it">arteconi@cs.unibo.it</a>)
+  </td>
+</tr>
+<tr>
+  <td class="third">
+    Additional algorithms regarding ASN inspired algorithms (PD + Greedy
+    Cheating Liars, Weakest link, and Broadcast) are analyzed and 
+    discussed respectively in the following technical reports:
     
     <ul>
     <li>
@@ -304,37 +400,44 @@ the experiments described in the publications.</p>
     Department of Computer Science, Bologna, Italy, October 2006.
     </li>
     </ul>
-
-</li>
-
-<li>
-    ResourceWorld and
-    SkillWorld are protocols claiming to produce emergent social
+  </td>
+  <td class="third">
+    <a href="code/GCL-weakestLink-bcast.tgz">GCL-weakestLink-bcast.tgz</a>
+  </td>
+  <td class="third">
+    Stefano Arteconi (<a href="mailto:arteconi@cs.unibo.it">arteconi@cs.unibo.it</a>)
+  </td>
+</tr>
+<tr>
+  <td class="third">
+    <B>ResourceWorld, SkillWorld</B> <BR />
+    Protocols claiming to produce emergent social
     rationality in peer-to-peer networks.
     The original technical report is the following:
 
-    <ul>
-    <li>
+    <p>
     Andrea Marcozzi and David Hales
     <a
     href="http://www.cs.unibo.it/pub/TR/UBLCS/2006/2006-26.pdf">Emergent
     Social Rationality in a Peer-to-Peer System</a>.
     Technical Report UBLCS-2006-23, University of Bologna,
     Department of Computer Science, Bologna, Italy, October 2006.
-    </li>
-    </ul>
-
-    The code used to generate the graphs in the
-    paper is available <a href="code/RwSw.tgz">here</a>.
-
-</li>
-
-<li>
+    </P>
+  </td>
+  <td class="third">
+  <a href="code/RwSw.tgz">RwSw.tgz</a>
+  </td>
+  <td class="third">
+    Andrea Marcozzi (<a href="mailto:marcozzi@cs.unibo.it">marcozzi@cs.unibo.it</a>)
+  </td>
+</tr>
+<tr>
+  <td class="third">
+    <B>FirmNet</B> <BR />
     The FirmNet protocol promotes the allocation of tasks in a
     knowledge-based economy. The original technical report is the following:
 
-    <ul>
-    <li>
+    <P>
     Edoardo Mollona and Andrea Marcozzi.
     <a
     href="http://www.cs.unibo.it/pub/TR/UBLCS/2006/2006-26.pdf">FirmNet:
@@ -342,18 +445,19 @@ the experiments described in the publications.</p>
     Economy</a>.
     Technical Report UBLCS-2006-22, University of Bologna,
     Department of Computer Science, Bologna, Italy, November 2006.
-    </li>
-    </ul>
+    </P>
+  </td>
+  <td class="third">
+  <a href="code/Fn.tgz">Fn.tgz</a>
+  </td>
+  <td class="third">
+    Andrea Marcozzi (<a href="mailto:marcozzi@cs.unibo.it">marcozzi@cs.unibo.it</a>)
+  </td>
+</tr>
+  </tbody>
+</table>
+<br /><br />
 
-    The code used to generate the graphs in the
-    paper is available <a href="code/Fn.tgz">here</a>.
-
-</li>
-
-</ul>
-
-
-<hr/>
 <address>
 <a href="http://validator.w3.org/check?uri=referer"><img
         src="http://www.w3.org/Icons/valid-xhtml10"

@@ -16,6 +16,19 @@ table.title {
   padding-bottom:0.5em
 }
 
+table.third {
+  border: 3px solid;
+  border-collapse:collapse;
+  background-color:#f0f0f0;
+  width:100%
+}
+
+td.third {
+  border: 1px solid;
+  padding: 10px
+}
+
+
 td.top {
   text-align : right;
 }

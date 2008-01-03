@@ -1,0 +1,25 @@
+pippo
+This is version 1.0 of the iSearch framework.
+It is an addon package for Peersim, providing simple overlay search
+features and message routingon top of the cycle-based simulation 
+environment.
+In other words, here we have a real message echange instead of a method 
+invocation. 
+However, this package is not memory efficient and will scale very poorly 
+with network size. The event-based simulation model is much better and 
+feature rich than iSearch.
+
+To run the example, you need java 5 and Peersim installed, and then type:
+
+java peersim.Simulator configs/config-isearch.txt
+
+in the directory of this README file in the extracted archive.
+
+For more documentation about iSearch visit the Peersim forum at
+
+http://sourceforge.net/forum/forum.php?forum_id=315476
+
+or download the iSeach tutorial at:
+
+http://jesi.web.cs.unibo.it/papers/howto-isearch.pdf
+

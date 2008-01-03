@@ -1,0 +1,36 @@
+# PEERSIM EXAMPLE iSEARCH
+random.seed 1234567890
+simulation.cycles 30
+control.0 peersim.cdsim.Shuffle
+
+network.size 100
+#network.maxsize 1000
+
+include.protocol search
+
+protocol.topology peersim.core.IdleProtocol
+protocol.topology.capacity 10
+
+protocol.search peersim.extras.gj.isearch.RWProtocol
+#protocol.search.linkable topology
+protocol.search.ttl 20
+
+init.0 peersim.dynamics.WireKOut
+#init.0.protocol topology
+init.0.protocol search
+init.0.k 20
+
+init.1 peersim.extras.gj.isearch.SearchDataInitializer
+init.1.protocol search
+init.1.keywords 1000
+init.1.query_nodes 1
+init.1.query_interval 1
+init.1.max_queries 1
+
+control.0 peersim.extras.gj.isearch.SearchObserver
+control.0.protocol search
+control.0.verbosity 1
+
+control.1 peersim.reports.DegreeStats
+control.1.protocol search
+control.1.method list

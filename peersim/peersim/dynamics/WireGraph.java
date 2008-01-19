@@ -71,7 +71,8 @@ private static final String PAR_UNDIR_ALT = "undirected";
 // --------------------------------------------------------------------------
 
 /**
- * The protocol we want to wire.
+ * The protocol we want to wire. It is negative if no protocol was set
+ * (in that case, a graph must be specified, see {@link #g}).
  */
 protected final int pid;
 

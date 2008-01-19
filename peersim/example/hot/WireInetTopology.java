@@ -77,12 +77,8 @@ public class WireInetTopology extends WireGraph {
     }
 
     /**
-     * Performs the actual wiring. It is a static factory method. Being static,
-     * it can also be invoked by a {@link peersim.dynamics.WireByMethod}
-     * initializer control.
-     * 
-     * @param g
-     *            a {@link peersim.graph.Graph} interface object to work on.
+     * Performs the actual wiring.
+     * @param g a {@link peersim.graph.Graph} interface object to work on.
      */
     public void wire(Graph g) {
         /** Contains the distance in hops from the root node for each node. */

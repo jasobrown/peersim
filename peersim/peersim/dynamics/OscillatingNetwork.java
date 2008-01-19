@@ -60,7 +60,7 @@ private static final String PAR_INIT = "init";
 /**
  * Nodes are added until the size specified by this parameter is reached. The
  * network will never exceed this size as a result of this class.
- * Defaults to {@link Network#getCapacity()}.
+ * If not set, there will be no limit on the size of the network.
  * @config
  */
 private static final String PAR_MAX = "maxsize";
@@ -119,7 +119,7 @@ public OscillatingNetwork(String prefix)
 	maxsize =
 		Configuration.getInt(
 			prefix + "." + PAR_MAX,
-			Network.getCapacity());
+			Integer.MAX_VALUE);
 	minsize = Configuration.getInt(prefix + "." + PAR_MIN, 0);
 
 	Object[] tmp = Configuration.getInstanceArray(prefix + "." + PAR_INIT);

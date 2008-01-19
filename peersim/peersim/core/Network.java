@@ -57,15 +57,15 @@ private static final String PAR_NODE = "network.node";
 
 /**
 * This config property defines the initial capacity of the overlay network.
-* See also {@link #getCapacity}.
-* If not set
-* then {@value #PAR_SIZE} will be used.
+* If not set then the value of {@value #PAR_SIZE} will be used.
+* The main purpose of this parameter is that it allows for optimization.
 * In the case of scenarios when the network needs to grow, setting this to
 * the maximal expected size of the network avoids reallocation of memory
 * during the growth of the network.
+* @see #getCapacity
 * @config
 */
-private static final String PAR_MAXSIZE = "network.maxSize";
+private static final String PAR_MAXSIZE = "network.initialCapacity";
 
 /**
 * This config property defines the initial size of the overlay network.
@@ -165,12 +165,14 @@ public static int size() { return len; }
 * Sets the capacity of the internal array storing the nodes.
 * The nodes will remain the same in the same order.
 * If the new capacity is less than the
-* old size of the node list, than the end of the list is cut.
+* old size of the node list, than the end of the list is cut. The nodes that
+* get removed via this cutting are removed through {@link #remove()}.
 */
 public static void setCapacity(int newSize) {
 
 	if( node == null || newSize != node.length )
 	{
+		for(int i=newSize; i<len; ++i) remove();
 		Node[] newnodes = new Node[newSize];
 		final int l = Math.min(node.length,newSize);
 		System.arraycopy(node,0,newnodes,0,l);

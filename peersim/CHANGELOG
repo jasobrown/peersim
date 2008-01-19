@@ -1,3 +1,10 @@
+MJ 19/01/08
+- Changed default of parameter "maxsize" in DynamicNetwork and
+  OscillatingNetwork. Now the default is: no limit on the size.
+- Changed confusing parameter name "network.maxSize" to
+  "network.initialCapacity".
+- Fixed a bug in Network.setCapacity: now it removes nodes correctly.
+
 AM 24/12/2007
 VERSION 1.0.3 RELEASED
 ------------------------------------------------------------------

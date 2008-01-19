@@ -76,7 +76,7 @@ private static final String PAR_ADD = "add";
 /**
  * Nodes are added until the size specified by this parameter is reached. The
  * network will never exceed this size as a result of this class.
- * Defaults to {@link Network#getCapacity()}.
+ * If not set, there will be no limit on the size of the network.
  * @config
  */
 private static final String PAR_MAX = "maxsize";
@@ -170,7 +170,7 @@ public DynamicNetwork(String prefix)
 		//System.out.println("Inits " + tmp[i]);
 		inits[i] = (NodeInitializer) tmp[i];
 	}
-	maxsize=Configuration.getInt(prefix+"."+PAR_MAX,Network.getCapacity());
+	maxsize=Configuration.getInt(prefix+"."+PAR_MAX,Integer.MAX_VALUE);
 	minsize = Configuration.getInt(prefix + "." + PAR_MIN, 0);
 }
 

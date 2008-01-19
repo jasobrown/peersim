@@ -73,7 +73,7 @@ private static final String PAR_UNDIR_ALT = "undirected";
 /**
  * The protocol we want to wire.
  */
-private final int pid;
+protected final int pid;
 
 /** If true, method pack() is invoked on the initialized protocol */
 private final boolean pack;

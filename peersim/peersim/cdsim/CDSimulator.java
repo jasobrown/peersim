@@ -184,6 +184,7 @@ public static final void nextExperiment()
 
 	// initialization
 	CDState.setCycle(0);
+	CDState.setPhase(CDState.PHASE_UNKNOWN);
 	System.err.println("CDSimulator: resetting");
 	controls = null;
 	ctrlSchedules = null;

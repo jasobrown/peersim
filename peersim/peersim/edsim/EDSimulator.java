@@ -19,6 +19,8 @@
 package peersim.edsim;
 
 import java.util.*;
+
+import peersim.cdsim.*;
 import peersim.config.*;
 import peersim.core.*;
 
@@ -336,6 +338,7 @@ public static void nextExperiment()
 
 	// initialization
 	System.err.println("EDSimulator: resetting");
+	CDState.setPhase(CDState.PHASE_UNKNOWN);
 	controls = null;
 	ctrlSchedules = null;
 	heap = new Heap();

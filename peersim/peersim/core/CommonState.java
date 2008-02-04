@@ -79,7 +79,7 @@ private static int toshift = -1;
 /**
  * Information about where exactly the simulation is.
  */
-private static int phase = 0;
+private static int phase = PHASE_UNKNOWN;
 
 /**
  * The current pid.

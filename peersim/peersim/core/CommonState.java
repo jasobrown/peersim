@@ -49,7 +49,7 @@ public static final int POST_SIMULATION = 1;
 
 /**
 * Constant that can be used as a value of simulation phase.
-* It means that the simulation phase information has not been (unknown).
+* It means that the simulation phase information has not been set (unknown).
 * @see #getPhase
 */
 public static final int PHASE_UNKNOWN = 0;

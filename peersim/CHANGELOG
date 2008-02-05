@@ -1,7 +1,8 @@
 AM 04/02/08
 - Solved a bug in phase management for both cd and ed
-  simulations: at the end of a simulation, phase is set
-  to POST_SIMULATION and never gets back to UNKNOWN_PHASE.
+  simulations: at the end of the first experiment, phase was set
+  to POST_SIMULATION and in subsequent experiments it stayed that way
+  (never set back to UNKNOWN_PHASE).
   (Credits to Alessandro Russo)
 
 MJ 19/01/08

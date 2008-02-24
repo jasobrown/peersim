@@ -156,12 +156,12 @@ protected void add(int n)
 // ------------------------------------------------------------------
 
 /**
- * Removes n random nodes from the network. Extending classes can implement any
- * algorithm to do that. The default algorithm removes random nodes simply by
- * calling {@link Network#remove()}. This is equivalent to permanent failure
- * without any cleanup.
- * @param n
- *          the number of nodes to remove
+ * Removes n nodes from the network. Extending classes can implement any
+ * algorithm to do that. The default algorithm removes <em>random</em>
+ * nodes <em>permanently</em> simply by
+ * calling {@link Network#remove()} after swapping a random node to the last
+ * position (that is removed by {@link Network#remove()}).
+ * @param n the number of nodes to remove
  */
 protected void remove(int n)
 {

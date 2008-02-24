@@ -24,7 +24,8 @@ import peersim.core.*;
 
 /**
  * Initializes the values so that {@value #PAR_PEAKS} nodes have value
- * {@value #PAR_VALUE}/{@value #PAR_PEAKS}, the rest zero.
+ * {@value #PAR_VALUE}/{@value #PAR_PEAKS}, the rest {@value #PAR_LVALUE}
+ * (zero by default).
  * @see VectControl
  * @see peersim.vector
  */
@@ -42,6 +43,13 @@ public class PeakDistribution extends VectControl
  */
 private static final String PAR_VALUE = "value";
 
+/** 
+ * The value for the nodes that are not peaks. This parameter is optional,
+ * by default, the nodes that are
+ * not peaks are set to zero. This value overrides that behavior.
+ * @config
+ */
+private static final String PAR_LVALUE = "background";
 
 /** 
  * The number of peaks in the system. If this value is greater than or equal to
@@ -56,6 +64,9 @@ private static final String PAR_PEAKS = "peaks";
 // --------------------------------------------------------------------------
 // Fields
 // --------------------------------------------------------------------------
+
+/** Total load */
+private final Number lvalue;
 
 /** Total load */
 private final Number value;
@@ -79,10 +90,17 @@ public PeakDistribution(String prefix)
 	peaks = Configuration.getDouble(prefix+"."+PAR_PEAKS, 1);
 	
 	if( setter.isInteger() )
+	{
 		value = new Long(Configuration.getLong(prefix+"."+PAR_VALUE));
+		lvalue = new Long(Configuration.getLong(prefix+"."+PAR_LVALUE,0));
+	}
 	else
+	{
 		value = new Double(Configuration.getDouble(prefix + "." +
 		PAR_VALUE));
+		lvalue = new Double(Configuration.getDouble(prefix + "." +
+		PAR_LVALUE,0));
+	}
 }
 
 // --------------------------------------------------------------------------
@@ -101,14 +119,16 @@ public boolean execute()
 	if( setter.isInteger() )
 	{
 		long v = value.longValue()/pn;
+		long lv = lvalue.longValue();
 		for (int i=0; i < pn; i++) setter.set(i, v);
-		for (int i=pn; i < Network.size(); i++) setter.set(i,0);
+		for (int i=pn; i < Network.size(); i++) setter.set(i,lv);
 	}
 	else
 	{
 		double v = value.doubleValue()/pn;
+		double lv = lvalue.doubleValue();
 		for (int i=0; i < pn; i++) setter.set(i, v);
-		for (int i=pn; i < Network.size(); i++) setter.set(i,0.0);
+		for (int i=pn; i < Network.size(); i++) setter.set(i,lv);
 	}
 
 	return false;

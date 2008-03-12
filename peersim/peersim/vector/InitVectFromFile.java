@@ -85,9 +85,6 @@ public InitVectFromFile(String prefix)
  * is ignored.
  * The file can contain more values than necessary but
  * enough values must be present.
- * Lines starting with # or lines that contain only whitespace are ignored. The
- * file can contain more values than necessary but enough values must be
- * present.
  * @throws RuntimeException if the file cannot be read or contains too few
  * values
  * @return always false

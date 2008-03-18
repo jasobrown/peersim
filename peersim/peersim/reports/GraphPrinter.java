@@ -48,8 +48,11 @@ private static final String PAR_BASENAME = "outf";
 * which is a plain dump of neighbors. The class
 * {@link peersim.dynamics.WireFromFile} can read this format.
 * Other supported formats are "chaco" to be used with Yehuda Koren's
-* Embedder, "netmeter" to be used with Sergi Valverde's netmeter and
-* "edgelist" that dumps one (directed) node pair in each line for each edge.
+* Embedder, "netmeter" to be used with Sergi Valverde's netmeter and also
+* with pajek,
+* "edgelist" that dumps one (directed) node pair in each line for each edge,
+* "gml" that is a generic format of many graph tools, and "dot" that can
+* be used with the graphviz package.
 * @see GraphIO#writeEdgeList
 * @see GraphIO#writeChaco
 * @see GraphIO#writeNeighborList
@@ -118,6 +121,10 @@ try {
 		GraphIO.writeChaco(g, pstr);
 	else if( format.equals("netmeter") )
 		GraphIO.writeNetmeter(g, pstr);
+	else if( format.equals("gml") )
+		GraphIO.writeGML(g, pstr);
+	else if( format.equals("dot") )
+		GraphIO.writeDOT(g, pstr);
 	else
 		System.err.println(name+": unsupported format "+format);
 	

@@ -74,6 +74,32 @@ public static void writeNeighborList( Graph g, PrintStream out ) {
 
 /**
 * Saves the given graph to
+* the given stream in DOT format. Good for the graphviz package.
+*/
+public static void writeDOT( Graph g, PrintStream out ) {
+
+	out.println((g.directed()?"digraph":"graph")+" {");
+	
+	for(int i=0; i<g.size(); ++i)
+	{
+		Iterator<Integer> it=g.getNeighbours(i).iterator();
+		while(it.hasNext())
+		{
+			final int j = it.next();
+			if(g.directed())
+				out.println(i+" -> "+j+";");
+			else if( i<=j )
+				out.println(i+" -- "+j+";");
+		}
+	}
+	
+	out.println("}");
+}
+
+// ------------------------------------------------------------------
+
+/**
+* Saves the given graph to
 * the given stream in GML format.
 */
 public static void writeGML( Graph g, PrintStream out ) {

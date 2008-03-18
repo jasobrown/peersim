@@ -51,7 +51,17 @@ public class WireFromFile extends WireGraph {
 */
 private static final String PAR_FILE = "file";
 
+/** 
+*  The number of neighbors to be read from the file. If unset, the default
+* behavior is to read all links in the file. If set, then the first k
+* neighbors will be read only.
+*  @config
+*/
+private static final String PAR_K = "k";
+
 private final String file;
+
+private final int k;
 
 // ==================== initialization ==============================
 // ==================================================================
@@ -66,6 +76,7 @@ public WireFromFile(String prefix) {
 
 	super(prefix);
 	file = Configuration.getString(prefix+"."+PAR_FILE);
+	k = Configuration.getInt(prefix + "." + PAR_K, Integer.MAX_VALUE);
 }
 
 
@@ -93,23 +104,24 @@ try
 		if( line.startsWith("#") ) continue;
 		StringTokenizer st = new StringTokenizer(line);
 		if(!st.hasMoreTokens()) continue;
-		int from = Integer.parseInt(st.nextToken());
+		
+		final int from = Integer.parseInt(st.nextToken());
 		if( from < 0 || from >= Network.size() )
 		{
 			wasOutOfRange = true;
 			continue;
 		}
-		while(st.hasMoreTokens())
+		
+		for(int i=0; i<k && st.hasMoreTokens(); ++i)
 		{
-			int to = Integer.parseInt(st.nextToken());
+			final int to = Integer.parseInt(st.nextToken());
 			if( to < 0 || to >= Network.size() )
-			{
 				wasOutOfRange = true;
-				continue;
-			}
-			g.setEdge(from,to);
+			else
+				g.setEdge(from,to);
 		}
 	}
+
 	if( wasOutOfRange )
 		System.err.println("WireFromFile warning: in "+file+" "+
 			"some nodes were out of range and so ignored.");

@@ -21,7 +21,7 @@ package peersim.core;
 
 /**
 * Instances of classes implementing this interface
-* maintain a fail state, ie information about the availability
+* maintain a fail state, i.e. information about the availability
 * of the object.
 */
 public interface Fallible {

@@ -56,7 +56,7 @@ private final Number min;
 /** Maximum value */
 private final Number max;
 
-/** step value */
+/** Step value */
 private final double step;
 
 // --------------------------------------------------------------------------

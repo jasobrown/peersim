@@ -47,7 +47,7 @@ private static final int SIZE = 65536;
 /** Event component of the heap */
 private Object[] events;
 
-/** Time componenent of the heap */
+/** Time component of the heap */
 private long[] times;
 
 /** Node component of the heap */
@@ -103,7 +103,7 @@ public int size()
  * Add a new event, to be scheduled at the specified time.
  * 
  * @param time the time at which this event should be scheduled
- * @param event the object decribing the event
+ * @param event the object describing the event
  * @param node the node at which the event has to be delivered
  * @param pid the protocol that handles the event
  */

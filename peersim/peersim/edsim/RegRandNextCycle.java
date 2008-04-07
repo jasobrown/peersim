@@ -23,7 +23,7 @@ import peersim.core.*;
 
 /**
 * Implements a random delay, but making sure there is exactly one call in each
-* consequtive <code>step</code> time units.
+* consecutive <code>step</code> time units.
 */
 public class RegRandNextCycle extends NextCycleEvent {
 
@@ -65,7 +65,7 @@ public Object clone() throws CloneNotSupportedException {
 
 /**
 * Returns a random delay but making sure there is exactly one invocation in each
-* consequtive interval of length <code>step</code>. The beginning of these
+* consecutive interval of length <code>step</code>. The beginning of these
 * intervals is defined by the first invocation which is in turn defined by
 * {@link CDScheduler} that initiates the protocol in question.
 */

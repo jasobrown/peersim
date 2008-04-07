@@ -20,7 +20,7 @@ package peersim.util;
 
 /**
 * A class that can keep track of some statistics like variance, average, min,
-* max incremetally. That is, when adding a new data item, it updates the
+* max incrementally. That is, when adding a new data item, it updates the
 * statistics.
 */
 public class IncrementalStats {

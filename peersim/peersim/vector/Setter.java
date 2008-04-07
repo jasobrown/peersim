@@ -30,7 +30,7 @@ import peersim.core.*;
  * For backward compatibility, if no method is specified, the method
  * <code>setValue</code> is used. In this way, protocols
  * implementing the {@link SingleValue} interface can be manipulated using the
- * old configuration syntax (ie, without specifying the method).
+ * old configuration syntax (i.e., without specifying the method).
  * <p>
  * Please refer to package {@link peersim.vector} for a detailed description of 
  * the concept of protocol vector and the role of getters and setters. 
@@ -44,7 +44,7 @@ private final String protocol;
 private final String methodn;
 private final String prefix;
 
-/** Identifier of the protocol that defines the vetor */
+/** Identifier of the protocol that defines the vector */
 private int pid;
 
 /** Setter method name */

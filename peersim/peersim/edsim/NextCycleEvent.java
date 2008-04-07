@@ -26,7 +26,7 @@ import peersim.cdsim.CDProtocol;
 * This class is used to wrap a {@link CDProtocol} instance into an event so
 * that it can be used in the event based simulation engine.
 * This class is responsible for calling
-* {@link CDProtocol#nextCycle} and also to schedule the consequtive cycle.
+* {@link CDProtocol#nextCycle} and also to schedule the consecutive cycle.
 * In the configuration of an event driven simulation {@link CDProtocol}s can be
 * configured using {@link CDScheduler}, which places appropriate instances of
 * this events in the queue.
@@ -95,7 +95,7 @@ public final void execute() {
 
 /**
 * Calculates the delay until the next execution of the protocol.
-* This default impementation returns a constant delay equal to the step
+* This default implementation returns a constant delay equal to the step
 * parameter (cycle length in this case) of the schedule of this event
 * (as set in the config file).
 */

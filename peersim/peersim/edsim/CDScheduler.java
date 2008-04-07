@@ -142,7 +142,7 @@ public CDScheduler(String n) {
 /**
  * Schedules the protocol at all nodes
  * for the first execution adding it to the priority queue of the event driven
- * simulation. The time of the first execution is detemined by
+ * simulation. The time of the first execution is determined by
  * {@link #firstDelay}. The implementation calls {@link #initialize}
  * for all nodes.
  * @see #initialize
@@ -162,7 +162,7 @@ public boolean execute() {
 /**
  * Schedules the protocol at given node
  * for the first execution adding it to the priority queue of the event driven
- * simulation. The time of the first execution is detemined by a reference
+ * simulation. The time of the first execution is determined by a reference
  * point in time and {@link #firstDelay}, which defines the delay from the
  * reference point.
  * The reference point is the maximum of the current time, and the
@@ -176,7 +176,7 @@ public boolean execute() {
  * not to use parameter {@value peersim.core.Scheduler#PAR_FROM}
  * in protocols, but
  * to schedule {@link CDScheduler} itself for the desired time, whenever
- * possible (eg, it is not possible if {@link CDScheduler} is used as a
+ * possible (e.g., it is not possible if {@link CDScheduler} is used as a
  * {@link NodeInitializer}).
 */
 public void initialize(Node n) {

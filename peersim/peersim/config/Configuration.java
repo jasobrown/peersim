@@ -36,7 +36,7 @@ import java.util.*;
  * processing, and offers some utility functions. This extended
  * functionality consists of the following: reading values with type
  * checking, ordering of entries, pre-processing protocol names, parsing
- * expressions, resolving underspecified classnames, and finaly some basic
+ * expressions, resolving underspecified classnames, and finally some basic
  * debugging possibilities. We discuss these in the following.
  * <p>
  * Note that the configuration is initialized using a Properties object.
@@ -47,7 +47,7 @@ import java.util.*;
  * <h3>Typed reading of values</h3>
  * Properties can have arbitrary values of type String. This class offers a
  * set of read methods that perform the appropriate conversion of the
- * string value to the given type, eg long. They also allow for specifiying
+ * string value to the given type, eg long. They also allow for specifying
  * default values in case the given property is not specified.
  * <h3>Resolving class names</h3>
  * 
@@ -103,7 +103,7 @@ import java.util.*;
  * 
  * where the names are separated by any non-word character (non
  * alphanumeric or underscore). If not all names are listed then the given
- * order is followed by alphabetical order of the rest of the items, eg
+ * order is followed by alphabetical order of the rest of the items, e.g.
  * 
  * <pre>
  *   order.control 2
@@ -340,7 +340,7 @@ public static void setConfig(Properties p, boolean check)
 // -------------------------------------------------------------------
 
 /**
- * @return true if and only if name is a specified (exisitng) property.
+ * @return true if and only if name is a specified (existing) property.
  */
 public static boolean contains(String name)
 {
@@ -638,7 +638,7 @@ public static Object getInstance(String name, Object def)
  * calling {@link #getInstance(String)} on the names returned by
  * {@link #getNames(String)}.
  * @param name
- *          The component type (ie prefix of the list of configuration
+ *          The component type (i.e. prefix of the list of configuration
  *          properties) which will be passed to {@link #getNames(String)}.
  */
 public static Object[] getInstanceArray(String name)
@@ -653,10 +653,10 @@ public static Object[] getInstanceArray(String name)
  * sorted as follows. If there is no config entry
  * <code>{@value #PAR_INCLUDE}+"."+name</code> or
  * <code>{@value #PAR_ORDER}+"."+name</code> then the order is
- * aplhabetical. Otherwise this entry defines the order. For more
+ * alphabetical. Otherwise this entry defines the order. For more
  * information see {@link Configuration}.
  * @param name
- *          the component type (ie, the prefix)
+ *          the component type (i.e., the prefix)
  * @return the full property names in the order specified by the
  *         configuration
  */

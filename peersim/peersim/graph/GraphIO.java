@@ -22,7 +22,7 @@ import java.util.*;
 import java.io.*;
 
 /**
-* Implenments static methods to load and write graphs.
+* Implements static methods to load and write graphs.
 */
 public class GraphIO {
 private GraphIO() {}
@@ -34,7 +34,7 @@ private GraphIO() {}
 
 /**
 * Prints graph in edge list format. Each line contains exactly two
-* node id-s separated by whitespace.
+* node IDs separated by whitespace.
 */
 public static void writeEdgeList( Graph g, PrintStream out ) {
 
@@ -248,7 +248,7 @@ public static void writeChaco( Graph g, PrintStream out ) {
 * </ul>
 * @param file Filename to read
 * @param direction If 0, the original directionality is preserved, if 1,
-* than each edge is reversed, if 2 then directionalty is dropped and the
+* than each edge is reversed, if 2 then directionality is dropped and the
 * returned graph will be undirected.
 */
 public static Graph readNewscastGraph( String file, int direction )

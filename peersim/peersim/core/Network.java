@@ -34,7 +34,7 @@ import java.util.Arrays;
 * sake of efficiency.
 * Each node has an array of protocols. The protocols within a node can
 * interact directly as defined by their implementation, and can be imagined as
-* processes running in a common local environment (ie the node).
+* processes running in a common local environment (i.e. the node).
 * This class is called a "network" because, although it is only a set of nodes,
 * in most simulations there is at least one {@link Linkable} protocol that
 * defines connections between nodes. In fact, such a {@link Linkable} protocol
@@ -79,7 +79,7 @@ private static final String PAR_SIZE = "network.size";
 * efficiency has the highest priority here. The main purpose is to allow
 * the package quick reading of the contents in a maximally flexible way.
 * Nevertheless, methods of this class should be used instead of the array
-* when modifiying the contents.
+* when modifying the contents.
 * Because this array is not private,
 * it is necessary to know that the actual node set is only the first
 * {@link #size()} items of the array.
@@ -185,7 +185,7 @@ public static void setCapacity(int newSize) {
 
 /**
 * Returns the maximal number of nodes that can be stored without reallocating
-* the underlying array to increase capcity.
+* the underlying array to increase capacity.
 */
 public static int getCapacity() { return node.length; }
 
@@ -209,7 +209,7 @@ public static void add( Node n ) {
 * Returns node with the given index. Note that the same node will normally
 * have a different index in different times.
 * This can be used as a random access iterator.
-* This method does not perfomr range checks to increase efficiency.
+* This method does not perform range checks to increase efficiency.
 * The maximal valid index is {@link #size()}.
 */
 public static Node get( int index ) {
@@ -252,7 +252,7 @@ public static Node remove(int i) {
 // ------------------------------------------------------------------
 
 /**
-* Swaps the two nodes at the given indeces.
+* Swaps the two nodes at the given indexes.
 */
 public static void swap(int i, int j) {
 	

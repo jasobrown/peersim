@@ -24,7 +24,7 @@ import peersim.core.Node;
 import peersim.core.Control;
 
 /**
-* A protocol that is not realy a protocol, but a trick to carry out all
+* A protocol that is not really a protocol, but a trick to carry out all
 * kinds of tasks during the simulation. Many users will probably not need it,
 * but it is a nice way to e.g. run controls at any time, not only between cycles.
 */

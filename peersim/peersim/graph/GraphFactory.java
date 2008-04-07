@@ -46,7 +46,7 @@ private GraphFactory() {}
 * number of nodes in g.
 * @param g the graph to be wired
 * @param k lattice parameter
-* @return returns g for convinience
+* @return returns g for convenience
 */
 public static Graph wireRingLattice(Graph g, int k) {
 	
@@ -83,9 +83,9 @@ public static Graph wireRingLattice(Graph g, int k) {
 * @param g the graph to be wired
 * @param k lattice parameter: this is the out-degree of a node in the
 * ring lattice before rewiring
-* @param p the propability of rewiring each 
+* @param p the probability of rewiring each 
 * @param r source of randomness
-* @return returns g for convinience
+* @return returns g for convenience
 */
 public static Graph wireWS( Graph g, int k, double p, Random r ) {
 //XXX unintuitive to call it WS due to the slight mods
@@ -111,13 +111,13 @@ public static Graph wireWS( Graph g, int k, double p, Random r ) {
 * Random graph. Generates randomly k directed edges out of each node.
 * The neighbors
 * (edge targets) are chosen randomly without replacement from the nodes of the
-* graph other than the source node (ie no loop edge is added).
+* graph other than the source node (i.e. no loop edge is added).
 * If k is larger than N-1 (where N is the number of nodes) then k is set to
 * be N-1 and a complete graph is returned.
 * @param g the graph to be wired
 * @param k samples to be drawn for each node
 * @param r source of randomness
-* @return returns g for convinience
+* @return returns g for convenience
 */
 public static Graph wireKOut( Graph g, int k, Random r ) {
 
@@ -151,7 +151,7 @@ public static Graph wireKOut( Graph g, int k, Random r ) {
 * A sink star.
 * Wires a sink star topology adding a link to 0 from all other nodes.
 * @param g the graph to be wired
-* @return returns g for convinience
+* @return returns g for convenience
 */
 public static Graph wireStar( Graph g ) {
 
@@ -170,7 +170,7 @@ public static Graph wireStar( Graph g ) {
 * @param k the number of outgoing links of nodes in the tree (except
 * leaves that have zero out-links, and exactly one node that might have
 * less than k).
-* @return returns g for convinience
+* @return returns g for convenience
 */
 public static Graph wireRegRootedTree( Graph g, int k ) {
 
@@ -195,7 +195,7 @@ public static Graph wireRegRootedTree( Graph g, int k ) {
 * this define a log(graphsize) dimensional hypercube (if the log is an
 * integer).
 * @param g the graph to be wired
-* @return returns g for convinience
+* @return returns g for convenience
 */
 public static Graph wireHypercube( Graph g ) {
 
@@ -231,9 +231,9 @@ http://arxiv.org/pdf/cond-mat/0408391</a>. In both cases, the number of the
 * added. The first added node is connected to all of the initial nodes,
 * and after that the BA model is used normally.
 * @param k the number of edges that are generated for each new node, also
-* the number of initial nodes (that have no adges).
+* the number of initial nodes (that have no edges).
 * @param r the randomness to be used
-* @return returns g for convinience
+* @return returns g for convenience
 */
 public static Graph wireScaleFreeBA( Graph g, int k, Random r ) {
 

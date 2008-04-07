@@ -1,3 +1,6 @@
+AM 07/04/08
+- Applied the javadoc patch of Filippo Giunchedi
+
 MJ 18/03/08
 - Added a "k" parameter to WireFromFile
 - Added some popular file formats to GraphPrinter (as well as GraphIO)

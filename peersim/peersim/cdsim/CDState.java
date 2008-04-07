@@ -114,7 +114,7 @@ public static Integer getCycleObj()
  * Returns the current time within the current cycle.
  * Note that the time returned by {@link #getCycle} is the cycle id
  * in this case. In other words, it returns the number of nodes that have
- * already been visisted in a given cycle.
+ * already been visited in a given cycle.
  * @throws UnsupportedOperationException if no cycle-driven state is available
  */
 public static int getCycleT()

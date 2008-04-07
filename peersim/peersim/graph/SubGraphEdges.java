@@ -47,7 +47,7 @@ private final BitSet nodes;
 
 
 /**
-* Constructs an initially empty subgraph of g. That is, the subgrpah will
+* Constructs an initially empty subgraph of g. That is, the subgraph will
 * contain no nodes.
 */
 public SubGraphEdges( Graph g ) {
@@ -143,7 +143,7 @@ public int degree(int i) {
 
 
 /**
-* This function returns the size of the subgraph, ie the number of nodes
+* This function returns the size of the subgraph, i.e. the number of nodes
 * in the subgraph.
 */
 public int subGraphSize() { return nodes.cardinality(); }

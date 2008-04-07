@@ -118,7 +118,7 @@ public class WireInetTopology extends WireGraph {
      * @param new_node
      *            the node to insert in the topology.
      * @param old_node
-     *            a node allready part of the topology.
+     *            a node already part of the topology.
      * @param coordPid
      *            identifier index.
      * @return the distance value.

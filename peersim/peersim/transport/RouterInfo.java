@@ -19,7 +19,7 @@
 package peersim.transport;
 
 /**
- * Generic interface to be implemented by protocols that beed to be assigned to
+ * Generic interface to be implemented by protocols that need to be assigned to
  * routers. The idea is that each node is assigned to a router, by
  * invoking {@link #setRouter(int)} method. Routers are identified by
  * integer indexes (starting from 0), based on the assumption that the

@@ -133,7 +133,7 @@ public static void setLatency(int sender, int receiver, int latency)
 //---------------------------------------------------------------------
 
 /**
- * Returns the current size of the underlying network (ie, the number of
+ * Returns the current size of the underlying network (i.e., the number of
  * routers).
  */
 public static int getSize()

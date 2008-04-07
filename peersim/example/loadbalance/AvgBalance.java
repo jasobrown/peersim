@@ -143,7 +143,7 @@ public class AvgBalance extends BasicBalance {
 
     /**
      * Provides the most loaded neighbor according to the current node load. The
-     * neighbors are estracted by the underlying {@link peersim.core.Linkable}
+     * neighbors are extracted by the underlying {@link peersim.core.Linkable}
      * implementing protocol.
      * 
      * @param node
@@ -180,7 +180,7 @@ public class AvgBalance extends BasicBalance {
 
     /**
      * Provides the least loaded neighbor according to the current node load.
-     * The neighbors are estracted by the underlying
+     * The neighbors are extracted by the underlying
      * {@link peersim.core.Linkable} implementing protocol.
      * 
      * @param node

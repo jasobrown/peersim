@@ -22,14 +22,14 @@ import java.io.*;
 
 
 /**
-* Generates a series of filenames for classes that have to save eg
+* Generates a series of filenames for classes that have to save e.g.
 * snapshots regularly.
 */
 public class FileNameGenerator {
 
 
 /**
-* The number of filenames aready returned.
+* The number of filenames already returned.
 */
 private long counter = 0;
 

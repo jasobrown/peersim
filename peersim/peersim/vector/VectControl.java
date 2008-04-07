@@ -39,7 +39,7 @@ public abstract class VectControl implements Control {
 protected static final String PAR_PROT = "protocol";
 
 /**
- * The setter method used to set values in the protocol instances. Defauls to
+ * The setter method used to set values in the protocol instances. Defaults to
  * <code>setValue</code>
  * (for backward compatibility with previous implementation of this
  * class, that were based on the {@link SingleValue} interface). Refer to the
@@ -51,7 +51,7 @@ protected static final String PAR_METHOD = "setter";
 
 /**
  * The getter method used to obtain the protocol values. 
- * Defauls to <code>getValue</code>
+ * Defaults to <code>getValue</code>
  * (for backward compatibility with previous 
  * implementation of this class, that were based on the 
  * {@link SingleValue} interface).

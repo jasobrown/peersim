@@ -36,14 +36,14 @@ private final ArrayList<Object> nodes;
 
 /**
 * Contains the indices of the nodes. The vector "nodes" contains this
-* information implicitly but this way we can find indeces in log time at
+* information implicitly but this way we can find indexes in log time at
 * the cost of memory (node that the edge lists typically use much more memory
 * than this anyway). Note that the nodes vector is still necessary to
-* provide constant acces to nodes based on indeces.
+* provide constant access to nodes based on indexes.
 */
 private final HashMap<Object,Integer> nodeindex;
 
-/** Contains sets of node indeces. If "nodes" is not null, indices are 
+/** Contains sets of node indexes. If "nodes" is not null, indices are 
 * defined by "nodes", otherwise they correspond to 0,1,... */
 private final ArrayList<Set<Integer>> neighbors;
 

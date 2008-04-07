@@ -62,7 +62,7 @@ public boolean isEdge(int i, int j) {
 
 /**
 * Uses sets as collection so does not support multiple edges now, even if
-* the underlying direced graph does.
+* the underlying directed graph does.
 */
 public Collection<Integer> getNeighbours(int i) {
 	

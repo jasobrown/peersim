@@ -29,7 +29,7 @@ import peersim.util.*;
  *<p>
  * <em>The set methods should not be used by applications</em>,
  * they are for system
- * components. Use them only if you know exactly what you are doing, eg
+ * components. Use them only if you know exactly what you are doing, e.g.
  * if you are so advanced that you can write your own simulation engine.
  * Ideally, they should not be visible, but due to the lack of more
  * flexibility in java access rights, we are forced to make them public.
@@ -66,7 +66,7 @@ public static final int PHASE_UNKNOWN = 0;
 private static long time = 0;
 
 /**
- * The maxival value {@link #time} can ever take.
+ * The maximal value {@link #time} can ever take.
  */
 private static long endtime = -1;
 

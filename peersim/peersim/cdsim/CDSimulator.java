@@ -69,7 +69,7 @@ public static final String PAR_CYCLES = "simulation.cycles";
  * This option is only for experts. It switches off the main cycle that
  * calls the cycle driven protocols. When you switch this off, you need to
  * control the execution of the protocols by configuring controls that do
- * the job (eg, {@link FullNextCycle}, {@link NextCycle}). It's there for
+ * the job (e.g., {@link FullNextCycle}, {@link NextCycle}). It's there for
  * people who want maximal flexibility for their hacks.
  * @config
  */

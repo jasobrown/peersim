@@ -29,7 +29,7 @@ import java.util.*;
 * passed to the constructor changes over time then
 * methods {@link #getNeighbours(int)} and {@link #degree(int)}
 * become inconsistent (but only those).
-* The upside of this inconvinience is that {@link #getNeighbours} will have
+* The upside of this inconvenience is that {@link #getNeighbours} will have
 * constant time complexity.
 * @see UndirectedGraph
 */
@@ -98,7 +98,7 @@ public boolean isEdge(int i, int j) {
 
 /**
 * Uses sets as collection so does not support multiple edges now, even if
-* the underlying direced graph does.
+* the underlying directed graph does.
 */
 public Collection<Integer> getNeighbours(int i) {
 	

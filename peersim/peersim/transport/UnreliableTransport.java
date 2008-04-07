@@ -97,7 +97,7 @@ public Object clone()
 //---------------------------------------------------------------------
 
 /** Sends the message according to the underlying transport protocol.
-* With the configured probability, the message is not sent (ie the method does
+* With the configured probability, the message is not sent (i.e. the method does
 * nothing).
 */
 public void send(Node src, Node dest, Object msg, int pid)

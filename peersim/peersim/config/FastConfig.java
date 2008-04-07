@@ -37,7 +37,7 @@ public class FastConfig
 /**
  * Parameter name in configuration that attaches a linkable protocol to a
  * protocol. The property can contain multiple protocol names, in one line,
- * separated by non-word characters (eg whitespace or ",").
+ * separated by non-word characters (e.g. whitespace or ",").
  * @config
  */
 private static final String PAR_LINKABLE = "linkable";

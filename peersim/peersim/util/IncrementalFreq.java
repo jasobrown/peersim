@@ -142,7 +142,7 @@ public int getFreq(int i) {
 	
 
 /**
- * Performs an element-by-element vector substraction of the
+ * Performs an element-by-element vector subtraction of the
  * frequency vectors. If <code>strict</code> is true, it
  * throws an IllegalArgumentException if <code>this</code> is
  * not strictly larger than <code>other</code> (element by element)
@@ -182,7 +182,7 @@ public void remove(IncrementalFreq other, boolean strict) {
 * all values from 0 to the capacity of the internal representation using the
 * format
 * <pre>
-* value occurences
+* value occurrences
 * </pre>
 * That is, numbers with zero occurrences will also be printed. 
 */
@@ -201,7 +201,7 @@ public void printAll( PrintStream out ) {
 * all values that have a number of occurrences different from zero using the 
 * format
 * <pre>
-* value occurences
+* value occurrences
 * </pre>
 */
 public void print( PrintStream out ) {

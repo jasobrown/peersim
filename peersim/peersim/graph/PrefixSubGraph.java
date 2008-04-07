@@ -47,7 +47,7 @@ private int prefSize;
 
 
 /**
-* Constructs an initially max size subgraph of g. That is, the subgrpah will
+* Constructs an initially max size subgraph of g. That is, the subgraph will
 * contain all nodes.
 */
 public PrefixSubGraph( Graph g ) {

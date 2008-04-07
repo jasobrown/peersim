@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
- * This class adds the ability to retrive the median element to the
+ * This class adds the ability to retrieve the median element to the
  * {@link IncrementalStats} class. Note that this class actually stores all
  * the elements, so (unlike in its superclass) storage requirements depend
  * on the number of items processed.
@@ -42,7 +42,7 @@ public MedianStats()
 }
 
 /**
- * Retrives the median in the current data collection.
+ * Retrieves the median in the current data collection.
  * 
  * @return The current median value.
  */

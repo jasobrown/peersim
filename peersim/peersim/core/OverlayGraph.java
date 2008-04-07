@@ -74,8 +74,8 @@ public OverlayGraph( int protocolID ) {
 /**
 * @param protocolID The protocol on which this adaptor is supposed
 * to operate.
-* @param wireDirected specifies if {@link #setEdge} whould wire the
-* opposit edge too.
+* @param wireDirected specifies if {@link #setEdge} would wire the
+* opposite edge too.
 */
 public OverlayGraph( int protocolID, boolean wireDirected ) {
 
@@ -146,12 +146,12 @@ public boolean directed() { return true; }
 /**
 * Sets given edge.
 * In some cases this behaves strangely. Namely, when node i or j is not up,
-* but is not dead (eg it can be down temporarily).
+* but is not dead (e.g. it can be down temporarily).
 * In such situations the relevant link is made, but afterwards
 * getEdge(i,j) will NOT return true, only when the fail state has changed back
 * to OK.
 *
-* <p>Conecptually one can think of it as a succesful operation which is
+* <p>Conceptually one can think of it as a successful operation which is
 * immediately overruled by the dynamics of the underlying overlay network.
 * Let's not forget that this class is an adaptor only.
 *

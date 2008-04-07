@@ -21,7 +21,7 @@ package peersim.core;
 /**
 * A protocol that does nothing but knows everything.
 * It provides an interface which models a protocol that knows all nodes
-* in the network, ie the neighborhood set of this protocol is always the
+* in the network, i.e. the neighborhood set of this protocol is always the
 * whole node set. this protocol is also extremely cheap, in fact it
 * has no data fields.
 */

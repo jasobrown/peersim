@@ -30,7 +30,7 @@ import peersim.cdsim.CDProtocol;
  * order to provide a consistent access to the averaging variable value.
  *
  * Note that this class does not override the clone method, because it does
- * not have any state other than what is inheritred from
+ * not have any state other than what is inherited from
  * {@link SingleValueHolder}.
  * 
  * @author Alberto Montresor

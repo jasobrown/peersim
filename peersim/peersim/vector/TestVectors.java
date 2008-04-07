@@ -20,7 +20,7 @@ package peersim.vector;
 
 
 /**
- * Dor testing the vector package.
+ * Do testing the vector package.
  */
 public class TestVectors extends SingleValueHolder
 {

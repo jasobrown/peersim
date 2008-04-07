@@ -26,9 +26,9 @@ import peersim.core.Node;
 
 /**
  * <p>
- * This intialization class collects the simulation parameters from the config
- * file and generates uniformly random 2d-coordindates for each node. The
- * coordianates are distributed on a unit (1.0) square.
+ * This initialization class collects the simulation parameters from the config
+ * file and generates uniformly random 2D-coordinates for each node. The
+ * coordinates are distributed on a unit (1.0) square.
  * </p>
  * <p>
  * The first node in the {@link Network} is considered as the root node and its

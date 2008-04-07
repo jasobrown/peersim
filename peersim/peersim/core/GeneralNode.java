@@ -30,7 +30,7 @@ public class GeneralNode implements Node {
 // ================= fields ========================================
 // =================================================================
 
-/** used to generate unique id-s */
+/** used to generate unique IDs */
 private static long counterID = -1;
 
 /**
@@ -52,7 +52,7 @@ private int index;
 protected int failstate = Fallible.OK;
 
 /**
-* The id of the node. It should be final, however it can't be final because
+* The ID of the node. It should be final, however it can't be final because
 * clone must be able to set it.
 */
 private long ID;
@@ -164,8 +164,8 @@ public void setIndex(int index) { this.index = index; }
 //------------------------------------------------------------------
 
 /**
-* Returns the ID of this node. The ID-s are generated using a counter
-* (ie they are not random).
+* Returns the ID of this node. The IDs are generated using a counter
+* (i.e. they are not random).
 */
 public long getID() { return ID; }
 

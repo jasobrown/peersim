@@ -36,7 +36,7 @@ public class BallExpansion extends GraphObserver
 /**
  * This parameter defines the maximal distance we care about.
  * In other words, two nodes are further away, they will not be taken
- * into account when caclulating statistics.
+ * into account when calculating statistics.
  * <p>
  * Defaults to the
  * network size (which means all distances are taken into account).
@@ -44,7 +44,7 @@ public class BallExpansion extends GraphObserver
  * have only short distances between the nodes. Setting a short
  * (but sufficient) distance saves memory.
  * Also note that the <em>initial</em> network
- * size is used if no value is given which might not be what you want if eg the
+ * size is used if no value is given which might not be what you want if e.g. the
  * network is growing.
  * @config
  */

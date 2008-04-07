@@ -55,7 +55,7 @@ public RandPermutation( Random r ) { this.r=r; }
 
 
 /**
-* It calculates a random permutation of the integeres from 0 to k-1.
+* It calculates a random permutation of the integers from 0 to k-1.
 * The permutation can be read using method {@link #get}. 
 * If the previous permutation was of the same length, it is more efficient.
 * Note that after calling this the object is reset, so {@link #next} can
@@ -93,7 +93,7 @@ public int get(int i) {
 // -------------------------------------------------------------------
 
 /**
-* It initiates a random permutation of the integeres from 0 to k-1.
+* It initiates a random permutation of the integers from 0 to k-1.
 * It does not actually calculate the permutation.
 * The permutation can be read using method {@link #next}.
 * Calls to {@link #get} return undefined values, so {@link #next} must be used.

@@ -114,7 +114,7 @@ public ConfigContainer(Properties config, boolean check)
 // ===================================================================
 
 /**
- * @return true if and only if name is a specified (exisitng) property.
+ * @return true if and only if name is a specified (existing) property.
  */
 public boolean contains(String name)
 {
@@ -642,7 +642,7 @@ public Class getClass(String name, Class def)
  * @param name
  *          Name of configuration property
  * @throws MissingParameterException
- *           if the given protperty is not defined
+ *           if the given property is not defined
  * @throws IllegalParameterException
  *           if there is any problem creating the instance
  */
@@ -721,7 +721,7 @@ public Object getInstance(String name, Object def)
  * calling {@link #getInstance(String)} on the names returned by
  * {@link #getNames(String)}.
  * @param name
- *          The component type (ie prefix of the list of configuration
+ *          The component type (i.e. prefix of the list of configuration
  *          properties) which will be passed to {@link #getNames(String)}.
  */
 public Object[] getInstanceArray(String name)
@@ -747,7 +747,7 @@ public Object[] getInstanceArray(String name)
  * alphabetical. Otherwise this entry defines the order. For more
  * information see {@link Configuration}.
  * @param name
- *          the component type (ie, the prefix)
+ *          the component type (i.e., the prefix)
  * @return the full property names in the order specified by the
  *         configuration
  */
@@ -769,7 +769,7 @@ public String[] getNames(String name)
 // -------------------------------------------------------------------
 
 /**
- * The input of this method is a set of property <code>names</code> (eg
+ * The input of this method is a set of property <code>names</code> (e.g.
  * initializers, controls and protocols) and a string specifying the type
  * (prefix) of these. The output is in <code>names</code>, which will
  * contain a permutation of the original array. Parameter
@@ -836,7 +836,7 @@ private String[] order(String[] names, String type)
 /**
  * Print debug information for configuration. The amount of information
  * depends on the debug level DEBUG. 0 = nothing 1 = just the config name 2 =
- * config name plus methodd calling
+ * config name plus method calling
  * 
  * @param name
  */

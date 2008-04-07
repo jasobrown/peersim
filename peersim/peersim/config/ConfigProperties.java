@@ -49,7 +49,7 @@ public ConfigProperties() { super(); }
 * from index 1) pars is loaded as if it was a command line argument list
 * using {@link #loadCommandLineDefs}.
 * <p>
-* A little inconvinience is that if pars[0] is supposed to be the first
+* A little inconvenience is that if pars[0] is supposed to be the first
 * command line argument but it is a valid filename at the same time by
 * accident. The caller must take care of that.
 * <p>
@@ -175,7 +175,7 @@ public void loadSystemResource( String n ) throws IOException {
 
 
 /**
-* Appends properties defined in the given command line arg list.
+* Appends properties defined in the given command line argument list.
 * Every string in the array is considered as a property file line.
 * The strings are converted to byte arrays according to the
 * default character encoding and then the properties are loaded by the

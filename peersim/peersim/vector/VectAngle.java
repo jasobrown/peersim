@@ -55,7 +55,7 @@ private static final String PAR_PROT2 = "protocol2";
 
 /**
  * The getter method used to obtain the values of the first protocol. 
- * Defauls to <code>getValue</code> (for backward compatibility with previous 
+ * Defaults to <code>getValue</code> (for backward compatibility with previous 
  * implementation of this class, that were based on the 
  * {@link SingleValue} interface).
  * Refer to the {@linkplain peersim.vector vector package description} for more 
@@ -66,7 +66,7 @@ private static final String PAR_METHOD1 = "getter1";
 
 /**
  * The getter method used to obtain the values of the second protocol. 
- * Defauls to <code>getValue</code> (for backward compatibility with previous 
+ * Defaults to <code>getValue</code> (for backward compatibility with previous 
  * implementation of this class, that were based on the 
  * {@link SingleValue} interface).
  * Refer to the {@linkplain peersim.vector vector package description} for more 

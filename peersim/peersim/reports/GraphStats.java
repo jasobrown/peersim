@@ -88,7 +88,7 @@ public GraphStats(String name) {
 // =====================================================================
 
 /**
-* Returns staistics over minimal path length and clustering.
+* Returns statistics over minimal path length and clustering.
 * The output is the average over the set of
 * clustering coefficients of randomly selected nodes, and the
 * set of distances from randomly selected nodes to all the other nodes.

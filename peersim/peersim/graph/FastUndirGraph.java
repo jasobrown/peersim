@@ -27,7 +27,7 @@ import java.util.BitSet;
 
 /**
 * Speeds up {@link ConstUndirGraph#isEdge} by storing the links in an
-* adjecency matrix (in fact in a triangle).
+* adjacency matrix (in fact in a triangle).
 * Its memory consumption is huge but it's much faster if the isEdge method
 * of the original underlying graph is slow.
 */

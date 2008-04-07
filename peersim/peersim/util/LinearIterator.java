@@ -42,7 +42,7 @@ private int pointer = 0;
 
 
 /**
-* Construct an interator for an empty set of numbers.
+* Construct an iterator for an empty set of numbers.
 * You have to call {@link #reset} to actually fully initialize the object.
 * The numbers returned by consecutive calls to {@link #next} are 0,1,...
 */

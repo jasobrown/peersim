@@ -276,7 +276,7 @@ public static double clustering( Graph g, int i ) {
 * In each cycle each node contacts a random neighbour and exchanges
 * information. The simulation is generational: when a node contacts a neighbor
 * in cycle i, it sees their state as in cycle i-1, besides, all nodes update
-* their state at the same time point, sycnhronously.
+* their state at the same time point, synchronously.
 */
 public static void multicast( Graph g, int[] b, Random r ) {
 

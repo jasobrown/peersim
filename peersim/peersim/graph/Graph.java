@@ -64,7 +64,7 @@ public interface Graph {
 	int size();
 
 	/**
-	* Returns true if the graph is directed othewise false.
+	* Returns true if the graph is directed otherwise false.
 	*/
 	boolean directed();
 

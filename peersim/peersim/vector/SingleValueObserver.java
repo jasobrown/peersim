@@ -99,7 +99,7 @@ public SingleValueObserver(String name)
 * {@link IncrementalStats#toString}).
 * @return true if the standard deviation is below the value of
  * {@value #PAR_ACCURACY}, and the time of the simulation is larger then zero
- * (ie it has started).
+ * (i.e. it has started).
  */
 public boolean execute()
 {

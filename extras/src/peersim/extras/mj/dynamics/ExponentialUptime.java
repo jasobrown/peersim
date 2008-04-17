@@ -24,6 +24,7 @@ import peersim.core.*;
 import peersim.dynamics.NodeInitializer;
 
 import cern.jet.random.Binomial;
+import cern.jet.random.Uniform;
 import cern.jet.random.engine.MersenneTwister;
 
 /**
@@ -103,11 +104,18 @@ protected final int minsize;
 /** node initializers to apply on the newly added nodes */
 protected final NodeInitializer[] inits;
 
-/** The binomial distribution sampler to calculate nodes to remove. */
+/** The binomial distribution sampler to calculate number of nodes to remove. */
 protected final Binomial binom;
+
+/** The uniform distribution sampler to select which nodes to remove exactly. */
+protected final Uniform uni;
 
 /** The size of the network at initialization time. */
 protected final int initNetsize;
+
+/** This control's own random engine initialized using the current random seed */
+protected final MersenneTwister mtw =
+	new MersenneTwister((int)CommonState.r.getLastSeed());
 
 // --------------------------------------------------------------------------
 // Protected methods
@@ -143,7 +151,7 @@ protected void add(int n)
 protected void remove(int n)
 {
 	for (int i = 0; i < n; ++i) {
-		Network.remove(CommonState.r.nextInt(Network.size()));
+		Network.remove(uni.nextIntFromTo(0,Network.size()-1));
 	}
 }
 
@@ -162,6 +170,16 @@ public ExponentialUptime(String prefix)
 	p = Configuration.getDouble(prefix + "." + PAR_P);
 	if( p<0 || p>1 ) throw new IllegalParameterException(prefix+"."+PAR_P,
 		"Should be a probability (from [0,1])");
+	if( p !=1.0 && p!=0.0 )
+	{
+		binom = new Binomial( Network.size(), p, mtw );
+		initNetsize = Network.size();
+	}
+	else // we don't use the binomial distribution
+	{
+		binom = null;
+		initNetsize = -1;
+	}
 	substitute = Configuration.contains(prefix + "." + PAR_SUBST);
 	Object[] tmp = Configuration.getInstanceArray(prefix + "." + PAR_INIT);
 	inits = new NodeInitializer[tmp.length];
@@ -170,9 +188,7 @@ public ExponentialUptime(String prefix)
 		inits[i] = (NodeInitializer) tmp[i];
 	}
 	minsize = Configuration.getInt(prefix + "." + PAR_MIN, 0);
-	binom = new Binomial( Network.size(), p,
-			new MersenneTwister( CommonState.r.nextInt() ));
-	initNetsize = Network.size();
+	uni = new Uniform( mtw );
 }
 
 // --------------------------------------------------------------------------
@@ -189,9 +205,13 @@ public final boolean execute()
 	int toadd = 0;
 	int toremove = 0;
 
-	if( Network.size() == initNetsize ) toremove = binom.nextInt();
-	else toremove = binom.nextInt( Network.size(), p );
-
+	if( p==1.0 ) toremove = Network.size();
+	else if( p>0.0 )
+	{
+		if( Network.size() == initNetsize ) toremove = binom.nextInt();
+		else toremove = binom.nextInt( Network.size(), p );
+	}
+	
 	if( !substitute && toremove > Network.size() - minsize )
 		toremove = Network.size() - minsize;
 	if( substitute ) toadd = toremove;

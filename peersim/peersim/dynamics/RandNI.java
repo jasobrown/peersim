@@ -103,8 +103,7 @@ public void initialize(Node n)
 	Linkable linkable = (Linkable) n.getProtocol(pid);
 	for (int j = 0; j < k; ++j)
 	{
-		int r = CommonState.r.nextInt(Network.size()-1);
-		if (r >= n.getIndex()) r++;
+		int r = CommonState.r.nextInt(Network.size());
 		linkable.addNeighbor(Network.get(r));
 	}
 

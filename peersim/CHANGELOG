@@ -1,3 +1,12 @@
+MJ 18/04/08
+- Changed truncation to rounding (as stated in the class docs) for DynamicNetwork.
+  This fixes issues with small network sizes (or small "add" percentages).
+- Fixed bug in RandNI: it assumed it is called adter insertion, while the
+  specification says it is called before insertion. This caused misbehavior for
+  networks of size 1, and, more annyingly, resulted in node 0 _never_ being linked
+  to (note that for simulations that use shuffle (and most do) this is not
+  noticable) (credit for spotting goes to Balazs Banhelyi).
+
 AM 07/04/08
 - Applied the javadoc patch of Filippo Giunchedi
 

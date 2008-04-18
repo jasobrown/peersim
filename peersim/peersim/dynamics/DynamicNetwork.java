@@ -66,9 +66,9 @@ private static final String PAR_SUBST = "substitute";
 /**
  * Specifies the number of nodes to add or remove. It can
  * be negative in which case nodes are removed. If its absolute value is
- * less than one, then it is interpreted as proportion of current network
- * size. Otherwise it is rounded to an integer and interpreted as exact number
- * of nodes.
+ * less than one, then it is interpreted as a proportion of current network
+ * size, that is, its value is substituted with <tt>add*networksize</tt>.
+ * Its value is rounded to an integer.
  * @config
  */
 private static final String PAR_ADD = "add";
@@ -191,13 +191,13 @@ public final boolean execute()
 	int toadd = 0;
 	int toremove = 0;
 	if (add > 0) {
-		toadd = (int) (add < 1 ? add * Network.size() : add);
+		toadd = (int) Math.round(add < 1 ? add * Network.size() : add);
 		if (!substitute && toadd > maxsize - Network.size())
 			toadd = maxsize - Network.size();
 		if (substitute)
 			toremove = toadd;
 	} else if (add < 0) {
-		toremove = (int) (add > -1 ? -add * Network.size() : -add);
+		toremove = (int) Math.round(add > -1 ? -add * Network.size() : -add);
 		if (!substitute && toremove > Network.size() - minsize)
 			toremove = Network.size() - minsize;
 		if (substitute)

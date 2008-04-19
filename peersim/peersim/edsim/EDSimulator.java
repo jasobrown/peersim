@@ -89,7 +89,8 @@ public class EDSimulator
 	
 /**
  * The ending time for simulation. Only events that have a strictly smaller
- * value are executed.
+ * value are executed. It must be positive. Although in principle
+ * negative timestamps could be allowed, we assume time will be positive.
  * @config
  */
 public static final String PAR_ENDTIME = "simulation.endtime";	
@@ -103,14 +104,12 @@ public static final String PAR_ENDTIME = "simulation.endtime";
 private static final String PAR_LOGTIME = "simulation.logtime";	
 
 /** 
- * This parameter specifies how many
- * bits are used to order events that occur at the same time. Defaults
- * to 8. A value smaller than 8 causes an IllegalParameterException.
- * Higher values allow for a better discrimination, but reduce
- * the maximal time steps that can be simulated.
+ * This parameter specifies the event queue to be used. It must be an
+ * implementation of interface {@link PriorityQ}. If it is not defined,
+ * the internal implementation is used.
  * @config 
  */	
-private static final String PAR_RBITS = "simulation.timebits";
+private static final String PAR_PQ = "simulation.eventqueue";
 
 /**
  * This is the prefix for initializers.
@@ -145,9 +144,6 @@ private static long endtime;
 /** Log time */
 private static long logtime;
 
-/** Number of bits used for random */
-private static int rbits;
-
 /** holds the modifiers of this simulation */
 private static Control[] controls=null;
 
@@ -155,7 +151,7 @@ private static Control[] controls=null;
 private static Scheduler[] ctrlSchedules = null;
 
 /** Ordered list of events (heap) */
-private static Heap heap = new Heap();
+private static PriorityQ heap = null;
 
 private static long nextlog = 0;
 
@@ -202,13 +198,12 @@ private static void scheduleControls()
 		Arrays.asList(names));
 
 	// Schedule controls execution
-	int order = 0;
+	if (controls.length > heap.maxPriority()+1)
+		throw new IllegalArgumentException(
+		"Too many control objects");
 	for (int i=0; i < controls.length; i++) {
 		ControlEvent event = new ControlEvent(
-			controls[i], ctrlSchedules[i], order++);
-		if (order > ((1 << rbits)-1))
-			throw new IllegalArgumentException(
-			"Too many control objects");
+			controls[i], ctrlSchedules[i], i);
 	}
 }
 
@@ -229,9 +224,10 @@ private static void scheduleControls()
  */
 static void addControlEvent(long time, int order, ControlEvent event)
 {
+// we don't check whether time is negative or in the past: we trust
+// the caller, which must be from this package
 	if (time >= endtime) return;
-	time = (time << rbits) | order;
-	heap.add(time, event, null, (byte)0);
+	heap.add(time, event, null, (byte)0, order);
 }
 
 //---------------------------------------------------------------------
@@ -254,7 +250,7 @@ public static final boolean isConfigurationEventDriven()
  */
 private static boolean executeNext() {
 
-	Heap.Event ev = heap.removeFirst();
+	PriorityQ.Event ev = heap.removeFirst();
 	if( ev == null )
 	{
 		System.err.println("EDSimulator: queue is empty, quitting"+
@@ -262,7 +258,7 @@ private static boolean executeNext() {
 		return true;
 	}
 	
-	long time = ev.time >> rbits;
+	long time = ev.time;
 	if (time >= nextlog)
 	{
 		System.err.println("Current time: " + time);
@@ -325,22 +321,20 @@ private static boolean executeNext() {
 public static void nextExperiment() 
 {
 	// Reading parameter
-	rbits = Configuration.getInt(PAR_RBITS, 8);	
-	if (rbits < 8 || rbits >= 64) {
-		throw new IllegalParameterException(PAR_RBITS, "This parameter"
-		+" should be >= 8 or < 64");
-	}
 	endtime = Configuration.getLong(PAR_ENDTIME);
 	if( CommonState.getEndTime() < 0 ) // not initialized yet
 		CommonState.setEndTime(endtime);
 	logtime = Configuration.getLong(PAR_LOGTIME, Long.MAX_VALUE);
+	if( Configuration.contains(PAR_PQ) )
+		heap = (PriorityQ) Configuration.getInstance(PAR_PQ);
+	else
+		heap = new Heap();
 
 	// initialization
 	System.err.println("EDSimulator: resetting");
 	CommonState.setPhase(CommonState.PHASE_UNKNOWN);
 	controls = null;
 	ctrlSchedules = null;
-	heap = new Heap();
 	nextlog = 0;
 	Network.reset();
 	System.err.println("EDSimulator: running initializers");
@@ -383,7 +377,7 @@ public static void nextExperiment()
  */
 public static void add(long delay, Object event, Node node, int pid)
 {
-	if (delay < 0 )
+	if (delay < 0)
 		throw new IllegalArgumentException("Protocol "+
 			node.getProtocol(pid)+" is trying to add event "+
 			event+" with a negative delay: "+delay);
@@ -392,10 +386,9 @@ public static void add(long delay, Object event, Node node, int pid)
 				"This version does not support more than " 
 				+ Byte.MAX_VALUE + " protocols");
 	
-	long time = CommonState.getTime()+delay;
-	if (time >= endtime) return;
-	time = (time << rbits) | CommonState.r.nextInt(1 << rbits);
-	heap.add(time, event, node, (byte) pid);
+	long time = CommonState.getTime();
+	if( endtime - time > delay )
+		heap.add(time+delay, event, node, (byte) pid);
 }
 
 }

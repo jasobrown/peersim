@@ -168,8 +168,9 @@ public boolean active() {
 public long getNext()
 {
 	long ret = next;
-	next += step;
-	if( next >= until ) next = -1;
+	// check like this to prevent integer overflow of "next"
+	if( until-next > step ) next += step;
+	else next = -1;
 	return ret;
 }
 

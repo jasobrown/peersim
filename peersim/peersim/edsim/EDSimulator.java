@@ -98,7 +98,11 @@ public static final String PAR_ENDTIME = "simulation.endtime";
 /**
  * This parameter specifies
  * how often the simulator should log the current time on the
- * standard error.
+ * standard error. The time is logged only if there were events in the
+ * respective interval, and only the time of some actual event is printed.
+ * That is, the actual log is not guaranteed to happen
+ * in identical intervals of time. It is merely a way of seeing whether the
+ * simulation progresses and how fast...
  * @config
  */
 private static final String PAR_LOGTIME = "simulation.logtime";	
@@ -262,8 +266,10 @@ private static boolean executeNext() {
 	if (time >= nextlog)
 	{
 		System.err.println("Current time: " + time);
-		do { nextlog+=logtime; }
-		while(time >= nextlog);
+		// seemingly complicated: to prevent overflow
+		while( time-nextlog >= logtime ) nextlog+=logtime;
+		if( endtime-nextlog >= logtime ) nextlog+=logtime;
+		else nextlog=endtime;
 	}
 	if (time >= endtime)
 	{
@@ -321,14 +327,18 @@ private static boolean executeNext() {
 public static void nextExperiment() 
 {
 	// Reading parameter
-	endtime = Configuration.getLong(PAR_ENDTIME);
-	if( CommonState.getEndTime() < 0 ) // not initialized yet
-		CommonState.setEndTime(endtime);
-	logtime = Configuration.getLong(PAR_LOGTIME, Long.MAX_VALUE);
 	if( Configuration.contains(PAR_PQ) )
 		heap = (PriorityQ) Configuration.getInstance(PAR_PQ);
 	else
 		heap = new Heap();
+	endtime = Configuration.getLong(PAR_ENDTIME);
+	if( CommonState.getEndTime() < 0 ) // not initialized yet
+		CommonState.setEndTime(endtime);
+	if( heap.maxTime() < endtime )
+		throw new IllegalParameterException(PAR_ENDTIME,
+			"End time is too large: configured event queue only"+
+			" supports "+heap.maxTime());
+	logtime = Configuration.getLong(PAR_LOGTIME, Long.MAX_VALUE);
 
 	// initialization
 	System.err.println("EDSimulator: resetting");
@@ -387,7 +397,7 @@ public static void add(long delay, Object event, Node node, int pid)
 				+ Byte.MAX_VALUE + " protocols");
 	
 	long time = CommonState.getTime();
-	if( endtime - time > delay )
+	if( endtime - time > delay ) // check like this to deal with overflow
 		heap.add(time+delay, event, node, (byte) pid);
 }
 

@@ -2,7 +2,8 @@ MJ 20/04/08
 - Refactoring of EDSimulator to support the application of any event queue
   implementation. The even queue can now be configured to be any extrenal class
   implementing peersim.edsim.PriorityQ. Tests show there is no noticeable
-  penalty for performance.
+  penalty for performance. (credit to Jan Schoenherr for pointing out some
+  issues with edsim)
 - Fixing various problems with handling integer overflow in time management in
   EDSimulator, Heap, and Scheduler.
 

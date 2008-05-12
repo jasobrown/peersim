@@ -82,7 +82,7 @@ private static final String PAR_INFECTABLE = "infectable";
  * If a node does not receive any new node identifier for a period
  * of time equal to the value of this parameter, it stops to be
  * active.
- * @config
+ * @confi
  */
 private static final String PAR_STOP = "inactive";
 
@@ -321,17 +321,21 @@ private void prepareMessage(ViewMessage msg, Node rnode)
 	ChordLibrary.resetFingers(p.fingers[0]);
 	ChordLibrary.selectFingers(leafs, nleafs, p.fingers[0], rnode, rid, p.pid,
 			SortedRing.NEXT, null);
-	ChordLibrary.selectFingers(fingers[0], nleafs, p.fingers[0], rnode, rid,
+	// Bug correction; nleafs substituted by fingers[i].length
+	// Thanks to Zhang Hao
+	ChordLibrary.selectFingers(fingers[0], fingers[0].length, p.fingers[0], rnode, rid,
 			p.pid, SortedRing.NEXT, null);
-	ChordLibrary.selectFingers(fingers[1], nleafs, p.fingers[0], rnode, rid,
+	ChordLibrary.selectFingers(fingers[1], fingers[1].length, p.fingers[0], rnode, rid,
 			p.pid, SortedRing.NEXT, null);
 	// Compute prev fingers
 	ChordLibrary.resetFingers(p.fingers[1]);
 	ChordLibrary.selectFingers(leafs, nleafs, p.fingers[1], rnode, rid, p.pid,
 			SortedRing.PREV, null);
-	ChordLibrary.selectFingers(fingers[0], nleafs, p.fingers[1], rnode, rid,
+	// Bug correction; nleafs substituted by fingers[i].length
+	// Thanks to Zhang Hao
+	ChordLibrary.selectFingers(fingers[0], fingers[0].length, p.fingers[1], rnode, rid,
 			p.pid, SortedRing.PREV, null);
-	ChordLibrary.selectFingers(fingers[1], nleafs, p.fingers[1], rnode, rid,
+	ChordLibrary.selectFingers(fingers[1], fingers[0].length, p.fingers[1], rnode, rid,
 			p.pid, SortedRing.PREV, null);
 	int size = 0;
 

@@ -179,8 +179,10 @@ public boolean execute() {
 		throw new IllegalParameterException(prefix + "." +
 				PAR_CONDITION, jep.getErrorInfo());
 	}
-	if (ret instanceof Boolean)
+	if (ret instanceof Boolean) {
+		System.out.println(((Boolean) ret).booleanValue());
 		return ((Boolean) ret).booleanValue();
+	}
 	else
 		return (((Number) ret).doubleValue() != 0);
 }

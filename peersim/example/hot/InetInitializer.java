@@ -54,7 +54,7 @@ public class InetInitializer implements Control {
     // ------------------------------------------------------------------------
 
     /** Protocol identifier, obtained from config property {@link #PAR_PROT}. */
-    private static int pid;
+    private final int pid;
 
     // ------------------------------------------------------------------------
     // Constructor

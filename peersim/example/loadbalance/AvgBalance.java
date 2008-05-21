@@ -44,13 +44,13 @@ public class AvgBalance extends BasicBalance {
      * The overall system average load. It is computed once by
      * {@link #calculateAVG(int)} method.
      */
-    public static double average = 0.0;
+    protected static double average = 0.0;
 
     /**
      * This flag indicates if the average value computation has been performed
      * or not. Default is NO.
      */
-    public static boolean avg_done = false;
+    protected static boolean avg_done = false;
 
     // ==================== initialization ================================
     // ====================================================================

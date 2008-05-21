@@ -82,7 +82,7 @@ public Collection<Integer> getNeighbours(int i) {
 	final int max = size();
 	for(int j=0; j<max; ++j)
 	{
-		if( neighb.get(j) ) result.add( new Integer(j) );
+		if( neighb.get(j) ) result.add(j);
 	}
 
 	return Collections.unmodifiableCollection(result);

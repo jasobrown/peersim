@@ -272,14 +272,14 @@ throws IOException {
 	
 	for(int i=1; i<=GRAPHSIZE; ++i)
 	{
-		int iind = gr.addNode(new Integer(i));
+		int iind = gr.addNode(i);
 		
 		for(int j=0; j<CACHESIZE; ++j)
 		{
 			int a = dis.readInt();
 			dis.readLong();
 			
-			int agentIndex = gr.addNode(new Integer(a));
+			int agentIndex = gr.addNode(a);
 			if( direction == 0 ) gr.setEdge(iind,agentIndex);
 			else gr.setEdge(agentIndex,iind);
 		}

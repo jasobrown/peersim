@@ -73,8 +73,8 @@ public UniformDistribution(String prefix)
 	
 	// Read parameters based on type
 	if (setter.isInteger()) {
-		max = new Long(Configuration.getLong(prefix + "." + PAR_MAX));
-		min = new Long(Configuration.getLong(prefix + "." + PAR_MIN, 
+		max=Long.valueOf(Configuration.getLong(prefix + "." + PAR_MAX));
+		min=Long.valueOf(Configuration.getLong(prefix + "." + PAR_MIN, 
 				-max.longValue()));
 	} else { // we know it's double or float
 		max = new Double(Configuration.getDouble(prefix+"."+PAR_MAX));

@@ -197,20 +197,18 @@ public Map weaklyConnectedClusters( Graph g ) {
 			for(j=0; j<g.size(); ++j)
 			{
 				if( color[j] == BLACK ||
-				cluster.contains(new Integer(color[j])) )
+						cluster.contains(color[j]) )
 					color[j] = actCluster;
 			}
 		}
 	}
 
 	Hashtable<Integer,Integer> ht = new Hashtable<Integer,Integer>();
-	Integer one = new Integer(1);
 	for(j=0; j<g.size(); ++j)
 	{
-		Integer in = new Integer(color[j]);
-		Integer num = ht.get(in);
-		if( num == null ) ht.put(in,one);
-		else ht.put(in,new Integer(num.intValue()+1));
+		Integer num = ht.get(color[j]);
+		if( num == null ) ht.put(color[j],Integer.valueOf(1));
+		else ht.put(color[j],num+1);
 	}
 	
 	return ht;

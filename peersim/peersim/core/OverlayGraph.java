@@ -113,7 +113,7 @@ public Collection<Integer> getNeighbours(int i) {
 		{
 			final Node n = lble.getNeighbor(j);
 			// if accessible, we include it
-			if(n.isUp()) al.add(new Integer(n.getIndex()));
+			if(n.isUp()) al.add(Integer.valueOf(n.getIndex()));
 		}
 	}
 	return Collections.unmodifiableList(al);

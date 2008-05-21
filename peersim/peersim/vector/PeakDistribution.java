@@ -91,8 +91,8 @@ public PeakDistribution(String prefix)
 	
 	if( setter.isInteger() )
 	{
-		value = new Long(Configuration.getLong(prefix+"."+PAR_VALUE));
-		lvalue = new Long(Configuration.getLong(prefix+"."+PAR_LVALUE,0));
+		value=Long.valueOf(Configuration.getLong(prefix+"."+PAR_VALUE));
+		lvalue=Long.valueOf(Configuration.getLong(prefix+"."+PAR_LVALUE,0));
 	}
 	else
 	{

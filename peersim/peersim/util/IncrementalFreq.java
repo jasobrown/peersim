@@ -216,13 +216,14 @@ public void print( PrintStream out ) {
 
 public String toString() {
 	
-	String result="";
+	StringBuilder result=new StringBuilder("");
 	for(int i=0; i<freq.length; ++i)
 	{
 		if (freq[i] != 0)
-			result = result+" ("+i+","+freq[i]+")";
+			result.append(" (").append(i).append(","
+			).append(freq[i]).append(")");
 	}
-	return result;
+	return result.toString();
 }
 
 // ---------------------------------------------------------------------
@@ -230,18 +231,18 @@ public String toString() {
 /** An alternative method to convert the object to String */
 public String toArithmeticExpression() {
 
-	String result="";
+	StringBuilder result=new StringBuilder("");
 	for (int i=freq.length-1; i>=0; i--)
 	{
 		if (freq[i] != 0)
-			result = result+freq[i]+"*"+i+"+";
+			result.append(freq[i]).append(
+			"*").append(i).append("+");
 	}
 	
-	if (result.equals(""))
-		result = "(empty)";
+	if (result.length()==0)
+		return "(empty)";
 	else
-		result = result.substring(0, result.length()-1);
-	return result;
+		return result.substring(0, result.length()-1);
 }
 
 // ---------------------------------------------------------------------

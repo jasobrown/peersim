@@ -74,8 +74,8 @@ public LinearDistribution(String prefix)
 	
 	// Read parameters based on type
 	if (setter.isInteger()) {
-		max = new Long(Configuration.getLong(prefix + "." + PAR_MAX));
-		min = new Long(Configuration.getLong(prefix + "." + PAR_MIN, 
+		max=Long.valueOf(Configuration.getLong(prefix + "." + PAR_MAX));
+		min=Long.valueOf(Configuration.getLong(prefix + "." + PAR_MIN, 
 				-max.longValue()));
 		step= (max.longValue()-min.longValue())/
 			((double)(Network.size()-1));

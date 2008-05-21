@@ -71,7 +71,7 @@ public Collection<Integer> getNeighbours(int i) {
 	final int max = g.size();
 	for(int j=0; j<max; ++j)
 	{
-		if( g.isEdge(j,i) ) result.add( new Integer(j) );
+		if( g.isEdge(j,i) ) result.add(j);
 	}
 
 	return Collections.unmodifiableCollection(result);

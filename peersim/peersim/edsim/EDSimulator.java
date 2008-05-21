@@ -206,8 +206,7 @@ private static void scheduleControls()
 		throw new IllegalArgumentException(
 		"Too many control objects");
 	for (int i=0; i < controls.length; i++) {
-		ControlEvent event = new ControlEvent(
-			controls[i], ctrlSchedules[i], i);
+		new ControlEvent(controls[i], ctrlSchedules[i], i);
 	}
 }
 

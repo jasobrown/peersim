@@ -98,7 +98,7 @@ public int addNode( Object o ) {
 	Integer index = nodeindex.get(o);
 	if( index == null )
 	{
-		index = new Integer(nodes.size());
+		index = nodes.size();
 		nodes.add(o);
 		neighbors.add(new HashSet<Integer>());
 		nodeindex.put(o,index);

@@ -7,7 +7,8 @@ MJ 21/05/08
   and hashCode
 - Added "close" for various unclosed streams (no serious issues, but it was
   not nice in any case)
-
+- Various minor issues found by FindBugs (that is also responsible for the
+  items above)
 
 MJ 20/04/08
 - Refactoring of EDSimulator to support the application of any event queue

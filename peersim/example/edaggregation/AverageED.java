@@ -63,8 +63,6 @@ public void nextCycle( Node node, int pid )
 		// (message would be lost anyway, we save time)
 		if(!peern.isUp()) return;
 		
-		AverageED peer = (AverageED) peern.getProtocol(pid);
-		
 		((Transport)node.getProtocol(FastConfig.getTransport(pid))).
 			send(
 				node,

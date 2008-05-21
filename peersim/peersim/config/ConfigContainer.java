@@ -84,7 +84,7 @@ public ConfigContainer(Properties config, boolean check)
 	protocols = new HashMap<String, Integer>();
 	String[] prots = getNames(Configuration.PAR_PROT);// they're returned in correct order
 	for (int i = 0; i < prots.length; ++i) {
-		protocols.put(prots[i].substring(Configuration.PAR_PROT.length() + 1), new Integer(i));
+		protocols.put(prots[i].substring(Configuration.PAR_PROT.length() + 1), Integer.valueOf(i));
 	}
 	String debug = config.getProperty(Configuration.PAR_DEBUG);
 	if (Configuration.DEBUG_EXTENDED.equals(debug))
@@ -180,7 +180,7 @@ private boolean getBool(String name)
 		throw new MissingParameterException(name,
 				"Blank value is not accepted when parsing Boolean.");
 	}
-	boolean ret = (new Boolean(config.getProperty(name))).booleanValue();
+	boolean ret = Boolean.valueOf(config.getProperty(name));
 	debug(name, "" + ret);
 	return ret;
 }

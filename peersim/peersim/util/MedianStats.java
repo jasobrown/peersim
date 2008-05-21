@@ -33,7 +33,7 @@ public class MedianStats extends IncrementalStats
 {
 
 /** Structure to store each entry. */
-private ArrayList<Double> data;
+private final ArrayList<Double> data=new ArrayList<Double>();
 
 /** Calls {@link #reset}. */
 public MedianStats()
@@ -56,11 +56,10 @@ public double getMedian()
 	// Sort the arraylist
 	Collections.sort(data);
 	if (data.size() % 2 != 0) { // odd number
-		int index = Math.round(data.size() / 2);
-		result = data.get(index);
+		result = data.get(data.size() / 2);
 	} else { // even number:
 		double a = data.get(data.size() / 2);
-		double b = data.get((data.size() / 2) - 1);
+		double b = data.get(data.size() / 2 - 1);
 		result = (a + b) / 2;
 	}
 	return result;
@@ -80,14 +79,13 @@ public void reset()
 	if (data != null)
 		data.clear();
 }
-/*
- * public static void main( String[] args ) { MedianStats s = new
- * MedianStats(); Random r = new Random();
- * 
- * for(int i=0; i< 50000; i++) s.add(r.nextDouble());
- * 
- * System.out.println("Average: "+s.getAverage());
- * System.out.println("Median: "+s.getMedian());
- *  }
- */
+
+
+public static void main( String[] args ) {
+	MedianStats s = new MedianStats();
+	for(int i=0; i<args.length; i++) s.add(Double.parseDouble(args[i]));
+	System.out.println("Average: "+s.getAverage());
+	System.out.println("Median: "+s.getMedian());
+}
+
 }

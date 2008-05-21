@@ -31,7 +31,7 @@ import peersim.edsim.*;
  * @author Alberto Montresor
  * @version $Revision$
  */
-public class UniformRandomTransport implements Transport
+public final class UniformRandomTransport implements Transport
 {
 
 //---------------------------------------------------------------------

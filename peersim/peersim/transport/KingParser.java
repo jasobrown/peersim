@@ -129,8 +129,12 @@ public boolean execute()
 
 			line = in.readLine();
 		} while (line != null);
+		
+		in.close();
+	
 	} catch (IOException e) {
 	}
+
 
 	return false;
 }

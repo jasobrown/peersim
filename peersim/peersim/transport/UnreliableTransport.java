@@ -35,7 +35,7 @@ import peersim.core.*;
  * @author Alberto Montresor
  * @version $Revision$
  */
-public class UnreliableTransport implements Transport
+public final class UnreliableTransport implements Transport
 {
 
 //---------------------------------------------------------------------

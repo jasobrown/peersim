@@ -98,18 +98,27 @@ public boolean execute() {
 try
 {
 	System.out.print(prefix + ": ");
+	
 	// initialize output streams
-	PrintStream pstr = System.out;
 	if (baseName != null)
 	{
 		String filename = fng.nextCounterName();
 		System.out.println("writing "+filename);
-		pstr = new PrintStream(new FileOutputStream(filename));
+		PrintStream pstr =
+			new PrintStream(new FileOutputStream(filename));
+		for (int i = 0; i < Network.size(); ++i)
+		{
+			pstr.println(getter.get(i));
+		}
+		pstr.close();
 	}
-	else	System.out.println();
-	for (int i = 0; i < Network.size(); ++i)
+	else
 	{
-		pstr.println(getter.get(i));
+		System.out.println();
+		for (int i = 0; i < Network.size(); ++i)
+		{
+			System.out.println(getter.get(i));
+		}
 	}
 }
 catch (IOException e)

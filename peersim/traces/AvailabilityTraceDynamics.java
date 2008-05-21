@@ -139,6 +139,9 @@ public AvailabilityTraceDynamics(String prefix)
 				zn++;
 			}
 		}
+		
+		in.close();
+
 	} catch (IOException e ) {
 		e.printStackTrace(System.err);
 		System.exit(0);	

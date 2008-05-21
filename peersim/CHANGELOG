@@ -1,3 +1,14 @@
+MJ 21/05/08
+- Fixed serious initialization bug in MedianStats
+- Changed OracleIdleProtocol, UniformRandomTransport and UnreliableTransport
+  into final, due to their unconventional impementation of "clone" (they are
+  singletons)
+- Fixed minor issues in IncrementalFreq related to java conventions on equals
+  and hashCode
+- Added "close" for various unclosed streams (no serious issues, but it was
+  not nice in any case)
+
+
 MJ 20/04/08
 - Refactoring of EDSimulator to support the application of any event queue
   implementation. The even queue can now be configured to be any extrenal class

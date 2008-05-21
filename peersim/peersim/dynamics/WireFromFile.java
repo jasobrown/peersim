@@ -125,6 +125,7 @@ try
 	if( wasOutOfRange )
 		System.err.println("WireFromFile warning: in "+file+" "+
 			"some nodes were out of range and so ignored.");
+	lnr.close();
 }
 catch( IOException e )
 {

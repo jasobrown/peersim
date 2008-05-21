@@ -108,6 +108,7 @@ try {
 		else	setter.set(i,Double.parseDouble(st.nextToken()));
 		i++;
 	}
+	lnr.close();
 }
 catch(IOException e)
 {

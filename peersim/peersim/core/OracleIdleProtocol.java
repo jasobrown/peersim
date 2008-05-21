@@ -25,7 +25,7 @@ package peersim.core;
 * whole node set. this protocol is also extremely cheap, in fact it
 * has no data fields.
 */
-public class OracleIdleProtocol implements Protocol, Linkable {
+public final class OracleIdleProtocol implements Protocol, Linkable {
 
 // =================== initialization, creation ======================
 // ===================================================================

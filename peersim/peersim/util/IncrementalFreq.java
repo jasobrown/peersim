@@ -62,7 +62,7 @@ public IncrementalFreq(int maxvalue) {
 
 // --------------------------------------------------------------------
 
-/** Calls <code>this(-1)</code>.
+/** Calls <code>this(-1)</code>, that is, no values will be ignored.
 * @see #IncrementalFreq(int) */
 public IncrementalFreq() {
 	
@@ -263,6 +263,7 @@ public Object clone() throws CloneNotSupportedException {
 */
 public boolean equals(Object obj) {
 
+	if( !( obj instanceof IncrementalFreq) ) return false;
 	IncrementalFreq other = (IncrementalFreq)obj;
 	final int minlength = Math.min(other.freq.length, freq.length);
 	
@@ -276,6 +277,19 @@ public boolean equals(Object obj) {
 			return false;
 
 	return true;
+}
+
+// ---------------------------------------------------------------------
+
+/**
+* Hashcode (consistent with {@link #equals}). Probably you will never want to
+* use this, but since we have {@link #equals}, we must implement it.
+*/
+public int hashCode() {
+
+	int sum = 0;
+	for(int i=0; i<freq.length; ++i) sum += freq[i]*i;
+	return sum;
 }
 
 // ---------------------------------------------------------------------

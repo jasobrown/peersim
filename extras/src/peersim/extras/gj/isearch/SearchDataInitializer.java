@@ -154,16 +154,16 @@ public class SearchDataInitializer implements Control {
         }
     }
 
-    private Map<Integer,Integer> makeKeyMap(int size) {
+    private Map<Integer, Integer> makeKeyMap(int size) {
         HashMap<Integer, Integer> keys = new HashMap<Integer, Integer>();
         while (keys.size() < size) {
-            int key = (int) Math.ceil(nextPower(keywords / 100, 1.0));
+            int key = (int) Math.ceil(nextPower(keywords / (double) 100, 1.0));
             if (key > keywords)
                 continue;
-            Integer ikey = new Integer(key);
+            Integer ikey = Integer.valueOf(key);
             Integer oldValue = (Integer) keys.get(ikey);
             int newval = (oldValue == null ? 1 : oldValue.intValue() + 1);
-            keys.put(ikey, new Integer(newval));
+            keys.put(ikey, Integer.valueOf(newval));
         }
 
         return keys;
@@ -172,10 +172,10 @@ public class SearchDataInitializer implements Control {
     private int[] makeKeyArray(int size) {
         HashSet<Integer> keys = new HashSet<Integer>();
         while (keys.size() < size) {
-            int key = (int) Math.ceil(nextPower(keywords / 100, 1.0));
+            int key = (int) Math.ceil(nextPower(keywords / (double) 100, 1.0));
             if (key > keywords)
                 continue;
-            keys.add(new Integer(key));
+            keys.add(Integer.valueOf(key));
         }
 
         int[] result = new int[size];

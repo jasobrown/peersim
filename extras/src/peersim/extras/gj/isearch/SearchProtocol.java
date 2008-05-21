@@ -117,7 +117,7 @@ public abstract class SearchProtocol implements CDProtocol, Linkable {
 
     protected boolean andMatch;
 
-    private static int linkID; // Linkable id: may be the same as protocolID
+    private int linkID; // Linkable id: may be the same as protocolID
 
     public Node whoAmI; // a reference the the protocol own node
 
@@ -192,7 +192,7 @@ public abstract class SearchProtocol implements CDProtocol, Linkable {
             // continue;
             Integer actual = (Integer) this.messageTable.get(mes);
             int index = (actual != null ? actual.intValue() + 1 : 1);
-            this.messageTable.put(mes, new Integer(index));
+            this.messageTable.put(mes, Integer.valueOf(index));
             // int before = incomingQueue.size();
             this.process(mes);
             iter.remove();
@@ -220,7 +220,7 @@ public abstract class SearchProtocol implements CDProtocol, Linkable {
         try {
             SMessage copy = (SMessage) mes.clone();
             copy.hops++;
-            this.messageTable.put(mes, new Integer(1));
+            this.messageTable.put(mes, Integer.valueOf(1));
 
             // store to whom the message is sent and how many copies
             updateRoutingTable(n, mes);
@@ -395,8 +395,8 @@ public abstract class SearchProtocol implements CDProtocol, Linkable {
         int[] result = null;
         ArrayList<Integer> temp = new ArrayList<Integer>();
         for (int i = 0; i < keys.length; i++) {
-            if (this.keyStorage.containsKey(new Integer(keys[i]))) {
-                temp.add(new Integer(keys[i]));
+            if (this.keyStorage.containsKey(Integer.valueOf(keys[i]))) {
+                temp.add( Integer.valueOf(keys[i]));
             }
         }
         if (temp.size() > 0) {
@@ -405,7 +405,7 @@ public abstract class SearchProtocol implements CDProtocol, Linkable {
                 result[i] = temp.get(i);
             }
         }
-        return result; 
+        return result;
     }
 
     /**
@@ -467,7 +467,7 @@ public abstract class SearchProtocol implements CDProtocol, Linkable {
         // System.err.print(keys[i] + " ");
         // System.err.println(" scheduled @" + cycle);
 
-        this.queryDistro.put(new Integer(cycle), (Object) keys);
+        this.queryDistro.put( Integer.valueOf(cycle), (Object) keys);
     }
 
     /**

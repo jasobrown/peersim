@@ -1,7 +1,11 @@
+AM 23/05/08
+- Improved KingParser; it now performs some check about file format, and
+  print out the appropriate exceptions.
+
 MJ 21/05/08
 - Fixed serious initialization bug in MedianStats
 - Changed OracleIdleProtocol, UniformRandomTransport and UnreliableTransport
-  into final, due to their unconventional impementation of "clone" (they are
+  into final, due to their unconventional implementation of "clone" (they are
   singletons)
 - Fixed minor issues in IncrementalFreq related to java conventions on equals
   and hashCode

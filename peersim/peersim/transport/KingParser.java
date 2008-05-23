@@ -109,30 +109,54 @@ public boolean execute()
 	String line = null;
 	// Skip initial lines
 	int size = 0;
+	int lc = 1;
 	try {
-		while ((line = in.readLine()) != null && !line.startsWith("node"));
+		while ((line = in.readLine()) != null && !line.startsWith("node")) lc++;
 		while (line != null && line.startsWith("node")) {
 			size++;
+			lc++;
 			line = in.readLine();
 		}
 	} catch (IOException e) {
+		System.err.println("KingParser: " + filename + ", line " + lc + ":");
+		e.printStackTrace();
+		try { in.close(); } catch (IOException e1) { };
+		System.exit(1);
 	}
 	E2ENetwork.reset(size, true);
+	if (line == null) {
+		System.err.println("KingParser: " + filename + ", line " + lc + ":");
+		System.err.println("No latency matrix contained in the specified file");
+		try { in.close(); } catch (IOException e1) { };
+		System.exit(1);
+	}
+	
 	System.err.println("KingParser: read " + size + " entries");
+	
 	try {
 		do {
 			StringTokenizer tok = new StringTokenizer(line, ", ");
+			if (tok.countTokens() != 3) {
+				System.err.println("KingParser: " + filename + ", line " + lc + ":");
+				System.err.println("Specified line does not contain a <node1, node2, latency> triple");
+				try { in.close(); } catch (IOException e1) { };
+				System.exit(1);
+			}
 			int n1 = Integer.parseInt(tok.nextToken()) - 1;
 			int n2 = Integer.parseInt(tok.nextToken()) - 1;
 			int latency = (int) (Double.parseDouble(tok.nextToken()) * ratio);
 			E2ENetwork.setLatency(n1, n2, latency);
-
+			lc++;
 			line = in.readLine();
 		} while (line != null);
 		
 		in.close();
 	
 	} catch (IOException e) {
+		System.err.println("KingParser: " + filename + ", line " + lc + ":");
+		e.printStackTrace();
+		try { in.close(); } catch (IOException e1) { };
+		System.exit(1);
 	}
 
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001 The Anthill Team
+ * Copyright (c)2008 The Peersim Team
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -87,7 +87,7 @@ public long maxTime();
 public long maxPriority();
 
 /**
- * Return type of {@link #removeFirst}.
+ * Return type of {@link #removeFirst()}.
  */
 public class Event
 {

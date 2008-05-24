@@ -1,3 +1,7 @@
+AM 24/05/08
+- Solved a bug in ConfigContainer; some exceptions were incorrectly
+  swallowed.
+
 AM 23/05/08
 - Improved KingParser; it now performs some check about file format, and
   print out the appropriate exceptions.

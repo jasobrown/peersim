@@ -979,13 +979,8 @@ private void manageDefault(String name, Object def,
 	}
 	if (e instanceof MissingParameterException) {
 		// Do nothing
-	} else if (e instanceof IllegalParameterException) {
-		// Print just the short message in this case
-		System.out.println("Error: " + 
-				((IllegalParameterException) e).getShortMessage());
 	} else {
-		System.out.println("Error: " + name + " " +e);
-		e.printStackTrace();
+		manageException(name, e);
 	}
 }
 

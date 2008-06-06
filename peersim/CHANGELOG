@@ -1,3 +1,8 @@
+AM 6/6/08
+- Solved a bug in EDSimulator. Time was not reset to zero when network
+  is re-initialized, this caused some problems in case of multiple
+  experiments.
+
 AM 24/05/08
 - Solved a bug in ConfigContainer; some exceptions were incorrectly
   swallowed.

@@ -326,9 +326,9 @@ private static boolean executeNext() {
 public static void nextExperiment() 
 {
 	// Reading parameter
-	if( Configuration.contains(PAR_PQ) )
+	if( Configuration.contains(PAR_PQ) ) 
 		heap = (PriorityQ) Configuration.getInstance(PAR_PQ);
-	else
+	else 
 		heap = new Heap();
 	endtime = Configuration.getLong(PAR_ENDTIME);
 	if( CommonState.getEndTime() < 0 ) // not initialized yet
@@ -342,12 +342,12 @@ public static void nextExperiment()
 	// initialization
 	System.err.println("EDSimulator: resetting");
 	CommonState.setPhase(CommonState.PHASE_UNKNOWN);
+	CommonState.setTime(0); // needed here
 	controls = null;
 	ctrlSchedules = null;
 	nextlog = 0;
 	Network.reset();
 	System.err.println("EDSimulator: running initializers");
-	CommonState.setTime(0); // needed here
 	runInitializers();
 	scheduleControls();
 
@@ -396,7 +396,7 @@ public static void add(long delay, Object event, Node node, int pid)
 				+ Byte.MAX_VALUE + " protocols");
 	
 	long time = CommonState.getTime();
-	if( endtime - time > delay ) // check like this to deal with overflow
+	if( endtime - time > delay ) // check like this to deal with overflow 
 		heap.add(time+delay, event, node, (byte) pid);
 }
 

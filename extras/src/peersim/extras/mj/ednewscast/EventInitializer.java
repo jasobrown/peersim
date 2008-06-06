@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003-2005 The BISON Project
+ * Copyright (c) 2008 M. Jelasity and N. Tolgyesi
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as

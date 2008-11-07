@@ -302,14 +302,16 @@ private static boolean executeNext() {
 		}
 		else
 		{
+			EDProtocol prot = null;
 			try {
-				EDProtocol prot = (EDProtocol) ev.node.getProtocol(pid);
-				prot.processEvent(ev.node, pid, ev.event);
+				prot = (EDProtocol) ev.node.getProtocol(pid);
 			} catch (ClassCastException e) {
+				e.printStackTrace();
 				throw new IllegalArgumentException("Protocol " +
 					Configuration.lookupPid(pid) + 
 					" does not implement EDProtocol; " + ev.event.getClass()  );
 			}
+			prot.processEvent(ev.node, pid, ev.event);
 		}
 	}
 	

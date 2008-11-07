@@ -1,3 +1,14 @@
+Release notes for Peersim 1.0.4
+
+This minor release fixes several small bugs, see CHANGELOG. 
+
+New features added:
+- Refactoring of EDSimulator to support the application of any event queue
+  implementation. The even queue can now be configured to be any external 
+  class implementing peersim.edsim.PriorityQ.
+- Added some popular file formats to GraphPrinter (as well as GraphIO)
+- Added a "background" parameter to PeakDistribution
+
 Release notes for Peersim 1.0.3
 
 This minor release fixes several small bugs, see CHANGELOG. 

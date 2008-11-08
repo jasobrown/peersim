@@ -3,6 +3,12 @@ VERSION 1.0.4 RELEASED
 ------------------------------------------------------------------
 ------------------------------------------------------------------
 
+AM 10/7/08
+- Modified EDSimulator to print additional information in case
+  of protocols not implementing a particular interface. Class cast
+  execeptions launched by event processing are not swallowed any
+  more.
+
 AM 6/6/08
 - Solved a bug in EDSimulator. Time was not reset to zero when network
   is re-initialized, this caused some problems in case of multiple

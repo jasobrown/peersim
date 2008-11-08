@@ -3,7 +3,7 @@ VERSION 1.0.4 RELEASED
 ------------------------------------------------------------------
 ------------------------------------------------------------------
 
-AM 10/7/08
+AM 8/10/08
 - Modified EDSimulator to print additional information in case
   of protocols not implementing a particular interface. Class cast
   execeptions launched by event processing are not swallowed any

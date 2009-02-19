@@ -92,7 +92,9 @@ private static Graph undirg;
 
 private static boolean fast;
 
-/** If any extending class defines undir we need to maintain an undir graph.*/
+/** If any instance of some extending class defines undir we need to
+maintain an undir graph. Note that the graph is stored in a static
+field so it is common to all instances. */
 private static boolean needUndir=false;
 
 // ===================== initialization ================================

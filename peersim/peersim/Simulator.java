@@ -163,7 +163,7 @@ public static void main(String[] args)
 	if( SIMID == UNKNOWN )
 	{
 		System.err.println(
-		    "Simulator: unable to identify configuration, exiting.");
+		    "Simulator: unable to determine simulation engine type");
 		return;
 	}
 	

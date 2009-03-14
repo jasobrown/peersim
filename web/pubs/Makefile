@@ -7,6 +7,7 @@ htmlfiles: \
 
 references:
 	mkdir -p refs
+	rm -f refs/*.bib
 	cd refs ; pwd ; awk -f ../bib-split.awk ../peersim.bib
 	
 %.html: %.tex peersim.bib alpha-web.bst

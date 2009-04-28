@@ -38,7 +38,7 @@ import peersim.vector.*;
  * the simulation based on a configurable condition, expressed by the
  * parameter {@value #PAR_CONDITION}.
  * 
- * @see VectControl
+ * @see MultipleVectorObserver
  * @see peersim.vector
  */
 public class ConditionalVectorObserver extends VectControl {

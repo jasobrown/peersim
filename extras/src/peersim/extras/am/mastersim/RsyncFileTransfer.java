@@ -31,7 +31,7 @@ public class RsyncFileTransfer implements FileTransfer
 
 /**
  * The temporary directory in the remote hosts to be used
- * as buffer for transferred files. Defaults to "/tmp".
+ * as buffer for transferred files. Defaults to ".tmp".
  * @config
  */
 private static final String PAR_TMP = "tempdir";
@@ -82,7 +82,7 @@ public String transfer(Set done, String host, String domain, File file)
 	list.add("-e");
 	list.add("ssh");
 	list.add(file.getAbsolutePath());
-	list.add(host+":"+tmpfile);
+	list.add(domain+":"+tmpfile);
 	
 	// Prepare the argument array for process forking
 	String[] newargs = list.toArray(new String[list.size()]);

@@ -58,11 +58,14 @@ private Process p;
 
 private Set done;
 
+/** If true, used the RandomSimulator instead of the RangeSimulator */
+private boolean random;
+
 /**
  * 
  */
 public ExecutionThread(File jobdir, File job, FileTransfer ft,
-		Heap hosts, File[] jarfiles, Set done, File resdir, int id)
+		Heap hosts, File[] jarfiles, Set done, File resdir, int id, boolean random)
 {
 	this.jobdir = jobdir;
 	this.job = job;
@@ -72,6 +75,7 @@ public ExecutionThread(File jobdir, File job, FileTransfer ft,
 	this.done = done;
 	this.resdir = resdir;
 	this.id = id;
+	this.random = random;
 }
 
 public void run()
@@ -90,7 +94,7 @@ public void run()
 		list.add("NumberOfPasswordPrompts=0");
 		list.add(desc.getHostname());
 //		list.add("nice");
-		list.add("java");
+		list.add(desc.getCommand());
 		
 		// Transfer jar files and config files to the destination
 		// and add them to the classpath
@@ -106,7 +110,10 @@ public void run()
 		list.add(build.toString());
 	
 		// The class to be run in the forked JVM
-		list.add("peersim.rangesim.RangeSimulator");
+		if (random)
+			list.add("peersim.extras.am.randomsim.RandomSimulator");
+		else 
+			list.add("peersim.rangesim.RangeSimulator");
 		
 		// Transfer config file and add the remote string to the
 		// local file
@@ -115,6 +122,7 @@ public void run()
 		// Since multiple experiments are managed here, the value
 		// of standard variable for multiple experiments is changed to 1
 		list.add(Simulator.PAR_EXPS+"=1");
+		//list.add(RandomSimulator.PAR_REXPERIMENTS+"=1");
 	
 		// Add the seed
 		list.add(CommonState.PAR_SEED+"="+r.nextLong());
@@ -124,7 +132,14 @@ public void run()
 		
 		// Prepare the argument array for process forking
 		String[] newargs = list.toArray(new String[list.size()]);
-		System.out.println(list);
+		//System.out.println(list);
+		
+		StringBuffer s = new StringBuffer();
+		for (int i=0; i < list.size(); i++) {
+			s.append(newargs[i]);
+			s.append(" ");
+		}
+		System.out.println(s);
 	
 		// Execute a new JVM
 		try {

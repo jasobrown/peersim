@@ -28,6 +28,10 @@ private String hostname;
 /** The max amount of memory that can be used by this machine */
 private String memory;
 
+/** The java command to be executed on the remote machine; defaults to java */
+private String command;
+
+
 /** 
  * The address of one machine representative of an entire domain;
  * files common to several machines will be sent just once.
@@ -55,13 +59,16 @@ public String getDomain()
 public HostDescriptor(String linedesc)
 {
 	String[] parts = linedesc.split(" ");
-	hostname = parts[0];
-	memory = parts[1];
-	if (parts.length == 3)
-		domain = parts[2];
-	else 
-		domain = hostname;
-	counter = 0;
+	if (parts.length != 3 || parts.length != 4) {
+	  hostname = parts[0];
+	  memory = parts[1];
+	  domain = parts[2];
+	  if (parts.length == 4)
+		  command = parts[3];
+	  else 
+		  domain = "java";
+	  counter = 0;
+	}
 }
 
 public int compareTo(HostDescriptor o)
@@ -96,6 +103,15 @@ public void setCounter(int counter)
 public String getHostname()
 {
 	return hostname;
+}
+
+
+/**
+ * @return the command
+ */
+public String getCommand()
+{
+	return command;
 }
 
 }

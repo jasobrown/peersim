@@ -23,7 +23,7 @@ import peersim.core.*;
 import peersim.extras.am.id.*;
 
 /**
- * Extract a Chord structure from a ring.
+ * Extract a Pastry structure from a ring.
  * 
  * @author Alberto Montresor
  * @version $Revision$
@@ -32,12 +32,12 @@ public class WirePastryTopology implements Control
 {
 
 /**
- * The identifier of the protocol where the Chord topology should be stored.
+ * The identifier of the protocol where the Pastry topology should be stored.
  */
 private static final String PAR_PROT = "protocol";
 
 /**
- * The identifier of the protocol where the Chord topology should be stored.
+ * The identifier of the protocol where the Pastry topology should be stored.
  */
 private static final String PAR_HOLDER = "holder";
 

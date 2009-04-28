@@ -323,8 +323,7 @@ public abstract class SearchProtocol implements CDProtocol, Linkable {
      * protocol versions. It always return a random node even if no free node
      * are available.
      * 
-     * @param The
-     *            message for which the nodes must be "free".
+     * @param mes The message for which the nodes must be "free".
      * @return A "free" node.
      */
     public Node selectFreeNeighbor(SMessage mes) {

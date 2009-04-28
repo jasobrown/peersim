@@ -23,7 +23,7 @@ import java.util.*;
 
 import peersim.*;
 import peersim.config.*;
-import peersim.rangesim.*;
+import peersim.rangesim.ProcessManager;
 
 /**
  * This class is the main class for the Master Simulator.  
@@ -45,6 +45,13 @@ public class MasterSimulator
  * @config
  */
 private static final String PAR_FILETRANSFER = "transfer";
+
+/** 
+ * If true, uses the random simulator instead of the range simulator 
+ * @config
+ */
+private static final String PAR_RANDOM = "random";
+
 
 //--------------------------------------------------------------------------
 //Constants
@@ -98,7 +105,7 @@ public static void main(String[] args)
 			executeJobDir(srcdir, jobname, dstdir);
 		else {
 			try { 
-				Thread.sleep(30000);
+				Thread.sleep(10000);
 			} catch (InterruptedException e) {
 			}
 		}
@@ -148,10 +155,10 @@ private static void executeJobDir(File srcdir, String jobname,
 	if (cc == null)
 		return;
 	
-	// Read common configuration parameters parameters
+	// Read common configuration parameters
 	FileTransfer ft = (FileTransfer) cc.getInstance(PAR_FILETRANSFER);
+	int random = cc.getInt(PAR_RANDOM, 0);
 	
-
 	// Host file: common to all jobs
 	File hostfile = new File(jobsrc, HOSTS);
 	Heap hosts = null;
@@ -187,7 +194,11 @@ private static void executeJobDir(File srcdir, String jobname,
 	int tot = 0;
 	for (int i = 0; i < jobs.length; i++) {
 		cc = readConfig(jobs[i]);
-  	exps[i] = cc.getInt(Simulator.PAR_EXPS);
+		if (random > 0) {
+			exps[i] = random;
+		} else {
+			exps[i] = cc.getInt(Simulator.PAR_EXPS);
+		}
   	tot += exps[i];
 	}
 	while (tot > 0) {
@@ -196,7 +207,7 @@ private static void executeJobDir(File srcdir, String jobname,
 				exps[i]--;
 				tot--;
 				ExecutionThread t = new ExecutionThread(jobsrc, jobs[i], 
-						ft, hosts, jarfiles, domains, jobdst, exps[i]);
+						ft, hosts, jarfiles, domains, jobdst, tot, random>0);
 				pm.addThread(t);
 				t.start();
 			}

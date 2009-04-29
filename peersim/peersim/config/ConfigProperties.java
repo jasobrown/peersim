@@ -42,16 +42,18 @@ public ConfigProperties() { super(); }
 /**
 * Constructs a ConfigProperty object from a parameter list.
 * The algorithm is as follows: first <code>resource</code> is used to attempt
-* loading default values from the give system resource.
-* Then pars[0] is tried if it is an
-* existing filename. If it is, reading properties from that file is
-* attempted. Then (if pars[0] was a filename then from index 0 otherwise
-* from index 1) pars is loaded as if it was a command line argument list
-* using {@link #loadCommandLineDefs}.
+* loading default values from the given system resource.
+* Then all Strings in <b>pars</b> are tried <b>firstly</b> as if each of them was 
+* an existing filename. All positions that were not an existing filename
+* are processed as if they were command line arguments. That is, all positions of 
+* <b>pars</b>
+* that were an existing filename are omitted in the process of loading 
+* command line arguments.
 * <p>
-* A little inconvenience is that if pars[0] is supposed to be the first
-* command line argument but it is a valid filename at the same time by
-* accident. The caller must take care of that.
+* A little inconvenience is that if any <b>pars</b>' position is supposed to be 
+* a command line argument, but it is a valid filename at the same time by
+* accident, the algorithm will process it as a file instead of a command line
+* argument. The caller must take care of that.
 * <p>
 * No exceptions are thrown, instead error messages are written to the
 * standard error. Users who want a finer control should use
@@ -80,28 +82,30 @@ public	ConfigProperties( String[] pars, String resource ) {
 	
 	if( pars == null || pars.length == 0 ) return;
 	
-	try
+	StringBuffer sb = new StringBuffer();
+	for (int i=0; i < pars.length; i++)
 	{
-		load( pars[0] );
-		System.err.println(
-			"ConfigProperties: File "+pars[0]+" loaded.");
-		pars[0] = "";
-	}
-	catch( IOException e )
-	{
-		System.err.println("ConfigProperties: Failed loading '"+pars[0]
-		+"' as a file, interpreting it as a property.");
-	}
-	catch( Exception e )
-	{
-		System.err.println("ConfigProperties: " + e );
+		try
+		{
+			load( pars[i] );
+			System.err.println(
+				"ConfigProperties: File "+pars[i]+" loaded.");
+			pars[i] = "";
+		}
+		catch( IOException e )
+		{
+			System.err.println("ConfigProperties: Property '" +pars[i] + "' loaded.");
+			sb.append( pars[i] ).append( "\n" );
+		}
+		catch( Exception e )
+		{
+			System.err.println("ConfigProperties: " + e );
+		}
 	}
 
-	if( pars.length==1 && pars[0].length()==0 ) return;
-	
 	try
 	{
-		loadCommandLineDefs( pars );
+		load( new ByteArrayInputStream(sb.toString().getBytes()) );
 		System.err.println(
 			"ConfigProperties: Command line defs loaded.");
 	}
@@ -171,22 +175,5 @@ public void loadSystemResource( String n ) throws IOException {
 	load( cl.getResourceAsStream( n ) );
 }
 
-// -------------------------------------------------------------------
-
-
-/**
-* Appends properties defined in the given command line argument list.
-* Every string in the array is considered as a property file line.
-* The strings are converted to byte arrays according to the
-* default character encoding and then the properties are loaded by the
-* <code>Properties.load</code> method. This means that the ISO-8859-1
-* (or compatible) encoding is assumed.
-*/
-public void loadCommandLineDefs( String[] cl ) throws IOException {
-
-	StringBuffer sb = new StringBuffer();
-	for(int i=0; i<cl.length; ++i) sb.append( cl[i] ).append( "\n" );
-	load( new ByteArrayInputStream(sb.toString().getBytes()) );
-}
 }
 

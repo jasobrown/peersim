@@ -1,3 +1,18 @@
+AM 30/04/09
+- Solved a bug in ConfigContainer.  
+  ConfigContainer.getInstance(String name, Object def) was 
+  returning the default object even if name was defined but
+  a parameter was missing in the definition of the created
+  object. Thanks to Marco Biazzini for spotting this.
+- Improved the functionality of configuration file parsing
+  in peersim.config.ConfigProperties. Now, each of the
+  command line parameter is first interpreted as a file
+  name, and if this file does not exist, it is set as
+  a configuration property. This allows the configuration 
+  to be split in multiple files.
+  Thanks to Jordi Pujol for suggesting the idea and
+  implementing a first version of it.  
+
 AM 8/11/2008
 VERSION 1.0.4 RELEASED
 ------------------------------------------------------------------
@@ -6,7 +21,7 @@ VERSION 1.0.4 RELEASED
 AM 8/10/08
 - Modified EDSimulator to print additional information in case
   of protocols not implementing a particular interface. Class cast
-  execeptions launched by event processing are not swallowed any
+  exceptions launched by event processing are not swallowed any
   more.
 
 AM 6/6/08

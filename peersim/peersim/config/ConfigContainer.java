@@ -705,11 +705,12 @@ private Object getInst(String name)
  */
 public Object getInstance(String name, Object def)
 {
-
+  if (!contains(name)) 
+  	return def;
 	try {
 		return getInst(name);
 	} catch (RuntimeException e) {
-		manageDefault(name, def, e);
+		manageException(name, e);
 		return def;
 	}
 }

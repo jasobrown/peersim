@@ -81,7 +81,6 @@ public	ConfigProperties( String[] pars, String resource ) {
 	
 	if( pars == null || pars.length == 0 ) return;
 	
-	StringBuffer sb = new StringBuffer();
 	for (int i=0; i < pars.length; i++)
 	{
 		try

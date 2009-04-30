@@ -43,14 +43,13 @@ public ConfigProperties() { super(); }
 * Constructs a ConfigProperty object from a parameter list.
 * The algorithm is as follows: first <code>resource</code> is used to attempt
 * loading default values from the given system resource.
-* Then all Strings in <b>pars</b> are tried <b>firstly</b> as if each of them was 
-* an existing filename. All positions that were not an existing filename
-* are processed as if they were command line arguments. That is, all positions of 
-* <b>pars</b>
-* that were an existing filename are omitted in the process of loading 
-* command line arguments.
+* Then all Strings in <code>pars</code> are processed in the order they
+* appear in the array. For <code>pars[i]</code>, first a property file
+* with the name <code>pars[i]</code> is attempted to be loaded. If the file
+* does not exist or loading produces any other IOException, <code>pars[i]</code>
+* is interpreted as a property definition, and it is set.
 * <p>
-* A little inconvenience is that if any <b>pars</b>' position is supposed to be 
+* A little inconvenience is that if <code>pars[i]</code> is supposed to be 
 * a command line argument, but it is a valid filename at the same time by
 * accident, the algorithm will process it as a file instead of a command line
 * argument. The caller must take care of that.
@@ -94,24 +93,21 @@ public	ConfigProperties( String[] pars, String resource ) {
 		}
 		catch( IOException e )
 		{
-			System.err.println("ConfigProperties: Property '" +pars[i] + "' loaded.");
-			sb.append( pars[i] ).append( "\n" );
+			try
+			{
+				loadPropertyString( pars[i] );
+				System.err.println("ConfigProperties: Property '" +
+					pars[i] + "' set.");
+			}
+			catch( Exception e2 )
+			{
+				System.err.println("ConfigProperties: " + e2 );
+			}
 		}
 		catch( Exception e )
 		{
 			System.err.println("ConfigProperties: " + e );
 		}
-	}
-
-	try
-	{
-		load( new ByteArrayInputStream(sb.toString().getBytes()) );
-		System.err.println(
-			"ConfigProperties: Command line defs loaded.");
-	}
-	catch( Exception e )
-	{
-		System.err.println("ConfigProperties: " + e );
 	}
 }
 
@@ -175,5 +171,21 @@ public void loadSystemResource( String n ) throws IOException {
 	load( cl.getResourceAsStream( n ) );
 }
 
+// -------------------------------------------------------------------
+
+/**
+* Appends a property defined in the given string.
+* The string is considered as a property file line.
+* It is converted to a byte array according to the
+* default character encoding and then loaded by the
+* <code>Properties.load</code> method. This means that the ISO-8859-1
+* (or compatible) encoding is assumed.
+*/
+public void loadPropertyString( String prop ) throws IOException {
+
+	StringBuffer sb = new StringBuffer();
+	sb.append( prop ).append( "\n" );
+	load( new ByteArrayInputStream(sb.toString().getBytes()) );
+}
 }
 

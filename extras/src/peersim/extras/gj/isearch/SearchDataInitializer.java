@@ -111,15 +111,16 @@ public class SearchDataInitializer implements Control {
 
     /**
      * Fills a {@link SearchProtocol} with the keywords representing the
-     * documents it holds.
+     * documents it holds. It is called for each node.
      * 
      * @param proto
-     *            the protocol to initialize
+     *            the protocol instance to initialize
      */
     private void initializeData(SearchProtocol proto) {
         // create the stored keywords
         // number of keywords held by the node (poisson)
         int storageSize = CommonState.r.nextPoisson(1 + keywords / 1000);
+        /* generates a distribution of keyIDs along with their frequencies */
         Map<Integer, Integer> keyStorage = makeKeyMap(storageSize);
         proto.addKeyStorage(keyStorage);
     }
@@ -154,11 +155,21 @@ public class SearchDataInitializer implements Control {
         }
     }
 
+    /**
+     * Generate a set of (keyID, frequency) pairs of the specified size.
+     * 
+     * @param size
+     *            The size of the desired set
+     * @return
+     */
     private Map<Integer, Integer> makeKeyMap(int size) {
         HashMap<Integer, Integer> keys = new HashMap<Integer, Integer>();
         while (keys.size() < size) {
             int key = (int) Math.ceil(nextPower(keywords / (double) 100, 1.0));
-            if (key > keywords)
+            if (key > keywords) /*
+                                 * keyIDs grater than the max key number are
+                                 * trashed
+                                 */
                 continue;
             Integer ikey = Integer.valueOf(key);
             Integer oldValue = (Integer) keys.get(ikey);
@@ -197,6 +208,15 @@ public class SearchDataInitializer implements Control {
         return false;
     }
 
+    /**
+     * Extracts random values according to a power distribution.
+     * 
+     * @param base
+     *            base
+     * @param a
+     *            scaling exponent
+     * @return
+     */
     private static double nextPower(double base, double a) {
         return base / Math.pow(CommonState.r.nextDouble(), a) - base;
     }

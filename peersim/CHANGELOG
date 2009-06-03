@@ -1,3 +1,9 @@
+AM 31/05/09
+- Solved a bug in peersim.edsim.EDSimulator
+  ClassCastException generated inside a user Control object
+  were caught by the EDSimulator and a misleading error
+  message was printed.
+
 AM 30/04/09
 - Solved a bug in ConfigContainer.  
   ConfigContainer.getInstance(String name, Object def) was 

@@ -282,14 +282,15 @@ private static boolean executeNext() {
 	if (ev.node == null)
 	{
 		// might be control event; handled through a special method
+		ControlEvent ctrl = null;
 		try {
-			ControlEvent ctrl = (ControlEvent) ev.event;
-			return ctrl.execute();
+			ctrl = (ControlEvent) ev.event;
 		} catch (ClassCastException e) {
 			throw new RuntimeException(
 				"No destination specified (null) for event "+
 				ev);
 		}
+		return ctrl.execute();
 	}
 	else if (ev.node != Network.prototype && ev.node.isUp() )
 	{

@@ -21,7 +21,7 @@ package peersim.core;
 import peersim.config.*;
 
 // XXX a quite primitive scheduler, should be able to be configured
-// much more flexibly using a simlpe syntax for time ranges.
+// much more flexibly using a simple syntax for time ranges.
 /**
 * A binary function over the time points. That is,
 * for each time point returns a boolean value.
@@ -135,7 +135,7 @@ public Scheduler(String prefix, boolean useDefault)
 		from = Configuration.getLong(prefix+"."+PAR_FROM,0);
 		until = Configuration.getLong(prefix+"."+PAR_UNTIL,Long.MAX_VALUE);
 	}
-	next = 0;
+	next = from;
 	fin = Configuration.contains(prefix+"."+PAR_FINAL);
 }
 
@@ -167,7 +167,7 @@ public boolean active() {
 */
 public long getNext()
 {
-	if (until < 0)
+	if (next > until)
 		return -1;
 	long ret = next;
 	// check like this to prevent integer overflow of "next"

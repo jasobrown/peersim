@@ -18,7 +18,12 @@
 
 package peersim.util;
 
+import java.math.*;
 import java.util.*;
+
+import org.lsmp.djep.groupJep.*;
+
+import peersim.config.*;
 
 /**
  * This utility class can be used to parse range expressions. In particular,
@@ -88,73 +93,63 @@ private static void parseSingleItem(List<String> list, String item)
 
 private static void parseRangeItem(List<String> list, String start, String stop)
 {
-  try {
-		long vstart;
-		long vstop;
-		long vinc;
-		boolean sum;
-		vstart = Long.parseLong(start);
-		int pos = stop.indexOf("|*");
+	Number vstart;
+	Number vstop;
+	Number vinc;
+	boolean sum;
+	
+	GroupJep jep = new GroupJep(new Operators());
+	jep.parseExpression(start);
+	vstart = (Number) jep.getValueAsObject(); 
+	int pos = stop.indexOf("|*");
+	if (pos >= 0) {
+		// The string contains a multiplicative factor
+		jep.parseExpression(stop.substring(0, pos));
+		vstop = (Number) jep.getValueAsObject(); 
+		jep.parseExpression(stop.substring(pos + 2));
+		vinc = (Number) jep.getValueAsObject(); 
+		sum = false;
+	} else {
+		pos = stop.indexOf("|");
+		// The string contains an additive factor
 		if (pos >= 0) {
-			// The string contains a multiplicative factor
-			vstop = Long.parseLong(stop.substring(0, pos));
-			vinc = Long.parseLong(stop.substring(pos + 2));
-			sum = false;
+			// The string contains just the final value
+			jep.parseExpression(stop.substring(0, pos));
+			vstop = (Number) jep.getValueAsObject(); 
+			jep.parseExpression(stop.substring(pos + 1));
+			vinc = (Number) jep.getValueAsObject(); 
+			sum = true;
 		} else {
-			pos = stop.indexOf("|");
-			if (pos >= 0) {
-				// The string contains an additive factor
-				vstop = Long.parseLong(stop.substring(0, pos));
-				vinc = Long.parseLong(stop.substring(pos + 1));
-				sum = true;
-			} else {
-				// The string contains just the final value
-				vstop = Long.parseLong(stop);
-				vinc = 1;
-				sum = true;
-			}
+			jep.parseExpression(stop);
+			vstop = (Number) jep.getValueAsObject(); 
+			vinc = BigInteger.ONE;
+			sum = true;
 		}
+	}
+	
+	if (vstart instanceof BigInteger && vstart instanceof BigInteger && vinc instanceof BigInteger) {
+		long vvstart = vstart.longValue();
+		long vvstop  =  vstop.longValue();
+		long vvinc   =   vinc.longValue(); 
 		if (sum) {
-			for (long i = vstart; i <= vstop; i += vinc)
+			for (long i = vvstart; i <= vvstop; i += vvinc)
 				list.add("" + i);
 		} else {
-			for (long i = vstart; i <= vstop; i *= vinc)
+			for (long i = vvstart; i <= vvstop; i *= vvinc)
 				list.add("" + i);
 		}
-  } catch (NumberFormatException e) {
-		double vstart;
-		double vstop;
-		double vinc;
-		boolean sum;
-		vstart = Double.parseDouble(start);
-		int pos = stop.indexOf("|*");
-		if (pos >= 0) {
-			// The string contains a multiplicative factor
-			vstop = Double.parseDouble(stop.substring(0, pos));
-			vinc = Double.parseDouble(stop.substring(pos + 2));
-			sum = false;
-		} else {
-			pos = stop.indexOf("|");
-			if (pos >= 0) {
-				// The string contains an additive factor
-				vstop = Double.parseDouble(stop.substring(0, pos));
-				vinc = Double.parseDouble(stop.substring(pos + 1));
-				sum = true;
-			} else {
-				// The string contains just the final value
-				vstop = Double.parseDouble(stop);
-				vinc = 1;
-				sum = true;
-			}
-		}
+	} else {
+		double vvstart = vstart.doubleValue();
+		double vvstop  =  vstop.doubleValue();
+		double vvinc   =   vinc.doubleValue(); 
 		if (sum) {
-			for (double i = vstart; i <= vstop; i += vinc)
+			for (double i = vvstart; i <= vvstop; i += vvinc) 
 				list.add("" + i);
 		} else {
-			for (double i = vstart; i <= vstop; i *= vinc)
+			for (double i = vvstart; i <= vvstop; i *= vvinc)
 				list.add("" + i);
 		}
-  }
+	}
 }
 
 /*

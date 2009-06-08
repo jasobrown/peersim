@@ -135,7 +135,7 @@ public Scheduler(String prefix, boolean useDefault)
 		from = Configuration.getLong(prefix+"."+PAR_FROM,0);
 		until = Configuration.getLong(prefix+"."+PAR_UNTIL,Long.MAX_VALUE);
 	}
-	next = from;
+	next = 0;
 	fin = Configuration.contains(prefix+"."+PAR_FINAL);
 }
 
@@ -167,6 +167,8 @@ public boolean active() {
 */
 public long getNext()
 {
+	if (until < 0)
+		return -1;
 	long ret = next;
 	// check like this to prevent integer overflow of "next"
 	if( until-next > step ) next += step;

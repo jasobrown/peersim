@@ -50,9 +50,9 @@ range.[id] [var];[range]
  * to <code>var</code>, whose syntax and semantics is defined in 
  * {@link peersim.util.StringListParser}. </LI>
  * </UL>
- * An example of range specification is the following:
+ * Examples of range specifications are the following:
 <pre>
-range.0 SIZE;2^10:2^18*|2
+range.0 SIZE;2^10:2^18|*2
 range.1 K;20:30
 range.2 CHURN;0.05,0.10,0.20 
 </pre>
@@ -60,6 +60,9 @@ range.2 CHURN;0.05,0.10,0.20
  * <code>SIZE</code> is {2^10,2^11,...,2^18}; <code>K</code> contains 
  * {20,21,22,...,30}, while <code>CHURN</code> contains just the
  * specified values.
+ * <p>
+ * Values can be specified as constant expressions (like 2^10, (5+10), etc.)
+ * but variables cannot be used. 
  * <p>
  * A separate Java virtual machine is invoked to run each of the
  * experiments. An attempt is done to run the same JVM version as

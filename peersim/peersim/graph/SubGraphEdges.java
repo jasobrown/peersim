@@ -33,7 +33,7 @@ import java.util.*;
 public class SubGraphEdges implements Graph {
 
 
-// ====================== private fileds ========================
+// ====================== private fields ========================
 // ==============================================================
 
 

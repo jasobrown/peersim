@@ -45,7 +45,7 @@ public class TaggedOutputStream extends PrintStream
 /** 
  * This character is appended at the end of each line. 
  */
-protected static final int TAG = 1;
+public static final int TAG = 1;
 
 //--------------------------------------------------------------------------
 //Parameters
@@ -56,16 +56,18 @@ protected static final int TAG = 1;
  * line, containing the values of the range parameters for the experiment
  * which is being run. The full name of this configuration string is
  * prefixed by {@value peersim.Simulator#PAR_REDIRECT}.
+ * @config
  */
-protected static final String PAR_RANGES = "ranges";
+public static final String PAR_RANGES = "ranges";
 
 /**
  * This parameter contains the list of observers for which the string
  * contained in parameter {@value #PAR_RANGES} should be augmented with 
  * a "TIME &lt;t&gt;" specification regarding current time. Observers are 
  * separated by one of this characters: ' ' - ',' - ';'.
+ * @config
  */
-protected static final String PAR_TIME = "simulation.timed-observers";
+public static final String PAR_TIME = "simulation.timed-observers";
 
 
 //--------------------------------------------------------------------------

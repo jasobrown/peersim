@@ -1,3 +1,9 @@
+MJ 09/06/09
+- Fixed a bug in Scheduler found by Alberto. In the event
+  based engine if "from" was set, the component was
+  executed at "from" irrespective of "until". Besides,
+  a negative "step" was not checked for.
+
 AM 07/06/09
 - Solved a bug identified by Mark: constant expressions
   were not allowed on RangeSimulator ranges, although they

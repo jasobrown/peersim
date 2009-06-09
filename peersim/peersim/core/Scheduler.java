@@ -91,7 +91,7 @@ public final long until;
 public final boolean fin;
 
 /** The next scheduled time point.*/
-protected long next;
+protected long next = -1;
 
 // ==================== initialization ==============================
 // ==================================================================
@@ -120,22 +120,29 @@ public Scheduler(String prefix, boolean useDefault)
 				Configuration.contains(prefix+"."+PAR_UNTIL) ||
 				Configuration.contains(prefix+"."+PAR_STEP))
 			throw new IllegalParameterException(prefix,
-				"Cannot use \""+PAR_AT+"\" and \""+PAR_FROM+
-				"\"/\""+PAR_UNTIL+"\"/\""+PAR_STEP+"\" together");
+				"Cannot use \""+PAR_AT+"\" together with \""
+				+PAR_FROM+"\", \""+PAR_UNTIL+"\", or \""+
+				PAR_STEP+"\"");
 
-		long at = Configuration.getLong(prefix+"."+PAR_AT);
-		from = at;
-		until = at+1;
+		from = Configuration.getLong(prefix+"."+PAR_AT);
+		until = from+1;
 		step = 1;
 	} else {
 		if (useDefault) 
 			step = Configuration.getLong(prefix+"."+PAR_STEP,1);
 		else
 			step = Configuration.getLong(prefix+"."+PAR_STEP);
+		if( step < 1 )
+			throw new IllegalParameterException(prefix,
+				"\""+PAR_STEP+"\" must be >= 1");
+		
 		from = Configuration.getLong(prefix+"."+PAR_FROM,0);
 		until = Configuration.getLong(prefix+"."+PAR_UNTIL,Long.MAX_VALUE);
 	}
-	next = from;
+
+	if( from < until ) next = from;
+	else next = -1;
+	
 	fin = Configuration.contains(prefix+"."+PAR_FINAL);
 }
 
@@ -167,8 +174,6 @@ public boolean active() {
 */
 public long getNext()
 {
-	if (next > until)
-		return -1;
 	long ret = next;
 	// check like this to prevent integer overflow of "next"
 	if( until-next > step ) next += step;

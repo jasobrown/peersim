@@ -46,8 +46,24 @@ private final Random r;
 
 
 /** Sets source of randomness to be used. You need to call
-* {@link #reset} to fully initialize the object. */
+* {@link #reset} to fully initialize the object.
+* @param r Source of randomness
+*/
 public RandPermutation( Random r ) { this.r=r; }
+
+// -------------------------------------------------------------------
+
+/** Sets source of randomness and initial size. It calls 
+* {@link #setPermutation} to fully initialize the object with a
+* permuation ready to use. 
+* @param r Source of randomness
+* @param k size of permutation
+*/
+public RandPermutation( int k, Random r ) {
+	
+	this.r=r;
+	setPermutation(k);
+}
 
 
 // ======================= public methods ============================

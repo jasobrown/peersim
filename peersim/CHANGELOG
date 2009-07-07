@@ -1,3 +1,6 @@
+MJ 07/07/09
+- Added a new constructor to RandPermutation for convenience.
+
 MJ 09/06/09
 - Fixed a bug in Scheduler found by Alberto. In the event
   based engine if "from" was set, the component was

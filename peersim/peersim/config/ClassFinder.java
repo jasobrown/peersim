@@ -44,12 +44,31 @@ class ClassFinder
 	
 /** Local map containing the associations */
 private static Map<String,String> map = new TreeMap<String,String>();	
-	
+
+/** The number of directories that have been touched by the search.
+This does not include directories in jar files. */
+private static int visitedDirs = 0;
+
+private static final int maxDirs;
+
 static {
+
+	maxDirs = 10000;
+
 	try {
 		findClasses(map);
 	} catch (IOException e) {
 		e.printStackTrace();
+	}
+
+	if(visitedDirs >= maxDirs )
+	{
+		System.err.println("Configuration: some directories in your "+
+		"classpath probably contain filesystem\nConfiguration: "+
+		"loops because the number of visited directories "+
+		"reached "+maxDirs+".\nConfiguration: This means automatic "+
+		"class lookup might fail and you might have\nConfiguration: "+
+		"to fully qualify class names in the configuration.");
 	}
 }
 	
@@ -63,12 +82,13 @@ static {
  * information.
  */
 public static String getShortName(String className) {
-  int index = className.lastIndexOf('.');
-  if (index < 0) {
-  	return className;
-  } else {
-  	return className.substring(index+1);
-  }
+
+	int index = className.lastIndexOf('.');
+	if (index < 0) {
+		return className;
+	} else {
+ 		return className.substring(index+1);
+	}
 }
 
 /**
@@ -113,28 +133,30 @@ public static String getQualifiedName(String name)
 private static void findClasses(Map<String,String> map)
 throws IOException
 {
-  String classPath = System.getProperty( "java.class.path" );
-  String separator = System.getProperty( "path.separator"  );
-  String filesep = System.getProperty( "file.separator");
-  StringTokenizer path = new StringTokenizer( classPath, separator );
+	String classPath = System.getProperty( "java.class.path" );
+	String separator = System.getProperty( "path.separator"  );
+	String filesep = System.getProperty( "file.separator");
+	StringTokenizer path = new StringTokenizer( classPath, separator );
 
-  while( path.hasMoreTokens() ) {
-  	
-    String pathElement = path.nextToken();
-    File pathFile = new File( pathElement );
-    
-    if( pathFile.isDirectory() ) {
-    	if (!pathElement.endsWith(filesep)) {
-    		pathElement = pathElement + filesep;
-    		pathFile = new File( pathElement);
-    	}
-      findClassInPathDir( map, pathElement, pathFile );
-    	// Search directories
-    } else if ( pathFile.exists() ) {
-    	findClassInJar( map, pathFile);
-    }
-  }
+	while( path.hasMoreTokens() ) {
+		
+		String pathElement = path.nextToken();
+		File pathFile = new File( pathElement );
+		
+		if( pathFile.isDirectory() ) {
+			if (!pathElement.endsWith(filesep)) {
+				pathElement = pathElement + filesep;
+				pathFile = new File( pathElement);
+			}
+			findClassInPathDir( map, pathElement, pathFile );
+			// Search directories
+		} else if ( pathFile.exists() ) {
+			findClassInJar( map, pathFile);
+		}
+	}
 }
+
+//--------------------------------------------------------------------------
 
 /**
  * Parses jar file.
@@ -146,25 +168,28 @@ throws IOException
 private static void findClassInJar(Map<String,String> map, File pathFile)
 throws IOException
 {
-  ZipFile zipFile = new ZipFile( pathFile );
-  Enumeration entries = zipFile.entries();
-  while( entries.hasMoreElements() ) {
-  	
-    String entry = entries.nextElement().toString();
-    if( entry.endsWith( ".class" ) ) {
-    	// File names in ZIP archives (so, also in JARs) are separated by
-    	// forward slashes '/', independently from the architecture.
-      String className = classname( entry, "/" ); 
-      String shortName = getShortName( className );
-      if (map.containsKey(shortName)) {
-      	map.put(shortName, map.get(shortName)+","+className);
-      } else {
-      	map.put(shortName, className);
-      }
-    }
-   
-  }
+	ZipFile zipFile = new ZipFile( pathFile );
+	Enumeration entries = zipFile.entries();
+	while( entries.hasMoreElements() ) {
+		
+		String entry = entries.nextElement().toString();
+		if( entry.endsWith( ".class" ) ) {
+			// File names in ZIP archives (so, also in JARs)
+			// are separated by forward slashes '/', independently
+			// of the architecture.
+			String className = classname( entry, "/" ); 
+			String shortName = getShortName( className );
+			if (map.containsKey(shortName)) {
+				map.put(shortName,
+					map.get(shortName)+","+className);
+			} else {
+				map.put(shortName, className);
+			}
+		}
+	}
 }
+
+//--------------------------------------------------------------------------
 
 /**
  * Recursively parses directories.
@@ -174,30 +199,35 @@ throws IOException
  * @param pathFile the file (directory) to be analyzed
  * @throws IOException
  */
-private static void findClassInPathDir( Map<String,String> map, String 
-		pathElement, File pathFile ) 
-	throws IOException
+private static void findClassInPathDir( Map<String,String> map,
+	String pathElement, File pathFile )
+throws IOException
 {
-  String[] list = pathFile.list();
-  String filesep = System.getProperty( "file.separator");
-  
-  for( int i = 0; i < list.length; i++ ) {
-    File file = new File( pathFile, list[i] );
-    if( file.isDirectory() ) {
-      findClassInPathDir( map, pathElement, file );
-    }
-	  else if ( file.exists() && (file.length() != 0) && list[i].endsWith( ".class" ) ) {
-	    String classFile = file.toString().substring( pathElement.length());
-	    String className = classname( classFile, filesep );
-      String shortName = getShortName( className );
-      if (map.containsKey(shortName)) {
-      	map.put(shortName, map.get(shortName)+","+className);
-      } else {
-      	map.put(shortName, className);
-      }
-	  }
-  }
+	visitedDirs++;
+	if(visitedDirs>=maxDirs) return;
+
+	String[] list = pathFile.list();
+	String filesep = System.getProperty( "file.separator");
+	
+	for( int i = 0; i < list.length; i++ ) {
+		File file = new File( pathFile, list[i] );
+		if( file.isDirectory() ) {
+			findClassInPathDir( map, pathElement, file );
+		}
+		else if ( file.exists() && (file.length() != 0) && list[i].endsWith( ".class" ) ) {
+			String classFile = file.toString().substring( pathElement.length());
+			String className = classname( classFile, filesep );
+			String shortName = getShortName( className );
+			if (map.containsKey(shortName)) {
+				map.put(shortName, map.get(shortName)+","+className);
+			} else {
+				map.put(shortName, className);
+			}
+		}
+	}
 }
+
+//--------------------------------------------------------------------------
 
 /**
  * Translates a class file name in a class name using
@@ -205,8 +235,11 @@ private static void findClassInPathDir( Map<String,String> map, String
  */
 private static String classname(String classFile, String filesep)
 { 
-  return classFile.replace( filesep, "." ).substring( 0, classFile.length() - ".class".length() ); 
+	return classFile.replace( filesep, "." ).substring(
+		0, classFile.length() - ".class".length() ); 
 }
+
+//--------------------------------------------------------------------------
 
 /** 
  * Testing.
@@ -222,5 +255,4 @@ public static void main( String[] argv )
 		System.out.println(key + " --> " + name);
 	}
 }
-  
 }

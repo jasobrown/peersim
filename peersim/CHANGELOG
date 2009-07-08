@@ -1,4 +1,13 @@
 MJ 07/07/09
+- When there was a loop in the filesystem under one of the directories in
+  the classpath, peersim hung when trying to collect the available classes
+  (in order to resolve the underspecified classnames in the config). I added
+  a temporary fix, which stops the directory walk after a (very large) maximal
+  number of visited directories. Now peersim does not hang, but either fails
+  with a clear message, or executes the simulation. Note that jar files
+  are not affected, and they can still be arbitrarily large. When one needs
+  an excessive number of packages (thousands) then a jar file is a better
+  idea.
 - Added a new constructor to RandPermutation for convenience.
 
 MJ 09/06/09

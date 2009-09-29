@@ -24,7 +24,7 @@ AM 07/06/09
   allowed inside ranges.
 - Changed constants in peersim.rangesime.TaggedOutputStream
   from protected to public; this is needed to use the same
-  class in other simulator implementation. Added the @config
+  class in other simulator implementations. Added the @config
   specification, so they appear correctly in the documentation.
 
 AM 31/05/09

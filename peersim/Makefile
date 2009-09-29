@@ -1,4 +1,4 @@
-VER=1.0.4
+VER=1.0.5
 
 .PHONY: all clean doc release
 
@@ -74,7 +74,7 @@ docpdf:
 		example.newscast 
 
 release: clean all docnew
-	rm -fr peersim-$(VER)
+	rm -rf peersim-$(VER)
 	mkdir peersim-$(VER)
 	cp -r doc peersim-$(VER)
 	cp overview.html README CHANGELOG RELEASE-NOTES build.xml peersim-doclet.jar peersim-$(VER)

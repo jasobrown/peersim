@@ -1,3 +1,12 @@
+Release notes for Peersim 1.0.5
+
+This minor release fixes a number of small bugs, see CHANGELOG.
+
+New features added:
+- It is now possible to specify multiple configuration files in
+  the command line; this enables the users to write their
+  configuration files in a modular way.
+
 Release notes for Peersim 1.0.4
 
 This minor release fixes several small bugs, see CHANGELOG. 

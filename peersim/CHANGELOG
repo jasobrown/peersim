@@ -1,3 +1,8 @@
+AM 1/10/2009
+VERSION 1.0.5 RELEASED
+------------------------------------------------------------------
+------------------------------------------------------------------
+
 MJ 07/07/09
 - When there was a loop in the filesystem under one of the directories in
   the classpath, peersim hung when trying to collect the available classes

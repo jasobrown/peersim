@@ -96,7 +96,8 @@ public class Event
 	public Node node;
 	public byte pid;
 	public String toString() {
-		return event+" to node "+node+"prot "+pid+"at "+time; }
+		return "["+event+" to node "+node+
+			", protocol "+pid+", at time "+time+"]"; }
 }
 
 }

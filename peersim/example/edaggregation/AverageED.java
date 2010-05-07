@@ -29,7 +29,7 @@ import peersim.edsim.EDProtocol;
 * Event driven version of epidemic averaging.
 */
 public class AverageED extends SingleValueHolder
-implements CDProtocol, EDProtocol {
+implements CDProtocol, EDProtocol<AverageMessage> {
 
 //--------------------------------------------------------------------------
 // Initialization
@@ -77,10 +77,8 @@ public void nextCycle( Node node, int pid )
 /**
 * This is the standard method to define to process incoming messages.
 */
-public void processEvent( Node node, int pid, Object event ) {
-		
-	AverageMessage aem = (AverageMessage)event;
-	
+public void processEvent( Node node, int pid, AverageMessage aem ) {
+			
 	if( aem.sender!=null )
 		((Transport)node.getProtocol(FastConfig.getTransport(pid))).
 			send(

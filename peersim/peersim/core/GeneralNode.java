@@ -124,9 +124,12 @@ public void setFailState(int failState) {
 			//protocol = null;
 			index = -1;
 			failstate = DEAD;
-			for(int i=0;i<protocol.length;++i)
+			CommonState.setNode(this);
+			for(int i=0;i<protocol.length;++i) {
+				CommonState.setPid(i);
 				if(protocol[i] instanceof Cleanable)
 					((Cleanable)protocol[i]).onKill();
+			}
 			break;
 		case DOWN:
 			failstate = DOWN;

@@ -1,3 +1,13 @@
+AM 07/07/10
+- When GeneralNode calls method onKill, CommonState.getNode() and
+  CommonName.getPid() were not able to return the correct information.
+  Now both pid and the node are correctly set up.
+
+AM 23/04/10
+- Based on a suggestion of Hein Meling, the event-driven interface
+  has been made generic. In this way, for protocols that deal
+  with a single event type, casts can be avoided.
+
 MJ 12/03/2010
 - Improved the toString method of PriorityQ.Event
 

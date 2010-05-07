@@ -27,7 +27,7 @@ import peersim.core.*;
  * @author Alberto Montresor
  * @version $Revision$
  */
-public interface EDProtocol 
+public interface EDProtocol<T>
 extends Protocol 
 {
 
@@ -41,7 +41,7 @@ extends Protocol
 	* @param pid the identifier of this protocol
 	* @param event the delivered event
 	*/
-	public void processEvent( Node node, int pid, Object event );
+	public void processEvent( Node node, int pid, T event );
 
 }
 

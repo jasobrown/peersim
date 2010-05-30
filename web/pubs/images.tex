@@ -67,7 +67,12 @@
 \newcommand\lthtmlboxmathZ{\@next\next\@currlist{}{\def\next{\voidb@x}}%
  \expandafter\box\next\egroup}%
 \newcommand\lthtmlmathtype[1]{\gdef\lthtmlmathenv{#1}}%
-\newcommand\lthtmllogmath{\lthtmltypeout{l2hSize %
+\newcommand\lthtmllogmath{\dimen0\ht\sizebox \advance\dimen0\dp\sizebox
+  \ifdim\dimen0>.95\vsize
+   \lthtmltypeout{%
+*** image for \lthtmlmathenv\space is too tall at \the\dimen0, reducing to .95 vsize ***}%
+   \ht\sizebox.95\vsize \dp\sizebox\z@ \fi
+  \lthtmltypeout{l2hSize %
 :\lthtmlmathenv:\the\ht\sizebox::\the\dp\sizebox::\the\wd\sizebox.\preveqno}}%
 \newcommand\lthtmlfigureA[1]{\let\@savefreelist\@freelist
        \lthtmlmathtype{#1}\lthtmlvboxmathA}%
@@ -135,92 +140,128 @@
 % !!! IMAGES START HERE !!!
 
 {\newpage\clearpage
-\lthtmlinlinemathA{tex2html_wrap_inline1032}%
+\lthtmlinlinemathA{tex2html_wrap_inline1097}%
 $4^{th}$%
 \lthtmlinlinemathZ
 \lthtmlcheckvsize\clearpage}
 
 {\newpage\clearpage
-\lthtmlinlinemathA{tex2html_wrap_inline1034}%
-$9^{th}$%
+\lthtmlinlinemathA{tex2html_wrap_inline1099}%
+$1^{st}$%
 \lthtmlinlinemathZ
 \lthtmlcheckvsize\clearpage}
 
 {\newpage\clearpage
-\lthtmlinlinemathA{tex2html_wrap_inline1036}%
-$16^{th}$%
-\lthtmlinlinemathZ
-\lthtmlcheckvsize\clearpage}
-
-{\newpage\clearpage
-\lthtmlinlinemathA{tex2html_wrap_inline1038}%
+\lthtmlinlinemathA{tex2html_wrap_inline1101}%
 $12^{th}$%
 \lthtmlinlinemathZ
 \lthtmlcheckvsize\clearpage}
 
 {\newpage\clearpage
-\lthtmlinlinemathA{tex2html_wrap_inline1040}%
-$11^{th}$%
+\lthtmlinlinemathA{tex2html_wrap_inline1103}%
+$16^{th}$%
 \lthtmlinlinemathZ
 \lthtmlcheckvsize\clearpage}
 
 {\newpage\clearpage
-\lthtmlinlinemathA{tex2html_wrap_inline1042}%
-$3^{rd}$%
-\lthtmlinlinemathZ
-\lthtmlcheckvsize\clearpage}
-
-{\newpage\clearpage
-\lthtmlinlinemathA{tex2html_wrap_inline1044}%
+\lthtmlinlinemathA{tex2html_wrap_inline1105}%
 $6^{th}$%
 \lthtmlinlinemathZ
 \lthtmlcheckvsize\clearpage}
 
 {\newpage\clearpage
-\lthtmlinlinemathA{tex2html_wrap_inline1048}%
-$5^{th}$%
+\lthtmlinlinemathA{tex2html_wrap_inline1107}%
+$11^{th}$%
 \lthtmlinlinemathZ
 \lthtmlcheckvsize\clearpage}
 
 {\newpage\clearpage
-\lthtmlinlinemathA{tex2html_wrap_inline1056}%
+\lthtmlinlinemathA{tex2html_wrap_inline1109}%
 $22^{nd}$%
 \lthtmlinlinemathZ
 \lthtmlcheckvsize\clearpage}
 
 {\newpage\clearpage
-\lthtmlinlinemathA{tex2html_wrap_inline1066}%
-$24^{th}$%
+\lthtmlinlinemathA{tex2html_wrap_inline1113}%
+$27^{th}$%
 \lthtmlinlinemathZ
 \lthtmlcheckvsize\clearpage}
 
 {\newpage\clearpage
-\lthtmlinlinemathA{tex2html_wrap_inline1086}%
-$31^{st}$%
-\lthtmlinlinemathZ
-\lthtmlcheckvsize\clearpage}
-
-{\newpage\clearpage
-\lthtmlinlinemathA{tex2html_wrap_inline1092}%
-$2^{nd}$%
-\lthtmlinlinemathZ
-\lthtmlcheckvsize\clearpage}
-
-{\newpage\clearpage
-\lthtmlinlinemathA{tex2html_wrap_inline1100}%
-$25^{th}$%
-\lthtmlinlinemathZ
-\lthtmlcheckvsize\clearpage}
-
-{\newpage\clearpage
-\lthtmlinlinemathA{tex2html_wrap_inline1102}%
+\lthtmlinlinemathA{tex2html_wrap_inline1115}%
 $21^{th}$%
 \lthtmlinlinemathZ
 \lthtmlcheckvsize\clearpage}
 
 {\newpage\clearpage
-\lthtmlinlinemathA{tex2html_wrap_inline1108}%
+\lthtmlinlinemathA{tex2html_wrap_inline1117}%
+$^{th}$%
+\lthtmlinlinemathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_inline1119}%
+$3^{rd}$%
+\lthtmlinlinemathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_inline1127}%
+$8^{th}$%
+\lthtmlinlinemathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_inline1129}%
+$2^{nd}$%
+\lthtmlinlinemathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_inline1133}%
+$7^{th}$%
+\lthtmlinlinemathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_inline1139}%
+$25^{th}$%
+\lthtmlinlinemathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_inline1141}%
 $26^{th}$%
+\lthtmlinlinemathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_inline1143}%
+$31^{st}$%
+\lthtmlinlinemathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_inline1153}%
+$24^{th}$%
+\lthtmlinlinemathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_inline1157}%
+$37^{th}$%
+\lthtmlinlinemathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_inline1163}%
+$5^{th}$%
+\lthtmlinlinemathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_inline1185}%
+$9^{th}$%
 \lthtmlinlinemathZ
 \lthtmlcheckvsize\clearpage}
 

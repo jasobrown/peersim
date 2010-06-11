@@ -18,6 +18,8 @@
 		
 package peersim.vector;
 
+import java.lang.reflect.*;
+
 import peersim.core.*;
 import peersim.util.*;
 
@@ -25,7 +27,10 @@ import peersim.util.*;
  * This class computes and reports statistics information about a vector.
  * Provided statistics include average, max, min, variance,
  * etc. Values are printed according to the string format of {@link 
- * IncrementalStats#toString}.
+ * IncrementalStats#toString}. Single nodes may avoid to be counted in the
+ * statistics by throwing an <tt>UnsupportedOperationException</tt> in the
+ * getter method.
+ * 
  * @see VectControl
  * @see peersim.vector
  */
@@ -68,8 +73,16 @@ public boolean execute() {
 
 	for (int j = 0; j < Network.size(); j++)
 	{
+		try {
 		Number v = getter.get(j);
 		stats.add( v.doubleValue() );
+		} catch (RuntimeException e) {
+			if (!(e.getCause() instanceof InvocationTargetException) || !(e.getCause().getCause() instanceof UnsupportedOperationException))
+				throw e;
+				
+			// Do nothing; the particular node on which the operation has been invoked
+			// does not want to be counted
+		}
 	}
 	
 	System.out.println(prefix+": "+stats);	

@@ -1,6 +1,12 @@
-AM 07/07/10
+AM 11/06/10
+- Classes VectorObserver, VectCopy and SingleValueObserver of peersim.vector
+  have been modified to allow single nodes not to be observed or copied;
+  these nodes must throw a UnsupportedOperationException, that will be
+  appropriately discarded by the controls.
+
+AM 07/05/10
 - When GeneralNode calls method onKill, CommonState.getNode() and
-  CommonState.getPid() were not able to return the correct information.
+  CommonName.getPid() did not return the correct information.
   Now both pid and the node are correctly set up.
 
 AM 23/04/10

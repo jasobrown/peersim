@@ -18,6 +18,8 @@
 
 package peersim.vector;
 
+import java.lang.reflect.*;
+
 import peersim.core.*;
 import peersim.dynamics.*;
 
@@ -79,6 +81,11 @@ public VectCopy(String prefix)
  * Sets values in a protocol vector by copying the values of another 
  * protocol vector. The source is defined by {@value #PAR_SOURCE},
  * and getter method {@value peersim.vector.VectControl#PAR_GETTER}.
+ * Single nodes may avoid to be considered in the copy by throwing an 
+ * <tt>UnsupportedOperationException</tt> in the getter method; if so, the 
+ * setter method will not be invoked on the corresponding element
+ * of the vector protocol.
+ *  
  * @return always false
  */
 public boolean execute() {
@@ -86,8 +93,16 @@ public boolean execute() {
 	int size = Network.size();
 	for (int i = 0; i < size; i++) {
 		Number ret = source.get(i);
+		try {
 		if(setter.isInteger()) setter.set(i,ret.longValue());
 		else setter.set(i,ret.doubleValue());
+		} catch (RuntimeException e) {
+			if (!(e.getCause() instanceof InvocationTargetException) || !(e.getCause().getCause() instanceof UnsupportedOperationException))
+				throw e;
+				
+			// Do nothing; the particular node on which the operation has been invoked
+			// has not to be copied.
+		}
 	}
 
 	return false;

@@ -25,7 +25,9 @@ import peersim.util.*;
 /**
 * Print statistics over a vector. The vector is defined by a protocol,
 * specified by {@value #PAR_PROT}, that has to  implement
-* {@link SingleValue}.
+* {@link SingleValue}. Single nodes may avoid to be counted in the statistics
+* by throwing an <tt>UnsupportedOperationException</tt> in method 
+* {@link SingleValue#getValue}.
 * Statistics printed are: min, max, number of samples, average, variance,
 * number of minimal instances, number of maximal instances (using
 * {@link IncrementalStats#toString}).
@@ -109,7 +111,11 @@ public boolean execute()
 	for (int i = 0; i < Network.size(); i++)
 	{
 		SingleValue v = (SingleValue)Network.get(i).getProtocol(pid);
-		stats.add( v.getValue() );
+		try {
+			stats.add( v.getValue() );
+		} catch (UnsupportedOperationException e) {
+			// Do nothing
+		}
 	}
 
 	/* Printing statistics */

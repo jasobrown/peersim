@@ -1,28 +1,27 @@
 .PHONY: all htmlfiles publish clean cleanall
 
-all: references htmlfiles
+all: htmlfiles
 
 htmlfiles: \
-  desc.html 
+  desc.html
 
 references:
 	mkdir -p refs
-	rm -f refs/*.bib
-	cd refs ; pwd ; awk -f ../bib-split.awk ../peersim.bib
+	rm -f refs/*
+	cd refs ; pwd ; awk -f ../bib-split.awk ../references.bib
 	
-%.html: %.tex peersim.bib alpha-web.bst
-	latex `basename $< .tex`
+%.html: %.tex peersim.bib is-unsrt-web.bst
+	htlatex `basename $< .tex` "html,uni-html4" " -cmozhtf"
 	bibtex `basename $< .tex`
-	latex `basename $< .tex`
-	latex `basename $< .tex`
-	latex2html -nosubdir -no_auto_link -html_version 4.0 -info 0 -split 0 -no_navigation $<
+	htlatex `basename $< .tex` "html,uni-html4" " -cmozhtf"
+#	mv `basename $< .tex`.html `basename $< .tex`.shtml
 
 publish: htmlfiles clean
 	pubblica-web
 
 cleanall: clean
-	rm -rf refs *.html *.css > /dev/null
+	rm -rf refs *.shtml *.css > /dev/null
 
 clean:
-	rm -rf WARNINGS *.out *.aux *.dvi *.log *.bbl *.blg *.pl > /dev/null
+	rm -rf WARNINGS *.out *.aux *.dvi *.log *.bbl *.blg *.pl *.4ct *.4tc *.idv *.lg *.html *.xref *.tmp > /dev/null
 

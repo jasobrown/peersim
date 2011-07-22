@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"><head>
-  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type" />
+  <meta content="text/html; charset=utf-8" http-equiv="content-type" />
   <link type="text/css" href="peersim_schema.css" rel="stylesheet" />
   <title>PeerSim P2P Simulator</title></head>
 
@@ -158,24 +158,27 @@ a mail to <a href="http://www.disi.unitn.it/%7Emontreso/">Alberto Montresor</a>.
 <pre>
 --- bibtex ---
 
-@Misc{peersim,
-  author = {M{\'a}rk Jelasity and Alberto Montresor and Gian~Paolo Jesi and Spyros Voulgaris},
-  title = {The {Peersim} Simulator},
-  note = {{\tt http://peersim.sf.net}}
+@inproceedings{p2p09-peersim,
+	Author = {Alberto Montresor and M\'{a}rk Jelasity},
+	Title = {{PeerSim}: A Scalable {P2P} Simulator},
+	Booktitle = {Proc. of the 9th Int. Conference on Peer-to-Peer (P2P'09)},
+	Year = {2009}
+	Month = sep,
+	Pages = {99-100},
+	Address = {Seattle, WA},
 }
 
 --- plain latex ---
 
-\bibitem[JMJV]{peersim}
-M{\'a}rk Jelasity, Alberto Montresor, Gian~Paolo Jesi, and Spyros Voulgaris.
-The {Peersim} simulator.
-{\tt http://peersim.sf.net}.
+\bibitem{p2p09-peersim}
+Alberto Montresor and M\'{a}rk Jelasity.
+\newblock PeerSim: A scalable P2P simulator.
+\newblock In {\em Proc. of the 9th Int. Conference on Peer-to-Peer (P2P'09)},
+  pages 99--100. Seattle, WA, September 2009.
 
 --- resulting text ----
 
-M&aacute;rk Jelasity, Alberto Montresor, Gian Paolo Jesi, and Spyros Voulgaris. 
-The Peersim simulator. 
-http://peersim.sf.net
+Alberto Montresor and Mark Jelasity. PeerSim: A scalable P2P simulator. In Proc. of the 9th Int. Conference on Peer-to-Peer (P2P’09), pages 99–100. Seattle, WA, September 2009.
 
 </pre>
 
@@ -241,11 +244,12 @@ in your code.
 <tr>
   <td class="third">
     <b>Bandwidth management protocol</b><br />
-    The bandwidth aware protocol provides a simple implementation of the�priority 
+    The bandwidth aware protocol provides a simple implementation of the priority 
     sharing bandwidth allocation which serves transmissions using FIFO policies, 
     reserving as much resources as possibile for each connection.
 	This module was developed by Alessandro Russo (DISI - University of Trento)
 	under the European project <a href="http://www.napa-wine.eu">Napa-Wine</a>.
+  </td>
   <td class="third">
     <a href="code/bandwidth-module.tar.gz">bandwidth-module.tar.gz</a>
   </td>
@@ -278,8 +282,7 @@ in your code.
     <a href="code/pastry.tar.gz">pastry.tar.gz</a>
   </td>
   <td class="third">
-    Manuel Cortella (<a href="mailto:manuel.cortella@studenti.unitn.it">manuel.cortella@studenti.unitn.it</a>)<br />
-    Elisa Bisoffi (<a href="mailto:elisa.bisoffi@studenti.unitn.it">elisa.bisoffi@studenti.unitn.it</a>)
+    Manuel Cortella (<a href="mailto:manuel.cortella@studenti.unitn.it">manuel.cortella@studenti.unitn.it</a>)
   </td>
 </tr>
 
@@ -336,7 +339,7 @@ in your code.
   </td>
   <td class="third">
     Fabrizio Frioli
- (<a href="mailto:fabrizio.frioli@studenti.unitn.it">fabrizio.frioli@studenti.unitn.it</a>)<br>
+ (<a href="mailto:fabrizio.frioli@studenti.unitn.it">fabrizio.frioli@studenti.unitn.it</a>)<br />
     Michele Pedrolli
  (<a href="mailto:michele.pedrolli@studenti.unitn.it">michele.pedrolli@studenti.unitn.it</a>)
   </td>
@@ -359,7 +362,7 @@ in your code.
  
   </td>
   <td class="third">
-    <a href="code/aggregation.tgz">aggregation.tgz</a><br /><br /><a href="code/tsize.tar.gz">tsize.tar.gz</a>
+    <a href="code/Aggregation.zip">Aggregation.zip</a><br /><br /><a href="code/T-Size.zip">T-Size.zip</a>
   </td>
   <td class="third">
     Alberto Montresor (<a href="mailto:alberto.montresor@unitn.it">alberto.montresor@unitn.it</a>)
@@ -378,7 +381,7 @@ in your code.
   </p>
   </td>
   <td class="third">
-  <a href="code/superpeer.tgz">superpeer.tgz</a>.
+  <a href="code/Superpeer.zip">Superpeer.zip</a>
   </td>
   <td class="third">
     Alberto Montresor (<a href="mailto:alberto.montresor@unitn.it">alberto.montresor@unitn.it</a>)
@@ -408,19 +411,21 @@ in your code.
     <b>T-Man</b><br />
     The T-Man protocol can be used to build a wide range of different topologies
     using only a ranking function that defines the preference of each node for
-    neighbors. The original technical report is:
-    <p>M&aacute;rk Jelasity and Ozalp Babaoglu.
-    <cite>T-Man: Fast gossip-based construction of large-scale overlay topologies</cite>.
-    Technical Report UBLCS-2004-7, University of Bologna, Department of Computer
-    Science, Bologna, Italy, May 2004.
-    <a href="http://www.cs.unibo.it/pub/TR/UBLCS/2004/2004-07.pdf">[PDF]</a>.
+    neighbors. The most recent results have been published here:
+    <p>
+	M&aacute;rk Jelasity, Alberto Montresor, and Ozalp Babaoglu. <cite>T-Man: Gossip-based fast overlay topology construction.</cite> Computer Networks, 53 (13):2321–2339, 2009.
+
+
+
+
+    <a href="http://disi.unitn.it/~montreso/pubs/papers/comnet09.pdf">[PDF]</a>.
     </p>
   </td>
   <td class="third">
-    <a href="code/UBLCS-2004-7.tar.gz">UBLCS-2004-7.tar.gz</a>
+    <a href="code/T-Man.zip">T-Man.zip</a>
   </td>
   <td class="third">
-    M&aacute;rk Jelasity (<a href="mailto:jelasity@inf.u-szeged.hu">jelasity@inf.u-szeged.hu</a>)
+    Alberto Montresor (<a href="mailto:alberto.montresor@unitn.it">alberto.montresor@unitn.it</a>)
   </td>
 </tr>
 <tr>
@@ -556,7 +561,9 @@ overlay. Its related papers are the following: <ul>
 
     <p>
     Alberto Montresor and Luca Abeni
-    <a href="http://www.disi.unitn.it/~montreso/pubs/papers/cloudcast.pdf">Cloudy Weather for P2P, with a Chance of Gossip</a>. Submitted for publication.
+    <cite>Cloudy Weather for P2P, with a Chance of Gossip.</cite>
+    In Proceedings of the 11th IEEE Conference on P2P Computing, P2P'11, Kyoto, Japan, August 2011.
+<a href="http://www.disi.unitn.it/~montreso/pubs/papers/cloudcast.pdf">[PDF]</a>
     </p>
   </td>
   <td class="third">
@@ -567,6 +574,24 @@ overlay. Its related papers are the following: <ul>
   </td>
 </tr>
 
+
+<tr>
+  <td class="third">
+    <b>Gosh</b> <br />
+    Some experimentations in the field of P2P, distributed function
+    optimization.
+    <p>
+    Marco Biazzini, Alberto Montresor and Mauro Brunato. <cite>Towards a decentralized architecture for optimization.</cite> In Proc. of the 22nd IEEE Int. Parallel and Distributed Processing Symposium (IPDPS'08). Miami, FL, USA, April 2008. 
+<a href="http://disi.unitn.it/~montreso/pubs/papers/ipdps08.pdf">[PDF]</a>
+    </p>
+  </td>
+  <td class="third">
+  <a href="code/Gosh.zip">Gosh.zip</a>
+  </td>
+  <td class="third">
+    Alberto Montresor (<a href="mailto:alberto.montresor@unitn.it">alberto.montresor@unitn.it</a>)
+  </td>
+</tr>
 
 
   </tbody>

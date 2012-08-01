@@ -29,6 +29,8 @@ public class EDMongering implements EDProtocol, Infectable
 
 private static final String PAR_LINKABLE = "linkable";
 
+private static final String PAR_INFECTABLE = "infectable";
+
 private static final String PAR_TRANSPORT = "transport";
 
 private static final String PAR_PROB = "prob";
@@ -55,6 +57,9 @@ private class ProtocolData
   /** Linkable id */
   final int lid;
 
+  /** Infectable id */
+  final int iid;
+
   /** Transport id */
   final int tid;
   
@@ -68,6 +73,7 @@ private class ProtocolData
   {
   	pid = CommonState.getPid();
   	lid = Configuration.getPid(prefix + "." + PAR_LINKABLE);
+  	iid = Configuration.getPid(prefix + "." + PAR_INFECTABLE);
   	tid = Configuration.getPid(prefix + "." + PAR_TRANSPORT);
   	period = Configuration.getInt(prefix + "." + PAR_PERIOD);
   	prob = Configuration.getDouble(prefix + "." + PAR_PROB);
@@ -78,24 +84,23 @@ private class ProtocolData
 /** */
 int status;
 
-/** The node hosting this protocol */
-final Node node;
-
 /** */
 ProtocolData p;
 
 public EDMongering(String prefix)
 {
-  p = new ProtocolData(prefix);
-  node = CommonState.getNode();
+	assert false;
+  //p = new ProtocolData(prefix);
 	status = SUSCEPTIBLE;
+	System.err.print("fffslkfklsdlkdslksdlklksd");
 }
 
 private EDMongering(ProtocolData p)
 {
 	this.p = p;
-  node = CommonState.getNode();
 	status = SUSCEPTIBLE;
+	int r = CommonState.r.nextInt(p.period);
+	EDSimulator.add(r, TIMEOUT, CommonState.getNode(), CommonState.getPid());
 }
 
 public Object clone()
@@ -105,24 +110,23 @@ public Object clone()
 
 public void processEvent(Node node, int pid, Object event)
 {
-	if (status == 2)
-		return;
+	EDSimulator.add(p.period, TIMEOUT, node, pid);
 	Linkable  l = (Linkable ) node.getProtocol(p.lid);
 	Transport t = (Transport) node.getProtocol(p.tid);
+	Infectable i = (Infectable) node.getProtocol(p.iid);
 	if (event == TIMEOUT) {
-		if (status == SUSCEPTIBLE)
+		if (status == INFECTED  || i.isInfected()) {
 			status = INFECTED;
-		if (status == INFECTED) {
-			EDSimulator.add(p.period, TIMEOUT, node, pid);
+			// Evitare di spedire alla cloud
 			int r = CommonState.r.nextInt(l.degree());
 			t.send(node, l.getNeighbor(r), INFECTION, pid);
+			System.err.print("*");
+			assert false;
 		}
 	} else if (event == INFECTION) {
 		if (status == SUSCEPTIBLE) {
 			status = INFECTED;
-			EDSimulator.add(p.period, TIMEOUT, node, pid);
-			int r = CommonState.r.nextInt(l.degree());
-			t.send(node, l.getNeighbor(r), INFECTION, pid);
+			i.setInfected(true);
 		} else if (status == INFECTED) {
 			float chance = CommonState.r.nextFloat();
 			if (chance < p.prob)
@@ -136,22 +140,15 @@ public void processEvent(Node node, int pid, Object event)
 public void setInfected(boolean infected)
 {
 	if (infected) {
-		if (status == 0) {
-			Linkable  l = (Linkable ) node.getProtocol(p.lid);
-			Transport t = (Transport) node.getProtocol(p.tid);
-			for (int i=0; i < l.degree(); i++) {
-				t.send(node, l.getNeighbor(i), INFECTION, p.pid);
-			}
-			status = 1;
-		}
+		status = INFECTED;
 	} else {
-		status = 0;
+		status = SUSCEPTIBLE;
 	}
 }
 
 public boolean isInfected()
 {
-	return status != 0;
+	return status != SUSCEPTIBLE;
 }
 
 

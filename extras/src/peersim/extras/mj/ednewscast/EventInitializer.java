@@ -53,10 +53,10 @@ private static final String PAR_MFED = "maxFirstDelay";
 // Fields
 // --------------------------------------------------------------------------
 
-/** value of {@value #protocolID} */
+/** value of {@value #PAR_PROT} */
 private final int protocolID;
 
-/** value of {@value #maxFirstEventDelay} */
+/** value of {@value #PAR_MFED} */
 private final long maxDelay;
 
 // --------------------------------------------------------------------------

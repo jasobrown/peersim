@@ -36,6 +36,7 @@ public static void main(String[] args) throws Exception
 	/** Read parameters */
 	if (args.length < 3)
 		usage();
+	System.err.println("columns " + (args.length-2));
 	BufferedReader reader;
 	
 	// "-" corresponds to the standard input
@@ -98,7 +99,7 @@ public static void main(String[] args) throws Exception
 		System.out.print(key);
 		for (int i=0; i < columny.length; i++) {
 			System.out.print(" " + stats[i].getAverage() + " " + stats[i].getMin()
-					+ " " + stats[i].getMax() + " " + stats[i].getN() + " " + stats[i].getVar());
+					+ " " + stats[i].getMax() + " " + stats[i].getN() + " " + stats[i].getVar() + " " + stats[i].getMinCount() + " " + stats[i].getMaxCount());
 		}
 		System.out.println();
 	}

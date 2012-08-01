@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003-2005 The BISON Project
+ * Copyright (c) 2010 Alberto Montresor
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 2 as
@@ -16,16 +16,41 @@
  *
  */
 
-package peersim.extras.am.epidemic.xtman;
-
-import peersim.core.*;
+package peersim.extras.am.util;
 
 
-public interface Distance
+public class IntGraph
 {
 
-  public int rank(Node[] src, int ssize, Node node, Node[] dest, int dsize);
+private int size;
 
-  public int merge(Node[] src1, int size1, Node[] src2, int size2, Node[] dest);
-  
+private IntArray[] neighbors;
+
+public IntGraph(int size)
+{
+	this.size = size;
+	neighbors = new IntArray[size];
+}
+
+public int size()
+{
+	return size;
+}
+
+public IntArray neighbors(int i)
+{
+	if (neighbors[i] == null) 
+		neighbors[i] = new IntArray(4);
+	return neighbors[i];
+}
+
+public void addEdge(int i, int j)
+{
+	if (neighbors[i] == null) 
+		neighbors[i] = new IntArray(4);
+	if (!neighbors[i].contains(j))
+		neighbors[i].append(j);
+}
+	
+	
 }

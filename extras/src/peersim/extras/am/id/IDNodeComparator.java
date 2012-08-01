@@ -50,9 +50,9 @@ public int compare(Object o1, Object o2)
 	IDHolder s1 = (IDHolder) ((Node) o1).getProtocol(pid);
 	IDHolder s2 = (IDHolder) ((Node) o2).getProtocol(pid);
 	long diff = s1.getID() - s2.getID();
-	if (diff < 0)
+	if (s1.getID() < s2.getID())
 		return -1;
-	else if (diff == 0)
+	else if (s1.getID() == s2.getID())
 		return 0;
 	else
 		return +1;

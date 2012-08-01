@@ -56,7 +56,12 @@ private final int lid;
 
 private final boolean pushpull;
 
-private boolean status;
+/** Current infection status */
+private boolean infected;
+
+/** Time of infection */
+private long time;
+
 
 
 //---------------------------------------------------------------------
@@ -67,7 +72,7 @@ public EpidemicRumor(String prefix)
 {
 	lid = Configuration.getPid(prefix + "." + PAR_LINKABLE);
 	pushpull = Configuration.contains(prefix + "." + PAR_PUSHPULL);
-	status = false;
+	infected = false;
 }
 
 
@@ -78,7 +83,7 @@ public Object clone()
 		ret = (EpidemicRumor) super.clone();
 	} catch (CloneNotSupportedException e) {
 	}
-	ret.status = false;
+	ret.infected = false;
 	return ret;
 }
 
@@ -95,13 +100,13 @@ public Node selectPeer(Node lnode)
 
 public Message prepareRequest(Node lnode, Node rnode)
 {
-	if (status && !pushpull)
+	if (infected && !pushpull)
 		return null;
 	
 	if (Simulator.getSimID() == Simulator.CDSIM) {
-		return (status ? TRUE : FALSE);
+		return (infected ? TRUE : FALSE);
 	} else if (Simulator.getSimID() == Simulator.EDSIM) {
-		return new InfectionMessage(status);
+		return new InfectionMessage(infected);
 	} else {
 		throw new IllegalStateException("Unknow simulator");
 	}
@@ -112,9 +117,9 @@ public Message prepareResponse(Node lnode, Node rnode, Message request)
 	InfectionMessage msg = (InfectionMessage) request;
 	
 	if (Simulator.getSimID() == Simulator.CDSIM) {
-		return (status ? TRUE : FALSE);
+		return (infected ? TRUE : FALSE);
 	} else if (Simulator.getSimID() == Simulator.EDSIM) {
-		return new InfectionMessage(status);
+		return new InfectionMessage(infected);
 	} else {
 		throw new IllegalStateException("Unknow simulator");
 	}
@@ -123,19 +128,22 @@ public Message prepareResponse(Node lnode, Node rnode, Message request)
 public void merge(Node lnode, Node rnode, Message message)
 {
 	InfectionMessage msg = (InfectionMessage) message;
-	status = status || msg.getStatus();
+	infected = infected || msg.getStatus();
 }
 
 
 public void setInfected(boolean infected)
 {
-	this.status = infected;
+	if (!this.infected && infected) {
+		time = CommonState.getTime();
+	}
+	this.infected = infected;
 }
 
 
 public boolean isInfected()
 {
-	return status;
+	return infected;
 }
 
 }

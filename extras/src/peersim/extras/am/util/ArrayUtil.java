@@ -70,4 +70,30 @@ public static boolean contains(Object[] array, int size, Object obj)
 	return false;
 }
 
+/** 
+ * Returns a new array of size newSize, contanining the first
+ * oldSize elements of the original array.
+ */
+public static int[] resizeArray(int[] array, int oldSize, int newSize)
+{
+	if (array == null)
+		return null;
+	int[] temp = new int[newSize];
+	System.arraycopy(array, 0, temp, 0, oldSize);
+	return temp;
+}
+
+/** 
+ * Returns a new array of size newSize, contanining the first
+ * oldSize elements of the original array.
+ */
+public static int[][] resizeArray(int[][] array, int oldSize, int newSize)
+{
+	if (array == null)
+		return null;
+	int[][] temp = new int[newSize][];
+	System.arraycopy(array, 0, temp, 0, oldSize);
+	return temp;
+}
+
 }

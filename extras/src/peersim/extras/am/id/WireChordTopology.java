@@ -99,7 +99,6 @@ public WireChordTopology(String prefix)
 	for (int i = 0; i < size; i++) {
 		nodes[i] = Network.get(i);
 	}
-	Arrays.sort(nodes, idc);
 }
 
 // ---------------------------------------------------------------------
@@ -117,6 +116,8 @@ public boolean execute()
  */
 private void buildChordTopology()
 {
+	Arrays.sort(nodes, idc);
+
 	int size = nodes.length;
 	int[] array = new int[ID.BITS];
 	for (int i = 0; i < size; i++) {
@@ -135,6 +136,7 @@ private void buildChordTopology()
 				}
 				long rid = getID(pos);
 				long dist = dist(lid, rid);
+				//System.out.println(lid + " " + rid + " " + dist + " " + ID.log2(dist) + " " + j);
 				if (j == ID.log2(dist)) {
 					array[j]++;
 					link.addNeighbor(nodes[pos]);
@@ -142,8 +144,8 @@ private void buildChordTopology()
 			}
 		}
 		// Extract leafs
-		for (int j = 0; j < successors; j++) {
-			link.addNeighbor(nodes[(i + j + 1) % nodes.length]);
+		for (int j = 1; j <= successors; j++) {
+			link.addNeighbor(nodes[(i + j) % nodes.length]);
 		}
 	}
 }

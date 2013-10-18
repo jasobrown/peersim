@@ -260,23 +260,6 @@ in your code.
 
 <tr>
   <td class="third">
-    <b>Bandwidth management protocol</b><br />
-    The bandwidth aware protocol provides a simple implementation of the priority 
-    sharing bandwidth allocation which serves transmissions using FIFO policies, 
-    reserving as much resources as possibile for each connection.
-	This module was developed by Alessandro Russo (DISI - University of Trento)
-	under the European project <a href="http://www.napa-wine.eu">Napa-Wine</a>.
-  </td>
-  <td class="third">
-    <a href="code/bandwidth-module.tar.gz">bandwidth-module.tar.gz</a>
-  </td>
-  <td class="third">
-    Alessandro Russo (<a href="mailto:russo@disi.unitn.it">russo@disi.unitn.it</a>)<br />
-  </td>
-</tr>
-
-<tr>
-  <td class="third">
     <b>Simphony</b><br />
     An implementation of the Symphony protocol for Peersim. Lab assignment for the Peer-to-Peer Systems course at the University of Pisa.
   </td>
@@ -652,6 +635,56 @@ in your code.
   </td>
 </tr>
 
+<tr>
+  <td class="third">
+    <b>AREN</b> <br />
+    AREN Bandwidth Manager provides a lightweight and accurate  
+	fair-sharing of bandwidth and rate control enforcement.  We assume a  
+	simple approach that does not reproduce in-depth  transport protocol  
+	behavior. Instead, our design focuses in reducing the inherent impact  
+	on the overall simulation scalability  as bandwidth scheduling  
+	accuracy is improved. We have studied the scalability and bandwidth  
+	scheduling accuracy of four scheduling approaches, namely the  
+	simplest, lock-based, packet or slot-based, and connection-oriented  
+	bandwidth scheduler. We have verified that a connection-oriented  
+	approach allows us to  (i) improve considerably the accuracy of fair  
+	bandwidth sharing, and (ii) implement a rate control mechanism properly.
+    <ul>
+    <li>
+    Guthemberg Silvestre, Sébastien Monnet, David Buffoni,and Pierre Sens.
+     <cite>Predicting Popularity and Adapting Replication of Internet Videos for  
+	 High-Quality Delivery.</cite> In Proc. of the IEEE 19th International Conference on Parallel and Distributed Systems (ICPADS 2013) - Seoul, South Korea - December 2013. 
+	[to appear]
+    </li>
+	<li>
+	Guthemberg Silvestre, Sébastien Monnet, Ruby Krishnaswamy,and Pierre Sens.
+	<cite>AREN: a popularity-aware replication scheme for cloud storage.</cite>
+	In Proc. of the IEEE 18th International Conference on Parallel and Distributed Systems (ICPADS 2012) - Singapore - December 2012.
+	<a href="http://pagesperso-systeme.lip6.fr/Guthemberg.Silvestre/publications/silvestre_icpads12.pdf">[PDF]</a>
+	</li>
+    <li>
+    Guthemberg Silvestre and Sébastien Monnet.
+    <cite>Performing accurate simulations for deadline-aware applications.</cite>
+    In Proc. of the 4th International Workshop on Modeling and Simulation of
+	Peer-to-Peer and Autonomic Systems (MOSPAS), as part of The International Conference on High Performance Computing & Simulation (HPCS 2013) - Helsinki, Finland - July 2013.
+    <a href="http://pagesperso-systeme.lip6.fr/Guthemberg.Silvestre/publications/silvestre_mospas13.pdf">[PDF]</a>
+    </li>
+    <li>
+    Guthemberg Silvestre, Sébastien Monnet, Ruby Krishnaswamy,and Pierre Sens.
+    <cite>Caju: a content distribution system for edge networks.</cite>
+    In Proc. of BDMC/Euro-Par 2012: Parallel Processing Workshops - Rhodes Island, Greece - August 2012.
+    <a href=http://pagesperso-systeme.lip6.fr/Guthemberg.Silvestre/publications/silvestre_bdmc12.pdf">[PDF]</a>
+    </li>
+    </ul>
+  </td>
+  <td class="third">
+  <a href="https://github.com/guthemberg/arenbm">AREN [Git repository]</a>
+  </td>
+  <td class="third">
+    Guthemberg Silvestre (<a href="mailto:guthemberg.silvestre@lip6.fr">guthemberg.silvestre@lip6.fr</a>)
+  </td>
+</tr>
+
 
   </tbody>
 </table>
@@ -662,6 +695,6 @@ in your code.
 <a href="http://jigsaw.w3.org/css-validator/"><img style="width: 88px; height: 31px;" src="http://jigsaw.w3.org/css-validator/images/vcss" alt="Valid CSS!" /></a>
 <a href="http://sourceforge.net/projects/peersim"><img style="width: 120px; height: 31px;" src="http://sflogo.sourceforge.net/sflogo.php?group_id=91456&amp;type=13" alt="Get peersim at SourceForge.net. Fast, secure and Free Open Source software downloads" /></a>
 Page maintenance: Gian Paolo Jesi (<a href="mailto:jesi@cs.unibo.it">jesi@cs.unibo.it</a>)<br /> 
-Last update: Sat Jul 23 13:01:41 CET 2011<br />
+Last update: Wed Sep 11 11:12:41 CET 2013<br />
 </address>
 </body></html>

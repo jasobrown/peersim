@@ -21,6 +21,8 @@ package peersim.extras.mj.dynamics;
 import peersim.core.*;
 import peersim.config.Configuration;
 import peersim.config.IllegalParameterException;
+import peersim.dynamics.NodeInitializer;
+
 /**
  * A {@link Control} to modell the random log in and out of nodes in network.
  * With a given configurable probability, all nodes that are up go offline
@@ -33,6 +35,24 @@ public class RandLogInOut implements Control {
 // --------------------------------------------------------------------------
 // Parameters
 // --------------------------------------------------------------------------
+
+/**
+ * Config parameter which gives the prefix of node initializers. An arbitrary
+ * number of node initializers can be specified (Along with their parameters).
+ * These will be applied on the nodes that (re-)join the network.
+ * The initializers are ordered according to
+ * alphabetical order of their ID.
+ * Example:
+ * <pre>
+control.0 RandLogInOut
+control.0.init.0 RandNI
+control.0.init.0.k 5
+control.0.init.0.protocol somelinkable
+...
+ * </pre>
+ * @config
+ */
+private static final String PAR_INIT = "init";
 
 /**
  * Defines the probability for a node that is offline (down) to go
@@ -57,6 +77,9 @@ protected final double pOn;
 
 /** value of {@value #PAR_pOff} */
 protected final double pOff;
+
+/** node initializers to apply on the newly added nodes */
+protected final NodeInitializer[] inits;
 
 // --------------------------------------------------------------------------
 // Initialization
@@ -83,6 +106,11 @@ public RandLogInOut(String prefix) {
 			prefix + "." + PAR_pOff,
 			"probability must be between 0 and 1!");
 	}
+	Object[] tmp = Configuration.getInstanceArray(prefix + "." + PAR_INIT);
+	inits = new NodeInitializer[tmp.length];
+	for (int i = 0; i < tmp.length; ++i) {
+		inits[i] = (NodeInitializer) tmp[i];
+	}
 }
 
 // --------------------------------------------------------------------------
@@ -91,20 +119,24 @@ public RandLogInOut(String prefix) {
 
 public boolean execute() {
 	
-	for (int i = 0; i < Network.size(); i++) {
-		if (Network.get(i).getFailState() == Fallible.OK) {
-			if (CommonState.r.nextDouble() <= pOff) {
-				Network.get(i).setFailState(Fallible.DOWN);
-			}
-		} else {
-			if (Network.get(i).getFailState() == Fallible.DOWN) {
-				if (CommonState.r.nextDouble() <= pOn) {
-					Network.get(i).setFailState(Fallible.OK);
-				}
-			}
+	for (int i = 0; i < Network.size(); i++)
+	{
+
+		final Node n = Network.get(i);
+		final double d = CommonState.r.nextDouble();
+		
+		if (n.getFailState() == Fallible.OK && d <= pOff)
+		{
+			n.setFailState(Fallible.DOWN);
+		}
+		else if (n.getFailState() == Fallible.DOWN && d <= pOn)
+		{			
+			n.setFailState(Fallible.OK);
+			for (int j = 0; j < inits.length; ++j)
+				inits[j].initialize(n);
 		}
 	}
+	
 	return false;
 }
 }
-

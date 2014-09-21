@@ -25,7 +25,7 @@ import peersim.core.*;
 
 /**
  * This class provides a generic implementation of the
- * <code>java.lang.Comparator<code> interface specialized
+ * <code>java.lang.Comparator</code> interface specialized
  * for {@link Node} objects. Nodes are compared based
  * on one of their protocols, on which a configurable
  * method is invoked. Both the protocol id and the

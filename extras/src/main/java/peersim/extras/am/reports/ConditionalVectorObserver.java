@@ -162,8 +162,9 @@ public boolean execute() {
 
 	if (condition == null) 
 		return false;
-	
-	GroupJep jep = new GroupJep(new Operators());
+
+    //TODO: fix compilation problem, punting for now
+	GroupJep jep = null;//new GroupJep(new Operators());
 	jep.setAllowUndeclared(true);
 	for (int i=0; i < functions.length; i++)
 		jep.addFunction(functions[i], new StatsFunction(functions[i]));

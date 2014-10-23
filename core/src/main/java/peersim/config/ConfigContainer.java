@@ -20,7 +20,7 @@ package peersim.config;
 
 import java.lang.reflect.*;
 import java.util.*;
-//import org.lsmp.djep.groupJep.*;
+import org.lsmp.djep.groupJep.*;
 
 /**
  * This class is the container for the configuration data used in
@@ -363,17 +363,16 @@ private Number getVal(String initial, String property, int depth)
  *          the java expression parser containing the list of variables
  * @return an array of strings.
  */
-private String[] getSymbols(Object o)
-//private String[] getSymbols(org.nfunk.jep.JEP jep)
+private String[] getSymbols(org.nfunk.jep.JEP jep)
 {
-//	Hashtable h = jep.getSymbolTable();
-	String[] ret = new String[0];//[h.size()];
-//	Enumeration e = h.keys();
-//	int i = 0;
-//	while (e.hasMoreElements()) {
-//		ret[i++] = (String) e.nextElement();
-//	}
-	return ret;
+	Hashtable h = jep.getSymbolTable();
+	String[] ret = new String[h.size()];
+	Enumeration e = h.keys();
+	int i = 0;
+	while (e.hasMoreElements()) {
+		ret[i++] = (String) e.nextElement();
+	}
+    return ret;
 }
 
 // -------------------------------------------------------------------

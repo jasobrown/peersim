@@ -8,12 +8,14 @@
 	<artifactId>core</artifactId>
 	<packaging>jar</packaging>
 	<name>peersim core</name>
-	<!--dependencies>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>core</artifactId>
+
+	<dependencies>
+	    <dependency>
+		    <groupId>org.scijava</groupId>
+			<artifactId>jep</artifactId>
+			<version>2.4.2</version>
 		</dependency>
-	</dependencies-->
+	</dependencies>
 
 	<build>
 		<resources>

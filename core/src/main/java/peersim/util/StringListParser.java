@@ -21,7 +21,7 @@ package peersim.util;
 import java.math.*;
 import java.util.*;
 
-//import org.lsmp.djep.groupJep.*;
+import org.lsmp.djep.groupJep.*;
 
 import peersim.config.*;
 
@@ -97,7 +97,7 @@ private static void parseRangeItem(List<String> list, String start, String stop)
 	Number vstop;
 	Number vinc;
 	boolean sum;
-/*	
+
 	GroupJep jep = new GroupJep(new Operators());
 	jep.parseExpression(start);
 	vstart = (Number) jep.getValueAsObject(); 
@@ -150,7 +150,6 @@ private static void parseRangeItem(List<String> list, String start, String stop)
 				list.add("" + i);
 		}
 	}
-*/
 }
 
 /*

@@ -48,6 +48,11 @@
 				<artifactId>extras</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>example</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 
 			<dependency>
 				<groupId>ch.qos.logback</groupId>
@@ -503,6 +508,7 @@
 		<module>core</module>
 		<module>aggregation</module>
 		<module>extras</module>
+		<module>example</module>
 	</modules>
 </project>
 
